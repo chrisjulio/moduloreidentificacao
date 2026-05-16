@@ -1,0 +1,12 @@
+# ============================================================
+# Dev dependencies — lint, testes, formatação
+# ============================================================
+#
+# Instalar com:
+#     pip install -r requirements-dev.txt
+#
+# Independente do requirements.txt (produção) para manter o CI rápido
+# e permitir que ambientes minimalistas pulem ferramentas de dev.
+
+pytest>=8.0
+ruff>=0.6
