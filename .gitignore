@@ -1,0 +1,110 @@
+# ============================================================
+# .gitignore — Baseline de Reidentificação em Redes Sociais
+# ============================================================
+
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ------------------------------------------------------------
+# Ambientes virtuais
+# ------------------------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ------------------------------------------------------------
+# Testes e cobertura
+# ------------------------------------------------------------
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# ------------------------------------------------------------
+# Type checking e linting
+# ------------------------------------------------------------
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+
+# ------------------------------------------------------------
+# Jupyter (não é workflow primário; excluído por precaução)
+# ------------------------------------------------------------
+.ipynb_checkpoints/
+
+# ------------------------------------------------------------
+# IDE / editores
+# ------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------
+# Sistema operacional
+# ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------------------------
+# Variáveis de ambiente locais
+# ------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+
+# ============================================================
+# Específico do projeto
+# ============================================================
+
+# Datasets: baixados por script, nunca comitados
+/data/raw/*
+/data/processed/*
+!/data/raw/.gitkeep
+!/data/processed/.gitkeep
+
+# Logs estruturados das execuções
+/experiments/logs/*
+!/experiments/logs/.gitkeep
+
+# Outputs gerados (tabelas e gráficos): regeneráveis a partir de configs versionados
+/results/tables/*
+/results/plots/*
+!/results/tables/.gitkeep
+!/results/plots/.gitkeep

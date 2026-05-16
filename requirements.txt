@@ -1,0 +1,22 @@
+# ============================================================
+# Core dependencies — Baseline de Reidentificação em Redes Sociais
+# ============================================================
+#
+# Pinagem por piso (>=). Para reprodutibilidade estrita após o setup do
+# ambiente, gere lockfile via:
+#     pip freeze > requirements.lock.txt
+
+# Grafos
+networkx>=3.4
+
+# Numérico e estatístico (KS-test em scipy.stats.ks_2samp)
+numpy>=2.0
+scipy>=1.14
+
+# Visualização e tabelas
+matplotlib>=3.9
+pandas>=2.2
+
+# Configuração e UX
+pyyaml>=6.0
+tqdm>=4.66

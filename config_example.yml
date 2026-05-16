@@ -1,0 +1,91 @@
+# ============================================================
+# Configuração experimental — exemplo
+# Baseline de Reidentificação em Redes Sociais Anonimizadas
+# ============================================================
+#
+# Este arquivo é referência. Para uma execução específica:
+#   1. Copie para experiments/configs/<nome_do_experimento>.yml
+#   2. Ajuste os parâmetros conforme o desenho experimental
+#   3. Versione o arquivo final junto aos resultados que ele produzir
+
+experiment:
+  name: example_baseline_he2009
+  description: >
+    Execução de referência aplicando He et al. (2009) sobre uma ego-rede do
+    Facebook Ego-Nets, com ataques por grau e por subgrafos.
+  output_dir: results/example_baseline_he2009
+
+# ------------------------------------------------------------
+# Sementes aleatórias
+# ------------------------------------------------------------
+# Mínimo de 3 sementes por configuração para barras de erro.
+# n_runs_por_configuracao = len(seeds); cada run usa uma semente distinta.
+seeds: [42, 1337, 2718]
+
+# ------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------
+dataset:
+  name: facebook_ego_nets
+  source: snap
+  data_path: data/processed/facebook/
+  # Decisão de pré-processamento a ser fixada na Semana 1 (cf. plano operacional):
+  #   - single_egonet:    uma ego-rede representativa
+  #   - multiple_egonets: replicar em várias para variância amostral
+  #   - union:            produzir união
+  preprocessing_mode: single_egonet
+  egonet_id: 0  # ignorado se preprocessing_mode != single_egonet
+
+  # Alternativa contingente (nível Desejável):
+  # name: email_enron
+  # source: snap
+  # data_path: data/processed/enron/
+  # treat_as_undirected: true
+
+# ------------------------------------------------------------
+# Anonimização
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k_values: [2, 5, 10, 20]
+  # Validação obrigatória pré-experimento (cf. Seção 7 do plano operacional):
+  # confirmar empiricamente que o k-anonimato pretendido é atingido.
+  # Se falhar para algum k, os resultados associados são inválidos.
+  validate_k_anonymity: true
+
+  # Aspiracional: anonimização secundária para comparação no mesmo gráfico
+  # algorithm: nettleton_salas_2016
+  # t_closeness: 0.2
+
+# ------------------------------------------------------------
+# Ataques
+# ------------------------------------------------------------
+attacks:
+  - type: degree
+    tolerance: 0  # casamento de grau; 0 = exato
+  - type: subgraph
+    hop_distance: 1  # vizinhança k-hop; 1 na primeira iteração
+    # Atenção: custo computacional cresce rapidamente com hop_distance
+    isomorphism_backend: vf2  # via NetworkX
+
+  # Aspiracional: derivado dos grupos de equivalência já calculados
+  # - type: entropy
+
+# ------------------------------------------------------------
+# Métricas
+# ------------------------------------------------------------
+metrics:
+  privacy:
+    - reidentification_rate           # N_correto / N_total, por ataque
+    - equivalence_group_size          # tamanho médio e mediano dos grupos
+  utility:
+    - ks_test_degree_distribution     # estatística D como métrica primária
+    - clustering_coefficient_variation  # |C_anon - C_orig| / C_orig
+
+# ------------------------------------------------------------
+# Execução
+# ------------------------------------------------------------
+runtime:
+  parallel: false        # paralelismo desativado por padrão
+  log_level: INFO
+  log_dir: experiments/logs/
