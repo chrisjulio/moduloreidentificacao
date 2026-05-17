@@ -16,19 +16,46 @@ DOI: 10.1109/WI-IAT.2009.108
 
 ## 1. Conceito central: k-anonimato estrutural
 
-> **Escopo desta seção:**
+> **Escopo desta seção (issue [#8](https://github.com/chrisjulio/moduloreidentificacao/issues/8)):**
 > vocabulário conceitual fundamentado nas três perguntas do esqueleto e nas
 > quatro definições formais da Seção 2 do artigo (pp. 647–649).
 > A decomposição operacional do algoritmo (partição, grouping, isomorfização,
 > reconexão) é objeto das Seções 2 e 3 deste documento — issues subsequentes.
 
+### 1.0 Nota terminológica: "grupo de equivalência" vs. k-group de estruturas locais
+
+O termo **grupo de equivalência** não aparece em He et al. (2009). O construto
+operacionalmente equivalente no artigo é o conjunto de `k` Local Structures
+agrupadas pela etapa de *grouping* (Seção 3.2, p. 650); os autores não
+atribuem um nome específico a esse conjunto — ele é simplesmente referenciado
+como "a group" ou `G_r` no Algorithm 1.
+
+O vocabulário de **grupo de equivalência** vem da literatura de anonimização
+tabular (tipicamente associado a k-anonymity sobre dados relacionais, ex.
+Sweeney, 2002). O issue [#8](https://github.com/chrisjulio/moduloreidentificacao/issues/8)
+usa a expressão por conveniência, como ponte para leitores familiarizados com
+aquele vocabulário.
+
+Neste documento, adotamos a expressão **grupo de equivalência estrutural**
+como ponte vocabular explícita: ela designa o conjunto de `k` LSs isomorfas
+produzido pelo algoritmo de He et al., e será o ponto de comparação com os
+construtos correspondentes em Nettleton & Salas (2016) — cujo vocabulário
+será reconciliado no issue correspondente àquele artigo.
+
+> **Armadilha a evitar:** não usar como fonte primária desta seção resumos
+> secundários do artigo. A rastreabilidade deve ir diretamente a He et al.
+> (2009) com página e definição numerada. Resumos de literatura de revisão
+> podem ser corretos, mas invertem a direção da citação e ocultam nuances
+> do artigo original.
+
 ### 1.1 O que constitui um grupo de equivalência em grafos?
 
-O grupo de equivalência é formado pelo conjunto de `k` **Local Structures (LSs)
-isomorfas entre si** que o algoritmo produz durante a etapa de grouping
-(Seção 3.2 do artigo). Qualquer nó pertencente a uma LS do grupo é
-indistinguível dos nós nas demais `k−1` LSs — a condição de isomorfismo entre
-subgrafos locais é o critério de equivalência (Def. 2, p. 648, Seção 2.3).
+O **grupo de equivalência estrutural** (no sentido da Seção 1.0) é formado
+pelo conjunto de `k` **Local Structures isomorfas entre si** que o algoritmo
+produz durante a etapa de grouping (Seção 3.2 do artigo). Qualquer nó
+pertencente a uma LS do grupo é indistinguível dos nós nas demais `k−1` LSs
+— o isomorfismo entre subgrafos locais é o critério de equivalência
+(Def. 2, p. 648, Seção 2.3).
 
 > "[...] node v_i is structure-aware k-anonymous, if there are at least k−1
 > other nodes which do not belong to LS(v_i) while having the local structure
