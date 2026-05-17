@@ -228,7 +228,7 @@ Retornar G'
 
 | Etapa | Complexidade | Classificação |
 |---|---|---|
-| Partição (Kernighan-Lin k-way) | `O(|E| · log |V|)` | Declarada para KL; METIS seria `O(|E|)` [artigo p. 650] |
+| Partição (Kernighan-Lin k-way) | `O(|E| · log |V|)` | Interpretativa (complexidade padrão de KL na literatura); METIS é a declarada no artigo, com `O(|E|)` (p. 650) |
 | FSM simplificado (enumeração até `s_max`) | `O(|LS|^s_max)` por LS — controlado por `s_max` | Interpretativa — não declarada no artigo |
 | Agrupamento (Algorithm 1) | `O(c_k · m)` por iteração; `c_k/k` iterações → `O(n·m / d·k)` | Interpretativa |
 | Isomorfização (Fases 1+2) | `O(k · |V(LS)|²)` por grupo | Interpretativa |
