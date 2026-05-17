@@ -16,7 +16,7 @@ DOI: 10.1109/WI-IAT.2009.108
 
 ## 1. Conceito central: k-anonimato estrutural
 
-> **Escopo desta seção (issue [#8](https://github.com/chrisjulio/moduloreidentificacao/issues/8)):**
+> **Escopo desta seção:**
 > vocabulário conceitual fundamentado nas três perguntas do esqueleto e nas
 > quatro definições formais da Seção 2 do artigo (pp. 647–649).
 > A decomposição operacional do algoritmo (partição, grouping, isomorfização,
@@ -32,21 +32,14 @@ como "a group" ou `G_r` no Algorithm 1.
 
 O vocabulário de **grupo de equivalência** vem da literatura de anonimização
 tabular (tipicamente associado a k-anonymity sobre dados relacionais, ex.
-Sweeney, 2002). O issue [#8](https://github.com/chrisjulio/moduloreidentificacao/issues/8)
-usa a expressão por conveniência, como ponte para leitores familiarizados com
-aquele vocabulário.
+Sweeney, 2002). Usamos a expressão por conveniência, como ponte para 
+leitores familiarizados com aquele vocabulário.
 
 Neste documento, adotamos a expressão **grupo de equivalência estrutural**
 como ponte vocabular explícita: ela designa o conjunto de `k` LSs isomorfas
 produzido pelo algoritmo de He et al., e será o ponto de comparação com os
 construtos correspondentes em Nettleton & Salas (2016) — cujo vocabulário
 será reconciliado no issue correspondente àquele artigo.
-
-> **Armadilha a evitar:** não usar como fonte primária desta seção resumos
-> secundários do artigo. A rastreabilidade deve ir diretamente a He et al.
-> (2009) com página e definição numerada. Resumos de literatura de revisão
-> podem ser corretos, mas invertem a direção da citação e ocultam nuances
-> do artigo original.
 
 ### 1.1 O que constitui um grupo de equivalência em grafos?
 
