@@ -33,8 +33,8 @@ do grupo é indistinguível dos nós nas demais `k-1` LSs (Def. 2, Seção 2.3).
 
 ### 1.2 Qual a propriedade estrutural que torna dois nós indistinguíveis?
 
-Dois nós são considerados indistinguíveis quando suas respectivas Local
-Structures são **graficamente isomorfas** (`LS(v_i) ≅ LS(v_j)`). O isomorfismo
+Dois nós são considerados indistinguíveis quando suas respectivas "Local
+Structures" são **graficamente isomorfas** (`LS(v_i) ≅ LS(v_j)`). O isomorfismo
 aqui é de grafos no sentido clássico: existe uma bijeção `f: V(LS_i) → V(LS_j)`
 tal que `(u, w) ∈ E(LS_i)` se e somente se `(f(u), f(w)) ∈ E(LS_j)` (Seção 2.3).
 Isso implica que grau individual, existência de arestas entre vizinhos e
