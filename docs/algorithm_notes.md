@@ -16,7 +16,7 @@ DOI: 10.1109/WI-IAT.2009.108
 
 ## 1. Conceito central: k-anonimato estrutural
 
-> **Escopo desta seção (issue [#8](https://github.com/chrisjulio/moduloreidentificacao/issues/8)):**
+> **Escopo desta seção:**
 > vocabulário conceitual fundamentado nas três perguntas do esqueleto e nas
 > quatro definições formais da Seção 2 do artigo (pp. 647–649).
 > A decomposição operacional do algoritmo (partição, grouping, isomorfização,
