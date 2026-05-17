@@ -32,7 +32,7 @@ como "a group" ou `G_r` no Algorithm 1.
 
 O vocabulário de **grupo de equivalência** vem da literatura de anonimização
 tabular (tipicamente associado a k-anonymity sobre dados relacionais, ex.
-Sweeney, 2002). Usamos a expressão por conveniência, como ponte para 
+Sweeney, 2002). Usamos a expressão por conveniência, como ponte para
 leitores familiarizados com aquele vocabulário.
 
 Neste documento, adotamos a expressão **grupo de equivalência estrutural**
@@ -44,30 +44,30 @@ será reconciliado no issue correspondente àquele artigo.
 ### 1.1 O que constitui um grupo de equivalência em grafos?
 
 O **grupo de equivalência estrutural** (no sentido da Seção 1.0) é formado
-pelo conjunto de `k` **Local Structures** que, ao **final do algoritmo**, 
+pelo conjunto de `k` **Local Structures** que, ao **final do algoritmo**,
 são mutualmente isomorfas. Operacionalmente, o conjunto é determinado pela
-etapa de grouping (Seção 3.2 do artigo), e a propriedadde de isomorfismo é
-estabelecida pela etapa de tranformação subsequente (fases 1 e 2 da Seção
+etapa de grouping (Seção 3.2 do artigo), e a propriedade de isomorfismo é
+estabelecida pela etapa de transformação subsequente (fases 1 e 2 da Seção
 3.2). Qualquer nó pertencente a uma LS do grupo é indistinguível dos nós nas
 demais `k−1` LSs — o isomorfismo entre subgrafos locais é o critério de
-equivalência (Def. 2, p. 649, Seção 2.3).
+equivalência (Def. 2, p. 649, Seção 2.3).
 
 > "[...] node v_i is structure-aware k-anonymous, if there are at least k−1
 > other nodes which do not belong to LS(v_i) while having the local structure
-> that is isomorphic to LS(v_i)." (Def. 2, p. 649)
+> that is isomorphic to LS(v_i)." (Def. 2, p. 649)
 
 ### 1.2 Qual a propriedade estrutural que torna dois nós indistinguíveis?
 
 Dois nós são indistinguíveis quando suas Local Structures são **graficamente
 isomorfas** (`LS(v_i) ≅ LS(v_j)`): existe uma bijeção `f: V(LS_i) → V(LS_j)`
-tal que `(u, w) ∈ E(LS_i)` sse `(f(u), f(w)) ∈ E(LS_j)` (Seção 2.3, p. 649).
+tal que `(u, w) ∈ E(LS_i)` sse `(f(u), f(w)) ∈ E(LS_j)` (Seção 2.3, p. 649).
 O isomorfismo captura simultaneamente grau, adjacências e distâncias locais;
 nenhuma informação estrutural de fundo sobre a vizinhança do alvo permite
 distinguir os `k` candidatos (Seção 2.2).
 
-> "An isomorphism of graphs from G to H is a bijection f : V(G) → V(H)
-> such that any edge (v1, v2) ∈ E(G) if and only if (f(v1), f(v2)) ∈ E(H)."
-> (p. 649, Seção 2.3)
+> "An isomorphism of graphs from G to H is a bijection f : V(G) → V(H)
+> such that any edge (v1, v2) ∈ E(G) if and only if (f(v1), f(v2)) ∈ E(H)."
+> (p. 649, Seção 2.3)
 
 ### 1.3 k-anonimato aqui refere-se a grau, vizinhança, ou outra assinatura?
 
@@ -77,16 +77,16 @@ explicitamente as duas abordagens anteriores por insuficiência:
 
 - **k-degree anonymity** (Liu & Terzi [5]): baseia-se só no grau,
   ignorando estrutura. *"[...] this anonymization process completely ignores
-  structural information inherent in the graph data."* (p. 647, Seção 1)
+  structural information inherent in the graph data."* (p. 647, Seção 1)
 - **1-neighborhood isomorphism** (Zhou & Pei [4]): raio fixo (1-hop)
   provoca re-anonimizações em cascata e produz grafos degenerados
-  (p. 647, Seção 1).
+  (p. 647, Seção 1).
 
 A garantia formal do modelo: a confiança de reidentificação de qualquer nó
-em G' é no máximo `1/k` (Def. 2–3, p. 649, Seção 2.3).
+em G' é no máximo `1/k` (Def. 2–3, p. 649, Seção 2.3).
 
 > "[...] the confidence of this node being re-identified from the graph is no
-> higher than 1/k." (p. 649, Seção 2.3)
+> higher than 1/k." (p. 649, Seção 2.3)
 
 ### 1.4 Camada conceitual formal — Definições 1–4 (Seção 2, pp. 647–649)
 
@@ -95,7 +95,7 @@ camada 1.1–1.3 acima só é possível porque o artigo as estabelece nesta orde
 
 #### Def. 1 — Local Structure (Seção 2.1, p. 649)
 
-Dado um grafo `G = (V, E)` e um nó `v_i ∈ V`, a **Local Structure** de `v_i`,
+Dado um grafo `G = (V, E)` e um nó `v_i ∈ V`, a **Local Structure** de `v_i`,
 denotada `LS(v_i)`, é um componente subgrafo **conectado** contendo `v_i`,
 com densidade de arestas interna maior do que a densidade das arestas que
 ligam os nós de `LS(v_i)` aos nós externos a ela.
@@ -104,8 +104,8 @@ ligam os nós de `LS(v_i)` aos nós externos a ela.
 - Todos os nós dentro de uma mesma LS **compartilham a mesma Local Structure**.
 - A LS é a **unidade de anonimização**: o algoritmo opera sobre ela como um
   bloco único, não nó a nó — o que reduz a perturbação total do grafo.
-- O tamanho `d` da LS é variável (Fig. 2, p. 649): o publicador não consegue
-  prever qual escopo o adversario conhece, portanto o modelo não o fixa.
+- O tamanho `d` da LS é variável (Fig. 2, p. 649): o publicador não consegue
+  prever qual escopo o adversário conhece, portanto o modelo não o fixa.
 
 #### Def. 2 — Structure-Aware k-Anonymous Node (Seção 2.3, p. 649)
 
@@ -120,16 +120,16 @@ Structure **isomorfa** a `LS(v_i)`.
 #### Def. 3 — Structure-Aware Graph k-Anonymity (Seção 2.3, p. 649)
 
 Um grafo anonimizado `G'` é **structure-aware k-anonymous** se **todo nó**
-em `G'` satisfaz a Def. 2.
+em `G'` satisfaz a Def. 2.
 
 - Garantia global: não basta cobrir a maioria dos nós; a propriedade precisa
   valer universalmente.
 - A definição **não impõe requisitos de utilidade** — isso é tratado pela
-  Def. 4 como objetivo de otimização.
+  Def. 4 como objetivo de otimização.
 
 #### Def. 4 — Structure-Aware kd Graph Anonymity (Seção 2.3, p. 649)
 
-Dado `G = (V, E)` e inteiros positivos `k` e `d`, o objetivo é encontrar
+Dado `G = (V, E)` e inteiros positivos `k` e `d`, o objetivo é encontrar
 um grafo `G'` structure-aware k-anonymous tal que:
 
 1. a estrutura de `G` seja perturbada o **mínimo possível** (preservação
@@ -152,22 +152,108 @@ um grafo `G'` structure-aware k-anonymous tal que:
 
 ## 2. Algoritmo principal
 
-*(a preencher — issue subsequente)*
+> **Issue de origem:** [#9](https://github.com/chrisjulio/moduloreidentificacao/issues/9)
+> **Fonte:** He et al. (2009), Seção 3, pp. 649–652.
 
-Estrutura esperada (esqueleto a confirmar com o artigo):
+### 2.1 Visão geral — três etapas encadeadas
 
 ```
-Entrada:  grafo G = (V, E), parâmetros k e d
-Saída:    grafo anonimizado G' = (V, E') com k-anonimato garantido
+Entrada:  G = (V, E),  k (privacidade),  d (tamanho máximo de LS),
+          σ (suporte FSM — threshold de frequência),
+          s_max (tamanho máximo de subgrafo para FSM simplificado)
+Saída:    G' = (V, E')  structure-aware k-anonymous
 
-Passos:
-  1. Partição em Local Structures  [Seção 3.1]
-  2. Agrupamento de LSs             [Seção 3.2 — Algorithm 1]
-  3. Isomorfização dentro do grupo [Seção 3.2 — Fases 1 e 2]
-  4. Reconexão                      [Seção 3.3]
+─────────────────────────────────────────────────────────────
+Etapa 1 — PARTIÇÃO  (Seção 3.1)
+─────────────────────────────────────────────────────────────
+1.1  Calcular c_k = ⌊|V| / d⌋          // número de partições
+1.2  Aplicar particionamento k-way em G via Kernighan-Lin bisseção recursiva
+     → produz subconjuntos V₁, V₂, ..., V_{c_k}
+        tal que |Vᵢ| ≤ d  e  arestas inter-partição minimizadas   [D-04]
+1.3  Para cada i: construir Cᵢ = (Vᵢ, Eᵢ)   // subgrafo induzido
+1.4  Remover temporariamente as arestas inter-partição de G
+     → conjunto de arestas removidas: E_inter
+     → saída: {LS₁, LS₂, ..., LS_{c_k}}
+
+─────────────────────────────────────────────────────────────
+Etapa 2 — AGRUPAMENTO E ISOMORFIZAÇÃO  (Seção 3.2 / Algorithm 1)
+─────────────────────────────────────────────────────────────
+2.1  Executar FSM simplificado({LS₁..LS_{c_k}}, σ, s_max)         [D-01]
+     → subgrafos frequentes g₁..gₘ com |V(gᵢ)| ≤ s_max
+     → SLS(gᵢ): conjunto de LSs que contêm gᵢ
+
+2.2  Repetir até todas as LSs estarem agrupadas:
+     a) Para cada gᵢ ∈ S, calcular MF(gᵢ):
+           MF(gᵢ) = |E(gᵢ)| · k           se |SLS(gᵢ)| ≥ k
+           MF(gᵢ) = |E(gᵢ)| · |SLS(gᵢ)|  caso contrário
+     b) Escolher gⱼ com maior MF
+     c) Formar grupo G_r de tamanho k:
+           se |SLS(gⱼ)| ≥ k  →  escolher k LSs aleatoriamente de SLS(gⱼ)
+           se |SLS(gⱼ)| < k  →  completar com LSs de SLS(g_complementar)
+                                  ou LSs livres em S
+     d) Remover G_r de S e de todos SLS
+2.3  LSs restantes (< k) → grupo final (possivelmente incompleto)
+
+2.4  Para cada grupo G_r de k LSs:
+
+     FASE 1 — Matching e numeração de nós:                         [D-03]
+       a) Identificar subgrafo comum gⱼ presente nas LSs do grupo
+       b) Atribuir numeração 1..|V(gⱼ)| aos nós de gⱼ em cada LS
+       c) Para LSs sem gⱼ: matching por grau;
+          desempate por índice de nó (lexicográfico, crescente)
+       d) Propagar numeração para vizinhos não numerados,
+          em ordem crescente de número já atribuído;
+          desempate por grau → índice lexicográfico
+
+     FASE 2 — Tornar isomorfas (adicionar e/ou remover arestas):
+       a) Para cada par numerado (u_i, u_j) em LSs distintas do grupo:
+          - contar existência/não-existência da aresta em cada LS
+          - escolher add ou delete — o que requerer menos mudanças
+
+─────────────────────────────────────────────────────────────
+Etapa 3 — RECONEXÃO  (Seção 3.3)
+─────────────────────────────────────────────────────────────
+3.1  Para cada aresta inter-partição (u, v) ∈ E_inter:
+     - u ∈ LSᵢ pertencente ao grupo G_r
+     - para manter isomorfismo: adicionar k(k-1) arestas complementares
+       (uma por cada par de cópias do nó nas k LSs do grupo)
+3.2  G' = união de todas as LSs transformadas
+          + arestas inter-partição originais
+          + arestas adicionadas no passo 3.1
+
+Retornar G'
 ```
 
-Complexidade declarada no artigo: *(a preencher)*
+### 2.2 Complexidade declarada
+
+| Etapa | Complexidade | Classificação |
+|---|---|---|
+| Partição (Kernighan-Lin k-way) | `O(|E| · log |V|)` | Declarada para KL; METIS seria `O(|E|)` [artigo p. 650] |
+| FSM simplificado (enumeração até `s_max`) | `O(|LS|^s_max)` por LS — controlado por `s_max` | Interpretativa — não declarada no artigo |
+| Agrupamento (Algorithm 1) | `O(c_k · m)` por iteração; `c_k/k` iterações → `O(n·m / d·k)` | Interpretativa |
+| Isomorfização (Fases 1+2) | `O(k · |V(LS)|²)` por grupo | Interpretativa |
+| Reconexão | `O(|E_inter| · k²)` | Interpretativa — artigo cita "k(k-1) edges per inter-edge" (p. 652) |
+
+> ⚠️ **Atenção:** apenas a complexidade da partição via METIS é **declarada
+> explicitamente** no artigo (`O(|E|)`). Todas as demais são **interpretativas**
+> derivadas da descrição do algoritmo. Classificar como tal para fins de
+> qualificação e relatório metodológico.
+
+### 2.3 Decisões de estrutura de dados
+
+| Estrutura | Representação escolhida | Justificativa |
+|---|---|---|
+| Grafo `G` | `networkx.Graph` | Padrão do módulo; suporte a atributos de nó/aresta |
+| Local Structures `{LSᵢ}` | lista de `networkx.Graph` (subgrafos induzidos) | Isomorfismo via `nx.is_isomorphic` (VF2) — ver Seção 4 |
+| Grupos `G_r` | lista de listas de índices de LS | Estrutura leve; lookup O(1) |
+| Arestas inter-partição `E_inter` | conjunto de tuplas `(u, v)` | Remoção e reinserção O(1) |
+| Mapeamento nó → número (Fase 1) | `dict[node_id → int]` por LS | Matching e numeração sequencial; determinístico com critério D-03 |
+
+### 2.4 Lacunas do artigo — pontos decididos
+
+As lacunas identificadas nesta seção geraram as decisões D-01 a D-05
+registradas na Seção 7. Referências cruzadas marcadas com `[D-xx]` ao longo
+do pseudocódigo acima.
 
 ---
 
@@ -175,7 +261,7 @@ Complexidade declarada no artigo: *(a preencher)*
 
 *(a preencher — issue subsequente)*
 
-Quões a responder:
+Questões a responder:
 - O algoritmo adiciona arestas, remove arestas, ou ambos?
 - Há operações sobre nós (inserção, fusão)?
 - As operações são determinísticas ou têm componente aleatório (→ impacto nas sementes)?
@@ -184,12 +270,46 @@ Quões a responder:
 
 ## 4. Critério de parada e garantia de k-anonimato
 
-*(a preencher — issue subsequente)*
+> **Fonte:** He et al. (2009), Seções 2.3 e 3.2; decisão D-05.
 
-Quões a responder:
-- Como o algoritmo verifica que k-anonimato foi atingido?
-- O que acontece se o grafo não puder ser anonimizado para o k pedido?
-- Como implementar o verificador independente (`validate_k_anonymity`)?
+### 4.1 Critério formal (artigo)
+
+O k-anonimato estrutural é garantido **por construção**: se o algoritmo
+termina com todos os grupos formados e todas as LSs de cada grupo
+isomorfizadas entre si, então todo nó em `G'` satisfaz a Def. 2 (p. 649).
+O artigo não propõe um verificador separado — a garantia é dedutiva, não
+verificada a posteriori.
+
+### 4.2 Verificação empírica independente
+
+Para fins deste módulo (avaliação de risco de reidentificação), a garantia
+teórica é necessária mas não suficiente. A verificação empírica independente
+utiliza `networkx.is_isomorphic` (algoritmo VF2) aplicado a pares de LSs
+dentro de cada grupo:
+
+```python
+# esboço — implementação completa em metrics_definitions.md
+def validate_k_anonymity(groups: list[list[nx.Graph]]) -> bool:
+    for group in groups:
+        reference = group[0]
+        for ls in group[1:]:
+            if not nx.is_isomorphic(reference, ls):
+                return False
+    return True
+```
+
+> → Implementação completa, parâmetros e casos de borda definidos em
+> `docs/metrics_definitions.md` §k-anonymity-verifier (issue a criar).
+
+### 4.3 Risco declarado do verificador
+
+> ⚠️ **Risco metodológico:** Graph Isomorphism (GI) não é sabidamente
+> polinomial nem NP-completo. Na prática, `networkx.is_isomorphic` (VF2)
+> é eficiente para subgrafos pequenos (`d ≤ 20` nós), mas pode apresentar
+> degradação significativa de desempenho para LSs maiores. Para `d > 20`,
+> avaliar substituição por heurísticas de isomorfismo aproximado ou limitar
+> `d` via configuração. Este risco deve constar no relatório de ameaças à
+> validade da qualificação.
 
 ---
 
@@ -202,8 +322,9 @@ Mapear para as chaves do YAML de configuração ([config_example.yml](../config_
 | Parâmetro do artigo | Chave YAML | Valor(es) usados |
 |---|---|---|
 | `k` | `anonymization.k_values` | [2, 5, 10, 20] |
-| `d` | *(a mapear)* | |
+| `d` | `anonymization.d` | 10 (default) — ver D-02 |
 | `σ` (suporte FSM) | *(a mapear)* | |
+| `s_max` (FSM simplificado) | `anonymization.fsm.max_size` | 4 (proposto) — ver D-01 |
 
 ---
 
@@ -218,11 +339,18 @@ Exemplos de casos que podem exigir tratamento especial:
 
 ---
 
-## 7. Decisões de implementação (registrar conforme surgem)
+## 7. Decisões de implementação
 
-| Data | Decisão | Justificativa |
-|---|---|---|
-| | | |
+> Registro contínuo. Atualizar à medida que novas decisões forem tomadas
+> durante o processo de implementação.
+
+| ID | Data | Decisão | Justificativa | Referência |
+|---|---|---|---|---|
+| D-01 | 2026-05-17 | FSM simplificado com `s_max` configurável (não gSpan completo) | Pragmatismo de prazo; gSpan Python tem manutenção irregular. `s_max` limita espaço de busca de forma auditável. Declarar como aproximação no relatório. | Artigo cita [18] (Wörlein et al. 2005) sem especificar implementação |
+| D-02 | 2026-05-17 | `d = 10` como default; variável de configuração YAML (`anonymization.d`) | Valor comum na literatura derivada para redes de 1k–10k nós. Varredura sobre `d` excluída do escopo mínimo. | Artigo não fixa default; experimentos usam valores variados (p. 652) |
+| D-03 | 2026-05-17 | Matching Fase 1: grau como critério primário; índice de nó lexicográfico como desempate | Garante determinismo e reprodutibilidade. Artigo diz "based on nodes degree" sem critério de desempate (p. 651). Escolha afeta `G'` e deve ser reportada como parâmetro de reprodutibilidade. | Artigo p. 651, Seção 3.2, Fase 1 |
+| D-04 | 2026-05-17 | Substituir METIS por `networkx.algorithms.community.kernighan_lin_bisection` recursivo | Zero dependência C externa; portabilidade em CI/CD. Substituição explicitamente autorizada pelo artigo: "though any other technique could also be used" (p. 650). Complexidade KL: `O(|E|·log|V|)` vs `O(|E|)` do METIS — aceitável para protótipo. | Artigo p. 650, Seção 3.1 |
+| D-05 | 2026-05-17 | Critério formal de k-anonimato registrado neste documento (Seção 4.1); verificador empírico (`nx.is_isomorphic` / VF2) definido em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo; `metrics_definitions.md` define os instrumentos de avaliação. Risco de desempenho do VF2 para `d > 20` declarado (Seção 4.3). | Seção 4 deste documento; `docs/metrics_definitions.md` §k-anonymity-verifier (issue a criar) |
 
 ---
 
