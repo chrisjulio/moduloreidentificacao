@@ -192,7 +192,7 @@ Etapa 2 — AGRUPAMENTO E ISOMORFIZAÇÃO  (Seção 3.2 / Algorithm 1)
            se |SLS(gⱼ)| < k  →  completar com LSs de SLS(g_complementar)
                                   ou LSs livres em S
      d) Remover G_r de S e de todos SLS
-2.3  LSs restantes (< k) → grupo final (possivelmente incompleto)
+2.3  LSs restantes (< k) → grupo final possivelmente incompleto   [D-06]
 
 2.4  Para cada grupo G_r de k LSs:
 
@@ -251,7 +251,7 @@ Retornar G'
 
 ### 2.4 Lacunas do artigo — pontos decididos
 
-As lacunas identificadas nesta seção geraram as decisões D-01 a D-05
+As lacunas identificadas nesta seção geraram as decisões D-01 a D-06
 registradas na Seção 7. Referências cruzadas marcadas com `[D-xx]` ao longo
 do pseudocódigo acima.
 
@@ -270,46 +270,99 @@ Questões a responder:
 
 ## 4. Critério de parada e garantia de k-anonimato
 
-> **Fonte:** He et al. (2009), Seções 2.3 e 3.2; decisão D-05.
+> **Fonte:** He et al. (2009), Seções 2.3 e 3.2; decisões D-05 e D-06.
 
 ### 4.1 Critério formal (artigo)
 
 O k-anonimato estrutural é garantido **por construção**: se o algoritmo
-termina com todos os grupos formados e todas as LSs de cada grupo
-isomorfizadas entre si, então todo nó em `G'` satisfaz a Def. 2 (p. 649).
-O artigo não propõe um verificador separado — a garantia é dedutiva, não
-verificada a posteriori.
+termina com todos os grupos formados, se os grupos são disjuntos e se todas
+as LSs de cada grupo completo são isomorfizadas entre si, então todo nó em
+`G'` satisfaz a Def. 2 (p. 649). O artigo não propõe um verificador separado
+— a garantia é dedutiva, não verificada a posteriori.
 
 ### 4.2 Verificação empírica independente
 
 Para fins deste módulo (avaliação de risco de reidentificação), a garantia
-teórica é necessária mas não suficiente. A verificação empírica independente
-utiliza `networkx.is_isomorphic` (algoritmo VF2) aplicado a pares de LSs
-dentro de cada grupo:
+teórica é necessária mas não suficiente. O esboço ingênuo de checar apenas
+isomorfismo par-a-par dentro de cada grupo é **mais fraco** que a Def. 2.
+A equivalência só vale se duas premissas forem satisfeitas simultaneamente:
+
+1. todo grupo tem cardinalidade `≥ k`; e
+2. os grupos são disjuntos.
+
+A primeira premissa **não vale** para o grupo incompleto previsto ao final do
+Algorithm 1. Portanto, o verificador empírico precisa checar três condições:
+
+- cardinalidade mínima do grupo (`|G_r| ≥ k`);
+- isomorfismo mútuo dentro de cada grupo completo;
+- disjunção entre LSs (invariante da partição).
 
 ```python
 # esboço — implementação completa em metrics_definitions.md
-def validate_k_anonymity(groups: list[list[nx.Graph]]) -> bool:
-    for group in groups:
+def validate_k_anonymity(groups: list[list[nx.Graph]], k: int) -> dict:
+    result = {"valid": True, "violations": []}
+
+    # Condição 1: disjunção global entre LSs
+    seen_nodes = set()
+    for i, group in enumerate(groups):
+        for ls in group:
+            overlap = seen_nodes & set(ls.nodes())
+            if overlap:
+                result["violations"].append(
+                    {"type": "non_disjoint", "group": i, "nodes": sorted(overlap)}
+                )
+                result["valid"] = False
+            seen_nodes.update(ls.nodes())
+
+    # Condições 2 e 3: cardinalidade + isomorfismo
+    for i, group in enumerate(groups):
+        if len(group) < k:
+            result["violations"].append(
+                {"type": "incomplete_group", "group": i,
+                 "size": len(group), "required": k,
+                 "status": "partially_unprotected"}
+            )
+            result["valid"] = False
+            continue
+
         reference = group[0]
-        for ls in group[1:]:
+        for j, ls in enumerate(group[1:], 1):
             if not nx.is_isomorphic(reference, ls):
-                return False
-    return True
+                result["violations"].append(
+                    {"type": "non_isomorphic", "group": i, "ls_index": j}
+                )
+                result["valid"] = False
+
+    return result
 ```
 
-> → Implementação completa, parâmetros e casos de borda definidos em
-> `docs/metrics_definitions.md` §k-anonymity-verifier (issue a criar).
+> → Implementação completa, parâmetros, logging e casos de borda definidos em
+> `docs/metrics_definitions.md` §k-anonymity-verifier.
 
-### 4.3 Risco declarado do verificador
+### 4.3 Grupo incompleto — decisão operacional
 
-> ⚠️ **Risco metodológico:** Graph Isomorphism (GI) não é sabidamente
+**Decisão D-06:** grupos incompletos serão mantidos e reportados como
+**violação parcial de k-anonimato**, com nós residuais tratados como
+**desprotegidos** do ponto de vista da garantia formal. O módulo não forçará
+fusão artificial nem descarte desses grupos no baseline.
+
+Implicação: o verificador nunca deve retornar `True` para um conjunto de
+saída que contenha grupo com `|G_r| < k`, ainda que as LSs desse grupo sejam
+mutuamente isomorfas.
+
+### 4.4 Risco declarado do verificador
+
+> ⚠️ **Risco metodológico 1:** Graph Isomorphism (GI) não é sabidamente
 > polinomial nem NP-completo. Na prática, `networkx.is_isomorphic` (VF2)
 > é eficiente para subgrafos pequenos (`d ≤ 20` nós), mas pode apresentar
 > degradação significativa de desempenho para LSs maiores. Para `d > 20`,
 > avaliar substituição por heurísticas de isomorfismo aproximado ou limitar
-> `d` via configuração. Este risco deve constar no relatório de ameaças à
-> validade da qualificação.
+> `d` via configuração.
+>
+> ⚠️ **Risco metodológico 2:** um verificador que cheque apenas isomorfismo
+> intra-grupo pode produzir falso positivo metodológico — "verde" para uma
+> medida auxiliar mais fraca que a Def. 2. Por isso, a checagem de
+> cardinalidade mínima e disjunção é obrigatória.
 
 ---
 
@@ -350,7 +403,8 @@ Exemplos de casos que podem exigir tratamento especial:
 | D-02 | 2026-05-17 | `d = 10` como default; variável de configuração YAML (`anonymization.d`) | Valor comum na literatura derivada para redes de 1k–10k nós. Varredura sobre `d` excluída do escopo mínimo. | Artigo não fixa default; experimentos usam valores variados (p. 652) |
 | D-03 | 2026-05-17 | Matching Fase 1: grau como critério primário; índice de nó lexicográfico como desempate | Garante determinismo e reprodutibilidade. Artigo diz "based on nodes degree" sem critério de desempate (p. 651). Escolha afeta `G'` e deve ser reportada como parâmetro de reprodutibilidade. | Artigo p. 651, Seção 3.2, Fase 1 |
 | D-04 | 2026-05-17 | Substituir METIS por `networkx.algorithms.community.kernighan_lin_bisection` recursivo | Zero dependência C externa; portabilidade em CI/CD. Substituição explicitamente autorizada pelo artigo: "though any other technique could also be used" (p. 650). Complexidade KL: `O(|E|·log|V|)` vs `O(|E|)` do METIS — aceitável para protótipo. | Artigo p. 650, Seção 3.1 |
-| D-05 | 2026-05-17 | Critério formal de k-anonimato registrado neste documento (Seção 4.1); verificador empírico (`nx.is_isomorphic` / VF2) definido em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo; `metrics_definitions.md` define os instrumentos de avaliação. Risco de desempenho do VF2 para `d > 20` declarado (Seção 4.3). | Seção 4 deste documento; `docs/metrics_definitions.md` §k-anonymity-verifier (issue a criar) |
+| D-05 | 2026-05-17 | Critério formal de k-anonimato registrado neste documento (Seção 4.1); verificador empírico (`nx.is_isomorphic` / VF2) definido em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo; `metrics_definitions.md` define os instrumentos de avaliação. Risco de desempenho do VF2 para `d > 20` declarado (Seção 4.4). | Seção 4 deste documento; `docs/metrics_definitions.md` §k-anonymity-verifier |
+| D-06 | 2026-05-17 | Grupos incompletos serão mantidos e reportados como violação parcial; nós residuais tratados como desprotegidos | O esboço de verificação por isomorfismo intra-grupo é mais fraco que a Def. 2. Como o Algorithm 1 admite grupo final com `|G_r| < k`, o módulo deve marcar esses casos como falha parcial da garantia, não como sucesso. | Seções 4.2–4.3 deste documento; Def. 2 do artigo |
 
 ---
 
