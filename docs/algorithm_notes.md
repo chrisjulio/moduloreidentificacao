@@ -10,91 +10,139 @@
 He, X. et al. (2009). Preserving privacy in social networks: A structure-aware
 approach. *Proceedings of the IEEE/WIC/ACM International Joint Conference on
 Web Intelligence and Intelligent Agent Technology (WI-IAT)*.
+DOI: 10.1109/WI-IAT.2009.108
 
 ---
 
 ## 1. Conceito central: k-anonimato estrutural
 
-### 1.1 O que constitui um "grupo de equivalência" no contexto de grafos?
+> **Escopo desta seção (issue [#8](https://github.com/chrisjulio/moduloreidentificacao/issues/8)):**
+> vocabulário conceitual fundamentado nas três perguntas do esqueleto e nas
+> quatro definições formais da Seção 2 do artigo (pp. 647–649).
+> A decomposição operacional do algoritmo (partição, grouping, isomorfização,
+> reconexão) é objeto das Seções 2 e 3 deste documento — issues subsequentes.
 
-No modelo de He et al., o grupo de equivalência é formado por **Local Structures
-(LSs) isomorfas entre si**. Uma Local Structure `LS(v_i)` é definida como um
-subgrafo conectado contendo o nó `v_i`, com densidade de arestas interna maior
-do que a densidade de arestas entre `LS(v_i)` e os nós externos
-(Def. 1, Seção 2.1). Durante a etapa de grouping (Seção 3.2), o algoritmo
-agrupa `k` Local Structures em um mesmo grupo; após a transformação, todas as
-LSs do grupo tornam-se isomorfas entre si. Esse conjunto de `k` subgrafos
-isomorfos constitui o grupo de equivalência: qualquer nó pertencente a uma LS
-do grupo é indistinguível dos nós nas demais `k-1` LSs (Def. 2, Seção 2.3).
+### 1.1 O que constitui um grupo de equivalência em grafos?
 
-> **Citação direta:** "[…] node v_i is structure-aware k-anonymous, if there
-> are at least k−1 other nodes which do not belong to LS(v_i) while having the
-> local structure that is isomorphic to LS(v_i)." (Def. 2, p. 648, Seção 2.3)
+O grupo de equivalência é formado pelo conjunto de `k` **Local Structures (LSs)
+isomorfas entre si** que o algoritmo produz durante a etapa de grouping
+(Seção 3.2 do artigo). Qualquer nó pertencente a uma LS do grupo é
+indistinguível dos nós nas demais `k−1` LSs — a condição de isomorfismo entre
+subgrafos locais é o critério de equivalência (Def. 2, p. 648, Seção 2.3).
+
+> "[...] node v_i is structure-aware k-anonymous, if there are at least k−1
+> other nodes which do not belong to LS(v_i) while having the local structure
+> that is isomorphic to LS(v_i)." (Def. 2, p. 648)
 
 ### 1.2 Qual a propriedade estrutural que torna dois nós indistinguíveis?
 
-Dois nós são considerados indistinguíveis quando suas respectivas "Local
-Structures" são **graficamente isomorfas** (`LS(v_i) ≅ LS(v_j)`). O isomorfismo
-aqui é de grafos no sentido clássico: existe uma bijeção `f: V(LS_i) → V(LS_j)`
-tal que `(u, w) ∈ E(LS_i)` se e somente se `(f(u), f(w)) ∈ E(LS_j)` (Seção 2.3).
-Isso implica que grau individual, existência de arestas entre vizinhos e
-distância local são identicamente preservados em ambas as LSs — qualquer
-informação de fundo estrutural que um adversário possa ter sobre a vizinhança
-local do alvo não permite distinguir entre os `k` candidatos (Seção 2.2).
+Dois nós são indistinguíveis quando suas Local Structures são **graficamente
+isomorfas** (`LS(v_i) ≅ LS(v_j)`): existe uma bijeção `f: V(LS_i) → V(LS_j)`
+tal que `(u, w) ∈ E(LS_i)` sse `(f(u), f(w)) ∈ E(LS_j)` (Seção 2.3, p. 648).
+O isomorfismo captura simultaneamente grau, adjacências e distâncias locais;
+nenhuma informação estrutural de fundo sobre a vizinhança do alvo permite
+distinguir os `k` candidatos (Seção 2.2).
 
-> **Citação direta:** "An isomorphism of graphs from G to H is a bijection
-> f : V(G) → V(H) such that any edge (v1, v2) ∈ E(G) if and only if
-> (f(v1), f(v2)) ∈ E(H)." (p. 648, Seção 2.3)
+> "An isomorphism of graphs from G to H is a bijection f : V(G) → V(H)
+> such that any edge (v1, v2) ∈ E(G) if and only if (f(v1), f(v2)) ∈ E(H)."
+> (p. 648, Seção 2.3)
 
-> **Nota interpretativa:** a indistinguibilidade não se baseia em um único
-> atributo (ex: grau isolado), mas no isomorfismo completo do subgrafo local —
-> o que é estruturalmente mais robusto e mais exigente do que k-degree
-> anonymity (Liu & Terzi, 2008 [5], citado em Seção 1 do artigo).
+### 1.3 k-anonimato aqui refere-se a grau, vizinhança, ou outra assinatura?
 
-### 1.3 k-anonimato aqui refere-se a grau, vizinhança, ou outra assinatura estrutural?
+Nem grau nem vizinhança de raio fixo: a assinatura é o **isomorfismo do
+subgrafo comunitário local de tamanho variável `d`**. O artigo critica
+explicitamente as duas abordagens anteriores por insuficiência:
 
-O k-anonimato de He et al. **não é baseado em grau nem em vizinhança de raio
-fixo**, mas em **isomorfismo de Local Structure** — um subgrafo de tamanho
-variável determinado pela estrutura comunitária do grafo (Seção 2.1). O artigo
-explicitamente critica as duas abordagens anteriores:
+- **k-degree anonymity** (Liu & Terzi [5]): baseia-se só no grau,
+  ignorando estrutura. *"[...] this anonymization process completely ignores
+  structural information inherent in the graph data."* (p. 648, Seção 1)
+- **1-neighborhood isomorphism** (Zhou & Pei [4]): raio fixo (1-hop)
+  provoca re-anonimizações em cascata e produz grafos degenerados
+  (p. 648, Seção 1).
 
-- **k-degree anonymity** (Liu & Terzi [5]): baseia-se apenas no grau do nó,
-  ignorando informação estrutural. "[…] this anonymization process completely
-  ignores structural information inherent in the graph data." (p. 648, Seção 1)
-- **1-neighborhood isomorphism** (Zhou & Pei [4]): usa vizinhança de raio fixo
-  (1-hop), o que pode exigir re-anonimizações em cascata e produzir grafos muito
-  densos (p. 648, Seção 1).
+A garantia formal do modelo: a confiança de reidentificação de qualquer nó
+em G' é no máximo `1/k` (Def. 2–3, p. 648, Seção 2.3).
 
-A assinatura estrutural empregada aqui é o **subgrafo comunitário local de
-tamanho variável `d`**, controlado pelo parâmetro `d` definido pelo usuário, que
-controla o tamanho da partição. A garantia formal é: a confiança de re-
-identificação de qualquer nó no grafo anonimizado G' é no máximo `1/k`
-(Def. 2–3, p. 648, Seção 2.3).
+> "[...] the confidence of this node being re-identified from the graph is no
+> higher than 1/k." (p. 648, Seção 2.3)
 
-> **Citação direta:** "[…] the confidence of this node being re-identified from
-> the graph is no higher than 1/k." (p. 648, Seção 2.3)
+### 1.4 Camada conceitual formal — Definições 1–4 (Seção 2, pp. 647–649)
 
-> **Parâmetros de controle:** `k` (nível de privacidade — mínimo de candidatos
-> indistinguíveis) e `d` (tamanho da Local Structure / número de nós por
-> partição). Juntos formam a **Structure-Aware kd-Anonymity** (Def. 4, p. 649,
-> Seção 2.3).
+As quatro definições são encadeadas: cada uma pressupõe a anterior e a
+camada 1.1–1.3 acima só é possível porque o artigo as estabelece nesta ordem.
+
+#### Def. 1 — Local Structure (Seção 2.1, p. 648)
+
+Dado um grafo `G = (V, E)` e um nó `v_i ∈ V`, a **Local Structure** de `v_i`,
+denotada `LS(v_i)`, é um componente subgrafo **conectado** contendo `v_i`,
+com densidade de arestas interna maior do que a densidade das arestas que
+ligam os nós de `LS(v_i)` aos nós externos a ela.
+
+- `|LS(v_i)|` denota o tamanho (número de nós) da Local Structure.
+- Todos os nós dentro de uma mesma LS **compartilham a mesma Local Structure**.
+- A LS é a **unidade de anonimização**: o algoritmo opera sobre ela como um
+  bloco único, não nó a nó — o que reduz a perturbação total do grafo.
+- O tamanho `d` da LS é variável (Fig. 2, p. 648): o publicador não consegue
+  prever qual escopo o adversario conhece, portanto o modelo não o fixa.
+
+#### Def. 2 — Structure-Aware k-Anonymous Node (Seção 2.3, p. 648)
+
+Um nó `v_i` é **structure-aware k-anonymous** se existem pelo menos `k−1`
+outros nós que (i) **não pertençam** a `LS(v_i)` e (ii) possuam Local
+Structure **isomorfa** a `LS(v_i)`.
+
+- Implicação direta: a confiança de reidentificação de `v_i` é `≤ 1/k`.
+- A condição é sobre nós **fora** da própria LS de `v_i` (para evitar
+  circularidade: nós dentro da mesma LS já são estruturalmente idênticos).
+
+#### Def. 3 — Structure-Aware Graph k-Anonymity (Seção 2.3, p. 648)
+
+Um grafo anonimizado `G'` é **structure-aware k-anonymous** se **todo nó**
+em `G'` satisfaz a Def. 2.
+
+- Garantia global: não basta cobrir a maioria dos nós; a propriedade precisa
+  valer universalmente.
+- A definição **não impõe requisitos de utilidade** — isso é tratado pela
+  Def. 4 como objetivo de otimização.
+
+#### Def. 4 — Structure-Aware kd Graph Anonymity (Seção 2.3, p. 649)
+
+Dado `G = (V, E)` e inteiros positivos `k` e `d`, o objetivo é encontrar
+um grafo `G'` structure-aware k-anonymous tal que:
+
+1. a estrutura de `G` seja perturbada o **mínimo possível** (preservação
+   de propriedades: APL, CC, distribuição de grau); e
+2. sua publicação **não cause violação de privacidade** conforme os
+   parâmetros `k` e `d`.
+
+| Parâmetro | Papel | Efeito prático |
+|-----------|-------|----------------|
+| `k` | nível de privacidade | mínimo de candidatos indistinguíveis por nó |
+| `d` | tamanho da LS (nós por partição) | controla granularidade; `c_k = ⌊n/d⌋` partições |
+
+> **Nota para implementação futura:** o verificador `validate_k_anonymity`
+> deve checar isomorfismo de subgrafo entre LSs, **não** apenas igualdade de
+> grau. O modelo adversarial (Seção 2.2) assume conhecimento multidimensional
+> (grau, adjacências, vizinhança, ou combinações), portanto verificar só grau
+> seria insuficiente.
 
 ---
 
 ## 2. Algoritmo principal
 
-*(a preencher)*
+*(a preencher — issue subsequente)*
 
 Estrutura esperada (esqueleto a confirmar com o artigo):
 
 ```
-Entrada:  grafo G = (V, E), parâmetro k
+Entrada:  grafo G = (V, E), parâmetros k e d
 Saída:    grafo anonimizado G' = (V, E') com k-anonimato garantido
 
 Passos:
-  1. [descrever]
-  2. [descrever]
-  ...
+  1. Partição em Local Structures  [Seção 3.1]
+  2. Agrupamento de LSs             [Seção 3.2 — Algorithm 1]
+  3. Isomorfização dentro do grupo [Seção 3.2 — Fases 1 e 2]
+  4. Reconexão                      [Seção 3.3]
 ```
 
 Complexidade declarada no artigo: *(a preencher)*
@@ -103,9 +151,9 @@ Complexidade declarada no artigo: *(a preencher)*
 
 ## 3. Operações de modificação do grafo
 
-*(a preencher)*
+*(a preencher — issue subsequente)*
 
-Questões a responder:
+Quões a responder:
 - O algoritmo adiciona arestas, remove arestas, ou ambos?
 - Há operações sobre nós (inserção, fusão)?
 - As operações são determinísticas ou têm componente aleatório (→ impacto nas sementes)?
@@ -114,9 +162,9 @@ Questões a responder:
 
 ## 4. Critério de parada e garantia de k-anonimato
 
-*(a preencher)*
+*(a preencher — issue subsequente)*
 
-Questões a responder:
+Quões a responder:
 - Como o algoritmo verifica que k-anonimato foi atingido?
 - O que acontece se o grafo não puder ser anonimizado para o k pedido?
 - Como implementar o verificador independente (`validate_k_anonymity`)?
@@ -131,8 +179,9 @@ Mapear para as chaves do YAML de configuração ([config_example.yml](../config_
 
 | Parâmetro do artigo | Chave YAML | Valor(es) usados |
 |---|---|---|
-| k | `anonymization.k_values` | [2, 5, 10, 20] |
-| *(outros)* | | |
+| `k` | `anonymization.k_values` | [2, 5, 10, 20] |
+| `d` | *(a mapear)* | |
+| `σ` (suporte FSM) | *(a mapear)* | |
 
 ---
 
