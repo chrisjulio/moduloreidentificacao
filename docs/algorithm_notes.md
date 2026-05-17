@@ -44,28 +44,30 @@ será reconciliado no issue correspondente àquele artigo.
 ### 1.1 O que constitui um grupo de equivalência em grafos?
 
 O **grupo de equivalência estrutural** (no sentido da Seção 1.0) é formado
-pelo conjunto de `k` **Local Structures isomorfas entre si** que o algoritmo
-produz durante a etapa de grouping (Seção 3.2 do artigo). Qualquer nó
-pertencente a uma LS do grupo é indistinguível dos nós nas demais `k−1` LSs
-— o isomorfismo entre subgrafos locais é o critério de equivalência
-(Def. 2, p. 648, Seção 2.3).
+pelo conjunto de `k` **Local Structures** que, ao **final do algoritmo**, 
+são mutualmente isomorfas. Operacionalmente, o conjunto é determinado pela
+etapa de grouping (Seção 3.2 do artigo), e a propriedadde de isomorfismo é
+estabelecida pela etapa de tranformação subsequente (fases 1 e 2 da Seção
+3.2). Qualquer nó pertencente a uma LS do grupo é indistinguível dos nós nas
+demais `k−1` LSs — o isomorfismo entre subgrafos locais é o critério de
+equivalência (Def. 2, p. 649, Seção 2.3).
 
 > "[...] node v_i is structure-aware k-anonymous, if there are at least k−1
 > other nodes which do not belong to LS(v_i) while having the local structure
-> that is isomorphic to LS(v_i)." (Def. 2, p. 648)
+> that is isomorphic to LS(v_i)." (Def. 2, p. 649)
 
 ### 1.2 Qual a propriedade estrutural que torna dois nós indistinguíveis?
 
 Dois nós são indistinguíveis quando suas Local Structures são **graficamente
 isomorfas** (`LS(v_i) ≅ LS(v_j)`): existe uma bijeção `f: V(LS_i) → V(LS_j)`
-tal que `(u, w) ∈ E(LS_i)` sse `(f(u), f(w)) ∈ E(LS_j)` (Seção 2.3, p. 648).
+tal que `(u, w) ∈ E(LS_i)` sse `(f(u), f(w)) ∈ E(LS_j)` (Seção 2.3, p. 649).
 O isomorfismo captura simultaneamente grau, adjacências e distâncias locais;
 nenhuma informação estrutural de fundo sobre a vizinhança do alvo permite
 distinguir os `k` candidatos (Seção 2.2).
 
 > "An isomorphism of graphs from G to H is a bijection f : V(G) → V(H)
 > such that any edge (v1, v2) ∈ E(G) if and only if (f(v1), f(v2)) ∈ E(H)."
-> (p. 648, Seção 2.3)
+> (p. 649, Seção 2.3)
 
 ### 1.3 k-anonimato aqui refere-se a grau, vizinhança, ou outra assinatura?
 
@@ -75,23 +77,23 @@ explicitamente as duas abordagens anteriores por insuficiência:
 
 - **k-degree anonymity** (Liu & Terzi [5]): baseia-se só no grau,
   ignorando estrutura. *"[...] this anonymization process completely ignores
-  structural information inherent in the graph data."* (p. 648, Seção 1)
+  structural information inherent in the graph data."* (p. 647, Seção 1)
 - **1-neighborhood isomorphism** (Zhou & Pei [4]): raio fixo (1-hop)
   provoca re-anonimizações em cascata e produz grafos degenerados
-  (p. 648, Seção 1).
+  (p. 647, Seção 1).
 
 A garantia formal do modelo: a confiança de reidentificação de qualquer nó
-em G' é no máximo `1/k` (Def. 2–3, p. 648, Seção 2.3).
+em G' é no máximo `1/k` (Def. 2–3, p. 649, Seção 2.3).
 
 > "[...] the confidence of this node being re-identified from the graph is no
-> higher than 1/k." (p. 648, Seção 2.3)
+> higher than 1/k." (p. 649, Seção 2.3)
 
 ### 1.4 Camada conceitual formal — Definições 1–4 (Seção 2, pp. 647–649)
 
 As quatro definições são encadeadas: cada uma pressupõe a anterior e a
 camada 1.1–1.3 acima só é possível porque o artigo as estabelece nesta ordem.
 
-#### Def. 1 — Local Structure (Seção 2.1, p. 648)
+#### Def. 1 — Local Structure (Seção 2.1, p. 649)
 
 Dado um grafo `G = (V, E)` e um nó `v_i ∈ V`, a **Local Structure** de `v_i`,
 denotada `LS(v_i)`, é um componente subgrafo **conectado** contendo `v_i`,
@@ -102,10 +104,10 @@ ligam os nós de `LS(v_i)` aos nós externos a ela.
 - Todos os nós dentro de uma mesma LS **compartilham a mesma Local Structure**.
 - A LS é a **unidade de anonimização**: o algoritmo opera sobre ela como um
   bloco único, não nó a nó — o que reduz a perturbação total do grafo.
-- O tamanho `d` da LS é variável (Fig. 2, p. 648): o publicador não consegue
+- O tamanho `d` da LS é variável (Fig. 2, p. 649): o publicador não consegue
   prever qual escopo o adversario conhece, portanto o modelo não o fixa.
 
-#### Def. 2 — Structure-Aware k-Anonymous Node (Seção 2.3, p. 648)
+#### Def. 2 — Structure-Aware k-Anonymous Node (Seção 2.3, p. 649)
 
 Um nó `v_i` é **structure-aware k-anonymous** se existem pelo menos `k−1`
 outros nós que (i) **não pertençam** a `LS(v_i)` e (ii) possuam Local
@@ -115,7 +117,7 @@ Structure **isomorfa** a `LS(v_i)`.
 - A condição é sobre nós **fora** da própria LS de `v_i` (para evitar
   circularidade: nós dentro da mesma LS já são estruturalmente idênticos).
 
-#### Def. 3 — Structure-Aware Graph k-Anonymity (Seção 2.3, p. 648)
+#### Def. 3 — Structure-Aware Graph k-Anonymity (Seção 2.3, p. 649)
 
 Um grafo anonimizado `G'` é **structure-aware k-anonymous** se **todo nó**
 em `G'` satisfaz a Def. 2.
