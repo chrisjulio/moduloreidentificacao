@@ -421,97 +421,165 @@ residual.
 
 > **Fonte:** He et al. (2009), Seções 2.3 e 3.2; decisões D-05 e D-06.
 
-### 4.1 Critério formal (artigo)
+### 4.1 Critério formal do artigo
 
-O k-anonimato estrutural é garantido **por construção**: se o algoritmo
-termina com todos os grupos formados, se os grupos são disjuntos e se todas
-as LSs de cada grupo completo são isomorfizadas entre si, então todo nó em
-`G'` satisfaz a Def. 2 (p. 649). O artigo não propõe um verificador separado
-— a garantia é dedutiva, não verificada a posteriori.
+O artigo trata o k-anonimato estrutural como propriedade **garantida por
+construção**, não como invariante verificada a posteriori. A garantia é
+dedutiva: se (a) cada grupo formado contém exatamente `k` Local Structures,
+(b) as LSs em cada grupo têm o mesmo número de nós **— condição que a
+Fase 1 pressupõe para terminar o matching** (ver Seção 3.1: *"Since each
+of local structures in the same group has the same number of nodes, this
+process will terminate quickly"*, p. 651) —, e (c) a Fase 2 da
+isomorfização opera corretamente, então todo nó em `G'` satisfaz a Def. 2
+(p. 649). O artigo não propõe um verificador separado.
+
+> **As três premissas não são automaticamente preservadas pela
+> implementação.** D-06 (grupo final incompleto) viola (a); D-07 (LSs de
+> tamanhos diferentes no mesmo grupo) potencialmente viola (b). Em ambos
+> os casos, a garantia por construção deixa de valer para um subconjunto
+> dos nós. A verificação empírica da Seção 4.2 existe precisamente para
+> tornar esse subconjunto explícito, em vez de assumi-lo nulo.
 
 ### 4.2 Verificação empírica independente
 
-Para fins deste módulo (avaliação de risco de reidentificação), a garantia
-teórica é necessária mas não suficiente. O esboço ingênuo de checar apenas
-isomorfismo par-a-par dentro de cada grupo é **mais fraco** que a Def. 2.
-A equivalência só vale se duas premissas forem satisfeitas simultaneamente:
+A verificação opera sobre o grafo de saída `G'` e a estrutura de grupos
+produzida pelo algoritmo. Ela responde a uma pergunta operacional: dado
+o que o algoritmo de fato produziu, quantos nós satisfazem a Def. 2 para
+o `k` configurado?
 
-1. todo grupo tem cardinalidade `≥ k`; e
-2. os grupos são disjuntos.
-
-A primeira premissa **não vale** para o grupo incompleto previsto ao final do
-Algorithm 1. Portanto, o verificador empírico precisa checar três condições:
-
-- cardinalidade mínima do grupo (`|G_r| ≥ k`);
-- isomorfismo mútuo dentro de cada grupo completo;
-- disjunção entre LSs (invariante da partição).
+#### 4.2.1 Verificador estrito (Def. 2 no nível do nó)
 
 ```python
-# esboço — implementação completa em metrics_definitions.md
-def validate_k_anonymity(groups: list[list[nx.Graph]], k: int) -> dict:
-    result = {"valid": True, "violations": []}
+# Esboço — implementação completa em docs/metrics_definitions.md
+def validate_k_anonymity_strict(
+    G_prime: nx.Graph,
+    groups: list[list[nx.Graph]],   # cada LS é subgrafo induzido em G_prime
+    k: int
+) -> dict:
+    """
+    Retorna estatísticas por nó:
+      - 'satisfies': fração de nós com >= k-1 outros nós com LS isomorfa
+      - 'violators': lista de nós que não satisfazem Def. 2
+      - 'per_ls': contagem de candidatos isomorfos disponíveis por LS
+    """
+    # Nota: iteração restrita ao grupo de anonimização — conservador.
+    # A Def. 2 não restringe candidatos ao mesmo grupo; LSs isomorfas em
+    # grupos distintos também satisfariam a condição. O verificador pode
+    # subestimar 'count' e produzir falsos negativos de violação.
+    # Comportamento conservador: aceitável para fins de auditoria.
 
-    # Condição 1: disjunção global entre LSs
-    seen_nodes = set()
+    # 1. Para cada LS, conta nós em outras LSs isomorfas (no mesmo grupo)
+    iso_counts = {}
     for i, group in enumerate(groups):
-        for ls in group:
-            overlap = seen_nodes & set(ls.nodes())
-            if overlap:
-                result["violations"].append(
-                    {"type": "non_disjoint", "group": i, "nodes": sorted(overlap)}
-                )
-                result["valid"] = False
-            seen_nodes.update(ls.nodes())
+        for j, ls in enumerate(group):
+            count = 0
+            for j2, other_ls in enumerate(group):
+                if j2 != j and nx.is_isomorphic(ls, other_ls):
+                    count += other_ls.number_of_nodes()
+            iso_counts[(i, j)] = count
 
-    # Condições 2 e 3: cardinalidade + isomorfismo
-    for i, group in enumerate(groups):
-        if len(group) < k:
-            result["violations"].append(
-                {"type": "incomplete_group", "group": i,
-                 "size": len(group), "required": k,
-                 "status": "partially_unprotected"}
-            )
-            result["valid"] = False
-            continue
-
-        reference = group[0]
-        for j, ls in enumerate(group[1:], 1):
-            if not nx.is_isomorphic(reference, ls):
-                result["violations"].append(
-                    {"type": "non_isomorphic", "group": i, "ls_index": j}
-                )
-                result["valid"] = False
-
-    return result
+    # 2. Cada nó herda a contagem da LS a que pertence
+    violators = [
+        node
+        for (i, j), count in iso_counts.items()
+        for node in groups[i][j].nodes()
+        if count < k - 1
+    ]
+    return {
+        'satisfies': 1 - len(violators) / G_prime.number_of_nodes(),
+        'violators': violators,
+        'per_ls': iso_counts,
+    }
 ```
 
-> → Implementação completa, parâmetros, logging e casos de borda definidos em
-> `docs/metrics_definitions.md` §k-anonymity-verifier.
+O verificador estrito é **estritamente mais forte** que o esboço anterior
+(que apenas checava isomorfismo par-a-par dentro de cada grupo, retornando
+booleano): ele captura corretamente os dois casos em que a garantia por
+construção falha — grupo final incompleto (D-06) e LSs com contagens de
+nós insuficientes para somar `k−1` candidatos isomorfos fora da LS de
+origem (D-07). Quando todas as premissas (a)–(c) da Seção 4.1 valem, o
+verificador estrito retorna `satisfies == 1.0`; quando alguma falha, ele
+quantifica a falha em vez de mascará-la.
 
-### 4.3 Grupo incompleto — decisão operacional
+> → Implementação completa, parâmetros e casos de borda em
+> `docs/metrics_definitions.md` §k-anonymity-verifier (issue a criar).
 
-**Decisão D-06:** grupos incompletos serão mantidos e reportados como
-**violação parcial de k-anonimato**, com nós residuais tratados como
-**desprotegidos** do ponto de vista da garantia formal. O módulo não forçará
-fusão artificial nem descarte desses grupos no baseline.
+#### 4.2.2 Critério de passagem do marco intermediário (29/05/2026)
 
-Implicação: o verificador nunca deve retornar `True` para um conjunto de
-saída que contenha grupo com `|G_r| < k`, ainda que as LSs desse grupo sejam
-mutuamente isomorfas.
+- Para a configuração de validação (sugestão: `k=5`, uma ego-rede do
+  Facebook, `d=10`), o verificador estrito retorna `satisfies == 1.0` em
+  pelo menos 1 das 3 sementes — **e** o número de violadores nas demais
+  sementes **não excede o número de nós no grupo final incompleto** (D-06).
+  Caso exceda, a causa é investigada antes de prosseguir.
+- Resultado `satisfies < 1.0` em todas as 3 sementes para a configuração
+  de validação, ou violadores acima do limite de D-06, dispara
+  reformulação do escopo conforme Seção 7 do plano operacional, não
+  acomodação.
 
-### 4.4 Risco declarado do verificador
+Diferença em relação à redação anterior do critério: registrar a fração
+de nós que satisfazem Def. 2 (não apenas True/False) dá visibilidade ao
+subconjunto problemático e permite distinguir falha pequena (poucos
+violators, atribuíveis a grupo incompleto) de falha estrutural (muitos
+violators, sugerindo bug na isomorfização).
 
-> ⚠️ **Risco metodológico 1:** Graph Isomorphism (GI) não é sabidamente
-> polinomial nem NP-completo. Na prática, `networkx.is_isomorphic` (VF2)
-> é eficiente para subgrafos pequenos (`d ≤ 20` nós), mas pode apresentar
-> degradação significativa de desempenho para LSs maiores. Para `d > 20`,
-> avaliar substituição por heurísticas de isomorfismo aproximado ou limitar
-> `d` via configuração.
->
-> ⚠️ **Risco metodológico 2:** um verificador que cheque apenas isomorfismo
-> intra-grupo pode produzir falso positivo metodológico — "verde" para uma
-> medida auxiliar mais fraca que a Def. 2. Por isso, a checagem de
-> cardinalidade mínima e disjunção é obrigatória.
+### 4.3 Riscos do verificador
+
+#### 4.3.1 Custo computacional do isomorfismo
+
+> ⚠️ Graph Isomorphism (GI) não é sabidamente polinomial nem NP-completo.
+> `networkx.is_isomorphic` (VF2) é eficiente para subgrafos pequenos
+> (`d ≤ 20`), mas pode degradar significativamente para LSs maiores. Para
+> `d > 20`, avaliar pré-filtro por invariantes baratos (distribuição de
+> graus, espectro do laplaciano) antes da chamada a VF2, ou limitar `d`
+> via configuração.
+
+O custo do verificador é dominado por chamadas a `is_isomorphic` entre
+pares de LSs dentro de cada grupo: para `c` grupos de tamanho `k`, são
+`c · k·(k−1)/2` chamadas, cada uma sobre LSs de tamanho aproximadamente
+`d`. O custo total escala com `c · k²` chamadas a um procedimento cuja
+complexidade depende fortemente de `d` e da estrutura das LSs.
+
+#### 4.3.2 Acoplamento com o algoritmo
+
+O próprio algoritmo de anonimização usa isomorfismo internamente na Fase 2.
+Se VF2 é o gargalo, ele é gargalo nos dois lados — não apenas no
+verificador. A faixa de `d` viável é, portanto, propriedade conjunta do
+par (algoritmo, verificador), não do verificador isoladamente.
+
+#### 4.3.3 Independência do verificador em relação ao algoritmo
+
+O verificador é **independente** no sentido de que não reutiliza a lógica
+de isomorfização da Fase 2: ele aplica VF2 sobre os grafos produzidos, não
+confia em bookkeeping interno. Mas ele **reutiliza a estrutura de grupos**
+que o algoritmo produziu — aceita como entrada o mapeamento
+`nó → LS → grupo`. Essa escolha troca independência completa por
+reprodutibilidade: re-particionar `G'` independentemente introduziria
+não-determinismo adicional (D-04) sem ganho informativo proporcional.
+
+> **Escopo da certificação:** o verificador certifica que *o algoritmo
+> cumpriu sua promessa dada a partição produzida*, não que *G' é
+> estruturalmente k-anônimo para qualquer particionamento alternativo
+> de G'*. A segunda afirmação é mais forte, não está coberta, e deve
+> ser listada como ameaça à validade externa no relatório de qualificação.
+
+### 4.4 Relação com os ataques de reidentificação
+
+A verificação de Def. 2 não substitui as métricas de ataque (por grau,
+por subgrafos, por entropia) definidas no plano operacional. As duas
+avaliações respondem a perguntas distintas:
+
+| Avaliação | Pergunta |
+|---|---|
+| Verificador estrito de Def. 2 (Seção 4.2) | O algoritmo cumpre sua garantia teórica? |
+| Ataques por grau / subgrafos / entropia | Que fração de nós um adversário realista consegue reidentificar? |
+
+A garantia teórica é uma **cota superior** sobre a confiança de
+reidentificação (`≤ 1/k`); os ataques medem a confiança **efetiva** sob
+modelos adversariais específicos. A diferença entre as duas é, em si, um
+dado interessante: se um ataque consegue reidentificação significativamente
+acima de `1/k`, isso indica que o modelo adversarial usado tem conhecimento
+que escapa do que a Def. 2 considera — e o resultado deve ser reportado
+como tal, não como falha do algoritmo.
 
 ---
 
@@ -552,9 +620,9 @@ Exemplos de casos que podem exigir tratamento especial:
 | D-01 | 2026-05-17 | FSM simplificado com `s_max` configurável (não gSpan completo) | Pragmatismo de prazo; gSpan Python tem manutenção irregular. `s_max` limita espaço de busca de forma auditável. Declarar como aproximação no relatório. | Artigo cita [18] (Wörlein et al. 2005) sem especificar implementação |
 | D-02 | 2026-05-17 | `d = 10` como default; variável de configuração YAML (`anonymization.d`) | Valor comum na literatura derivada para redes de 1k–10k nós. Varredura sobre `d` excluída do escopo mínimo. | Artigo não fixa default; experimentos usam valores variados (p. 652) |
 | D-03 | 2026-05-17 | Matching Fase 1: grau como critério primário; índice de nó lexicográfico como desempate | Garante determinismo e reprodutibilidade. Artigo diz "based on nodes degree" sem critério de desempate (p. 651). Escolha afeta `G'` e deve ser reportada como parâmetro de reprodutibilidade. | Artigo p. 651, Seção 3.2, Fase 1 |
-| D-04 | 2026-05-17 | Substituir METIS por `networkx.algorithms.community.kernighan_lin_bisection` recursivo | Zero dependência C externa; portabilidade em CI/CD. Substituição explicitamente autorizada pelo artigo: "though any other technique could also be used" (p. 650). Complexidade KL: `O(|E|·log|V|)` vs `O(|E|)` do METIS — aceitável para protótipo. | Artigo p. 650, Seção 3.1 |
-| D-05 | 2026-05-17 | Critério formal de k-anonimato registrado neste documento (Seção 4.1); verificador empírico (`nx.is_isomorphic` / VF2) definido em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo; `metrics_definitions.md` define os instrumentos de avaliação. Risco de desempenho do VF2 para `d > 20` declarado (Seção 4.4). | Seção 4 deste documento; `docs/metrics_definitions.md` §k-anonymity-verifier |
-| D-06 | 2026-05-17 | Grupos incompletos serão mantidos e reportados como violação parcial; nós residuais tratados como desprotegidos | O esboço de verificação por isomorfismo intra-grupo é mais fraco que a Def. 2. Como o Algorithm 1 admite grupo final com `|G_r| < k`, o módulo deve marcar esses casos como falha parcial da garantia, não como sucesso. | Seções 4.2–4.3 deste documento; Def. 2 do artigo |
+| D-04 | 2026-05-17 | Substituir METIS por `networkx.algorithms.community.kernighan_lin_bisection` recursivo | Zero dependência C externa; portabilidade em CI/CD. Substituição explicitamente autorizada pelo artigo: "though any other technique could also be used" (p. 650). Complexidade KL: `O(\|E\|·log\|V\|)` vs `O(\|E\|)` do METIS — aceitável para protótipo. | Artigo p. 650, Seção 3.1 |
+| D-05 | 2026-05-17 | Critério formal de k-anonimato registrado na Seção 4.1; **verificador empírico estrito** (Def. 2 no nível do nó, via `nx.is_isomorphic`/VF2) com saída em fração de nós satisfeitos; definido em detalhe em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo e o critério; `metrics_definitions.md` define os instrumentos de avaliação. Verificador anterior (booleano par-a-par) era estritamente mais fraco que Def. 2 e mascarava violações decorrentes de D-06 e D-07. Risco de desempenho do VF2 declarado (Seção 4.3). | Seção 4 deste documento; `docs/metrics_definitions.md` §k-anonymity-verifier (issue a criar) |
+| D-06 | 2026-05-17 | Grupos incompletos serão mantidos e reportados como violação parcial; nós residuais tratados como desprotegidos | O verificador estrito captura esses casos como violadores explícitos (count < k-1). O módulo não forçará fusão artificial nem descarte desses grupos no baseline. | Seções 4.1–4.2 deste documento; Def. 2 do artigo |
 | D-07 | *(a decidir antes da Semana 2)* | Política para LSs de tamanhos diferentes no mesmo grupo (consequência operacional de D-04) | Artigo assume `\|V_i\| = d`; KL aproxima. Opções: restringir grupos a LSs do mesmo tamanho; padding com nós isolados; outra. Escolha afeta Seção 3.1 e Fase 1 da isomorfização. | Seção 3.1 deste documento; D-04 |
 
 ---
@@ -563,12 +631,14 @@ Exemplos de casos que podem exigir tratamento especial:
 
 Para o marco de 29/05/2026, a validação de k-anonimato deve ser:
 
-- [ ] Verificador implementado **independentemente** do anonimizador
+- [ ] Verificador estrito implementado **independentemente** do anonimizador
       (não reutilizar código interno do algoritmo).
 - [ ] Verificador aplicado sobre o grafo de saída G', não sobre estruturas
       internas do algoritmo.
 - [ ] Resultado registrado em log estruturado, reproduzível via semente.
-- [ ] Testado em ao menos uma configuração: k=5, uma ego-rede do Facebook.
+- [ ] Testado em ao menos uma configuração: k=5, uma ego-rede do Facebook,
+      `d=10`.
 
-Critério de aprovação: verificador retorna `True` para o k configurado em
-100% das execuções (3 sementes, mesma configuração).
+Critério de aprovação: verificador retorna `satisfies == 1.0` em pelo menos
+1 das 3 sementes; `violators` nas demais sementes registrados e atribuíveis
+a D-06 (grupo final incompleto).
