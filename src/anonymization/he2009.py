@@ -57,9 +57,7 @@ def anonymize(G: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     raise NotImplementedError
 
 
-def _partition_neighborhoods(
-    G: nx.Graph, d: int
-) -> list[nx.Graph]:
+def _partition_neighborhoods(G: nx.Graph, d: int) -> list[nx.Graph]:
     """Particiona G em Local Structures usando multilevel k-way partitioning.
 
     Divide o conjunto de nos V em ck = floor(n/d) subconjuntos disjuntos
