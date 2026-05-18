@@ -258,12 +258,162 @@ do pseudocódigo acima.
 
 ## 3. Operações de modificação do grafo
 
-*(a preencher — issue subsequente)*
+> **Fontes:** He et al. (2009), Seções 3.2 (Phase 2, p. 651) e 3.3 (p. 652).
 
-Questões a responder:
-- O algoritmo adiciona arestas, remove arestas, ou ambos?
-- Há operações sobre nós (inserção, fusão)?
-- As operações são determinísticas ou têm componente aleatório (→ impacto nas sementes)?
+### 3.1 O que o algoritmo modifica
+
+He et al. produzem `G'` modificando **exclusivamente o conjunto de arestas**
+de `G`. O conjunto de vértices é preservado: nenhum nó é adicionado,
+removido ou fundido ao longo das três etapas (partição, agrupamento/
+isomorfização, reconexão). A renumeração interna durante a Fase 1
+(Seção 3.2 do artigo) é uma correspondência computacional entre LSs e
+**não afeta** a identidade dos nós nem o grafo publicado.
+
+> **Premissa que sustenta "sem operações em nós".** O artigo, na Fase 1
+> da Seção 3.2 (p. 651), afirma: *"Since each of local structures in the same
+> group has the same number of nodes, this process will terminate quickly."*
+> A garantia depende de `|V_i| = d` (igualdade estrita), que com KL (D-04;
+> ver `decisions.md`) passa a aproximação. LSs no mesmo grupo podem ter
+> contagens de nós distintas, e a implementação precisa de uma política
+> explícita para lidar com isso. Ver D-07 (a decidir; ver Seção 7).
+> Dependendo da política escolhida — em particular, se envolver padding com
+> nós isolados — a afirmação desta seção precisa ser revisada.
+
+### 3.2 Três pontos do algoritmo onde arestas são modificadas
+
+A modificação de arestas ocorre em **três contextos distintos**, cada um
+com regras próprias:
+
+#### 3.2.1 Fase de isomorfização intra-grupo (Seção 3.2, Phase 2)
+
+Após o agrupamento, cada grupo de `k` LSs precisa ter suas estruturas
+tornadas isomorfas entre si. O artigo propõe duas variantes:
+
+| Variante | Operação | Critério |
+|---|---|---|
+| **Edge-adding only** | Apenas adição de arestas | Adiciona-se o que falta para tornar pares de LSs isomorfos |
+| **Edge-adding/deleting** | Adição **ou** remoção | Para cada par de nós correspondentes entre LSs do grupo, escolhe-se a operação que incorre em **menos modificações totais** |
+
+> *"For each matched pair of nodes in the local structures of the same
+> group, we compare the number of edge existence and non-existence between
+> these matched pair of nodes in the group. We always choose either adding
+> edges or deleting edges, whichever would incur less edge changes for the
+> isomorphism."* (p. 651)
+
+> **Nota — greedy por par, não por grupo:** A escolha add vs. del é feita
+> independentemente para cada par de nós correspondentes (greedy por par),
+> não por otimização global do grupo. A variante edge-adding/deleting não
+> garante minimização global de modificações — apenas local por par.
+
+A variante edge-adding/deleting **tende a perturbar menos a estrutura**,
+dado que minimiza o número de modificações por par de nós correspondentes.
+O artigo não afirma diretamente a preservação de APL/CC/grau como
+consequência teórica — a correlação é razoável, mas é inferência, não
+afirmação do artigo. Empiricamente, os experimentos (Figuras 3b–d e 4b–d)
+confirmam essa correlação para os datasets testados (CompGeo e GBA), sem
+garantia teórica extensível a outros grafos.
+
+A escolha entre as duas variantes é **parâmetro de execução**, não
+resolvido automaticamente pelo algoritmo. Mapeamento para a configuração
+YAML em Seção 5.
+
+#### 3.2.2 Fase de reconexão (Seção 3.3)
+
+Após a partição (Etapa 1) ter removido as arestas inter-LS, e após a
+isomorfização (Fase 2) ter sido aplicada intra-grupo, o algoritmo precisa
+religar as LSs em um único grafo. Simplesmente reinserir as inter-arestas
+removidas quebraria o isomorfismo conquistado: as posições "equivalentes"
+de um nó em LSs distintas do mesmo grupo passariam a ter vizinhanças
+externas distintas.
+
+Para preservar o isomorfismo, o artigo prescreve a adição de arestas
+complementares:
+
+> *"In general, for each original inter-edge, a total of k(k − 1) edges
+> have to be added."* (p. 652)
+
+| Propriedade | Valor |
+|---|---|
+| Tipo de operação | Apenas adição (não há variante "delete" aqui) |
+| Custo por inter-aresta | `k(k−1)` arestas adicionais |
+| Custo total | `O(|E_inter| · k²)` |
+
+> **Nota de implementação (a verificar):** O artigo não demonstra a
+> derivação de `k(k−1)`. A interpretação mais natural é: cada inter-aresta
+> `(u, v)` entre `LS_a` e `LS_b` precisa ser replicada para todos os pares
+> de posições equivalentes nos `k` grupos que contêm `LS_a` e `LS_b`
+> respectivamente, resultando em `k² − k = k(k−1)` arestas adicionais.
+> Esta interpretação deve ser validada durante a implementação. Se
+> incorreta, a estimativa de `O(|E_inter| · k²)` também precisa ser
+> revisada.
+
+Esta é a **terceira fonte de modificação estrutural** e não está coberta
+pelas variantes da Seção 3.2.1 — a reconexão é obrigatoriamente aditiva.
+Para grafos com muitas inter-arestas (que o particionamento minimiza, mas
+não zera), esta fonte pode dominar a perturbação total do grafo final.
+
+#### 3.2.3 Contabilidade da utilidade
+
+As métricas de utilidade definidas no plano operacional (KS-test sobre
+distribuição de grau, ΔCC) medem o efeito agregado de **duas** das três
+fontes acima — a partição original não modifica arestas, apenas as
+redistribui temporariamente. Ao reportar resultados, registrar
+separadamente o número de arestas modificadas em cada fase (Fase 2
+intra-grupo vs. reconexão) facilita o diagnóstico: se a perturbação total
+for dominada pela reconexão, a escolha entre variantes de Phase 2 importa
+pouco para a utilidade final.
+
+### 3.3 Determinismo vs. aleatoriedade
+
+O algoritmo contém **cinco fontes de não-determinismo** que precisam ser
+controladas para reprodutibilidade:
+
+| # | Fonte | Localização | Mitigação |
+|---|---|---|---|
+| 1 | Escolha aleatória de `k` LSs de `SLS(g_j)` | Algorithm 1, linha 15 | `random.Random(seed)` único |
+| 2 | Escolha aleatória de `k` LSs de `S \ SLS(g_i)` | Algorithm 1, linha 17 | mesmo seed |
+| 3 | Escolha aleatória de `k` LSs de `SLS(g_i)` | Algorithm 1, linha 21 | mesmo seed |
+| 4 | Desempate em "largest MF value" | Algorithm 1, linha 12 | ordem crescente de identificador do subgrafo frequente |
+| 5 | Ordem de iteração sobre `g_i ∈ S` | Algorithm 1, linha 5 | ordem crescente de identificador |
+
+> **Nota sobre dependência entre fontes:** As Fontes 4 e 5 são
+> pré-condições do caminho de execução que leva às Fontes 1–3; fixá-las
+> reduz (mas não elimina) a variabilidade. O controle completo requer
+> fixar todas as cinco.
+
+Fontes adicionais já tratadas por decisões anteriores:
+
+- **Particionamento**: D-04 substituiu METIS (que tem componentes
+  não-determinísticos dependendo da build) por
+  `networkx.algorithms.community.kernighan_lin_bisection`, que aceita
+  parâmetro `seed` (ver Seção 7).
+- **Matching da Fase 1**: D-03 fixa grau como critério primário e índice
+  lexicográfico como desempate, eliminando o não-determinismo residual
+  (ver Seção 7).
+
+A Fase 2 (isomorfização) é **determinística** dado o agrupamento, a
+numeração da Fase 1 e a variante escolhida. A reconexão (Seção 3.3) é
+determinística dado o agrupamento e a numeração — não há escolha aleatória
+residual.
+
+### 3.4 Implicações para o módulo
+
+- A configuração YAML deve expor a variante de isomorfização como parâmetro
+  explícito (`anonymization.isomorphism_mode`), não decisão hardcoded.
+- A variante usada deve ser **registrada no log estruturado** da execução,
+  junto com seed e parâmetros, para que comparações entre execuções sejam
+  interpretáveis.
+- O log estruturado deve registrar também o número de arestas modificadas
+  **por fase** (Fase 2 intra-grupo e reconexão) separadamente, para
+  permitir que o módulo de avaliação de risco identifique qual fonte de
+  perturbação domina — e, por consequência, qual análise de utilidade é
+  mais relevante para aquela execução específica.
+- `validate_k_anonymity` (Seção 4.2) é **agnóstico à variante**: opera
+  sobre o grafo de saída `G'`, não sobre o caminho que o algoritmo seguiu
+  para chegar lá.
+- A política de D-07 (tratamento de LSs com tamanhos diferentes no mesmo
+  grupo, a decidir; ver Seção 7) afeta a Fase 1 e potencialmente
+  a Seção 3.1 deste documento.
 
 ---
 
@@ -377,6 +527,7 @@ Mapear para as chaves do YAML de configuração ([config_example.yml](../config_
 | `d` | `anonymization.d` | 10 (default) — ver D-02 |
 | `σ` (suporte FSM) | *(a mapear)* | |
 | `s_max` (FSM simplificado) | `anonymization.fsm.max_size` | 4 (proposto) — ver D-01 |
+| Variante de isomorfização | `anonymization.isomorphism_mode` | `"add_or_delete"` (default) — alternativa: `"add_only"` |
 
 ---
 
@@ -404,6 +555,7 @@ Exemplos de casos que podem exigir tratamento especial:
 | D-04 | 2026-05-17 | Substituir METIS por `networkx.algorithms.community.kernighan_lin_bisection` recursivo | Zero dependência C externa; portabilidade em CI/CD. Substituição explicitamente autorizada pelo artigo: "though any other technique could also be used" (p. 650). Complexidade KL: `O(|E|·log|V|)` vs `O(|E|)` do METIS — aceitável para protótipo. | Artigo p. 650, Seção 3.1 |
 | D-05 | 2026-05-17 | Critério formal de k-anonimato registrado neste documento (Seção 4.1); verificador empírico (`nx.is_isomorphic` / VF2) definido em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo; `metrics_definitions.md` define os instrumentos de avaliação. Risco de desempenho do VF2 para `d > 20` declarado (Seção 4.4). | Seção 4 deste documento; `docs/metrics_definitions.md` §k-anonymity-verifier |
 | D-06 | 2026-05-17 | Grupos incompletos serão mantidos e reportados como violação parcial; nós residuais tratados como desprotegidos | O esboço de verificação por isomorfismo intra-grupo é mais fraco que a Def. 2. Como o Algorithm 1 admite grupo final com `|G_r| < k`, o módulo deve marcar esses casos como falha parcial da garantia, não como sucesso. | Seções 4.2–4.3 deste documento; Def. 2 do artigo |
+| D-07 | *(a decidir antes da Semana 2)* | Política para LSs de tamanhos diferentes no mesmo grupo (consequência operacional de D-04) | Artigo assume `\|V_i\| = d`; KL aproxima. Opções: restringir grupos a LSs do mesmo tamanho; padding com nós isolados; outra. Escolha afeta Seção 3.1 e Fase 1 da isomorfização. | Seção 3.1 deste documento; D-04 |
 
 ---
 
