@@ -152,7 +152,6 @@ um grafo `G'` structure-aware k-anonymous tal que:
 
 ## 2. Algoritmo principal
 
-> **Issue de origem:** [#9](https://github.com/chrisjulio/moduloreidentificacao/issues/9)
 > **Fonte:** He et al. (2009), Seção 3, pp. 649–652.
 
 ### 2.1 Visão geral — três etapas encadeadas
