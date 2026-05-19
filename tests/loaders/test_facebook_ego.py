@@ -1,4 +1,9 @@
-"""Tests for src/loaders/facebook_ego.py."""
+"""Tests for src/loaders/facebook_ego.py.
+
+Raw data (data/raw/facebook/) is not versioned, so all tests use a synthetic
+fixture (tmp_path + _make_ego_dir) that replicates the SNAP .edges format.
+This avoids a download dependency in CI while still exercising the real parser.
+"""
 
 from pathlib import Path
 
