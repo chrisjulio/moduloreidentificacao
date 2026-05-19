@@ -71,6 +71,25 @@ na própria issue antes de prosseguir.
 
 ---
 
+## Convenções de shell (Windows + Git Bash)
+
+Sessões de Claude Code neste repositório rodam via Git Bash (Git for Windows).
+Duas convenções obrigatórias, registradas após fricção observada em sessões reais:
+
+- **Forward slashes em paths.** Bash trata `\` como caractere de escape, então
+  `.venv\Scripts\python.exe` é parseado como `.venvScriptspython.exe` e a chamada
+  falha. Use `.venv/Scripts/python.exe -m pytest ...` (mesma regra para qualquer
+  outra invocação de executável dentro do venv). Git Bash traduz `/` para Windows
+  path automaticamente ao chamar executáveis nativos.
+- **`gh pr create` com body multilinha: sempre `--body-file`, nunca `--body "..."`.**
+  Conteúdo com `>`, `<`, `|`, blockquotes markdown ou quebras de linha quebra o
+  parsing de shell e o `gh` recebe argumentos truncados. Padrão: gerar `pr_body.md`
+  via heredoc com `<< 'EOF'` (EOF entre aspas simples, para evitar expansão de
+  variáveis dentro do corpo), passar para `gh pr create --body-file pr_body.md`,
+  e remover o arquivo após o push.
+
+---
+
 ## Estrutura de módulos
 
 ```
