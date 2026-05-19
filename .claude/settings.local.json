@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv\\\\Scripts\\\\python.exe -m ruff check src/loaders/ tests/loaders/test_download.py)",
+      "Bash(.venv\\\\Scripts\\\\python.exe -m ruff format --check src/loaders/ tests/loaders/test_download.py)"
+    ]
+  }
+}
