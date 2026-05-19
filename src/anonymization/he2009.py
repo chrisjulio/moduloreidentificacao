@@ -17,7 +17,7 @@ from __future__ import annotations
 import networkx as nx
 
 
-def anonymize(G: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
+def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     """Ponto de entrada principal do algoritmo de anonimizacao estrutural.
 
     Executa o pipeline completo de structure-aware kd-anonymity:
@@ -28,7 +28,7 @@ def anonymize(G: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
 
     Parametros
     ----------
-    G : nx.Graph
+    g : nx.Graph
         Grafo original nao direcionado a ser anonimizado.
     k : int
         Parametro de k-anonimato estrutural. Cada no devera ser
@@ -57,7 +57,7 @@ def anonymize(G: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     raise NotImplementedError
 
 
-def _partition_neighborhoods(G: nx.Graph, d: int) -> list[nx.Graph]:
+def _partition_neighborhoods(g: nx.Graph, d: int) -> list[nx.Graph]:
     """Particiona G em Local Structures usando multilevel k-way partitioning.
 
     Divide o conjunto de nos V em ck = floor(n/d) subconjuntos disjuntos
@@ -186,7 +186,7 @@ def _modify_structure(
 
 
 def _reconnect_inter_edges(
-    G_original: nx.Graph,
+    g_original: nx.Graph,
     groups: list[list[nx.Graph]],
 ) -> nx.Graph:
     """Reconecta as inter-arestas removidas preservando o isomorfismo.
@@ -204,7 +204,7 @@ def _reconnect_inter_edges(
 
     Parametros
     ----------
-    G_original : nx.Graph
+    g_original : nx.Graph
         Grafo original, usado para recuperar as inter-arestas removidas
         na particao.
     groups : list[list[nx.Graph]]

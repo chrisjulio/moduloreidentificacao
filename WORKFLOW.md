@@ -18,7 +18,7 @@
 | 1 | **GitHub** | Centralizador. Estado canônico do código e da documentação. Tudo que importa termina aqui. |
 | 2 | **VSCode** | Intervenção direta. Edição manual, leitura de código, revisão de PRs antes de merge, substituição de arquivos gerados em outras interfaces. |
 | 3 | **Claude Code** | Geração e controle de código. Implementação de issues; abertura de PRs; execução local de testes e lint. |
-| 4 | **Claude Projects** (este chat) | Deliberação estratégica e metodológica; planejamento operacional; revisão de decisões; produção de documentação não trivial; geração de scripts/artefatos para serem aplicados ao repositório. |
+| 4 | **Claude Projects** | Deliberação estratégica e metodológica; planejamento operacional; revisão de decisões; produção de documentação não trivial; geração de scripts/artefatos para serem aplicados ao repositório. |
 | 5 | **Comet / Perplexity** | Espaço acadêmico. Bibliografia, busca de papers, ajustes acadêmicos, verificação de referências. |
 | 6 | **ChatGPT** | Catch-all. Qualquer interação não coberta pelas anteriores. |
 
