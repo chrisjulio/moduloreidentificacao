@@ -37,13 +37,13 @@ dataset:
   preprocessing_mode: single_egonet
 
   # Usado apenas quando preprocessing_mode == single_egonet.
-  # Definir após a medição da Semana 1 (issue #40); 0 é provisório.
-  egonet_id: 0
+  # Selecionado em issue #40: ego-rede de tamanho mediano entre as 6 que
+  # passam n_lcc >= 200 (sorted: 224, 324, 532*, 744, 775, 1034).
+  egonet_id: 3437  # n_lcc=532, m_lcc=4812, density=0.034068
 
   # Usado apenas quando preprocessing_mode == multiple_egonets.
-  # Preenchido pela etapa de seleção da Semana 1 (issue #40).
-  # ATENCAO: lista vazia causa excecao fatal no loader. Nao executar com [].
-  egonet_ids: []  # TODO: preencher apos filtro de tamanho (Semana 1)
+  # Redes com n_lcc >= 200 (issue #40): 348, 0, 3437, 1912, 1684, 107.
+  egonet_ids: [348, 0, 3437, 1912, 1684, 107]
 
   # Sub-decisões de pré-processamento (docs/preprocessing_decision.md, Seção 3).
   include_ego: false   # Seção 3.1 — nó ego excluído
