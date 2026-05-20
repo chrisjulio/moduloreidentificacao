@@ -259,7 +259,7 @@ Retornar G'
 
 ### 2.4 Lacunas do artigo — pontos decididos
 
-As lacunas identificadas nesta seção geraram as decisões D-01 a D-06
+As lacunas identificadas nesta seção geraram as decisões D-01 a D-07
 registradas na Seção 7. Referências cruzadas marcadas com `[D-xx]` ao longo
 do pseudocódigo acima.
 
@@ -281,12 +281,18 @@ isomorfização, reconexão). A renumeração interna durante a Fase 1
 > **Premissa que sustenta "sem operações em nós".** O artigo, na Fase 1
 > da Seção 3.2 (p. 651), afirma: *"Since each of local structures in the same
 > group has the same number of nodes, this process will terminate quickly."*
-> A garantia depende de `|V_i| = d` (igualdade estrita), que com KL (D-04;
-> ver `decisions.md`) passa a aproximação. LSs no mesmo grupo podem ter
-> contagens de nós distintas, e a implementação precisa de uma política
-> explícita para lidar com isso. Ver D-07 (a decidir; ver Seção 7).
-> Dependendo da política escolhida — em particular, se envolver padding com
-> nós isolados — a afirmação desta seção precisa ser revisada.
+> A garantia depende de `|V_i| = d` (igualdade estrita), que com KL (D-04)
+> passa a aproximação. LSs no mesmo grupo podem ter contagens de nós distintas.
+>
+> ⚠️ **D-07 formalizado (20/05/2026):** Adotada a **Opção A** — restrição
+> de grupos a LSs do mesmo `|Vi|`. LSs sem grupo completo do mesmo tamanho
+> são tratadas como grupo incompleto (D-06). Esta política é aplicada
+> exclusivamente em `_partition_backend.py` (issue #45), sendo transparente
+> para `_partition_neighborhoods` (#11), `_group_isomorphic` (#12) e
+> `_modify_structure` (#13). Declarada como **limitação do protótipo**
+> no relatório de qualificação. A produção poderia usar `tpwgts` do pymetis
+> para forçar partições exatas, mas essa opção não é mandatória para o marco
+> de 29/05/2026. Ver Seção 7 (D-07).
 
 ### 3.2 Três pontos do algoritmo onde arestas são modificadas
 
@@ -420,9 +426,9 @@ residual.
 - `validate_k_anonymity` (Seção 4.2) é **agnóstico à variante**: opera
   sobre o grafo de saída `G'`, não sobre o caminho que o algoritmo seguiu
   para chegar lá.
-- A política de D-07 (tratamento de LSs com tamanhos diferentes no mesmo
-  grupo, a decidir; ver Seção 7) afeta a Fase 1 e potencialmente
-  a Seção 3.1 deste documento.
+- A política de D-07 (**Opção A formalizada em 20/05/2026**) é aplicada
+  exclusivamente em `_partition_backend.py` (#45), sendo transparente para
+  as demais funções do pipeline. Ver Seção 3.1 e D-07 na Seção 7.
 
 ---
 
@@ -443,11 +449,13 @@ isomorfização opera corretamente, então todo nó em `G'` satisfaz a Def. 2
 (p. 649). O artigo não propõe um verificador separado.
 
 > **As três premissas não são automaticamente preservadas pela
-> implementação.** D-06 (grupo final incompleto) viola (a); D-07 (LSs de
-> tamanhos diferentes no mesmo grupo) potencialmente viola (b). Em ambos
-> os casos, a garantia por construção deixa de valer para um subconjunto
-> dos nós. A verificação empírica da Seção 4.2 existe precisamente para
-> tornar esse subconjunto explícito, em vez de assumi-lo nulo.
+> implementação.** D-06 (grupo final incompleto) viola (a); D-07
+> (LSs de tamanhos diferentes no mesmo grupo) potencialmente viola (b).
+> D-07 foi formalizado em 20/05/2026 com a **Opção A**: grupos são
+> restritos a LSs do mesmo `|Vi|`, e LSs sem grupo completo caem em D-06.
+> Isso preserva a premissa (b) para os grupos que se formam, mas pode
+> aumentar o número de violadores via D-06. O verificador empírico da
+> Seção 4.2 torna esse subconjunto explícito.
 
 ### 4.2 Verificação empírica independente
 
@@ -506,9 +514,9 @@ O verificador estrito é **estritamente mais forte** que o esboço anterior
 booleano): ele captura corretamente os dois casos em que a garantia por
 construção falha — grupo final incompleto (D-06) e LSs com contagens de
 nós insuficientes para somar `k−1` candidatos isomorfos fora da LS de
-origem (D-07). Quando todas as premissas (a)–(c) da Seção 4.1 valem, o
-verificador estrito retorna `satisfies == 1.0`; quando alguma falha, ele
-quantifica a falha em vez de mascará-la.
+origem (D-07). Com a adoção de D-07 Opção A, os violadores residuais
+devem ser atribuíveis exclusivamente a D-06 (grupos incompletos), não
+a desbalanceamento de tamanho dentro de um grupo completo.
 
 > → Implementação completa, parâmetros e casos de borda em
 > [`docs/metrics_definitions.md` §k-anonymity-verifier](metrics_definitions.md#k-anonymity-verifier) (issue #34).
@@ -605,7 +613,8 @@ Mapear para as chaves do YAML de configuração ([config_example.yml](../config_
 | `σ` (suporte FSM) | *(a mapear)* | |
 | `s_max` (FSM simplificado) | `anonymization.fsm.max_size` | 4 (proposto) — ver D-01 |
 | Variante de isomorfização | `anonymization.isomorphism_mode` | `"add_or_delete"` (default) — alternativa: `"add_only"` |
-| Motor de partição | `anonymization.partition_backend` | `"pymetis"` (default) — alternativa: `"networkx-kl"` |
+| Motor de partição | `anonymization.partition_backend` | `"auto"` (default) → pymetis se disponível, KL fallback |
+| Política D-07 | *(interno ao backend; não exposto no YAML)* | Opção A formalizada — restringir grupos a LSs do mesmo `\|Vi\|` |
 
 ---
 
@@ -633,7 +642,7 @@ Exemplos de casos que podem exigir tratamento especial:
 | D-04 | 2026-05-17 *(revisado 2026-05-20)* | **Motor primário: `pymetis` (multilevel k-way, Karypis & Kumar [14])**. Motor fallback: `networkx.kernighan_lin_bisection` recursivo, ativado quando `pymetis` não estiver disponível no ambiente (CI sem dependência C) ou via `anonymization.partition_backend: "networkx-kl"`. A divergência entre os dois motores (complexidade `O(\|E\|)` vs `O(\|E\|·log\|V\|)`; qualidade de partição; tamanho de LSs resultante) deve ser reportada como parâmetro metodológico, não como detalhe de implementação. | Artigo cita explicitamente Karypis & Kumar [14] (p. 650): multilevel k-way é o algoritmo de referência. KL bisection é heurística aparentada mas distinta: opera por bisseção recursiva e não garante `k` partições balanceadas diretamente. Revisão de 20/05/2026 reconcilia D-04 com o skeleton de `_partition_neighborhoods` criado em #33 e com o corpo atualizado da issue #11. | Artigo p. 650, Seção 3.1; skeleton `src/anonymization/he2009.py` (#33); issue #11 (corpo atualizado 20/05/2026) |
 | D-05 | 2026-05-17 | Critério formal de k-anonimato registrado na Seção 4.1; **verificador empírico estrito** (Def. 2 no nível do nó, via `nx.is_isomorphic`/VF2) com saída em fração de nós satisfeitos; definido em detalhe em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo e o critério; `metrics_definitions.md` define os instrumentos de avaliação. Verificador anterior (booleano par-a-par) era estritamente mais fraco que Def. 2 e mascarava violações decorrentes de D-06 e D-07. Risco de desempenho do VF2 declarado (Seção 4.3). | Seção 4 deste documento; [`docs/metrics_definitions.md` §k-anonymity-verifier](metrics_definitions.md#k-anonymity-verifier) (issue #34) |
 | D-06 | 2026-05-17 | Grupos incompletos serão mantidos e reportados como violação parcial; nós residuais tratados como desprotegidos | O verificador estrito captura esses casos como violadores explícitos (count < k-1). O módulo não forçará fusão artificial nem descarte desses grupos no baseline. | Seções 4.1–4.2 deste documento; Def. 2 do artigo |
-| D-07 | *(a decidir antes da Semana 2)* | Política para LSs de tamanhos diferentes no mesmo grupo (consequência operacional de D-04) | Artigo assume `\|V_i\| = d`; multilevel k-way pode produzir partições com tamanhos ligeiramente distintos; KL fallback também aproxima. Opções: restringir grupos a LSs do mesmo tamanho; padding com nós isolados; outra. Escolha afeta Seção 3.1 e Fase 1 da isomorfização. **Nota:** a revisão de D-04 (20/05/2026) não resolve D-07 — pymetis com opção `tpwgts` permite forçar partições exatas de tamanho `d`, mas introduz restrição adicional que precisa ser avaliada. | Seção 3.1 deste documento; D-04 revisado |
+| D-07 | 2026-05-20 | **Opção A — Restringir grupos a LSs do mesmo `\|Vi\|`.** Na etapa de agrupamento (#12), LSs são indexadas por tamanho; grupos formam-se apenas entre LSs com mesmo número de nós. LSs sem grupo completo do mesmo tamanho → grupo incompleto (D-06). Declarada como **limitação do protótipo** no relatório de qualificação. A política é aplicada exclusivamente em `_partition_backend.py` (#45) — transparente para `_partition_neighborhoods` (#11), `_group_isomorphic` (#12) e `_modify_structure` (#13). Produção futura pode usar `tpwgts` do pymetis para forçar partições exatas de tamanho `d`, mas isso não é mandatório para o marco de 29/05/2026. | Artigo pressupõe `\|V_i\| = d` estrito (p. 651); D-04 produz partições aproximadas. Opção A preserva a premissa formal do artigo para os grupos que se formam, sem introduzir nós fictícios (Opção B) nem violar a premissa (Opção C). Custo: mais violadores via D-06 — já instrumentados pelo verificador estrito (D-05). Discussão completa em issue #43 (fechada 20/05/2026). | Seção 3.1 deste documento; D-04 revisado; issue #43; issue #45 |
 
 ---
 
@@ -651,4 +660,6 @@ Para o marco de 29/05/2026, a validação de k-anonimato deve ser:
 
 Critério de aprovação: verificador retorna `satisfies == 1.0` em pelo menos
 1 das 3 sementes; `violators` nas demais sementes registrados e atribuíveis
-a D-06 (grupo final incompleto).
+a D-06 (grupo final incompleto) — e **não** a desbalanceamento de tamanho
+dentro de grupos completos (D-07 Opção A garante que esse segundo caso
+não ocorre).
