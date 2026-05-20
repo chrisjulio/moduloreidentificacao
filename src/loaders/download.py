@@ -14,7 +14,8 @@ SNAP_URL = "https://snap.stanford.edu/data/facebook.tar.gz"
 RAW_DIR = Path(__file__).resolve().parents[2] / "data" / "raw" / "facebook"
 
 # All ego-node IDs present in the SNAP Facebook archive.
-_EGO_IDS: frozenset[int] = frozenset({0, 107, 1684, 1912, 3437, 3980, 4038, 4899, 5188, 5908})
+# Verified against facebook.tar.gz on 2026-05-20.
+_EGO_IDS: frozenset[int] = frozenset({0, 107, 348, 414, 686, 698, 1684, 1912, 3437, 3980})
 _FILE_SUFFIXES: frozenset[str] = frozenset(
     {".circles", ".edges", ".egofeat", ".feat", ".featnames"}
 )
