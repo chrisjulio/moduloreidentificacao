@@ -156,8 +156,14 @@ um grafo `G'` structure-aware k-anonymous tal que:
 
 ### 2.1 Visão geral — três etapas encadeadas
 
+> ⚠️ **Nota de reconciliação (20/05/2026):** O pseudocódigo abaixo foi atualizado
+> para refletir o contrato do skeleton `src/anonymization/he2009.py` (criado em #33).
+> O algoritmo de partição primário passa a ser **multilevel k-way (Karypis & Kumar)**,
+> fiel à referência [14] do artigo. `kernighan_lin_bisection` permanece como fallback
+> documentado (D-04 revisado). Ver Seção 7.
+
 ```
-Entrada:  G = (V, E),  k (privacidade),  d (tamanho máximo de LS),
+Entrada:  G = (V, E),  k (privacidade),  d (tamanho de cada LS em nós),
           σ (suporte FSM — threshold de frequência),
           s_max (tamanho máximo de subgrafo para FSM simplificado)
 Saída:    G' = (V, E')  structure-aware k-anonymous
@@ -165,19 +171,21 @@ Saída:    G' = (V, E')  structure-aware k-anonymous
 ─────────────────────────────────────────────────────────────
 Etapa 1 — PARTIÇÃO  (Seção 3.1)
 ─────────────────────────────────────────────────────────────
-1.1  Calcular c_k = ⌊|V| / d⌋          // número de partições
-1.2  Aplicar particionamento k-way em G via Kernighan-Lin bisseção recursiva
-     → produz subconjuntos V₁, V₂, ..., V_{c_k}
-        tal que |Vᵢ| ≤ d  e  arestas inter-partição minimizadas   [D-04]
-1.3  Para cada i: construir Cᵢ = (Vᵢ, Eᵢ)   // subgrafo induzido
+1.1  Calcular ck = ⌊|V| / d⌋          // número de partições
+1.2  Aplicar particionamento k-way em G
+     → Primário:  multilevel k-way (Karypis & Kumar [14], via pymetis)
+     → Fallback:  kernighan_lin_bisection recursivo (D-04; sem dependência C)
+     → produz subconjuntos V₁, V₂, ..., V_{ck} de tamanho ≈ d
+        tal que arestas inter-partição são minimizadas
+1.3  Para cada i: construir Cᵢ = G.subgraph(Vᵢ)   // subgrafo induzido
 1.4  Remover temporariamente as arestas inter-partição de G
      → conjunto de arestas removidas: E_inter
-     → saída: {LS₁, LS₂, ..., LS_{c_k}}
+     → saída: {LS₁, LS₂, ..., LS_{ck}}
 
 ─────────────────────────────────────────────────────────────
 Etapa 2 — AGRUPAMENTO E ISOMORFIZAÇÃO  (Seção 3.2 / Algorithm 1)
 ─────────────────────────────────────────────────────────────
-2.1  Executar FSM simplificado({LS₁..LS_{c_k}}, σ, s_max)         [D-01]
+2.1  Executar FSM simplificado({LS₁..LS_{ck}}, σ, s_max)         [D-01]
      → subgrafos frequentes g₁..gₘ com |V(gᵢ)| ≤ s_max
      → SLS(gᵢ): conjunto de LSs que contêm gᵢ
 
@@ -227,7 +235,8 @@ Retornar G'
 
 | Etapa | Complexidade | Classificação |
 |---|---|---|
-| Partição (Kernighan-Lin k-way) | `O(|E| · log |V|)` | Interpretativa (complexidade padrão de KL na literatura); METIS é a declarada no artigo, com `O(|E|)` (p. 650) |
+| Partição (multilevel k-way / METIS) | `O(|E|)` | Declarada no artigo (p. 650) |
+| Partição (KL bisection recursivo — fallback D-04) | `O(|E| · log |V|)` | Interpretativa; complexidade padrão de KL na literatura |
 | FSM simplificado (enumeração até `s_max`) | `O(|LS|^s_max)` por LS — controlado por `s_max` | Interpretativa — não declarada no artigo |
 | Agrupamento (Algorithm 1) | `O(c_k · m)` por iteração; `c_k/k` iterações → `O(n·m / d·k)` | Interpretativa |
 | Isomorfização (Fases 1+2) | `O(k · |V(LS)|²)` por grupo | Interpretativa |
@@ -383,10 +392,10 @@ controladas para reprodutibilidade:
 
 Fontes adicionais já tratadas por decisões anteriores:
 
-- **Particionamento**: D-04 substituiu METIS (que tem componentes
-  não-determinísticos dependendo da build) por
-  `networkx.algorithms.community.kernighan_lin_bisection`, que aceita
-  parâmetro `seed` (ver Seção 7).
+- **Particionamento**: D-04 (revisado em 20/05/2026) define multilevel k-way
+  via `pymetis` como primário (aceita `seed` implícito pela inicialização
+  aleatória do METIS) e `kernighan_lin_bisection` como fallback (aceita
+  parâmetro `seed`). Ver Seção 7.
 - **Matching da Fase 1**: D-03 fixa grau como critério primário e índice
   lexicográfico como desempate, eliminando o não-determinismo residual
   (ver Seção 7).
@@ -596,6 +605,7 @@ Mapear para as chaves do YAML de configuração ([config_example.yml](../config_
 | `σ` (suporte FSM) | *(a mapear)* | |
 | `s_max` (FSM simplificado) | `anonymization.fsm.max_size` | 4 (proposto) — ver D-01 |
 | Variante de isomorfização | `anonymization.isomorphism_mode` | `"add_or_delete"` (default) — alternativa: `"add_only"` |
+| Motor de partição | `anonymization.partition_backend` | `"pymetis"` (default) — alternativa: `"networkx-kl"` |
 
 ---
 
@@ -620,10 +630,10 @@ Exemplos de casos que podem exigir tratamento especial:
 | D-01 | 2026-05-17 | FSM simplificado com `s_max` configurável (não gSpan completo) | Pragmatismo de prazo; gSpan Python tem manutenção irregular. `s_max` limita espaço de busca de forma auditável. Declarar como aproximação no relatório. | Artigo cita [18] (Wörlein et al. 2005) sem especificar implementação |
 | D-02 | 2026-05-17 | `d = 10` como default; variável de configuração YAML (`anonymization.d`) | Valor comum na literatura derivada para redes de 1k–10k nós. Varredura sobre `d` excluída do escopo mínimo. | Artigo não fixa default; experimentos usam valores variados (p. 652) |
 | D-03 | 2026-05-17 | Matching Fase 1: grau como critério primário; índice de nó lexicográfico como desempate | Garante determinismo e reprodutibilidade. Artigo diz "based on nodes degree" sem critério de desempate (p. 651). Escolha afeta `G'` e deve ser reportada como parâmetro de reprodutibilidade. | Artigo p. 651, Seção 3.2, Fase 1 |
-| D-04 | 2026-05-17 | Substituir METIS por `networkx.algorithms.community.kernighan_lin_bisection` recursivo | Zero dependência C externa; portabilidade em CI/CD. Substituição explicitamente autorizada pelo artigo: "though any other technique could also be used" (p. 650). Complexidade KL: `O(\|E\|·log\|V\|)` vs `O(\|E\|)` do METIS — aceitável para protótipo. | Artigo p. 650, Seção 3.1 |
+| D-04 | 2026-05-17 *(revisado 2026-05-20)* | **Motor primário: `pymetis` (multilevel k-way, Karypis & Kumar [14])**. Motor fallback: `networkx.kernighan_lin_bisection` recursivo, ativado quando `pymetis` não estiver disponível no ambiente (CI sem dependência C) ou via `anonymization.partition_backend: "networkx-kl"`. A divergência entre os dois motores (complexidade `O(\|E\|)` vs `O(\|E\|·log\|V\|)`; qualidade de partição; tamanho de LSs resultante) deve ser reportada como parâmetro metodológico, não como detalhe de implementação. | Artigo cita explicitamente Karypis & Kumar [14] (p. 650): multilevel k-way é o algoritmo de referência. KL bisection é heurística aparentada mas distinta: opera por bisseção recursiva e não garante `k` partições balanceadas diretamente. Revisão de 20/05/2026 reconcilia D-04 com o skeleton de `_partition_neighborhoods` criado em #33 e com o corpo atualizado da issue #11. | Artigo p. 650, Seção 3.1; skeleton `src/anonymization/he2009.py` (#33); issue #11 (corpo atualizado 20/05/2026) |
 | D-05 | 2026-05-17 | Critério formal de k-anonimato registrado na Seção 4.1; **verificador empírico estrito** (Def. 2 no nível do nó, via `nx.is_isomorphic`/VF2) com saída em fração de nós satisfeitos; definido em detalhe em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo e o critério; `metrics_definitions.md` define os instrumentos de avaliação. Verificador anterior (booleano par-a-par) era estritamente mais fraco que Def. 2 e mascarava violações decorrentes de D-06 e D-07. Risco de desempenho do VF2 declarado (Seção 4.3). | Seção 4 deste documento; [`docs/metrics_definitions.md` §k-anonymity-verifier](metrics_definitions.md#k-anonymity-verifier) (issue #34) |
 | D-06 | 2026-05-17 | Grupos incompletos serão mantidos e reportados como violação parcial; nós residuais tratados como desprotegidos | O verificador estrito captura esses casos como violadores explícitos (count < k-1). O módulo não forçará fusão artificial nem descarte desses grupos no baseline. | Seções 4.1–4.2 deste documento; Def. 2 do artigo |
-| D-07 | *(a decidir antes da Semana 2)* | Política para LSs de tamanhos diferentes no mesmo grupo (consequência operacional de D-04) | Artigo assume `\|V_i\| = d`; KL aproxima. Opções: restringir grupos a LSs do mesmo tamanho; padding com nós isolados; outra. Escolha afeta Seção 3.1 e Fase 1 da isomorfização. | Seção 3.1 deste documento; D-04 |
+| D-07 | *(a decidir antes da Semana 2)* | Política para LSs de tamanhos diferentes no mesmo grupo (consequência operacional de D-04) | Artigo assume `\|V_i\| = d`; multilevel k-way pode produzir partições com tamanhos ligeiramente distintos; KL fallback também aproxima. Opções: restringir grupos a LSs do mesmo tamanho; padding com nós isolados; outra. Escolha afeta Seção 3.1 e Fase 1 da isomorfização. **Nota:** a revisão de D-04 (20/05/2026) não resolve D-07 — pymetis com opção `tpwgts` permite forçar partições exatas de tamanho `d`, mas introduz restrição adicional que precisa ser avaliada. | Seção 3.1 deste documento; D-04 revisado |
 
 ---
 
