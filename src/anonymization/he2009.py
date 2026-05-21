@@ -262,12 +262,41 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
         Copia do grafo com estrutura modificada satisfazendo
         structure-aware k-anonimato (Definicao 3 do artigo).
 
+    Notas
+    -----
+    Parametros internos fixados nesta chamada de alto nivel:
+    * ``sigma=0.5``: suporte minimo de 50 % para o FSM simplificado
+      (D-01). Valor conservador que garante padroes estruturalmente
+      representativos sem restringir demais o agrupamento.
+    * ``add_only=False``: variante Edge Adding/Deleting para menor
+      perturbacao media (``anonymization.isomorphism_mode="add_or_delete"``
+      na Tabela de parametros, Secao 5 de docs/algorithm_notes.md).
+    * ``backend="auto"``: pymetis quando disponivel, fallback KL (D-04).
+
     Referencia
     ----------
     He et al. (2009), Secao 3 -- Anonymization Techniques.
     Secoes 2.3 (Definicao 3) e 3 (visao geral do pipeline de 3 passos).
     """
-    raise NotImplementedError
+    # ------------------------------------------------------------------
+    # Step 1 — Partition G into Local Structures (Section 3.1)
+    # ------------------------------------------------------------------
+    local_structures = _partition_neighborhoods(g, d, seed=seed, backend="auto")
+
+    # ------------------------------------------------------------------
+    # Step 2 — Group Local Structures via FSM + MF factor (Section 3.2)
+    # ------------------------------------------------------------------
+    groups = _group_isomorphic(local_structures, k=k, sigma=0.5, seed=seed)
+
+    # ------------------------------------------------------------------
+    # Step 3 — Make each group isomorphic (Section 3.2, Phases 1 & 2)
+    # ------------------------------------------------------------------
+    modified_groups = _modify_structure(groups, seed=seed, add_only=False)
+
+    # ------------------------------------------------------------------
+    # Step 4 — Reconnect inter-partition edges (Section 3.3)
+    # ------------------------------------------------------------------
+    return _reconnect_inter_edges(g, modified_groups)
 
 
 def _partition_neighborhoods(
@@ -619,4 +648,89 @@ def _reconnect_inter_edges(
     He et al. (2009), Secao 3.3 -- Reconnecting Local Structures (p. 652).
     Para cada inter-aresta reconectada: k(k-1) arestas adicionadas.
     """
-    raise NotImplementedError
+    # ------------------------------------------------------------------
+    # Build lookup: node_id → (group_idx, ls_idx)
+    # ------------------------------------------------------------------
+    node_location: dict[object, tuple[int, int]] = {}
+    for g_idx, group in enumerate(groups):
+        for ls_idx, ls in enumerate(group):
+            for node in ls.nodes():
+                node_location[node] = (g_idx, ls_idx)
+
+    # ------------------------------------------------------------------
+    # Build position maps for each LS using the same D-03 ordering as
+    # _modify_structure: sort by (-degree, node_id) on the modified LS.
+    #
+    # inv_maps[g_idx][ls_idx][pos] -> node_id
+    # pos_maps[g_idx][ls_idx][node_id] -> pos
+    # ------------------------------------------------------------------
+    inv_maps: list[list[dict[int, object]]] = []
+    pos_maps: list[list[dict[object, int]]] = []
+    for group in groups:
+        grp_inv: list[dict[int, object]] = []
+        grp_pos: list[dict[object, int]] = []
+        for ls in group:
+            sorted_nodes = sorted(ls.nodes(), key=lambda v: (-ls.degree(v), v))
+            inv = dict(enumerate(sorted_nodes))
+            pos = {v: p for p, v in inv.items()}
+            grp_inv.append(inv)
+            grp_pos.append(pos)
+        inv_maps.append(grp_inv)
+        pos_maps.append(grp_pos)
+
+    # ------------------------------------------------------------------
+    # Build G_prime = union of all modified Local Structures.
+    # At this point G_prime contains all n nodes and the intra-LS edges.
+    # ------------------------------------------------------------------
+    g_prime = nx.Graph()
+    for group in groups:
+        for ls in group:
+            g_prime.add_nodes_from(ls.nodes())
+            g_prime.add_edges_from(ls.edges())
+
+    # ------------------------------------------------------------------
+    # Reconnect inter-partition edges (Section 3.3).
+    #
+    # For each edge (u, v) in g_original:
+    #   * Intra-LS edge: both endpoints in the same LS → already in
+    #     g_prime via the union above; skip.
+    #   * Same-group inter-LS edge: endpoints in DIFFERENT LSs of the
+    #     SAME group → add the k(k-1) cross-LS position pairs (i≠j)
+    #     to preserve the isomorphism inside the group (He et al. p.652).
+    #   * Cross-group inter-LS edge: endpoints in DIFFERENT groups →
+    #     add back the original edge only (isomorphism across groups is
+    #     not enforced by the He et al. algorithm).
+    # ------------------------------------------------------------------
+    for u, v in g_original.edges():
+        u_loc = node_location.get(u)
+        v_loc = node_location.get(v)
+        if u_loc is None or v_loc is None:
+            # Node absent from all LSs — should not happen for valid input.
+            g_prime.add_edge(u, v)
+            continue
+
+        u_g, u_l = u_loc
+        v_g, v_l = v_loc
+
+        if u_g == v_g and u_l == v_l:
+            # Intra-LS edge: already present in g_prime; nothing to do.
+            continue
+
+        if u_g == v_g:
+            # Same-group inter-LS edge: add all k(k-1) cross-LS pairs.
+            k_size = len(groups[u_g])
+            u_pos = pos_maps[u_g][u_l][u]
+            v_pos = pos_maps[v_g][v_l][v]
+            for i in range(k_size):
+                for j in range(k_size):
+                    if i == j:
+                        continue  # skip intra-LS pairs
+                    node_u = inv_maps[u_g][i][u_pos]  # u-equivalent in LS_i
+                    node_v = inv_maps[v_g][j][v_pos]  # v-equivalent in LS_j
+                    if node_u != node_v:
+                        g_prime.add_edge(node_u, node_v)
+        else:
+            # Cross-group inter-LS edge: restore original edge.
+            g_prime.add_edge(u, v)
+
+    return g_prime
