@@ -5,6 +5,14 @@
 # Pinagem por piso (>=). Para reprodutibilidade estrita após o setup do
 # ambiente, gere lockfile via:
 #     pip freeze > requirements.lock.txt
+#
+# NOTA — pymetis (backend METIS para particionamento de grafos):
+#   NÃO está listado aqui pois não instala via pip no Windows.
+#   - Linux/macOS : pip install pymetis          (compila do fonte)
+#   - Windows     : conda install -c conda-forge pymetis  (binário)
+#   - Fallback    : backend Kernighan-Lin ativa automaticamente
+#                   se pymetis estiver ausente (UserWarning emitido)
+#   Setup completo: veja environment.yml e scripts/setup_conda_windows.ps1
 
 # Grafos
 networkx>=3.4
