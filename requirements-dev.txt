@@ -7,6 +7,10 @@
 #
 # Independente do requirements.txt (produção) para manter o CI rápido
 # e permitir que ambientes minimalistas pulem ferramentas de dev.
+#
+# IMPORTANTE: a versão do ruff deve ser idêntica ao rev declarado
+# em .pre-commit-config.yaml para garantir paridade local ↔ CI.
 
 pytest>=8.0
-ruff>=0.6
+ruff==0.11.0
+pre-commit>=3.7
