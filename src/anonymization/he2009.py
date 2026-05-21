@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterator
+from typing import NamedTuple
 
 import networkx as nx
 import numpy as np
@@ -25,6 +26,22 @@ from src.anonymization._partition_backend import partition_graph
 # ---------------------------------------------------------------------------
 # Private helpers — Simplified FSM (D-01)
 # ---------------------------------------------------------------------------
+
+
+class _PatternEntry(NamedTuple):
+    """Catalog entry for a frequent subgraph pattern (FSM, D-01).
+
+    Attributes
+    ----------
+    rep:
+        A representative copy of the subgraph (used to read ``number_of_edges``).
+    ls_indices:
+        Indices (into the current bucket) of Local Structures that contain
+        this pattern.
+    """
+
+    rep: nx.Graph
+    ls_indices: set[int]
 
 
 def _connected_subsets(g: nx.Graph, max_size: int) -> Iterator[frozenset]:
@@ -122,8 +139,8 @@ def _group_within_bucket(
     # WL hash serves as the canonical form; collisions are negligible for
     # subgraphs with <= fsm_max_size nodes.
     # ------------------------------------------------------------------
-    # pattern_catalog: wl_hash -> [representative_graph, set_of_ls_indices]
-    pattern_catalog: dict[str, list] = {}
+    # pattern_catalog: wl_hash -> _PatternEntry(rep, ls_indices)
+    pattern_catalog: dict[str, _PatternEntry] = {}
 
     for ls_idx, ls in enumerate(bucket):
         seen_hashes: set[str] = set()
@@ -133,15 +150,15 @@ def _group_within_bucket(
             if h not in seen_hashes:
                 seen_hashes.add(h)
                 if h not in pattern_catalog:
-                    pattern_catalog[h] = [sg.copy(), set()]
-                pattern_catalog[h][1].add(ls_idx)
+                    pattern_catalog[h] = _PatternEntry(rep=sg.copy(), ls_indices=set())
+                pattern_catalog[h].ls_indices.add(ls_idx)
 
     # Frequent patterns: support >= min_support; sorted by hash for determinism
     frequent: list[tuple[str, nx.Graph, list[int]]] = sorted(
         (
-            (h, entry[0], sorted(entry[1]))
+            (h, entry.rep, sorted(entry.ls_indices))
             for h, entry in pattern_catalog.items()
-            if len(entry[1]) >= min_support
+            if len(entry.ls_indices) >= min_support
         ),
         key=lambda x: x[0],
     )
