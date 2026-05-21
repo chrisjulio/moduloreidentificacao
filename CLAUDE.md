@@ -107,6 +107,23 @@ Para cada issue:
 
 ---
 
+## Convenção de commits
+
+- Nunca passe a mensagem de commit inline (`git commit -m "..."` ou
+  here-string `@'...'@`). O parser de comandos tem limite de ~965 bytes
+  e mensagens longas falham com "command too long for parsing".
+- Em vez disso, sempre escreva a mensagem em um arquivo temporário e
+  use `git commit -F <arquivo>`.
+- Mantenha QUALQUER comando individual abaixo de 900 bytes. Se a
+  escrita do arquivo de mensagem ultrapassar isso, divida em um
+  `Set-Content` inicial seguido de um ou mais `Add-Content`.
+- Use `$env:TEMP\\commit_msg.txt` como caminho do arquivo e remova-o
+  após o commit.
+- Revise a mensagem antes de commitar: sem blocos de bullets
+  duplicados.
+
+---
+
 ## Validação obrigatória de k-anonimato
 
 Ao implementar qualquer anonimizador, o verificador
