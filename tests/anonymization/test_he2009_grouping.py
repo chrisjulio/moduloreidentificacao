@@ -381,8 +381,7 @@ class TestEdgeCases:
         groups = _group_isomorphic(ls, k=1, sigma=0.1, seed=0)
         assert sum(len(grp) for grp in groups) == n
         assert all(len(grp) == 1 for grp in groups), (
-            f"Expected all groups of size 1 with k=1, got sizes: "
-            f"{[len(grp) for grp in groups]}"
+            f"Expected all groups of size 1 with k=1, got sizes: {[len(grp) for grp in groups]}"
         )
 
     def test_k1_coverage_invariant(self) -> None:
