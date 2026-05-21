@@ -11,6 +11,20 @@
 
 ---
 
+## Início de sessão obrigatório
+
+Ao abrir qualquer sessão nova neste repositório:
+
+```
+leia docs/progress.md e continue de onde paramos
+```
+
+O arquivo `docs/progress.md` é a fonte de verdade do estado de progresso
+corrente — último passo concluído, próximo passo planejado, bloqueios ativos
+e decisões pendentes. Ele deve ser atualizado ao final de cada sessão produtiva.
+
+---
+
 ## Em uma linha
 
 Pipeline `anonimização → ataque → métrica` sobre redes sociais reais, produzindo
