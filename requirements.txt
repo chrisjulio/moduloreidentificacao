@@ -15,7 +15,10 @@
 #   Setup completo: veja environment.yml e scripts/setup_conda_windows.ps1
 
 # Grafos
-networkx>=3.4
+# NOTA: pinado em >=3.5 — a semântica de weisfeiler_lehman_graph_hash
+# para grafos sem atributos mudou na v3.5, garantindo consistência de
+# hashes entre ambientes e reprodutibilidade dos testes de agrupamento.
+networkx>=3.5
 
 # Numérico e estatístico (KS-test em scipy.stats.ks_2samp)
 numpy>=2.0

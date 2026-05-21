@@ -11,6 +11,7 @@ Covers:
     - Determinism: two calls with the same seed return the same grouping.
     - D-07 (same-size policy): LSs with different node counts never share
       a group.
+    - Edge cases: sigma=0, sigma=1, k=1, edgeless LSs (mf=0 tiebreak).
 
 Seeds are fixed to 0 throughout (controlled exception per
 .claude/rules/seeds.md — deterministic tests require reproducible
@@ -18,6 +19,8 @@ grouping; seed=0 carries no algorithmic significance).
 """
 
 from __future__ import annotations
+
+from collections.abc import Callable
 
 import networkx as nx
 import pytest
@@ -29,7 +32,7 @@ from src.anonymization.he2009 import _group_isomorphic
 # ---------------------------------------------------------------------------
 
 
-def _make_ls(graph_factory, count: int) -> list[nx.Graph]:
+def _make_ls(graph_factory: Callable[[], nx.Graph], count: int) -> list[nx.Graph]:
     """Return *count* independent copies of the graph produced by *graph_factory*."""
     return [graph_factory().copy() for _ in range(count)]
 
@@ -57,11 +60,6 @@ def cycle4() -> nx.Graph:
 @pytest.fixture
 def path5() -> nx.Graph:
     return nx.path_graph(5)
-
-
-@pytest.fixture
-def petersen() -> nx.Graph:
-    return nx.petersen_graph()
 
 
 # ---------------------------------------------------------------------------
@@ -328,3 +326,90 @@ class TestSameSizePolicy:
         ls = small + large
         groups = _group_isomorphic(ls, k=2, sigma=0.1, seed=0)
         assert _all_nodes_covered(ls, groups)
+
+
+# ---------------------------------------------------------------------------
+# Edge cases: sigma=0, sigma=1, k=1, edgeless LSs
+# ---------------------------------------------------------------------------
+
+
+class TestEdgeCases:
+    """Boundary conditions for sigma, k, and graph topology."""
+
+    def test_sigma_zero_uses_min_support_one(self) -> None:
+        """sigma=0 → min_support=max(1, int(0*n))=1; every single-node
+        pattern qualifies as frequent — grouping still covers all LSs."""
+        ls = _make_ls(lambda: nx.cycle_graph(4), 6)
+        groups = _group_isomorphic(ls, k=2, sigma=0.0, seed=0)
+        assert _all_nodes_covered(ls, groups)
+        assert all(isinstance(g, nx.Graph) for grp in groups for g in grp)
+
+    def test_sigma_zero_total_count_preserved(self) -> None:
+        """sigma=0: total members == input size."""
+        n = 7
+        ls = _make_ls(lambda: nx.path_graph(3), n)
+        groups = _group_isomorphic(ls, k=3, sigma=0.0, seed=0)
+        assert sum(len(grp) for grp in groups) == n
+
+    def test_sigma_one_only_universal_patterns(self) -> None:
+        """sigma=1 → min_support=n; only patterns present in ALL LSs are
+        frequent. With identical LSs every pattern qualifies, so grouping
+        is identical to the standard case."""
+        ls = _make_ls(lambda: nx.cycle_graph(4), 6)
+        groups = _group_isomorphic(ls, k=2, sigma=1.0, seed=0)
+        assert _all_nodes_covered(ls, groups)
+
+    def test_sigma_one_heterogeneous_falls_back_to_random(self) -> None:
+        """sigma=1 with structurally distinct LSs: no pattern can be
+        universal across all of them, so the fallback random grouping
+        activates. Coverage invariant must still hold."""
+        ls = [
+            nx.cycle_graph(4).copy(),
+            nx.path_graph(4).copy(),
+            nx.star_graph(3).copy(),
+            nx.complete_graph(4).copy(),
+            nx.cycle_graph(4).copy(),
+            nx.path_graph(4).copy(),
+        ]
+        groups = _group_isomorphic(ls, k=2, sigma=1.0, seed=0)
+        assert _all_nodes_covered(ls, groups)
+
+    def test_k1_each_ls_forms_own_group(self) -> None:
+        """k=1: every LS must be its own group (no grouping is needed)."""
+        n = 5
+        ls = _make_ls(lambda: nx.cycle_graph(4), n)
+        groups = _group_isomorphic(ls, k=1, sigma=0.1, seed=0)
+        assert sum(len(grp) for grp in groups) == n
+        assert all(len(grp) == 1 for grp in groups), (
+            f"Expected all groups of size 1 with k=1, got sizes: "
+            f"{[len(grp) for grp in groups]}"
+        )
+
+    def test_k1_coverage_invariant(self) -> None:
+        """k=1: coverage invariant holds — each LS appears exactly once."""
+        ls = _make_ls(lambda: nx.path_graph(3), 4)
+        groups = _group_isomorphic(ls, k=1, sigma=0.2, seed=0)
+        assert _all_nodes_covered(ls, groups)
+
+    def test_edgeless_lss_mf_zero_tiebreak_by_hash(self) -> None:
+        """When all LSs have n_edges=0, mf=0.0 for every pattern and the
+        tiebreak falls to the smallest WL hash string. Grouping must still
+        cover all LSs and respect D-06."""
+        n = 5
+        # Isolated-node graphs: no edges, so every subgraph has 0 edges.
+        ls = [nx.Graph() for _ in range(n)]
+        for g in ls:
+            g.add_nodes_from(range(3))  # 3 isolated nodes, 0 edges
+        groups = _group_isomorphic(ls, k=2, sigma=0.1, seed=0)
+        assert sum(len(grp) for grp in groups) == n
+        assert _all_nodes_covered(ls, groups)
+
+    def test_edgeless_lss_all_graphs_preserved(self) -> None:
+        """Edgeless LSs: every returned element is still an nx.Graph."""
+        ls = [nx.Graph() for _ in range(4)]
+        for g in ls:
+            g.add_nodes_from(range(2))
+        groups = _group_isomorphic(ls, k=2, sigma=0.1, seed=0)
+        for grp in groups:
+            for item in grp:
+                assert isinstance(item, nx.Graph)
