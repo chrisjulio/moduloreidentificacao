@@ -12,5 +12,5 @@
 # em .pre-commit-config.yaml para garantir paridade local ↔ CI.
 
 pytest>=8.0
-ruff==0.11.0
+ruff==0.15.13
 pre-commit>=3.7
