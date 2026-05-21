@@ -6,6 +6,12 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
 
+[project.optional-dependencies]
+# Backend METIS via pip (Linux/macOS apenas).
+# No Windows, instale via conda: conda install -c conda-forge pymetis
+# Ver scripts/setup_conda_windows.ps1 para setup completo.
+partition-c = ["pymetis"]
+
 # ----------------------------------------------------------------------
 # ruff — linting e formatação
 # ----------------------------------------------------------------------
