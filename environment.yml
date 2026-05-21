@@ -1,0 +1,38 @@
+# =============================================================================
+# environment.yml — Ambiente Conda para desenvolvimento
+# =============================================================================
+#
+# Cobre todas as plataformas. Resolve o caso do Windows, onde pymetis
+# não pode ser compilado via pip (ausência de headers POSIX no MSVC).
+# No Linux/macOS o pip também funciona; aqui usamos conda-forge em todas
+# as plataformas para garantir consistência.
+#
+# Criação (primeira vez):
+#   conda env create -f environment.yml
+#   conda activate moduloreidentificacao
+#
+# Atualização após mudanças neste arquivo:
+#   conda env update -f environment.yml --prune
+#
+# Windows: use o script assistido em scripts/setup_conda_windows.ps1
+# =============================================================================
+
+name: moduloreidentificacao
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.12
+
+  # pymetis: binário pré-compilado via conda-forge.
+  # pip install pymetis falha no Windows (GKlib usa regex.h, header POSIX
+  # ausente no MSVC). conda-forge distribui win-64, linux-64 e osx-arm64.
+  - pymetis>=2025.2.2
+
+  # Demais dependências via pip
+  - pip
+  - pip:
+    - -r requirements.txt
+    - -r requirements-dev.txt
