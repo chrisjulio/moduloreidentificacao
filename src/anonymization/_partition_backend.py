@@ -119,6 +119,16 @@ def partition_graph(
     grupos com menos nós que ``d`` confirmam a limitação conhecida e não
     devem ser interpretados como falha do algoritmo — ver D-07 em
     ``docs/algorithm_notes.md`` §7.
+
+    With ``backend="networkx-kl"``, recursive Kernighan-Lin bisection
+    guarantees only the partition count (``ck``) and full, disjoint
+    coverage of all nodes. It does NOT guarantee balanced partition
+    sizes for ``ck > 2``; individual partitions may be smaller than
+    ``len(g) / ck``. Exact-size balance is a property of the
+    ``pymetis`` backend only. A partition smaller than the target
+    group size therefore does not invalidate the implementation under
+    the KL fallback -- it is a known limitation. See
+    ``docs/algorithm_notes.md`` (decision D-07).
     """
     if ck < 1:
         raise ValueError(f"ck deve ser >= 1; recebido: {ck}")
