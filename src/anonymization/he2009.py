@@ -444,24 +444,34 @@ def _modify_structure(
     Implementa a anonimizacao intra-grupo em duas fases:
 
     Phase 1 -- Numeracao de nos (node matching):
-        Para as Local Structures que compartilham o subgrafo comum gi,
-        atribui numeros naturais crescentes aos nos de gi. Para as
-        demais, realiza matching por grau (closeness de grau) em relacao
-        aos nos ja numerados, propagando a numeracao pelos vizinhos.
+        Atribui uma posicao canonica (0-indexed) a cada no em cada LS
+        do grupo, ordenando por (grau descendente, id do no ascendente)
+        conforme D-03.  Essa numeracao define a correspondencia entre
+        nos de LSs distintas: a posicao i da LS_a corresponde a posicao
+        i da LS_b, independentemente dos ids reais dos nos.
 
     Phase 2 -- Modificacao de arestas:
-        Com os nos numerados, torna as k Local Structures isomorfas:
-        (i)  add_only=True:  apenas adiciona arestas;
-        (ii) add_only=False: para cada par de nos correspondentes,
-             escolhe adicao ou remocao de aresta conforme minimize
-             o numero total de mudancas estruturais.
+        Para cada par de posicoes (i, j) com i < j, verifica em quantas
+        LSs existe a aresta entre os nos nessas posicoes.
+        * add_only=False (padrao, Edge Adding/Deleting):
+            se count_com_aresta >= count_sem_aresta, adiciona a aresta
+            em todas as LSs que nao a tem; caso contrario, remove das
+            que a tem.  Minimiza o numero total de modificacoes por par
+            (greedy local, conforme descricao do artigo p. 651).
+        * add_only=True (Edge Adding only):
+            se pelo menos uma LS tem a aresta, adiciona-a a todas.
 
     Parametros
     ----------
     groups : list[list[nx.Graph]]
         Grupos de Local Structures retornados por _group_isomorphic.
+        Todos os grupos completos devem ter LSs com o mesmo numero de
+        nos (D-07 Opcao A, garantido por _group_isomorphic).  Grupos
+        com um unico membro (D-06) sao passados sem modificacao.
     seed : int
-        Semente aleatoria para desempates no matching de nos.
+        Semente aleatoria aceita para consistencia de API; reservada
+        para desempate em extensoes futuras.  Nao ha escolhas
+        aleatorias na implementacao atual de Phase 1 e Phase 2.
     add_only : bool, optional
         Se True, aplica apenas adicao de arestas (Edge Adding).
         Se False, aplica adicao e remocao (Edge Adding/Deleting),
@@ -471,14 +481,106 @@ def _modify_structure(
     -------
     list[list[nx.Graph]]
         Grupos com Local Structures modificadas e isomorfas entre si,
-        prontas para reconexao.
+        prontas para reconexao.  Grupos incompletos (D-06) sao
+        retornados sem modificacao.
+
+    Notas
+    -----
+    * A funcao **nao modifica** os grafos de entrada; trabalha sobre
+      copias independentes.
+    * A correspondencia de nos e puramente posicional (D-03); nao
+      depende da existencia de um subgrafo comum calculado por FSM.
+    * Grupos de tamanhos mistos (violacao de D-07) sao passados sem
+      modificacao para nao propagar erros silenciosos.
+    * Arestas self-loop nunca sao adicionadas (posicoes distintas
+      implicam nos distintos dentro de cada LS).
 
     Referencia
     ----------
     He et al. (2009), Secao 3.2 -- Local Structures Grouping and
     Anonymization, Phase 1 (p. 651) e Phase 2 (p. 652).
+    D-03 em docs/algorithm_notes.md §7.
     """
-    raise NotImplementedError
+    _rng = np.random.default_rng(seed)  # reserved for future tie-break use
+
+    result_groups: list[list[nx.Graph]] = []
+
+    for group in groups:
+        # Grupos com menos de 2 LSs nao precisam de isomorfizacao (D-06).
+        if len(group) < 2:
+            result_groups.append([ls.copy() for ls in group])
+            continue
+
+        # Verificar homogeneidade de tamanho (D-07 Opcao A).
+        # Se violada, passar sem modificacao para nao mascarar erros.
+        sizes = {ls.number_of_nodes() for ls in group}
+        if len(sizes) > 1:
+            result_groups.append([ls.copy() for ls in group])
+            continue
+
+        # Trabalhar sobre copias independentes.
+        modified: list[nx.Graph] = [ls.copy() for ls in group]
+        n_nodes = modified[0].number_of_nodes()
+
+        if n_nodes == 0:
+            result_groups.append(modified)
+            continue
+
+        # ------------------------------------------------------------------
+        # Phase 1 -- Canonical node ordering per LS (D-03)
+        # Sort nodes by (-degree, node_id); assign position 0..n_nodes-1.
+        # inv_maps[ls_idx][pos] -> node_id in modified[ls_idx]
+        # ------------------------------------------------------------------
+        inv_maps: list[dict[int, object]] = []
+        for ls in modified:
+            sorted_nodes = sorted(ls.nodes(), key=lambda v: (-ls.degree(v), v))
+            inv_maps.append(dict(enumerate(sorted_nodes)))
+
+        # ------------------------------------------------------------------
+        # Phase 2 -- Make isomorphic (greedy per pair, He et al. p. 651)
+        # ------------------------------------------------------------------
+        k_size = len(modified)
+        for pos_i in range(n_nodes):
+            for pos_j in range(pos_i + 1, n_nodes):
+                # Check edge existence at this position pair in every LS.
+                has_edge = [
+                    modified[ls_idx].has_edge(
+                        inv_maps[ls_idx][pos_i],
+                        inv_maps[ls_idx][pos_j],
+                    )
+                    for ls_idx in range(k_size)
+                ]
+                count_with = sum(has_edge)
+                count_without = k_size - count_with
+
+                if add_only:
+                    # Edge Adding only: if any LS has the edge, add to all.
+                    if count_with > 0:
+                        for ls_idx in range(k_size):
+                            if not has_edge[ls_idx]:
+                                u = inv_maps[ls_idx][pos_i]
+                                v = inv_maps[ls_idx][pos_j]
+                                modified[ls_idx].add_edge(u, v)
+                else:
+                    # Edge Adding/Deleting: majority-vote per pair.
+                    if count_with >= count_without:
+                        # Add to all LSs that lack the edge.
+                        for ls_idx in range(k_size):
+                            if not has_edge[ls_idx]:
+                                u = inv_maps[ls_idx][pos_i]
+                                v = inv_maps[ls_idx][pos_j]
+                                modified[ls_idx].add_edge(u, v)
+                    else:
+                        # Remove from all LSs that have the edge.
+                        for ls_idx in range(k_size):
+                            if has_edge[ls_idx]:
+                                u = inv_maps[ls_idx][pos_i]
+                                v = inv_maps[ls_idx][pos_j]
+                                modified[ls_idx].remove_edge(u, v)
+
+        result_groups.append(modified)
+
+    return result_groups
 
 
 def _reconnect_inter_edges(
