@@ -265,6 +265,46 @@ do pseudocódigo acima.
 
 ---
 
+## Backend de particionamento (`partition_graph`)
+
+### Comportamento por backend
+
+`partition_graph(g, ck, seed, backend)` particiona o grafo em `ck`
+subconjuntos disjuntos. O backend é selecionado assim:
+
+- `backend="pymetis"`: usa pymetis; garante particionamento balanceado.
+- `backend="networkx-kl"`: bissecção Kernighan-Lin aplicada
+  recursivamente até atingir `ck` partições.
+- `backend="auto"`: usa pymetis se disponível; caso contrário recai
+  para `networkx-kl` emitindo um `UserWarning` (D-04).
+
+### Limitação conhecida do fallback KL (D-07)
+
+A bissecção KL recursiva garante apenas **contagem de partições** e
+**cobertura total e disjunta** dos nós. Ela **não garante balanceamento
+de tamanho** para `ck > 2`: partições individuais podem ser menores que
+`len(g) / ck`. O balanceamento exato é propriedade exclusiva do backend
+pymetis.
+
+Os testes em `tests/anonymization/test_partition_backend.py` verificam,
+para o caso KL, contagem e cobertura — não tamanho exato — de forma
+consistente com essa limitação.
+
+### Implicação para a validação de k-anonimato (Seção 7 do planejamento)
+
+Como uma partição sob o fallback KL pode ser menor que o tamanho de
+grupo pretendido, o k-anonimato pode não ser atingido por esse backend.
+Consequências operacionais:
+
+- A verificação de sanidade obrigatória do marco de 29/05 deve rodar
+  com `backend="pymetis"`.
+- Se for executada com `backend="networkx-kl"`, um grupo de
+  equivalência menor que k **não invalida o algoritmo** — apenas
+  confirma a limitação documentada aqui. Esse caso deve ser registrado
+  explicitamente, não tratado como falha de implementação.
+
+---
+
 ## 3. Operações de modificação do grafo
 
 > **Fontes:** He et al. (2009), Seções 3.2 (Phase 2, p. 651) e 3.3 (p. 652).
