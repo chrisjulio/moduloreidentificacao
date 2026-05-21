@@ -16,6 +16,8 @@ from __future__ import annotations
 
 import networkx as nx
 
+from src.anonymization._partition_backend import partition_graph
+
 
 def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     """Ponto de entrada principal do algoritmo de anonimizacao estrutural.
@@ -57,38 +59,78 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     raise NotImplementedError
 
 
-def _partition_neighborhoods(g: nx.Graph, d: int) -> list[nx.Graph]:
+def _partition_neighborhoods(
+    g: nx.Graph,
+    d: int,
+    seed: int = 0,
+    backend: str = "auto",
+) -> list[nx.Graph]:
     """Particiona G em Local Structures usando multilevel k-way partitioning.
 
     Divide o conjunto de nos V em ck = floor(n/d) subconjuntos disjuntos
-    V1, V2, ..., Vck de tamanho d, minimizando o numero de inter-arestas
-    entre particoes distintas (problema NP-completo, resolvido via
-    heuristica multilevel k-way de Karypis & Kumar [14]).
+    V1, V2, ..., Vck de tamanho aproximadamente d, minimizando o numero
+    de inter-arestas entre particoes distintas (problema NP-completo,
+    resolvido via heuristica multilevel k-way de Karypis & Kumar [14]).
 
     Apos a particao, as inter-arestas sao removidas temporariamente.
     Cada componente resultante Ci = (Vi, Ei) corresponde a uma
     Local Structure LSi, conforme a Definicao 1 do artigo.
 
+    O particionamento e delegado a ``_partition_backend.partition_graph``,
+    que seleciona automaticamente entre pymetis (motor primario, fiel ao
+    artigo) e networkx KL (fallback D-04) conforme a disponibilidade do
+    ambiente.
+
     Parametros
     ----------
-    G : nx.Graph
-        Grafo de entrada.
+    g : nx.Graph
+        Grafo de entrada nao-direcionado.
     d : int
-        Tamanho alvo de cada Local Structure (numero de nos).
+        Tamanho alvo de cada Local Structure em numero de nos.
         Determina o numero de particoes: ck = floor(n / d).
+        Nao e profundidade de vizinhanca -- e tamanho de particao.
+    seed : int, optional
+        Semente aleatoria para reproducibilidade do backend KL.
+        Ignorada pelo pymetis (deterministico). Propagada de
+        ``anonymize`` via parametro ``seed``. Padrao: 0.
+    backend : str, optional
+        Motor de particionamento: ``"auto"`` (padrao), ``"pymetis"``
+        ou ``"networkx-kl"``. Passado diretamente a ``partition_graph``.
 
     Retorna
     -------
     list[nx.Graph]
-        Lista de subgrafos {C1, C2, ..., Cck}, cada um correspondendo
+        Lista de ck subgrafos {C1, C2, ..., Cck}, cada um correspondendo
         a uma Local Structure LSi com as inter-arestas removidas.
+        Os subgrafos sao copias independentes (``copy()``), nao views
+        do grafo original.
+
+    Raises
+    ------
+    ValueError
+        Se d >= n (nao e possivel formar nenhuma particao).
 
     Referencia
     ----------
     He et al. (2009), Secao 3.1 -- Graph Partition.
     Algoritmo de particao: Karypis & Kumar [14] (multilevel k-way).
+    Decisao D-04 (revisado 20/05/2026) em docs/algorithm_notes.md sec. 7.
     """
-    raise NotImplementedError
+    n = g.number_of_nodes()
+    if d >= n:
+        raise ValueError(f"d={d} deve ser menor que n={n} para formar ao menos uma particao.")
+
+    ck = n // d
+    node_sets, _meta = partition_graph(g, ck, seed=seed, backend=backend)
+
+    local_structures: list[nx.Graph] = []
+    for node_set in node_sets:
+        # subgraph() retorna apenas arestas cujos dois extremos estao em node_set,
+        # excluindo automaticamente inter-arestas (Secao 3.1, passo 1.4).
+        ls = g.subgraph(node_set).copy()
+        local_structures.append(ls)
+
+    return local_structures
 
 
 def _group_isomorphic(
