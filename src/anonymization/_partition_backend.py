@@ -101,6 +101,24 @@ def partition_graph(
     para rastreabilidade.  A restrição de grupos a LSs do mesmo tamanho é
     responsabilidade de ``_group_isomorphic`` (#12), que consulta
     ``meta["sizes"]``.
+
+    **Limitação do backend ``"networkx-kl"`` — partições não balanceadas:**
+    A bissecção recursiva de Kernighan-Lin **NÃO garante partições de tamanho
+    exatamente ``d = n // ck``** para ``ck > 2``. O backend garante apenas
+    (a) o número de partições solicitado (``ck``) e (b) cobertura total dos
+    nós (toda partição não-vazia). Tamanho exato por partição é propriedade
+    exclusiva do backend ``"pymetis"`` — ver testes em
+    ``tests/anonymization/test_partition_backend.py``.
+
+    Implicação direta para k-anonimato: uma partição produzida pelo backend
+    KL pode ter tamanho menor que ``d``, o que significa que o k-anonimato
+    pretendido **pode não ser atingido** por esse backend. Por isso, a
+    validação de sanidade da Seção 7 de ``docs/algorithm_notes.md``
+    (marco 29/05/2026) **deve preferencialmente ser executada com**
+    ``backend="pymetis"``; se executada com ``backend="networkx-kl"``,
+    grupos com menos nós que ``d`` confirmam a limitação conhecida e não
+    devem ser interpretados como falha do algoritmo — ver D-07 em
+    ``docs/algorithm_notes.md`` §7.
     """
     if ck < 1:
         raise ValueError(f"ck deve ser >= 1; recebido: {ck}")
