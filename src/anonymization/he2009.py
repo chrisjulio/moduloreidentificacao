@@ -14,9 +14,203 @@ Pipeline de anonimizacao (Secao 3):
 
 from __future__ import annotations
 
+from collections import defaultdict
+from collections.abc import Iterator
+
 import networkx as nx
+import numpy as np
 
 from src.anonymization._partition_backend import partition_graph
+
+# ---------------------------------------------------------------------------
+# Private helpers — Simplified FSM (D-01)
+# ---------------------------------------------------------------------------
+
+
+def _connected_subsets(g: nx.Graph, max_size: int) -> Iterator[frozenset]:
+    """Yield every distinct connected node-subset of *g* of size 1..max_size.
+
+    Uses depth-first expansion with a ``seen`` set to avoid revisiting the
+    same subset regardless of which starting node reached it first.
+    Iteration order is deterministic: nodes are visited in sorted order
+    before each expansion.
+
+    Parameters
+    ----------
+    g:
+        Input undirected graph.
+    max_size:
+        Maximum number of nodes per subset (inclusive).
+
+    Yields
+    ------
+    frozenset
+        A connected node-subset of *g* with at most *max_size* nodes.
+
+    Notes
+    -----
+    For small graphs (|V| <= 20) and max_size <= 4 the total number of
+    subsets is at most C(20, 4) = 4 845 — well within the practical
+    performance envelope required by FSM (D-01).
+    Complexity per call: O(C(|V|, max_size)).
+    """
+    seen: set[frozenset] = set()
+
+    def _expand(current: frozenset) -> Iterator[frozenset]:
+        if current in seen:
+            return
+        seen.add(current)
+        yield current
+        if len(current) < max_size:
+            border: set = set()
+            for v in current:
+                border.update(g.neighbors(v))
+            border -= set(current)
+            for u in sorted(border):
+                yield from _expand(current | frozenset([u]))
+
+    for start in sorted(g.nodes()):
+        yield from _expand(frozenset([start]))
+
+
+def _group_within_bucket(
+    bucket: list[nx.Graph],
+    k: int,
+    sigma: float,
+    rng: np.random.Generator,
+    fsm_max_size: int = 4,
+) -> list[list[nx.Graph]]:
+    """FSM + MF greedy grouping for a same-size bucket of Local Structures.
+
+    Implements the core of Algorithm 1 (He et al., 2009, p. 650-651) for
+    a homogeneous set of Local Structures with the same number of nodes
+    (D-07 Opção A).
+
+    Parameters
+    ----------
+    bucket:
+        Local Structures to group, **all with the same number of nodes**.
+    k:
+        Target group size (k-anonymity parameter).
+    sigma:
+        Minimum support fraction for the simplified FSM (D-01).
+        Pattern must appear in ``max(1, int(sigma * n))`` LSs to qualify.
+    rng:
+        Seeded NumPy Generator for reproducible random choices.
+    fsm_max_size:
+        Maximum subgraph size (nodes) for the simplified FSM (D-01).
+        Default: 4 (``anonymization.fsm.max_size``).
+
+    Returns
+    -------
+    list[list[nx.Graph]]
+        Ordered list of groups. All complete groups have exactly *k*
+        members. The last group may have fewer than *k* members (D-06).
+    """
+    n = len(bucket)
+    groups: list[list[nx.Graph]] = []
+
+    if n == 0:
+        return groups
+
+    min_support = max(1, int(sigma * n))
+
+    # ------------------------------------------------------------------
+    # Simplified FSM (D-01)
+    # Enumerate every connected induced subgraph up to fsm_max_size nodes
+    # for each LS and fingerprint it with the Weisfeiler-Lehman graph hash.
+    # WL hash serves as the canonical form; collisions are negligible for
+    # subgraphs with <= fsm_max_size nodes.
+    # ------------------------------------------------------------------
+    # pattern_catalog: wl_hash -> [representative_graph, set_of_ls_indices]
+    pattern_catalog: dict[str, list] = {}
+
+    for ls_idx, ls in enumerate(bucket):
+        seen_hashes: set[str] = set()
+        for node_subset in _connected_subsets(ls, fsm_max_size):
+            sg = ls.subgraph(node_subset)
+            h = nx.weisfeiler_lehman_graph_hash(sg)
+            if h not in seen_hashes:
+                seen_hashes.add(h)
+                if h not in pattern_catalog:
+                    pattern_catalog[h] = [sg.copy(), set()]
+                pattern_catalog[h][1].add(ls_idx)
+
+    # Frequent patterns: support >= min_support; sorted by hash for determinism
+    frequent: list[tuple[str, nx.Graph, list[int]]] = sorted(
+        (
+            (h, entry[0], sorted(entry[1]))
+            for h, entry in pattern_catalog.items()
+            if len(entry[1]) >= min_support
+        ),
+        key=lambda x: x[0],
+    )
+
+    # ------------------------------------------------------------------
+    # Greedy grouping — Algorithm 1 (He et al., 2009, Section 3.2)
+    # ------------------------------------------------------------------
+    available: set[int] = set(range(n))
+
+    while len(available) >= k:
+        # Compute MF for each frequent pattern restricted to available LSs.
+        # Tiebreak on MF: smaller hash string → deterministic (D-03 style).
+        best_mf: float = -1.0
+        best_h: str = ""
+        best_sls: list[int] = []
+
+        for h, rep, ls_list in frequent:
+            sls = [i for i in ls_list if i in available]
+            if not sls:
+                continue
+            n_edges = rep.number_of_edges()
+            mf = float(n_edges * k if len(sls) >= k else n_edges * len(sls))
+            if mf > best_mf or (mf == best_mf and (not best_h or h < best_h)):
+                best_mf = mf
+                best_h = h
+                best_sls = sls
+
+        if not best_sls:
+            # No frequent pattern covers remaining available LSs.
+            # Fall back to random grouping to exhaust the available pool.
+            remaining = sorted(available)
+            perm = rng.permutation(len(remaining)).tolist()
+            shuffled = [remaining[i] for i in perm]
+            n_complete = len(shuffled) - len(shuffled) % k
+            for i in range(0, n_complete, k):
+                chunk = shuffled[i : i + k]
+                groups.append([bucket[j] for j in chunk])
+                for j in chunk:
+                    available.discard(j)
+            break
+
+        # Form a group of k LSs from best_sls (Algorithm 1, lines 15-21)
+        if len(best_sls) >= k:
+            # |SLS(gj)| >= k: choose k LSs randomly from SLS(gj)
+            chosen_pos = rng.choice(len(best_sls), size=k, replace=False)
+            chosen = [best_sls[int(p)] for p in sorted(chosen_pos)]
+        else:
+            # |SLS(gj)| < k: use all from best_sls and complete with others
+            chosen = list(best_sls)
+            others = sorted(available - set(chosen))
+            needed = k - len(chosen)
+            # len(others) = len(available) - len(chosen) >= k - len(chosen) = needed
+            extra_pos = rng.choice(len(others), size=needed, replace=False)
+            chosen += [others[int(p)] for p in sorted(extra_pos)]
+
+        groups.append([bucket[i] for i in chosen])
+        for i in chosen:
+            available.discard(i)
+
+    # Remaining LSs (< k) → incomplete final group (D-06)
+    if available:
+        groups.append([bucket[i] for i in sorted(available)])
+
+    return groups
+
+
+# ---------------------------------------------------------------------------
+# Public pipeline functions
+# ---------------------------------------------------------------------------
 
 
 def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
@@ -141,10 +335,10 @@ def _group_isomorphic(
 ) -> list[list[nx.Graph]]:
     """Agrupa Local Structures usando Frequent Subgraph Mining e fator MF.
 
-    Executa o Algorithm 1 do artigo: aplica um algoritmo FSM (Frequent
-    Subgraph Miner) sobre o conjunto de Local Structures com suporte sigma
-    para obter subgrafos frequentes g1, ..., gm. Para cada gi, calcula o
-    fator de multiplicacao:
+    Executa o Algorithm 1 do artigo: aplica um algoritmo FSM simplificado
+    (D-01) sobre o conjunto de Local Structures com suporte sigma para obter
+    subgrafos frequentes g1, ..., gm. Para cada gi, calcula o fator de
+    multiplicacao:
 
         MF(gi) = |E(gi)| x k           se |SLS(gi)| >= k
         MF(gi) = |E(gi)| x |SLS(gi)|   caso contrario
@@ -163,21 +357,64 @@ def _group_isomorphic(
     sigma : float
         Limiar de suporte para o FSM (ex.: 0.20 para 20%).
         Valores baixos permitem mais subgrafos frequentes candidatos.
+        ``sigma=0`` → suporte minimo de 1 LS; ``sigma=1`` → apenas padroes
+        presentes em todas as LSs sao frequentes.
     seed : int
-        Semente aleatoria para escolhas aleatorias no agrupamento.
+        Semente aleatoria para escolhas nao-deterministicas no agrupamento
+        (Algorithm 1, linhas 15, 17, 21 — Secao 3.3 deste documento).
 
     Retorna
     -------
     list[list[nx.Graph]]
-        Lista de grupos; cada grupo contem k Local Structures a serem
-        tornadas isomorfas entre si na etapa seguinte.
+        Lista de grupos. Grupos completos tem exatamente k membros.
+        O ultimo grupo pode ter menos de k membros (D-06).
+
+    Notas de implementacao
+    ----------------------
+    **Nao usa** ``nx.is_isomorphic`` como abordagem principal. O isomorfismo
+    e aproximado via hash Weisfeiler-Lehman (D-01, ``fsm_max_size=4``).
+    Colisoes de hash sao estatisticamente negligenciaveis para subgrafos
+    com ate 4 nos.
+
+    **D-07 Opcao A** (formalizado 20/05/2026): antes de executar o FSM,
+    as LSs sao indexadas pelo numero de nos. Grupos sao formados
+    exclusivamente entre LSs de mesmo tamanho. LSs sem grupo completo
+    do mesmo tamanho formam o grupo final incompleto (D-06).
+
+    **Custo computacional** (FSM simplificado vs. VF2 par-a-par):
+
+    * **VF2 par-a-par** (abordagem evitada): O(ck^2) chamadas a
+      ``nx.is_isomorphic``, cada uma com custo VF2 de O(d! / aut). Para
+      ck=50 e d=10 sao 1 225 chamadas. Cresce quadraticamente com ck.
+    * **FSM simplificado + MF** (esta implementacao): O(ck * C(d, s_max))
+      para enumerar subgrafos (C(10,4) = 210 por LS) mais O(ck * m * 1)
+      para calcular MF em cada iteracao, onde m e o numero de padroes
+      frequentes (tipicamente << ck). Cresce linearmente com ck.
 
     Referencia
     ----------
     He et al. (2009), Secao 3.2 -- Local Structures Grouping.
     Algorithm 1 (Local Structure Grouping, p. 650-651).
+    D-01, D-06, D-07 em docs/algorithm_notes.md §7.
     """
-    raise NotImplementedError
+    rng = np.random.default_rng(seed)
+
+    if not local_structures:
+        return []
+
+    # D-07 Opção A: index LSs by size; groups form only within same-size bins
+    size_buckets: dict[int, list[int]] = defaultdict(list)
+    for ls_idx, ls in enumerate(local_structures):
+        size_buckets[ls.number_of_nodes()].append(ls_idx)
+
+    all_groups: list[list[nx.Graph]] = []
+    for size in sorted(size_buckets.keys()):
+        bucket_indices = size_buckets[size]
+        bucket_ls = [local_structures[i] for i in bucket_indices]
+        bucket_groups = _group_within_bucket(bucket_ls, k, sigma, rng)
+        all_groups.extend(bucket_groups)
+
+    return all_groups
 
 
 def _modify_structure(
