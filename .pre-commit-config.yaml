@@ -1,0 +1,18 @@
+# Pre-commit hooks — roda automaticamente antes de cada commit.
+# Instalação inicial:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Execução manual em todos os arquivos:
+#   pre-commit run --all-files
+#
+# A versão rev DEVE ser a mesma que ruff==X.Y.Z em requirements-dev.txt
+# para evitar divergências entre ambiente local e CI.
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.13
+    hooks:
+      - id: ruff-format        # formata o código (equivalente a ruff format)
+      - id: ruff               # lint + auto-fix (equivalente a ruff check --fix)
+        args: [--fix]
