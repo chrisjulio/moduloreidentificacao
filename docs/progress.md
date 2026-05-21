@@ -13,20 +13,25 @@
 
 **Data da última atualização:** 2026-05-21
 
-**Semana corrente:** Semana 1 (15–22/05/2026) — Setup; leitura de He et al. (2009); loader Facebook Ego-Nets
+**Semana corrente:** Semana 2 (22–29/05/2026) — He et al. + validação obrigatória de k-anonimato
 
 **Último passo concluído:**
-- Repositório inicializado com estrutura de módulos, CLAUDE.md, WORKFLOW.md, CI, pre-commit e config de exemplo.
+- Issue #16 (Marco 29/05): script `experiments/run_milestone_29_05.py` executado com sucesso.
+  - Resultado: `SUCCESS_PARTIAL` nas 3 sementes (42, 1337, 2718).
+  - `satisfied_fraction=0.9962`, apenas `incomplete_group` (D-06 aceitável).
+  - PR #53 aberto em `validation/milestone-29-05` aguardando revisão humana.
+- Issues #11–#15 (pipeline He et al. + validador independente) todas fechadas.
+- Decision log DL-01 documentado em `docs/decision_log.md`.
 
 **Próximo passo planejado:**
-- Implementar `src/loaders/facebook_ego.py` — download e carregamento das ego-redes do Facebook (SNAP dataset).
-- Abrir issue correspondente e criar branch `loader/facebook-ego`.
+- Aguardar merge do PR #53 (revisão humana obrigatória).
+- Após merge: iniciar Semana 3 — ataques (grau e subgrafos), issue a abrir.
 
 **Bloqueios ativos:**
-- Nenhum.
+- PR #53 aguarda revisão humana no VSCode antes do merge.
 
 **Decisões pendentes de validação humana:**
-- Nenhuma.
+- Revisão e merge do PR #53 (marco 29/05).
 
 ---
 
@@ -47,6 +52,13 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-21 — Marco 29/05: validação k-anonimato k=5, d=1 (issue #16)
+
+- **Concluído:** Script `experiments/run_milestone_29_05.py` + YAML `experiments/configs/milestone_29_05.yml` criados e executados. Resultado APROVADO nas 3 sementes (satisfaction_fraction=0.9962, apenas incomplete_group). PR #53 aberto.
+- **Próximo:** Merge do PR #53 (revisão humana). Semana 3: ataques por grau e subgrafos.
+- **Bloqueios:** PR #53 aguarda revisão.
+- **Decisões pendentes:** Revisão humana do PR #53.
 
 ### 2026-05-21 — Inicialização do repositório e estrutura de sessão
 
