@@ -22,7 +22,7 @@
 
 > **Issue:** [S1] Definir metrics_definitions.md §k-anonymity-verifier (#34).
 > **Referências cruzadas:** `docs/algorithm_notes.md` §4 (decisões D-05 e D-06).
-> **Status:** Definido. Consolidado em 20/05/2026.
+> **Status:** Definido. Consolidado em 20/05/2026. Schema atualizado em 22/05/2026 (DL-01).
 
 O verificador de k-anonimato estrutural é um instrumento de auditoria
 **independente do anonimizador**. Ele opera sobre o grafo de saída `G'` e
@@ -53,65 +53,68 @@ pode violar parcialmente (ver D-06 e D-07 em `algorithm_notes.md` §7).
 
 ```python
 def validate_k_anonymity(
-    G_prime: nx.Graph,
     groups: list[list[nx.Graph]],  # groups[r][j] = subgrafo induzido em G' da j-ésima LS do grupo r
     k: int,
-) -> KAnonymityReport:
-    """Verify structure-aware k-anonymity of G' independently of the anonymizer.
-
-    Parameters
-    ----------
-    G_prime:
-        Output graph produced by the anonymization algorithm.
-    groups:
-        Partition of Local Structures (LSs) into equivalence groups as
-        produced by Algorithm 1. Each LS is represented as a node-induced
-        subgraph of G_prime. groups[r][j] is the j-th LS in group r.
-    k:
-        Target anonymity level (minimum group cardinality).
-
-    Returns
-    -------
-    KAnonymityReport
-        Structured result; see Section 3.
-    """
+) -> dict:
+    """Verify structure-aware k-anonymity of G' independently of the anonymizer."""
 ```
 
 **Entrada esperada:**
-- `G_prime` — grafo NetworkX não-dirigido; produto direto do anonimizador.
-- `groups` — lista de grupos; cada grupo é uma lista de subgrafos induzidos em `G_prime`
+- `groups` — lista de grupos; cada grupo é uma lista de subgrafos induzidos em `G'`
   (não cópias independentes), preservando a identidade dos nós.
 - `k` — inteiro positivo; mesmo valor configurado no anonimizador.
 
-**Saída:** instância de `KAnonymityReport` (ver Seção 3).
+**Saída:** dict com os campos da Seção 3.
 
 ---
 
 ### 3. Estrutura de retorno
 
 ```python
-@dataclass
-class KAnonymityReport:
-    valid: bool                     # True somente se NENHUMA violação existir
-    satisfies_fraction: float       # fração de nós que satisfazem Def. 2 (∈ [0, 1])
-    n_violators: int                # número de nós que não satisfazem Def. 2
-    violators: list[int]            # IDs dos nós violadores
-    violations: list[ViolationRecord]  # log estruturado (ver Seção 5)
-    per_ls_iso_count: dict[tuple[int, int], int]
-    # per_ls_iso_count[(r, j)] = número de nós em LSs isomorfas à LS (r, j),
-    # excluindo os nós da própria LS. Nó v satisfaz Def. 2 sse per_ls_iso_count[(r,j)] >= k-1
-    # onde (r, j) é a posição da LS à qual v pertence.
+{
+    # --- Campos originais (compatíveis com versões anteriores) ---
+    "valid":               bool,   # True somente se NENHUMA violação existir
+    "satisfied_fraction":  float,  # fração de nós que satisfazem Def. 2 (mantido para BC)
+    "n_violators":         int,    # número de nós violadores
+    "violators":           list,   # IDs dos nós violadores (ordenados)
+    "violations":          list,   # log estruturado (ver Seção 5)
 
-@dataclass
-class ViolationRecord:
-    type: str          # "non_disjoint" | "incomplete_group" | "non_isomorphic"
-    group_idx: int     # índice r do grupo afetado
-    ls_idx: int | None # índice j da LS afetada (None quando o tipo afeta o grupo inteiro)
-    detail: str        # mensagem legível para log estruturado
-    status: str        # "unprotected" | "partially_unprotected"
+    # --- Campos novos — DL-01 (22/05/2026) ---
+    "coverage_fraction":          float,  # alias de satisfied_fraction; fração coberta
+    "uncovered_fraction":         float,  # 1 - coverage_fraction; sempre == n_violators / n_total
+    "deficit_fully_structural":   bool,   # ver abaixo
+}
 ```
 
-**Invariante:** `valid == True` sse `violations == []` sse `satisfies_fraction == 1.0`.
+#### `coverage_fraction`
+Alias direto de `satisfied_fraction`. Fração de nós do grafo `G'` que satisfazem
+a Def. 2 para o `k` configurado. Valor real calculado pelo verificador — pode ser
+`0.98`, `0.94`, `1.0` etc., dependendo do grafo e de `k`. **Não existe um percentual
+fixo pré-definido de nós descartados.**
+
+#### `uncovered_fraction`
+Fração de nós não cobertos (`1 - coverage_fraction`). Campo explícito para
+facilitar filtragem e relatórios sem requerer cálculo externo.
+
+#### `deficit_fully_structural`
+`True` sse **todas** as violações registradas em `violations` são do tipo
+`"incomplete_group"` (causa estrutural, D-06), e **nenhuma** é do tipo
+`"non_isomorphic"` ou `"non_disjoint"` (que indicariam bugs de implementação).
+
+Este campo suporta diretamente o **critério lógico do marco #16** (decisão DL-01
+em `docs/decision_log.md`):
+
+| `coverage_fraction` | `deficit_fully_structural` | Veredicto do marco |
+|---|---|---|
+| `>= 0.9` | `True` | **APROVADO** — déficit integralmente estrutural |
+| `>= 0.9` | `False` | **REPROVADO** — há violações não estruturais (bug) |
+| `< 0.9` | qualquer | **REPROVADO** — piso de sanidade não atingido |
+| `1.0` | `True` (vacuamente) | **APROVADO** — sucesso pleno |
+
+> **Nota:** quando `valid == True` (sem nenhuma violação), `deficit_fully_structural`
+> é `True` por vacuidade (`violation_types ⊆ {"incomplete_group"}`
+> com conjunto vazio). Isso é correto: sem déficit, o campo não é relevante
+> mas não é falso.
 
 ---
 
@@ -150,9 +153,9 @@ Para todo grupo G_r em groups:
   são registrados como violadores.
 - **`valid` nunca retorna `True` se houver ao menos um grupo incompleto**, mesmo
   que todos os nós do grupo incompleto sejam minoria pequena.
-- O relatório reporta `satisfies_fraction < 1.0` e lista explicitamente os
-  violadores, permitindo distinguir falha pequena (grupo final de D-06) de falha
-  estrutural (muitos grupos incompletos, sugerindo bug).
+- O relatório reporta `satisfied_fraction` / `coverage_fraction < 1.0` e lista
+  explicitamente os violadores, permitindo distinguir falha pequena (grupo final
+  de D-06) de falha estrutural (muitos grupos incompletos, sugerindo bug).
 
 #### 4.3 Isomorfismo mútuo nos grupos completos
 
@@ -188,8 +191,8 @@ o Algorithm 1 pode exaurir LSs disponíveis antes de completar o último grupo.
    ```
 2. Marcar todos os nós das LSs do grupo como violadores em `violators`.
 3. **Nunca retornar `valid = True`** na presença de grupo incompleto.
-4. Registrar `satisfies_fraction` com precisão (ex.: `0.986` em vez de
-   `False`) — isso permite ao módulo de experimentos distinguir:
+4. Registrar `satisfied_fraction` / `coverage_fraction` com precisão (ex.: `0.986`
+   em vez de `False`) — isso permite ao módulo de experimentos distinguir:
    - falha pequena atribuível a D-06 (poucos violadores, dentro do limite
      esperado de `d` nós)
    - falha estrutural (muitos violadores, sugerindo bug na isomorfização)
@@ -203,7 +206,7 @@ deve ser investigada antes de prosseguir.
 
 ### 6. Log estruturado de violações
 
-Cada violação é registrada como um `ViolationRecord` com os campos da Seção 3.
+Cada violação é registrada como um dict com os campos da Seção 3.
 Os três tipos possíveis são:
 
 | `type` | Causa | `status` | Quando ocorre |
@@ -212,24 +215,29 @@ Os três tipos possíveis são:
 | `"incomplete_group"` | Grupo com `\|G_r\| < k` | `"partially_unprotected"` | Caso normal (D-06) |
 | `"non_isomorphic"` | Par de LSs no mesmo grupo não isomorfas | `"unprotected"` | Bug na isomorfização |
 
-**Exemplo de saída em log estruturado (JSON):**
+**Exemplo de saída em log estruturado (JSON) — após DL-01:**
 
 ```json
 {
   "valid": false,
-  "satisfies_fraction": 0.981,
-  "n_violators": 10,
+  "satisfied_fraction": 0.9962,
+  "coverage_fraction": 0.9962,
+  "uncovered_fraction": 0.0038,
+  "deficit_fully_structural": true,
+  "n_violators": 2,
+  "violators": [104, 387],
   "violations": [
     {
       "type": "incomplete_group",
-      "group_idx": 53,
-      "ls_idx": null,
-      "detail": "group 53: size 3 < k=5; 10 nodes partially_unprotected",
-      "status": "partially_unprotected"
+      "status": "partially_unprotected",
+      "nodes": [104, 387]
     }
   ]
 }
 ```
+
+Leitura: `coverage_fraction=0.9962 >= 0.9` e `deficit_fully_structural=true`
+→ instância **APROVADA** pelo critério DL-01.
 
 ---
 
@@ -267,9 +275,9 @@ exatamente **e** (b) os grupos são disjuntos. Se qualquer uma falhar (D-06,
 D-07), o verificador ingênuo retorna `True` mascarando violações reais.
 
 O verificador definido nesta seção contorna o problema contando, para cada LS
-`(r, j)`, o número de nós em LSs isomorfas **distintas** dentro do mesmo grupo:
-`per_ls_iso_count[(r, j)]`. O nó `v ∈ LS(r,j)` satisfaz Def. 2 sse
-`per_ls_iso_count[(r, j)] >= k - 1`.
+`(r, j)`, o número de nós em LSs isomorfas **distintas** dentro do mesmo grupo.
+O nó `v ∈ LS(r,j)` satisfaz Def. 2 sse o grupo de `v` é completo (`len >= k`)
+e todas as LSs do grupo são mutuamente isomorfas.
 
 #### 7.3 Escopo da certificação
 
@@ -285,14 +293,20 @@ de qualificação.
 
 Para a configuração de validação (`k = 5`, `egonet_id = 3437`, `d = 10`):
 
-1. O verificador retorna `valid = True` (`satisfies_fraction == 1.0`) em
-   **ao menos 1 das 3 sementes**.
-2. Nas sementes em que `valid = False`, `n_violators ≤ d − 1 = 9` — ou seja,
-   os violadores são atribuíveis ao grupo final incompleto (D-06) e não a bug
-   na isomorfização.
-3. Se a condição 1 **não** for satisfeita em nenhuma semente, ou se
-   `n_violators > d − 1` em alguma semente, disparar reformulação de escopo
-   (conforme Seção 7 do plano operacional) — não acomodar.
+1. O verificador retorna `valid = True` (`coverage_fraction == 1.0`) em
+   **ao menos 1 das 3 sementes**; **ou**
+2. Em todas as sementes em que `valid = False`:
+   - `coverage_fraction >= 0.9`, **e**
+   - `deficit_fully_structural == True`
+   (ou seja, 100% do déficit é atribuível a grupo incompleto D-06).
+3. Se nenhuma das duas condições for satisfeita, ou se
+   `deficit_fully_structural == False` em qualquer semente, disparar
+   reformulação de escopo (conforme Seção 7 do plano operacional) —
+   não acomodar.
 
 **Reprodutibilidade:** resultado registrado em log estruturado com semente,
 `k`, `d` e `egonet_id` explícitos.
+
+**Marco 29/05/2026: APROVADO** (issue #16, PR #53).
+Configuração k=5, d=1, egonet_id=3437: `coverage_fraction=0.9962`,
+`deficit_fully_structural=True` nas 3 sementes; apenas `incomplete_group` (D-06).
