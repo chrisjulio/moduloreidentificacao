@@ -1,7 +1,8 @@
-# Marco 29/05/2026 — Resultado Consolidado
+# Validação de k-Anonimato Estrutural — Resultados Consolidados
 
-> Documento de registro único do marco não-negociável da Semana 2.
-> Criterios de aceite: issue #16, decisão DL-01 ([docs/decision_log.md](decision_log.md)).
+> Registro consolidado da validação empírica de k-anonimato estrutural
+> (He et al., 2009) sobre o Facebook Ego-Nets, k ∈ {2, 5, 10, 20}.
+> Critérios de aceite: issue #16, decisão DL-01 ([docs/decision_log.md](decision_log.md)).
 > Detalhamento técnico: [docs/algorithm_notes.md](algorithm_notes.md) §§ 8–9.
 
 ---

@@ -17,7 +17,7 @@
 
 **Último passo concluído:**
 - Issue #18 (Documentar resultado do marco 29/05): PR #55 aberto.
-  - `docs/milestone_29_05.md` criado com data, hashes, tabela de resultados, análise de violações e decisão.
+  - `docs/validacao_k_anonimato.md` criado com data, hashes, tabela de resultados, análise de violações e decisão.
   - `CLAUDE.md` atualizado com link para o novo documento.
 - Issue #17 (k-sweep k∈{2,10,20}): PR #54 mergeado. Todos os k do escopo Mínimo validados.
 - Issue #16 (Marco 29/05): APROVADO. PR #53 mergeado.
@@ -54,7 +54,7 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 
 ### 2026-05-22 — Documentação do marco 29/05 (issue #18)
 
-- **Concluído:** `docs/milestone_29_05.md` criado com registro consolidado do marco: data, hashes de commits, tabela de configuração, tabela de resultados para k∈{2,5,10,20} × 3 sementes, análise de violações (nenhuma crítica), decisão de prosseguir para Semana 3. `CLAUDE.md` atualizado com link. PR #55 aberto.
+- **Concluído:** `docs/validacao_k_anonimato.md` criado com registro consolidado da validação: data, hashes de commits, tabela de configuração, tabela de resultados para k∈{2,5,10,20} × 3 sementes, análise de violações (nenhuma crítica), decisão de prosseguir para Semana 3. `CLAUDE.md` atualizado com link. PR #55 aberto.
 - **Próximo:** Aguardar merge do PR #55. Iniciar Semana 3: ataques por grau e subgrafos.
 - **Bloqueios:** PR #55 aguarda revisão humana.
 - **Decisões pendentes:** Revisão humana do PR #55.

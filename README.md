@@ -47,7 +47,7 @@ A unidade de progresso é o **gráfico defensável**, não o texto argumentativo
 | S4: Gráficos, tabelas e documentação técnica | 05–12/06 | ⏳ Pendente |
 | S5: Polimento, reprodutibilidade e entrega | 12–14/06 | ⏳ Pendente |
 
-**Marco intermediário não-negociável cumprido:** 21/05/2026 (antecipado em 8 dias). k-anonimato empiricamente atingido em todas as configurações do Mínimo (k ∈ {2, 5, 10, 20}) com `satisfied_fraction ≥ 0.9962` — critério DL-01 aprovado. Ver `docs/milestone_29_05.md` e `docs/decision_log.md`.
+**Marco intermediário não-negociável cumprido:** 21/05/2026 (antecipado em 8 dias). k-anonimato empiricamente atingido em todas as configurações do Mínimo (k ∈ {2, 5, 10, 20}) com `satisfied_fraction ≥ 0.9962` — critério DL-01 aprovado. Ver `docs/validacao_k_anonimato.md` e `docs/decision_log.md`.
 
 ### Componentes implementados
 
@@ -108,7 +108,7 @@ O Mínimo é entregável defensável em si; o Desejável é entregável discutí
   metrics_definitions.md # definições operacionais das métricas
   decision_log.md        # registro formal de decisões técnicas (DL-01, D-05, D-06, D-07)
   progress.md            # log de progresso por sessão
-  milestone_29_05.md     # resultado do marco 29/05 (cumprido em 21/05)
+  validacao_k_anonimato.md # resultados consolidados da validação empírica (k ∈ {2,5,10,20})
 requirements.txt
 requirements-dev.txt
 config_example.yml
