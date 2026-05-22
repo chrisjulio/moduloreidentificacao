@@ -1,0 +1,57 @@
+# ============================================================
+# k-Sweep — k=2, d=1 sobre ego-rede 3437 do Facebook (SNAP)
+# Issue #17: testes de sanidade adicionais
+# ============================================================
+
+experiment:
+  name: he2009_facebook_k_sweep_k2
+  description: >
+    Varredura de k: verifica k-anonimato estrutural para k=2, d=1
+    sobre a ego-rede 3437 do Facebook Ego-Nets (n_lcc=532, m_lcc=4812).
+    Parte da issue #17 (testes de sanidade adicionais: k=2, k=10, k=20).
+  output_dir: results/k_sweep
+
+# ------------------------------------------------------------
+# Sementes (mínimo 3 por .claude/rules/seeds.md)
+# ------------------------------------------------------------
+seeds: [42, 1337, 2718]
+
+# ------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------
+dataset:
+  name: facebook_ego_nets
+  source: snap
+  data_path: data/raw/facebook/
+  preprocessing_mode: single_egonet
+  egonet_id: 3437       # n_lcc=532, m_lcc=4812, density=0.034068
+  include_ego: false    # nó ego excluído (decisão Seção 3.1)
+  component: lcc        # reter maior componente conexo (decisão Seção 3.2)
+  min_nodes: 200        # limiar de sanidade (10 * k_max = 10 * 20 = 200)
+
+# ------------------------------------------------------------
+# Anonimização
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k: 2
+  d: 1
+  sigma: 0.5            # suporte mínimo do FSM simplificado (D-01)
+
+# ------------------------------------------------------------
+# Validação
+# ------------------------------------------------------------
+validation:
+  validate_k_anonymity: true
+  log_dir: experiments/logs/k_sweep/k2/
+  # Critério de aceite (DL-01 / D-06):
+  #   sucesso_pleno:    valid=True  e violations=[]
+  #   sucesso_parcial:  valid=False apenas por incomplete_group E satisfied_fraction >= 0.9
+  #   falha:            qualquer non_isomorphic, non_disjoint, ou satisfied_fraction < 0.9
+
+# ------------------------------------------------------------
+# Execução
+# ------------------------------------------------------------
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/
