@@ -16,26 +16,21 @@
 **Semana corrente:** Semana 2 (22–29/05/2026) — He et al. + validação obrigatória de k-anonimato
 
 **Último passo concluído:**
-- Issue #17 (k-sweep k∈{2,10,20}): `experiments/run_k_sweep.py` executado com sucesso.
-  - k=2: SUCCESS_FULL × 3 sementes (satisfied_fraction=1.0000).
-  - k=10: SUCCESS_PARTIAL × 3 sementes (satisfied_fraction=0.9962, D-06 aceitável).
-  - k=20: SUCCESS_PARTIAL × 3 sementes (satisfied_fraction=0.9774, D-06 aceitável).
-  - Todos os k do escopo Mínimo (k∈{2,5,10,20}) agora validados empiricamente.
-  - PR a abrir em `validation/k-sweep` aguardando revisão humana.
-- Issue #16 (Marco 29/05): APROVADO. PR #53 aberto, aguarda revisão humana.
+- Issue #18 (Documentar resultado do marco 29/05): PR #55 aberto.
+  - `docs/milestone_29_05.md` criado com data, hashes, tabela de resultados, análise de violações e decisão.
+  - `CLAUDE.md` atualizado com link para o novo documento.
+- Issue #17 (k-sweep k∈{2,10,20}): PR #54 mergeado. Todos os k do escopo Mínimo validados.
+- Issue #16 (Marco 29/05): APROVADO. PR #53 mergeado.
 
 **Próximo passo planejado:**
-- Abrir PR de `validation/k-sweep` para issue #17.
-- Aguardar revisão e merge dos PRs #53 (issue #16) e #17.
-- Após merges: Semana 3 — ataques por grau e subgrafos.
+- Aguardar revisão e merge do PR #55 (issue #18).
+- Após merge: Semana 3 — ataques por grau e subgrafos (issues #19–#22).
 
 **Bloqueios ativos:**
-- PR #53 (issue #16) aguarda revisão humana no VSCode.
-- PR de issue #17 (k-sweep) a abrir — requer revisão humana.
+- PR #55 (issue #18) aguarda revisão humana no VSCode.
 
 **Decisões pendentes de validação humana:**
-- Revisão e merge do PR #53 (marco 29/05, issue #16).
-- Revisão e merge do PR de issue #17 (k-sweep).
+- Revisão e merge do PR #55 (docs marco 29/05, issue #18).
 
 ---
 
@@ -56,6 +51,13 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-22 — Documentação do marco 29/05 (issue #18)
+
+- **Concluído:** `docs/milestone_29_05.md` criado com registro consolidado do marco: data, hashes de commits, tabela de configuração, tabela de resultados para k∈{2,5,10,20} × 3 sementes, análise de violações (nenhuma crítica), decisão de prosseguir para Semana 3. `CLAUDE.md` atualizado com link. PR #55 aberto.
+- **Próximo:** Aguardar merge do PR #55. Iniciar Semana 3: ataques por grau e subgrafos.
+- **Bloqueios:** PR #55 aguarda revisão humana.
+- **Decisões pendentes:** Revisão humana do PR #55.
 
 ### 2026-05-22 — k-Sweep k∈{2,10,20}: todos os k do escopo Mínimo validados (issue #17)
 
