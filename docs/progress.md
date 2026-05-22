@@ -13,26 +13,26 @@
 
 **Data da última atualização:** 2026-05-22
 
-**Semana corrente:** Semana 2 (22–29/05/2026) — He et al. + validação obrigatória de k-anonimato
+**Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques por grau e subgrafos
 
 **Último passo concluído:**
-- Issue #56 (Testes DL-01): PR #57 aberto.
-  - `TestDL01Fields` adicionada a `tests/anonymization/test_validation.py` com 16 casos de teste.
-  - Cobre `coverage_fraction`, `uncovered_fraction` e `deficit_fully_structural`.
-  - 51 testes passando; ruff limpo.
-- Issue #18 (Documentar resultado do marco 29/05): PR #55 aberto.
-- Issue #17 (k-sweep k∈{2,10,20}): PR #54 mergeado. Todos os k do escopo Mínimo validados.
-- Issue #16 (Marco 29/05): APROVADO. PR #53 mergeado.
+- Issue #19 (degree_attack): PR #58 aberto.
+  - `src/attacks/degree.py` implementado; `src/attacks/__init__.py` criado.
+  - `tests/attacks/test_degree.py`: 10 casos de teste (DoD completo).
+  - 198 testes passando, 4 skipped (pymetis); ruff limpo.
 
 **Próximo passo planejado:**
-- Aguardar revisão e merge de PR #57 (issue #56) e PR #55 (issue #18).
-- Após merges: Semana 3 — ataques por grau e subgrafos (issues #19–#22).
+- Aguardar revisão e merge de PR #58 (issue #19).
+- Implementar issue #20 (subgraph_attack: `src/attacks/subgraph.py`) — pré-requisito de #21.
+- Aguardar também revisão de PR #57 (issue #56) e PR #55 (issue #18).
 
 **Bloqueios ativos:**
+- PR #58 (issue #19) aguarda revisão humana no VSCode.
 - PR #57 (issue #56) aguarda revisão humana no VSCode.
 - PR #55 (issue #18) aguarda revisão humana no VSCode.
 
 **Decisões pendentes de validação humana:**
+- Revisão e merge do PR #58 (degree_attack, issue #19).
 - Revisão e merge do PR #57 (testes DL-01, issue #56).
 - Revisão e merge do PR #55 (docs marco 29/05, issue #18).
 
@@ -55,6 +55,13 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-22 — Ataque por grau: degree_attack (issue #19)
+
+- **Concluído:** `src/attacks/degree.py` criado com `degree_attack(g_orig, g_anon, target, tolerance=0) -> bool`. `src/attacks/__init__.py` criado. `tests/attacks/test_degree.py` com 10 casos cobrindo: identificação única (True), múltiplos candidatos (False), zero candidatos (False), tolerance != 0, target inválido (ValueError), tolerance negativa (ValueError). 198 passando, 4 skipped; ruff limpo. PR #58 aberto.
+- **Próximo:** Aguardar merge de PR #58. Implementar issue #20 (subgraph_attack).
+- **Bloqueios:** PR #58, #57, #55 aguardam revisão humana.
+- **Decisões pendentes:** Revisão humana dos três PRs.
 
 ### 2026-05-22 — Testes DL-01: coverage_fraction, uncovered_fraction, deficit_fully_structural (issue #56)
 
