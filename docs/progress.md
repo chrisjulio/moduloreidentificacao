@@ -13,27 +13,31 @@
 
 **Data da última atualização:** 2026-05-22
 
-**Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques por grau e subgrafos
+**Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques + Métricas
 
 **Último passo concluído:**
-- Issue #20 (subgraph_attack): PR #59 aberto.
-  - `src/attacks/subgraph.py` implementado com VF2 via GraphMatcher.
-  - `src/attacks/__init__.py` atualizado para exportar `subgraph_attack`.
-  - `tests/attacks/test_subgraph.py`: 17 casos de teste (DoD completo).
-  - 215 testes passando, 4 skipped (pymetis); ruff limpo.
+- Issue #21 (métricas: `src/metrics/`): PR #60 aberto.
+  - `src/metrics/reidentification_rate.py`: fração de alvos re-identificados.
+  - `src/metrics/equivalence_group_size.py`: média e mediana do tamanho dos grupos.
+  - `src/metrics/ks_test_degree.py`: KS-test (D, p-valor) sobre distribuições de grau.
+  - `src/metrics/clustering_variation.py`: variação relativa do clustering médio.
+  - `src/metrics/__init__.py` exporta as 4 funções.
+  - `tests/metrics/`: 52 novos casos de teste (DoD completo).
+  - 267 testes passando, 4 skipped (pymetis); ruff limpo.
 
 **Próximo passo planejado:**
-- Aguardar revisão e merge de PR #59 (issue #20) e PR #58 (issue #19).
-- Implementar issue #21 (métricas: `src/metrics/`) — pré-requisito: #19 e #20.
-- Aguardar também revisão de PR #57 (issue #56) e PR #55 (issue #18).
+- Aguardar revisão e merge dos PRs #60 (issue #21), #59 (issue #20), #58 (issue #19), #57 (issue #56), #55 (issue #18).
+- Implementar issue #22 (runner de experimentos: `experiments/run.py`) após merges.
 
 **Bloqueios ativos:**
+- PR #60 (issue #21) aguarda revisão humana no VSCode.
 - PR #59 (issue #20) aguarda revisão humana no VSCode.
 - PR #58 (issue #19) aguarda revisão humana no VSCode.
 - PR #57 (issue #56) aguarda revisão humana no VSCode.
 - PR #55 (issue #18) aguarda revisão humana no VSCode.
 
 **Decisões pendentes de validação humana:**
+- Revisão e merge do PR #60 (métricas, issue #21).
 - Revisão e merge do PR #59 (subgraph_attack, issue #20).
 - Revisão e merge do PR #58 (degree_attack, issue #19).
 - Revisão e merge do PR #57 (testes DL-01, issue #56).
@@ -58,6 +62,13 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-22 — Métricas: src/metrics/ (issue #21)
+
+- **Concluído:** `src/metrics/reidentification_rate.py` (`reidentification_rate(attack_results) -> float`), `src/metrics/equivalence_group_size.py` (`equivalence_group_size(groups) -> tuple[float, int]` — aceita `list[list[nx.Graph]]` idêntico ao `validate_k_anonymity`), `src/metrics/ks_test_degree.py` (`ks_test_degree(g_orig, g_anon) -> tuple[float, float]` via `scipy.stats.ks_2samp`), `src/metrics/clustering_variation.py` (`clustering_variation(g_orig, g_anon) -> float`). `src/metrics/__init__.py` exporta as 4 funções. 52 novos testes em `tests/metrics/` cobrindo edge cases, valores conhecidos, invariantes de tipo e intervalo. 267 passando, 4 skipped; ruff limpo. PR #60 aberto.
+- **Próximo:** Aguardar merge dos PRs #60, #59, #58, #57, #55. Implementar issue #22 (runner).
+- **Bloqueios:** PRs #60, #59, #58, #57, #55 aguardam revisão humana.
+- **Decisões pendentes:** Revisão humana dos cinco PRs.
 
 ### 2026-05-22 — Ataque por subgrafos: subgraph_attack (issue #20)
 
