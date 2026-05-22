@@ -16,23 +16,21 @@
 **Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques + Métricas
 
 **Último passo concluído:**
-- Issues #18, #19, #20, #21 e #56 implementadas e mergeadas em `main`.
-  - PR #55 (issue #18 — docs marco 29/05): mergeado.
-  - PR #57 (issue #56 — testes DL-01): mergeado.
-  - PR #58 (issue #19 — degree_attack): mergeado.
-  - PR #59 (issue #20 — subgraph_attack): mergeado.
-  - PR #60 (issue #21 — métricas src/metrics/): mergeado.
-- `main` contém: loader, anonimizador He et al., validação k-anonimato,
-  degree_attack, subgraph_attack, src/metrics/ (4 funções), 267 testes passando.
+- Issue #22 implementada: `experiments/run.py` (runner geral de experimentos).
+  - PR #61 aberto; aguarda revisão humana.
+  - Branch: `experiment/runner`.
 
 **Próximo passo planejado:**
-- Implementar issue #22 (runner de experimentos: `experiments/run.py`) a partir de `main`.
+- Aguardar merge do PR #61 (issue #22 — runner).
+- Após merge: executar `python -m experiments.run --config experiments/configs/he2009_facebook_full.yml`
+  para produzir os resultados finais (k ∈ {2,5,10,20}, 3 sementes).
+- Semana 4: gráficos e tabelas a partir dos logs JSONL.
 
 **Bloqueios ativos:**
-- Nenhum.
+- PR #61 (issue #22 — runner) aguarda revisão humana.
 
 **Decisões pendentes de validação humana:**
-- Nenhuma.
+- Revisão e merge do PR #61.
 
 ---
 
@@ -53,6 +51,22 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-22 — Runner de experimentos: experiments/run.py (issue #22)
+
+- **Concluído:** `experiments/__init__.py` (torna o diretório um pacote Python),
+  `experiments/run.py` (runner CLI com argparse, YAML → pipeline → JSONL),
+  `experiments/configs/he2009_facebook_full.yml` (config k=[2,5,10,20], 3 sementes),
+  `tests/experiments/test_runner.py` (37 testes, todos passando).
+  Pipeline por (k, seed): partition → group → modify → reconnect → validate_k_anonymity
+  → degree_attack em todos os nós → reidentification_rate, equivalence_group_size,
+  ks_test_degree, clustering_variation → JSONL com schema DL-01 completo.
+  Ruff limpo. 308 testes passando.
+  PR #61 aberto.
+- **Próximo:** Merge do PR #61. Executar experimento completo para produzir logs JSONL.
+  Semana 4: gráficos/tabelas a partir dos logs.
+- **Bloqueios:** PR #61 aguarda revisão humana.
+- **Decisões pendentes:** Revisão humana do PR #61.
 
 ### 2026-05-22 — Alinhamento documental: registro dos merges e abertura da issue #22
 
