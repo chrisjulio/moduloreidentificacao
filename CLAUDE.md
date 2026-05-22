@@ -6,6 +6,7 @@
 > Fonte de verdade canônica do escopo: [README.md](README.md).
 > Detalhamento algorítmico: [docs/algorithm_notes.md](docs/algorithm_notes.md).
 > Definições de métricas: [docs/metrics_definitions.md](docs/metrics_definitions.md).
+> Resultado consolidado do marco 29/05: [docs/milestone_29_05.md](docs/milestone_29_05.md).
 > Protocolo humano de orquestração entre interfaces: [WORKFLOW.md](WORKFLOW.md).
 > Regras escopadas a partes do repositório: [.claude/rules/](.claude/rules/).
 
