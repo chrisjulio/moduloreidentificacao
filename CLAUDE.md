@@ -6,6 +6,7 @@
 > Fonte de verdade canônica do escopo: [README.md](README.md).
 > Detalhamento algorítmico: [docs/algorithm_notes.md](docs/algorithm_notes.md).
 > Definições de métricas: [docs/metrics_definitions.md](docs/metrics_definitions.md).
+> Validação de k-anonimato (resultados consolidados): [docs/validacao_k_anonimato.md](docs/validacao_k_anonimato.md).
 > Protocolo humano de orquestração entre interfaces: [WORKFLOW.md](WORKFLOW.md).
 > Regras escopadas a partes do repositório: [.claude/rules/](.claude/rules/).
 
