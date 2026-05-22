@@ -441,3 +441,146 @@ class TestWithAnonymizerOutput:
         assert violation_types.issubset({"incomplete_group", "non_isomorphic"}), (
             f"Unexpected violation types: {violation_types}"
         )
+
+
+# ---------------------------------------------------------------------------
+# DL-01 fields: coverage_fraction, uncovered_fraction, deficit_fully_structural
+# ---------------------------------------------------------------------------
+
+
+class TestDL01Fields:
+    """Tests for fields introduced by decision DL-01 (docs/decision_log.md):
+    coverage_fraction, uncovered_fraction, and deficit_fully_structural."""
+
+    # -----------------------------------------------------------------------
+    # coverage_fraction — presence and alias invariant
+    # -----------------------------------------------------------------------
+
+    def test_coverage_fraction_key_present(self) -> None:
+        """Return dict must contain the coverage_fraction key."""
+        groups = [_make_disjoint_group(lambda: nx.cycle_graph(4), 2)]
+        result = validate_k_anonymity(groups, k=2)
+        assert "coverage_fraction" in result
+
+    def test_coverage_fraction_equals_satisfied_fraction_valid(self) -> None:
+        """valid=True: coverage_fraction is a direct alias of satisfied_fraction."""
+        groups = [_make_disjoint_group(lambda: nx.cycle_graph(4), 2)]
+        result = validate_k_anonymity(groups, k=2)
+        assert result["coverage_fraction"] == result["satisfied_fraction"]
+        assert result["coverage_fraction"] == pytest.approx(1.0)
+
+    def test_coverage_fraction_equals_satisfied_fraction_at_zero(self) -> None:
+        """satisfied_fraction == 0: coverage_fraction must also be 0."""
+        groups = [[nx.path_graph(4).copy()]]  # 1 LS, k=2 → all nodes violate
+        result = validate_k_anonymity(groups, k=2)
+        assert result["coverage_fraction"] == result["satisfied_fraction"]
+        assert result["coverage_fraction"] == pytest.approx(0.0)
+
+    def test_coverage_fraction_equals_satisfied_fraction_partial(self) -> None:
+        """Partial coverage: coverage_fraction mirrors satisfied_fraction."""
+        complete = _make_disjoint_group(lambda: nx.cycle_graph(3), 2)  # nodes 0-5
+        incomplete = [nx.relabel_nodes(nx.cycle_graph(3), {i: i + 6 for i in range(3)})]
+        result = validate_k_anonymity([complete, incomplete], k=2)
+        assert result["coverage_fraction"] == result["satisfied_fraction"]
+
+    # -----------------------------------------------------------------------
+    # uncovered_fraction — presence, complementarity, n_violators invariant
+    # -----------------------------------------------------------------------
+
+    def test_uncovered_fraction_key_present(self) -> None:
+        """Return dict must contain the uncovered_fraction key."""
+        groups = [_make_disjoint_group(lambda: nx.cycle_graph(4), 2)]
+        result = validate_k_anonymity(groups, k=2)
+        assert "uncovered_fraction" in result
+
+    def test_uncovered_fraction_complement_of_coverage_invalid(self) -> None:
+        """coverage_fraction + uncovered_fraction == 1.0 when invalid."""
+        groups = [[nx.cycle_graph(4).copy()]]  # 1 LS, k=2
+        result = validate_k_anonymity(groups, k=2)
+        assert result["coverage_fraction"] + result["uncovered_fraction"] == pytest.approx(1.0)
+
+    def test_uncovered_fraction_complement_of_coverage_valid(self) -> None:
+        """coverage_fraction + uncovered_fraction == 1.0 when valid."""
+        groups = [_make_disjoint_group(lambda: nx.cycle_graph(4), 2)]
+        result = validate_k_anonymity(groups, k=2)
+        assert result["coverage_fraction"] + result["uncovered_fraction"] == pytest.approx(1.0)
+        assert result["uncovered_fraction"] == pytest.approx(0.0)
+
+    def test_uncovered_fraction_invariant_all_violators(self) -> None:
+        """uncovered_fraction == n_violators / n_total (all nodes violate)."""
+        # path_graph(4): n_total=4, k=2 → 1 LS → all 4 nodes violate.
+        groups = [[nx.path_graph(4).copy()]]
+        n_total = 4
+        result = validate_k_anonymity(groups, k=2)
+        assert result["uncovered_fraction"] == pytest.approx(result["n_violators"] / n_total)
+
+    def test_uncovered_fraction_invariant_partial_case(self) -> None:
+        """Partial case: uncovered_fraction == n_violators / n_total."""
+        # Complete group: 2 cycle_graph(4) LSs with distinct node IDs → 8 valid nodes.
+        ls_c1 = nx.relabel_nodes(nx.cycle_graph(4), {i: i for i in range(4)})
+        ls_c2 = nx.relabel_nodes(nx.cycle_graph(4), {i: i + 4 for i in range(4)})
+        complete_group = [ls_c1, ls_c2]
+        # Incomplete group: 1 LS with 4 nodes → 4 violators.
+        ls_inc = nx.relabel_nodes(nx.path_graph(4), {i: i + 8 for i in range(4)})
+        incomplete_group = [ls_inc]
+        n_total = 12
+        result = validate_k_anonymity([complete_group, incomplete_group], k=2)
+        assert result["uncovered_fraction"] == pytest.approx(result["n_violators"] / n_total)
+
+    # -----------------------------------------------------------------------
+    # deficit_fully_structural — presence and three states
+    # -----------------------------------------------------------------------
+
+    def test_deficit_fully_structural_key_present(self) -> None:
+        """Return dict must contain the deficit_fully_structural key."""
+        groups = [_make_disjoint_group(lambda: nx.cycle_graph(4), 2)]
+        result = validate_k_anonymity(groups, k=2)
+        assert "deficit_fully_structural" in result
+
+    def test_deficit_fully_structural_type_is_bool(self) -> None:
+        """deficit_fully_structural must be a Python bool."""
+        groups = [_make_disjoint_group(lambda: nx.cycle_graph(4), 2)]
+        result = validate_k_anonymity(groups, k=2)
+        assert isinstance(result["deficit_fully_structural"], bool)
+
+    def test_deficit_fully_structural_true_when_valid(self) -> None:
+        """No violations: deficit_fully_structural is True by vacuity.
+
+        The empty violation set is a subset of {"incomplete_group"}, so
+        the condition holds even when valid=True (see metrics_definitions.md §3).
+        """
+        groups = [_make_disjoint_group(lambda: nx.cycle_graph(4), 2)]
+        result = validate_k_anonymity(groups, k=2)
+        assert result["valid"] is True
+        assert result["deficit_fully_structural"] is True
+
+    def test_deficit_fully_structural_true_only_incomplete_group(self) -> None:
+        """Only incomplete_group violations (D-06): deficit_fully_structural is True."""
+        # Single LS with k=2 → incomplete_group, no non_isomorphic or non_disjoint.
+        groups = [[nx.cycle_graph(4).copy()]]
+        result = validate_k_anonymity(groups, k=2)
+        violation_types = {v["type"] for v in result["violations"]}
+        assert violation_types == {"incomplete_group"}
+        assert result["deficit_fully_structural"] is True
+
+    def test_deficit_fully_structural_false_non_isomorphic(self) -> None:
+        """non_isomorphic violation present: deficit_fully_structural is False."""
+        ls_a = nx.path_graph(4).copy()
+        ls_b = nx.cycle_graph(4).copy()
+        result = validate_k_anonymity([[ls_a, ls_b]], k=2)
+        types = {v["type"] for v in result["violations"]}
+        assert "non_isomorphic" in types
+        assert result["deficit_fully_structural"] is False
+
+    def test_deficit_fully_structural_false_non_disjoint(self) -> None:
+        """non_disjoint violation present: deficit_fully_structural is False."""
+        ls_a = nx.Graph()
+        ls_a.add_nodes_from([0, 1])
+        ls_a.add_edge(0, 1)
+        ls_b = nx.Graph()
+        ls_b.add_nodes_from([0, 2])
+        ls_b.add_edge(0, 2)
+        result = validate_k_anonymity([[ls_a], [ls_b]], k=1)
+        types = {v["type"] for v in result["violations"]}
+        assert "non_disjoint" in types
+        assert result["deficit_fully_structural"] is False
