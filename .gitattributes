@@ -1,0 +1,5 @@
+# Git merge strategies
+# docs/progress.md uses the 'union' merge driver to avoid conflict markers
+# on append-only log sections. The 'Estado atual' block may duplicate on
+# concurrent edits, but it is corrected naturally on each session start.
+docs/progress.md merge=union
