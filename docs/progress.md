@@ -16,32 +16,23 @@
 **Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques + Métricas
 
 **Último passo concluído:**
-- Issue #21 (métricas: `src/metrics/`): PR #60 aberto.
-  - `src/metrics/reidentification_rate.py`: fração de alvos re-identificados.
-  - `src/metrics/equivalence_group_size.py`: média e mediana do tamanho dos grupos.
-  - `src/metrics/ks_test_degree.py`: KS-test (D, p-valor) sobre distribuições de grau.
-  - `src/metrics/clustering_variation.py`: variação relativa do clustering médio.
-  - `src/metrics/__init__.py` exporta as 4 funções.
-  - `tests/metrics/`: 52 novos casos de teste (DoD completo).
-  - 267 testes passando, 4 skipped (pymetis); ruff limpo.
+- Issues #18, #19, #20, #21 e #56 implementadas e mergeadas em `main`.
+  - PR #55 (issue #18 — docs marco 29/05): mergeado.
+  - PR #57 (issue #56 — testes DL-01): mergeado.
+  - PR #58 (issue #19 — degree_attack): mergeado.
+  - PR #59 (issue #20 — subgraph_attack): mergeado.
+  - PR #60 (issue #21 — métricas src/metrics/): mergeado.
+- `main` contém: loader, anonimizador He et al., validação k-anonimato,
+  degree_attack, subgraph_attack, src/metrics/ (4 funções), 267 testes passando.
 
 **Próximo passo planejado:**
-- Aguardar revisão e merge dos PRs #60 (issue #21), #59 (issue #20), #58 (issue #19), #57 (issue #56), #55 (issue #18).
-- Implementar issue #22 (runner de experimentos: `experiments/run.py`) após merges.
+- Implementar issue #22 (runner de experimentos: `experiments/run.py`) a partir de `main`.
 
 **Bloqueios ativos:**
-- PR #60 (issue #21) aguarda revisão humana no VSCode.
-- PR #59 (issue #20) aguarda revisão humana no VSCode.
-- PR #58 (issue #19) aguarda revisão humana no VSCode.
-- PR #57 (issue #56) aguarda revisão humana no VSCode.
-- PR #55 (issue #18) aguarda revisão humana no VSCode.
+- Nenhum.
 
 **Decisões pendentes de validação humana:**
-- Revisão e merge do PR #60 (métricas, issue #21).
-- Revisão e merge do PR #59 (subgraph_attack, issue #20).
-- Revisão e merge do PR #58 (degree_attack, issue #19).
-- Revisão e merge do PR #57 (testes DL-01, issue #56).
-- Revisão e merge do PR #55 (docs marco 29/05, issue #18).
+- Nenhuma.
 
 ---
 
@@ -62,6 +53,15 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-22 — Alinhamento documental: registro dos merges e abertura da issue #22
+
+- **Concluído:** PRs #55, #57, #58, #59, #60 mergeados em `main` pelo humano.
+  `progress.md` sincronizado com o estado real do repositório. `CLAUDE.md`
+  atualizado com regra de verificação de PRs antes de iniciar nova issue.
+- **Próximo:** Implementar issue #22 (`experiments/run.py`) a partir de `main`.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Nenhuma.
 
 ### 2026-05-22 — Métricas: src/metrics/ (issue #21)
 

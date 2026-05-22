@@ -26,6 +26,38 @@ e decisões pendentes. Ele deve ser atualizado ao final de cada sessão produtiv
 
 ---
 
+## Verificação de PRs antes de implementar
+
+Antes de iniciar a implementação de qualquer issue, verifique o estado real
+dos PRs listados em `Bloqueios ativos` no `progress.md`.
+
+**Passo 1 — Verificação via `gh` CLI (preferencial):**
+
+```bash
+gh pr view <número> --json state,mergedAt
+```
+
+Só prossiga se todos os bloqueios retornarem `"state": "MERGED"`
+ou se `Bloqueios ativos` já estiver vazio.
+
+**Passo 2 — Fallback via `git log` (se `gh` não disponível):**
+
+```bash
+git fetch origin
+git log --oneline origin/main | head -20
+```
+
+Confirme que os commits dos PRs aparecem em `origin/main`.
+
+**Passo 3 — Fallback humano (se nenhum dos anteriores funcionar):**
+
+Pergunte ao humano antes de continuar. Não aja sobre estado não verificado.
+
+> **Regra:** Se `Bloqueios ativos` listar PRs pendentes e você não conseguir
+> confirmar que foram mergeados, **pare e pergunte** — não assuma, não ignore.
+
+---
+
 ## Em uma linha
 
 Pipeline `anonimização → ataque → métrica` sobre redes sociais reais, produzindo
