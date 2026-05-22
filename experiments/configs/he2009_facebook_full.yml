@@ -1,0 +1,68 @@
+# ============================================================
+# Experimento completo: He et al. (2009) + Facebook Ego-Net 3437
+# Issue #22 — experiments/run.py (runner)
+# Escopo Mínimo: k ∈ {2, 5, 10, 20}, 3 sementes, ego-rede 3437
+# ============================================================
+#
+# Uso:
+#   python -m experiments.run --config experiments/configs/he2009_facebook_full.yml
+#
+# Saída:
+#   experiments/logs/he2009_facebook_full/he2009_facebook_full.jsonl
+#   experiments/logs/he2009_facebook_full/summary.json
+
+experiment:
+  name: he2009_facebook_full
+  description: >
+    Pipeline completo de avaliação: anonimização He et al. (2009) +
+    ataque por grau + métricas (reidentification_rate, equivalence_group_size,
+    ks_test_degree, clustering_variation), sobre a ego-rede 3437 do Facebook
+    Ego-Nets (n_lcc=532, m_lcc=4812), para k ∈ {2, 5, 10, 20} e 3 sementes.
+
+# ------------------------------------------------------------
+# Sementes — mínimo 3 por .claude/rules/seeds.md
+# Nunca hardcoded no código de produção; sempre lidas deste YAML.
+# ------------------------------------------------------------
+seeds: [42, 1337, 2718]
+
+# ------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------
+dataset:
+  name: facebook_ego_nets
+  source: snap
+  data_path: data/raw/facebook/
+  preprocessing_mode: single_egonet
+  egonet_id: 3437       # n_lcc=532, m_lcc=4812, density=0.034068 (issue #40)
+  include_ego: false    # nó ego excluído (decisão Seção 3.1)
+  component: lcc        # reter maior componente conexo (decisão Seção 3.2)
+  min_nodes: 200        # 10 * k_max = 10 * 20 = 200
+
+# ------------------------------------------------------------
+# Anonimização
+# k: lista de inteiros — o runner itera sobre todos os valores.
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k: [2, 5, 10, 20]    # escopo Mínimo completo
+  d: 1
+  sigma: 0.5            # suporte mínimo do FSM simplificado (D-01)
+
+# ------------------------------------------------------------
+# Ataques
+# ------------------------------------------------------------
+attacks:
+  degree:
+    enabled: true
+    tolerance: 0        # correspondência exata de grau (baseline)
+  subgraph:
+    enabled: false      # desabilitado: O(n²·VF2) por execução; n=532 → lento
+    hop: 1
+    timeout: 30         # segundos por nó alvo (se habilitado)
+
+# ------------------------------------------------------------
+# Execução
+# ------------------------------------------------------------
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/
