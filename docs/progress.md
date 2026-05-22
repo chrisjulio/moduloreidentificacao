@@ -16,20 +16,24 @@
 **Semana corrente:** Semana 2 (22–29/05/2026) — He et al. + validação obrigatória de k-anonimato
 
 **Último passo concluído:**
+- Issue #56 (Testes DL-01): PR #57 aberto.
+  - `TestDL01Fields` adicionada a `tests/anonymization/test_validation.py` com 16 casos de teste.
+  - Cobre `coverage_fraction`, `uncovered_fraction` e `deficit_fully_structural`.
+  - 51 testes passando; ruff limpo.
 - Issue #18 (Documentar resultado do marco 29/05): PR #55 aberto.
-  - `docs/validacao_k_anonimato.md` criado com data, hashes, tabela de resultados, análise de violações e decisão.
-  - `CLAUDE.md` atualizado com link para o novo documento.
 - Issue #17 (k-sweep k∈{2,10,20}): PR #54 mergeado. Todos os k do escopo Mínimo validados.
 - Issue #16 (Marco 29/05): APROVADO. PR #53 mergeado.
 
 **Próximo passo planejado:**
-- Aguardar revisão e merge do PR #55 (issue #18).
-- Após merge: Semana 3 — ataques por grau e subgrafos (issues #19–#22).
+- Aguardar revisão e merge de PR #57 (issue #56) e PR #55 (issue #18).
+- Após merges: Semana 3 — ataques por grau e subgrafos (issues #19–#22).
 
 **Bloqueios ativos:**
+- PR #57 (issue #56) aguarda revisão humana no VSCode.
 - PR #55 (issue #18) aguarda revisão humana no VSCode.
 
 **Decisões pendentes de validação humana:**
+- Revisão e merge do PR #57 (testes DL-01, issue #56).
 - Revisão e merge do PR #55 (docs marco 29/05, issue #18).
 
 ---
@@ -51,6 +55,13 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-22 — Testes DL-01: coverage_fraction, uncovered_fraction, deficit_fully_structural (issue #56)
+
+- **Concluído:** `TestDL01Fields` adicionada a `tests/anonymization/test_validation.py` com 16 novos casos de teste cobrindo os três campos introduzidos por DL-01. Sem alterações em `src/`. 51 testes passando; ruff limpo. PR #57 aberto.
+- **Próximo:** Aguardar merge de PR #57 e PR #55. Iniciar Semana 3: ataques por grau e subgrafos.
+- **Bloqueios:** PR #57 e PR #55 aguardam revisão humana.
+- **Decisões pendentes:** Revisão humana dos dois PRs.
 
 ### 2026-05-22 — Documentação do marco 29/05 (issue #18)
 
