@@ -24,6 +24,24 @@ O arquivo `docs/progress.md` é a fonte de verdade do estado de progresso
 corrente — último passo concluído, próximo passo planejado, bloqueios ativos
 e decisões pendentes. Ele deve ser atualizado ao final de cada sessão produtiva.
 
+## Regra de atualização do docs/progress.md
+
+`docs/progress.md` é um log concorrente e fonte recorrente de conflitos.
+Ao mexer nele:
+
+1. NÃO reescreva blocos inteiros. Em "Estado atual", altere o mínimo de
+   linhas. Em "Histórico", APENAS acrescente uma entrada nova no topo —
+   nunca reordene, edite ou remova entradas existentes.
+2. Antes de finalizar um PR, sincronize a branch com main
+   (`git fetch origin && git merge origin/main`) e só então edite o
+   progress.md, para que ele já reflita o estado mais recente.
+3. A atualização do progress.md deve ser o ÚLTIMO commit da branch e
+   isolada (commit só para ela), separada do commit de código.
+4. Nunca commite arquivo com marcadores de conflito. Antes de qualquer
+   commit rode `git grep -nE '^(<<<<<<<|=======|>>>>>>>)'` e aborte se
+   houver match.
+
+
 ---
 
 ## Em uma linha
