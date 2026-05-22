@@ -70,6 +70,20 @@ def validate_k_anonymity(
             ``True`` iff there are **no** violations of any kind.
         ``satisfied_fraction`` : float
             Fraction of nodes (in [0, 1]) that satisfy Def. 2.
+            Kept for backward compatibility; identical to ``coverage_fraction``.
+        ``coverage_fraction`` : float
+            Fraction of nodes covered by k-anonymity (alias of
+            ``satisfied_fraction``; added per decision DL-01).
+        ``uncovered_fraction`` : float
+            Fraction of nodes NOT covered (``1 - coverage_fraction``).
+            Always equals ``n_violators / n_total``.
+        ``deficit_fully_structural`` : bool
+            ``True`` iff every violation is of type ``"incomplete_group"``
+            (i.e., attributable to a structural impossibility — D-06) and
+            there are no ``"non_isomorphic"`` or ``"non_disjoint"`` violations.
+            When ``True`` together with ``coverage_fraction >= 0.9``,
+            the instance satisfies the logical criterion of milestone #16
+            (decision DL-01 in docs/decision_log.md).
         ``n_violators`` : int
             Number of nodes that do *not* satisfy Def. 2.
         ``violators`` : list
@@ -90,12 +104,19 @@ def validate_k_anonymity(
       on every call. Write failures are silently caught and emitted as
       ``logging.WARNING`` so that the audit result is never withheld due to
       I/O errors.
+    * ``satisfied_fraction`` is preserved unchanged for backward compatibility
+      with existing logs, runners and tests. New code should prefer
+      ``coverage_fraction`` and ``uncovered_fraction``.
+    * ``deficit_fully_structural`` supports the two-part acceptance criterion
+      of DL-01: sanity floor (``coverage_fraction >= 0.9``) plus logical
+      criterion (100% of deficit attributable to structural causes).
 
     References
     ----------
     He et al. (2009) Def. 2, p. 649.
     docs/metrics_definitions.md §k-anonymity-verifier.
     D-05 and D-06 in docs/algorithm_notes.md §7.
+    docs/decision_log.md DL-01 (refinamento do critério do marco #16).
     """
     violations: list[dict] = []
     violating_nodes: set = set()
@@ -174,9 +195,22 @@ def validate_k_anonymity(
     valid = len(violations) == 0
     satisfied_fraction = (n_total - n_violators) / n_total if n_total > 0 else 1.0
 
+    # DL-01: coverage_fraction / uncovered_fraction (aliases + inverse).
+    coverage_fraction = satisfied_fraction
+    uncovered_fraction = round(1.0 - coverage_fraction, 6)
+
+    # DL-01: deficit_fully_structural — True iff every violation type is
+    # "incomplete_group" (structural impossibility, D-06) and there are no
+    # "non_isomorphic" or "non_disjoint" violations (which would indicate bugs).
+    violation_types = {v["type"] for v in violations}
+    deficit_fully_structural = violation_types <= {"incomplete_group"}
+
     report: dict = {
         "valid": valid,
         "satisfied_fraction": round(satisfied_fraction, 6),
+        "coverage_fraction": round(coverage_fraction, 6),
+        "uncovered_fraction": uncovered_fraction,
+        "deficit_fully_structural": deficit_fully_structural,
         "n_violators": n_violators,
         "violators": sorted(violating_nodes),
         "violations": violations,
