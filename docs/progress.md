@@ -16,22 +16,25 @@
 **Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques por grau e subgrafos
 
 **Último passo concluído:**
-- Issue #19 (degree_attack): PR #58 aberto.
-  - `src/attacks/degree.py` implementado; `src/attacks/__init__.py` criado.
-  - `tests/attacks/test_degree.py`: 10 casos de teste (DoD completo).
-  - 198 testes passando, 4 skipped (pymetis); ruff limpo.
+- Issue #20 (subgraph_attack): PR #59 aberto.
+  - `src/attacks/subgraph.py` implementado com VF2 via GraphMatcher.
+  - `src/attacks/__init__.py` atualizado para exportar `subgraph_attack`.
+  - `tests/attacks/test_subgraph.py`: 17 casos de teste (DoD completo).
+  - 215 testes passando, 4 skipped (pymetis); ruff limpo.
 
 **Próximo passo planejado:**
-- Aguardar revisão e merge de PR #58 (issue #19).
-- Implementar issue #20 (subgraph_attack: `src/attacks/subgraph.py`) — pré-requisito de #21.
+- Aguardar revisão e merge de PR #59 (issue #20) e PR #58 (issue #19).
+- Implementar issue #21 (métricas: `src/metrics/`) — pré-requisito: #19 e #20.
 - Aguardar também revisão de PR #57 (issue #56) e PR #55 (issue #18).
 
 **Bloqueios ativos:**
+- PR #59 (issue #20) aguarda revisão humana no VSCode.
 - PR #58 (issue #19) aguarda revisão humana no VSCode.
 - PR #57 (issue #56) aguarda revisão humana no VSCode.
 - PR #55 (issue #18) aguarda revisão humana no VSCode.
 
 **Decisões pendentes de validação humana:**
+- Revisão e merge do PR #59 (subgraph_attack, issue #20).
 - Revisão e merge do PR #58 (degree_attack, issue #19).
 - Revisão e merge do PR #57 (testes DL-01, issue #56).
 - Revisão e merge do PR #55 (docs marco 29/05, issue #18).
@@ -55,6 +58,13 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-22 — Ataque por subgrafos: subgraph_attack (issue #20)
+
+- **Concluído:** `src/attacks/subgraph.py` criado com `subgraph_attack(g_orig, g_anon, target, hop=1, timeout=None) -> bool`. Backend VF2 via `GraphMatcher.is_isomorphic`. Helper `_k_hop_induced_subgraph` encapsula extração de vizinhança. Timeout opcional via `concurrent.futures`. `src/attacks/__init__.py` atualizado para exportar ambos os ataques. `tests/attacks/test_subgraph.py` com 17 casos cobrindo: identificação única (True), múltiplos candidatos (False), zero candidatos (False), hop=2 discrimina onde hop=1 falha (lollipops assimétricos), timeout via mock, inputs inválidos. 215 passando, 4 skipped; ruff limpo. PR #59 aberto.
+- **Próximo:** Aguardar merge de PRs #59, #58. Implementar issue #21 (métricas).
+- **Bloqueios:** PRs #59, #58, #57, #55 aguardam revisão humana.
+- **Decisões pendentes:** Revisão humana dos quatro PRs.
 
 ### 2026-05-22 — Ataque por grau: degree_attack (issue #19)
 
