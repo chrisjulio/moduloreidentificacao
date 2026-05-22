@@ -35,6 +35,39 @@ A unidade de progresso é o **gráfico defensável**, não o texto argumentativo
 - KS-test (estatística D) sobre a distribuição de grau (original vs. anonimizado).
 - Variação relativa do coeficiente de clustering médio.
 
+## Status
+
+**Atualizado em 22/05/2026.**
+
+| Fase | Período | Status |
+|---|---|---|
+| S1: Setup + loader + leitura He et al. | 15–22/05 | ✅ Concluída |
+| S2: Implementação He et al. + validação k-anonimato | 22–29/05 | ✅ Concluída com adiantamento (marco 29/05 cumprido em 21/05) |
+| S3: Ataques + métricas + experimento baseline | 29/05–05/06 | 🔄 Em andamento |
+| S4: Gráficos, tabelas e documentação técnica | 05–12/06 | ⏳ Pendente |
+| S5: Polimento, reprodutibilidade e entrega | 12–14/06 | ⏳ Pendente |
+
+**Marco intermediário não-negociável cumprido:** 21/05/2026 (antecipado em 8 dias). k-anonimato empiricamente atingido em todas as configurações do Mínimo (k ∈ {2, 5, 10, 20}) com `satisfied_fraction ≥ 0.9962` — critério DL-01 aprovado. Ver `docs/milestone_29_05.md` e `docs/decision_log.md`.
+
+### Componentes implementados
+
+- `src/anonymization/he2009.py` — pipeline completo: `partition_graph`, `_group_local_structures` (FSM+MF), `_modify_structure`, `_reconnect_inter_edges`, `anonymize(g, k, d, seed)`.
+- `src/anonymization/validation.py` — auditor independente `validate_k_anonymity(groups, k) → dict` (36 testes unitários).
+- `src/loaders/` — loader Facebook Ego-Nets (SNAP).
+- `experiments/run_milestone_29_05.py` — script de validação do marco (k=5, egonet_id=3437, n=532, m=4812).
+- `experiments/run_k_sweep.py` — k-sweep k ∈ {2, 5, 10, 20}; todos aprovados pelo critério DL-01.
+- `docs/decision_log.md` — registro de decisões técnicas (DL-01, D-05, D-06, D-07).
+- `docs/progress.md` — log de progresso sessão a sessão.
+- CI: GitHub Actions + pre-commit (ruff 0.15.13).
+
+### Próximos componentes (S3)
+
+- `src/attacks/degree.py` — ataque por grau (issue #19)
+- `src/attacks/subgraph.py` — ataque por subgrafos via VF2 (issue #20)
+- `src/metrics/` — 4 métricas: reidentification_rate, equivalence_group_size, ks_test_degree, clustering_variation (issue #21)
+- `experiments/run.py` — runner orquestrador CLI (issue #22)
+- Experimento baseline Facebook Ego-Nets: 4k × 2 ataques × 3 sementes (issue #23)
+
 ## Entregáveis
 
 Três níveis, com linha firme entre **Mínimo** e **Desejável**.
@@ -45,17 +78,12 @@ Três níveis, com linha firme entre **Mínimo** e **Desejável**.
 
 O Mínimo é entregável defensável em si; o Desejável é entregável discutível; o Aspiracional é bônus que não deve ser perseguido em detrimento da consolidação do Mínimo.
 
-## Cronograma
+## Reprodutibilidade
 
-| Período | Foco |
-|---|---|
-| 15–22/05 | Setup; leitura aprofundada de He et al. (2009) com extração passo a passo do algoritmo; loader para Facebook Ego-Nets. |
-| 22–29/05 | Implementação de He et al. (2009); **validação obrigatória** de que o k-anonimato pretendido é empiricamente atingido. |
-| 29/05–05/06 | Ataques por grau e por subgrafos; experimentos sobre Facebook Ego-Nets. |
-| 05–12/06 | Geração de gráficos e tabelas; documentação técnica do pipeline. |
-| 12–14/06 | Polimento; margem para imprevistos; finalização da entrega. |
-
-**Marco intermediário não-negociável:** 29/05/2026. O k-anonimato pretendido deve ser empiricamente atingido em pelo menos uma configuração (sugerido: k=5 sobre uma ego-rede do Facebook); caso contrário, o escopo é reformulado imediatamente. Adiar o marco elimina a margem de manobra e deve ser tratado como falha de planejamento, não como acomodação.
+- Sementes aleatórias fixadas e versionadas em arquivo de configuração único (YAML).
+- Mínimo de 3 execuções independentes por configuração `(k, dataset, ataque)` para barras de erro.
+- Outputs (gráficos, tabelas) gerados a partir de logs JSONL estruturados em `experiments/logs/`, não de execução interativa.
+- Datasets baixados por script versionado; **não** comitados no repositório.
 
 ## Estrutura do repositório
 
@@ -64,31 +92,31 @@ O Mínimo é entregável defensável em si; o Desejável é entregável discutí
   /raw/                  # datasets originais (não versionados; baixados por script)
   /processed/            # datasets após pré-processamento
 /src/
-  /anonymization/        # He et al. (2009); placeholder Nettleton & Salas (2016)
+  /anonymization/        # He et al. (2009) [implementado]; placeholder Nettleton & Salas (2016)
   /attacks/              # ataques por grau, subgrafos, entropia
   /metrics/              # cálculo das quatro métricas
   /loaders/              # carregadores de dataset
+  /visualization/        # gráficos privacy-vs-utility
 /experiments/
   /configs/              # arquivos de configuração (YAML)
-  /logs/                 # logs estruturados das execuções
+  /logs/                 # logs estruturados JSONL das execuções
 /results/
   /tables/               # tabelas em CSV
   /plots/                # gráficos em PDF/PNG
 /docs/
-  algorithm_notes.md     # notas sobre implementação de He et al.
+  algorithm_notes.md     # notas sobre implementação de He et al. (inclui Seção 9: k-sweep)
   metrics_definitions.md # definições operacionais das métricas
+  decision_log.md        # registro formal de decisões técnicas (DL-01, D-05, D-06, D-07)
+  progress.md            # log de progresso por sessão
+  milestone_29_05.md     # resultado do marco 29/05 (cumprido em 21/05)
 requirements.txt
+requirements-dev.txt
 config_example.yml
+CLAUDE.md
+WORKFLOW.md
 ```
 
 A organização foi pensada para permitir migração futura para `SyntheticUForgePR` sem refatoração estrutural significativa.
-
-## Reprodutibilidade
-
-- Sementes aleatórias fixadas e versionadas em arquivo de configuração único (YAML ou TOML).
-- Mínimo de 3 execuções independentes por configuração `(k, dataset, ataque)` para barras de erro.
-- Outputs (gráficos, tabelas) gerados a partir de logs estruturados, não de execução interativa.
-- Datasets baixados por script versionado; **não** comitados no repositório.
 
 ## Premissas
 
@@ -103,10 +131,6 @@ A organização foi pensada para permitir migração futura para `SyntheticUForg
 - Não implementa o gerador (EpiCNet + Nettleton).
 - Não substitui a deliberação metodológica da Decisão 4.3 do v19; produz medições que orientarão essa deliberação.
 - Não pretende contribuição original de pesquisa em privacidade — é instrumento de validação que viabilizará a contribuição posterior da tese.
-
-## Status
-
-Em desenvolvimento. Planejamento operacional consolidado em 15/05/2026. Entrega prevista para 14/06/2026.
 
 ## Referências
 
