@@ -13,25 +13,26 @@
 
 **Data da última atualização:** 2026-05-22
 
-**Semana corrente:** Semana 3 (29/05–05/06/2026) — Ataques + métricas — LIBERADA
+**Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques por grau e subgrafos
 
 **Último passo concluído:**
-- S2 encerrada antecipadamente (21/05, 8 dias antes do marco). Pipeline He et al.
-  completo e validado. k-anonimato empiricamente atingido em k ∈ {2, 5, 10, 20}
-  × 3 sementes. Critério DL-01 aplicado e documentado. 12 issues fechadas.
-- Issue #56 (Testes DL-01): PR #57 aberto.
-- Issue #18 (Documentar resultado do marco 29/05): PR #55 aberto.
+- Issue #19 (degree_attack): PR #58 aberto.
+  - `src/attacks/degree.py` implementado; `src/attacks/__init__.py` criado.
+  - `tests/attacks/test_degree.py`: 10 casos de teste (DoD completo).
+  - 198 testes passando, 4 skipped (pymetis); ruff limpo.
 
 **Próximo passo planejado:**
-- Aguardar revisão e merge de PR #57 (issue #56) e PR #55 (issue #18).
-- Após merges: iniciar S3 — ataques por grau e subgrafos (issues #19–#22).
-  Pré-condição satisfeita: loader + anonimizador validados (entregues por S2).
+- Aguardar revisão e merge de PR #58 (issue #19).
+- Implementar issue #20 (subgraph_attack: `src/attacks/subgraph.py`) — pré-requisito de #21.
+- Aguardar também revisão de PR #57 (issue #56) e PR #55 (issue #18).
 
 **Bloqueios ativos:**
+- PR #58 (issue #19) aguarda revisão humana no VSCode.
 - PR #57 (issue #56) aguarda revisão humana no VSCode.
 - PR #55 (issue #18) aguarda revisão humana no VSCode.
 
 **Decisões pendentes de validação humana:**
+- Revisão e merge do PR #58 (degree_attack, issue #19).
 - Revisão e merge do PR #57 (testes DL-01, issue #56).
 - Revisão e merge do PR #55 (docs marco 29/05, issue #18).
 
@@ -55,58 +56,12 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 
 ## Histórico de sessões
 
----
+### 2026-05-22 — Ataque por grau: degree_attack (issue #19)
 
-## S2 — Implementação do anonimizador He et al. — ENCERRADA
-
-**Período:** 22–29/05/2026 · **Fechada em:** 22/05/2026 (antecipada)
-
-### Entregue
-Pipeline He et al. (2009) completo e validado: particionamento com backend
-`pymetis`/KL e fallback (#45, #11), agrupamento por FSM (#12), modificação
-estrutural mínima (#13), `anonymize()` com reconexão (#14) e auditor
-independente `validate_k_anonymity` (#15, testes #56). Decisões de design
-D-07 (#43) e dependência `pymetis` (#44) consolidadas.
-
-12 issues fechadas. Sem pendências no nível de issue.
-
-### Marco 29/05
-Cumprido em 21/05 (antecipação de 8 dias). k-anonimato empiricamente
-atingido nas quatro configurações do Mínimo — k ∈ {2, 5, 10, 20} —
-em 3 sementes independentes cada (#16, #17, #18).
-
-### Desvio de critério — registrar para herança em S3/S4
-O critério de aceitação aplicado **não** foi o 100% estrito com que a #16
-foi originalmente redigida, e sim o critério fracionário **DL-01**
-(`satisfied_fraction ≥ 0.9`). A validação passou com
-`satisfied_fraction ≥ 0.9962`.
-
-Isso é resultado projetado de D-06/D-07: uma fração ~0,4% dos nós é
-classificada como **violadora por construção** (LSs sem grupo completo
-caem em D-06). Não é defeito do algoritmo — é o limite estrutural da
-implementação, e é resultado científico válido. Documentado em
-`decision_log.md` (DL-01) e `algorithm_notes.md` §4.
-
-**Implicações que S3 e S4 herdam — não tratar como resolvido aqui:**
-- A métrica "tamanho do grupo de equivalência ≥ k" **não vale** para o
-  subconjunto de violadores D-06; relatar esse subconjunto à parte.
-- A taxa de reidentificação deve separar os violadores D-06 dos nós
-  efetivamente k-anônimos, sob pena de contaminar a curva privacidade-
-  vs-utilidade.
-- Os gráficos finais (S4) devem reportar explicitamente
-  `satisfied_fraction` por k, conforme já previsto para os casos em que
-  algum k não atinja o alvo.
-
-### Pendência de documentação (não bloqueante)
-Verificar consistência de nomes: o bootstrap da #18 previa
-`docs/milestone_29_05.md`; os artefatos atuais são
-`docs/validacao_k_anonimato.md` e `docs/decision_log.md`. Confirmar o
-cross-link no `CLAUDE.md` aponta para o nome final.
-
-S3 (ataques + métricas) está liberada: #19 depende de "loader +
-anonimizador validados", entregue por este milestone.
-
----
+- **Concluído:** `src/attacks/degree.py` criado com `degree_attack(g_orig, g_anon, target, tolerance=0) -> bool`. `src/attacks/__init__.py` criado. `tests/attacks/test_degree.py` com 10 casos cobrindo: identificação única (True), múltiplos candidatos (False), zero candidatos (False), tolerance != 0, target inválido (ValueError), tolerance negativa (ValueError). 198 passando, 4 skipped; ruff limpo. PR #58 aberto.
+- **Próximo:** Aguardar merge de PR #58. Implementar issue #20 (subgraph_attack).
+- **Bloqueios:** PR #58, #57, #55 aguardam revisão humana.
+- **Decisões pendentes:** Revisão humana dos três PRs.
 
 ### 2026-05-22 — Testes DL-01: coverage_fraction, uncovered_fraction, deficit_fully_structural (issue #56)
 
