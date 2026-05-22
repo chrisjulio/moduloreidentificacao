@@ -1,7 +1,7 @@
 # Milestones — Módulo de Reidentificação
 
 **Repositório:** [chrisjulio/moduloreidentificacao](https://github.com/chrisjulio/moduloreidentificacao)
-**Atualizado em:** 2026-05-22
+**Atualizado em:** 2026-05-22 (16h51)
 
 ---
 
@@ -56,13 +56,13 @@ Todas as 11 issues de S1 concluídas. Registradas para referência histórica.
 
 ---
 
-## S3 — Ataques e métricas
+## S3 — Ataques e métricas (EM ANDAMENTO 🔄)
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
-| [#19](https://github.com/chrisjulio/moduloreidentificacao/issues/19) | `src/attacks/degree.py` | Ataque de reidentificação por grau do nó | 🔴 Aberta |
-| [#20](https://github.com/chrisjulio/moduloreidentificacao/issues/20) | `src/attacks/subgraph.py` (VF2) | Ataque por isomorfismo de subgrafo induzido via VF2 (1-hop) | 🔴 Aberta |
-| [#21](https://github.com/chrisjulio/moduloreidentificacao/issues/21) | `src/metrics/` (4 métricas) | Taxa de reidentificação, tamanho de grupo de equivalência, KS-test de grau e variação de clustering | 🔴 Aberta |
+| [#19](https://github.com/chrisjulio/moduloreidentificacao/issues/19) | `src/attacks/degree.py` | Ataque de reidentificação por grau do nó | ✅ Fechada (22/05) |
+| [#20](https://github.com/chrisjulio/moduloreidentificacao/issues/20) | `src/attacks/subgraph.py` (VF2) | Ataque por isomorfismo de subgrafo induzido via VF2 (1-hop) | ✅ Fechada (22/05) |
+| [#21](https://github.com/chrisjulio/moduloreidentificacao/issues/21) | `src/metrics/` (4 métricas) | Taxa de reidentificação, tamanho de grupo de equivalência, KS-test de grau e variação de clustering | ✅ Fechada (22/05) |
 | [#22](https://github.com/chrisjulio/moduloreidentificacao/issues/22) | `experiments/run.py` (runner CLI) | CLI que orquestra anonimização + ataques + métricas com log JSONL | 🔴 Aberta |
 | [#23](https://github.com/chrisjulio/moduloreidentificacao/issues/23) | Execução: experimento baseline Facebook Ego-Nets | 4k × 2 ataques × 3 sementes, logs estruturados em `experiments/logs/` | 🔴 Aberta |
 
