@@ -4,9 +4,11 @@
 
 ## Posicionamento
 
-Este repositório implementa o pipeline `anonimização → ataque → métrica` sobre redes sociais reais, produzindo uma **curva privacidade-vs-utilidade** por parâmetro de anonimização. O objetivo não é propor um novo mecanismo de privacidade, mas fornecer um aferidor que orientará a deliberação metodológica futura sobre o mecanismo de privacidade do framework integrado da tese (Decisão 4.3 do artigo decisório v19).
+Este repositório implementa o pipeline `anonimização → ataque → métrica` sobre redes sociais reais, produzindo uma **curva privacidade-vs-utilidade** por parâmetro de anonimização. O objetivo não é propor um novo mecanismo de privacidade, mas fornecer um aferidor que orientará a deliberação metodológica futura sobre o mecanismo de privacidade do framework integrado da tese (Decisão 4.3 do artigo decisório v19*).
 
 A unidade de progresso é o **gráfico defensável**, não o texto argumentativo.
+
+*Documentação formal da tese e outros artefatos produzidos no escopo acadêmico não serão publicizados aqui em princípio, considerando potencial vazamento.
 
 ## Escopo
 
