@@ -1,0 +1,78 @@
+# ============================================================
+# Experimento baseline: He et al. (2009) + Facebook Ego-Net 3437
+# Issue #23 — experimento baseline Facebook Ego-Nets
+# Escopo Mínimo: k ∈ {2, 5, 10, 20}, 2 ataques, 3 sementes
+# ============================================================
+#
+# Uso:
+#   python -m experiments.run --config experiments/configs/he2009_facebook_baseline.yml
+#
+# Saída:
+#   experiments/logs/he2009_facebook_baseline/he2009_facebook_baseline.jsonl
+#   experiments/logs/he2009_facebook_baseline/summary.json
+#
+# Diferenças em relação a he2009_facebook_full.yml:
+#   - Ataque por subgrafo HABILITADO (baseline completo)
+#   - timeout=60s por nó para subgraph_attack (safety margin)
+#   - name diferenciado para logs separados
+
+experiment:
+  name: he2009_facebook_baseline
+  description: >
+    Experimento baseline completo: anonimização He et al. (2009) +
+    ataque por grau + ataque por subgrafo + métricas
+    (reidentification_rate, equivalence_group_size, ks_test_degree,
+    clustering_variation), sobre a ego-rede 3437 do Facebook Ego-Nets
+    (n_lcc=532, m_lcc=4812), para k ∈ {2, 5, 10, 20} e 3 sementes.
+    Ambos os ataques habilitados (baseline completo, issue #23).
+
+# ------------------------------------------------------------
+# Sementes — mínimo 3 por .claude/rules/seeds.md
+# Nunca hardcoded no código de produção; sempre lidas deste YAML.
+# ------------------------------------------------------------
+seeds: [42, 1337, 2718]
+
+# ------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------
+dataset:
+  name: facebook_ego_nets
+  source: snap
+  data_path: data/raw/facebook/
+  preprocessing_mode: single_egonet
+  egonet_id: 3437       # n_lcc=532, m_lcc=4812, density=0.034068 (issue #40)
+  include_ego: false    # nó ego excluído (decisão Seção 3.1)
+  component: lcc        # reter maior componente conexo (decisão Seção 3.2)
+  min_nodes: 200        # 10 * k_max = 10 * 20 = 200
+
+# ------------------------------------------------------------
+# Anonimização
+# k: lista de inteiros — o runner itera sobre todos os valores.
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k: [2, 5, 10, 20]    # escopo Mínimo completo
+  d: 1
+  sigma: 0.5            # suporte mínimo do FSM simplificado (D-01)
+
+# ------------------------------------------------------------
+# Ataques
+# Ambos habilitados para o baseline completo (issue #23).
+# Estimativa de tempo subgraph: ~532 nós × ~532 checks VF2 × ~0.1ms
+#   ≈ 28s por (k, seed) combinação → ~336s total (≈ 6 min).
+# ------------------------------------------------------------
+attacks:
+  degree:
+    enabled: true
+    tolerance: 0        # correspondência exata de grau (baseline)
+  subgraph:
+    enabled: true
+    hop: 1
+    timeout: 60         # segundos por nó alvo; safety margin para VF2
+
+# ------------------------------------------------------------
+# Execução
+# ------------------------------------------------------------
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/
