@@ -11,26 +11,28 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-05-22
+**Data da última atualização:** 2026-05-23
 
 **Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques + Métricas
 
 **Último passo concluído:**
-- Issue #22 implementada: `experiments/run.py` (runner geral de experimentos).
-  - PR #61 aberto; aguarda revisão humana.
-  - Branch: `experiment/runner`.
+- Issue #23 implementada: experimento baseline Facebook Ego-Nets.
+  - PR #61 (issue #22 — runner) mergeado em main.
+  - `experiments/configs/he2009_facebook_baseline.yml` criado (ambos os ataques).
+  - Experimento executado: 12 runs (4k × 3 sementes), todas SUCCESS_FULL/PARTIAL.
+  - `docs/results_baseline.md` gerado com tabela bruta + agregações.
+  - `experiments/make_baseline_table.py` script de geração da tabela.
+  - PR a abrir na branch `experiment/facebook-baseline`.
 
 **Próximo passo planejado:**
-- Aguardar merge do PR #61 (issue #22 — runner).
-- Após merge: executar `python -m experiments.run --config experiments/configs/he2009_facebook_full.yml`
-  para produzir os resultados finais (k ∈ {2,5,10,20}, 3 sementes).
-- Semana 4: gráficos e tabelas a partir dos logs JSONL.
+- Revisão humana e merge do PR de issue #23.
+- Semana 4: gráficos e tabelas a partir dos logs JSONL (issue #24 planejada).
 
 **Bloqueios ativos:**
-- PR #61 (issue #22 — runner) aguarda revisão humana.
+- PR de issue #23 aguarda revisão humana.
 
 **Decisões pendentes de validação humana:**
-- Revisão e merge do PR #61.
+- Revisão e merge do PR de issue #23.
 
 ---
 
@@ -51,6 +53,24 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-23 — Experimento baseline: he2009_facebook_baseline (issue #23)
+
+- **Concluído:** PR #61 (issue #22 — runner) confirmado mergeado. Branch
+  `experiment/facebook-baseline` criada. `experiments/configs/he2009_facebook_baseline.yml`
+  com ambos os ataques habilitados (degree + subgraph hop=1, timeout=60s),
+  k∈{2,5,10,20}, 3 sementes. Experimento executado via
+  `python -m experiments.run` — 12 runs completas, exit code 0.
+  Resultados: k=2→SUCCESS_FULL×3 (rr_grau=0.026, rr_sub=0.791);
+  k=5→SUCCESS_PARTIAL×3 (rr_grau=0.008, rr_sub=0.406);
+  k=10→SUCCESS_PARTIAL×3 (rr_grau=0.023, rr_sub=0.140);
+  k=20→SUCCESS_PARTIAL×3 (rr_grau=0.099, rr_sub=0.000).
+  `experiments/make_baseline_table.py` gerador da tabela criado.
+  `docs/results_baseline.md` com tabela bruta + agregações commitado.
+  PR a abrir.
+- **Próximo:** Merge do PR de issue #23. Semana 4: gráficos/tabelas (issue #24).
+- **Bloqueios:** PR de issue #23 aguarda revisão humana.
+- **Decisões pendentes:** Revisão humana do PR de issue #23.
 
 ### 2026-05-22 — Runner de experimentos: experiments/run.py (issue #22)
 
