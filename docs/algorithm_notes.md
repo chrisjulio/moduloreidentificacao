@@ -642,30 +642,203 @@ como tal, não como falha do algoritmo.
 
 ## 5. Parâmetros e configuração
 
-*(a preencher)*
+> **Referência cruzada:** `docs/limitations.md` §1.3, §2.1–2.3 (impacto
+> metodológico de cada parâmetro); `docs/decision_log.md` (histórico de
+> decisões D-01 a D-07).
 
-Mapear para as chaves do YAML de configuração ([config_example.yml](../config_example.yml)):
+Esta seção reconcilia os parâmetros formais do artigo com as chaves
+concretas do arquivo `config_example.yml`, distinguindo parâmetros já
+expostos em YAML, parâmetros ainda internos à implementação e parâmetros
+que, embora conceitualmente presentes em He et al. (2009), ainda não têm
+mapeamento operacional completo no protótipo.
 
-| Parâmetro do artigo | Chave YAML | Valor(es) usados |
-|---|---|---|
-| `k` | `anonymization.k_values` | [2, 5, 10, 20] |
-| `d` | `anonymization.d` | 10 (default) — ver D-02 |
-| `σ` (suporte FSM) | *(a mapear)* | |
-| `s_max` (FSM simplificado) | `anonymization.fsm.max_size` | 4 (proposto) — ver D-01 |
-| Variante de isomorfização | `anonymization.isomorphism_mode` | `"add_or_delete"` (default) — alternativa: `"add_only"` |
-| Motor de partição | `anonymization.partition_backend` | `"auto"` (default) → pymetis se disponível, KL fallback |
-| Política D-07 | *(interno ao backend; não exposto no YAML)* | Opção A formalizada — restringir grupos a LSs do mesmo `\|Vi\|` |
+### 5.1 Mapeamento dos parâmetros do artigo para YAML
+
+| Parâmetro do artigo | Papel no algoritmo | Chave YAML | Valor(es) usados / planejados |
+|---|---|---|---|
+| `k` | nível de privacidade; mínimo de candidatos indistinguíveis por nó | `anonymization.k_values` | `[2, 5, 10, 20]` no baseline |
+| `d` | tamanho pretendido de cada Local Structure / partição | *(não exposto em `config_example.yml` atual; previsto como `anonymization.d`)* | `10` como default conceitual (D-02); baseline de validação executado com `d=1` |
+| `σ` | suporte mínimo para o FSM | *(não exposto no exemplo atual; presente nos YAMLs experimentais de runs como `sigma`)* | `0.5` na varredura de k (Seção 9) |
+| `s_max` | tamanho máximo de subgrafo no FSM simplificado | *(não exposto em `config_example.yml` atual; previsto como `anonymization.fsm.max_size`)* | `4` (proposto) — ver D-01 |
+| Variante de isomorfização | política de modificação intra-grupo (Phase 2) | *(não exposto em `config_example.yml` atual; previsto como `anonymization.isomorphism_mode`)* | `"add_or_delete"` (default planejado); alternativa `"add_only"` |
+| Motor de partição | backend da Etapa 1 | *(não exposto em `config_example.yml` atual; previsto como `anonymization.partition_backend`)* | `"auto"` (default planejado) → pymetis se disponível, KL fallback |
+| Verificação empírica do k-anonimato | auditoria pós-anonimização | `anonymization.validate_k_anonymity` | `true` no exemplo atual |
+| Sementes aleatórias | controle de reprodutibilidade | `seeds` | `[42, 1337, 2718]` |
+
+### 5.2 Divergência entre o YAML de exemplo e o estado conceitual do protótipo
+
+O `config_example.yml` atualmente versionado expõe `k_values` e
+`validate_k_anonymity`, mas **não expõe ainda** `d`, `σ`, `s_max`,
+`partition_backend` e `isomorphism_mode` como chaves estáveis de
+configuração. Isso significa que a documentação conceitual do algoritmo
+está **mais adiantada** do que a interface pública do YAML.
+
+Esta divergência é aceitável na fronteira entre #26-A e #26-B: a presente
+issue documenta o escopo conceitual e a nomenclatura correta; a issue #26-B
+será responsável por consolidar a documentação técnica operacional do
+pipeline, inclusive a listagem explícita de parâmetros efetivamente
+expostos ao usuário final.
+
+### 5.3 Parâmetros efetivamente confirmados no baseline
+
+A Seção 9 deste documento registra os parâmetros usados na varredura de `k`
+já executada:
+
+- `k ∈ {2, 5, 10, 20}`
+- `d = 1`
+- `sigma = 0.5`
+- sementes `= [42, 1337, 2718]`
+- dataset: ego-rede 3437 do Facebook Ego-Nets
+
+Para fins de rastreabilidade metodológica, o estado atual do protótipo
+deve ser lido assim:
+
+1. **`k` e validação** já estão representados no YAML público;
+2. **`d` e `sigma`** já aparecem nos YAMLs experimentais usados nos runs,
+   ainda que não estejam estabilizados no `config_example.yml` de referência;
+3. **`s_max`, `partition_backend` e `isomorphism_mode`** estão definidos
+   conceitualmente e nas decisões do documento, mas ainda dependem de
+   consolidação documental/técnica na passada de #26-B.
+
+### 5.4 Requisitos de documentação para #26-B
+
+A documentação técnica subsequente (#26-B) deve tornar explícitos, para
+cada parâmetro exposto:
+
+- nome da chave YAML;
+- tipo esperado (`int`, `float`, `list[int]`, `str`, `bool`);
+- valor default;
+- faixa ou conjunto de valores válidos;
+- efeito metodológico do parâmetro;
+- impacto esperado em custo computacional, utilidade e privacidade;
+- se o parâmetro já está implementado, parcialmente implementado ou apenas
+  documentado para versões futuras.
+
+Essa exigência é particularmente importante para `d`, `sigma`,
+`partition_backend` e `isomorphism_mode`, porque são precisamente os
+parâmetros que mais afetam a interpretação dos resultados e as limitações
+registradas em `docs/limitations.md`.
 
 ---
 
 ## 6. Casos especiais e limitações documentadas no artigo
 
-*(a preencher)*
+> **Referência cruzada:** `docs/limitations.md` (classificação formal das
+> limitações); esta seção caracteriza os **cenários** em que elas tendem
+> a se manifestar com maior clareza.
 
-Exemplos de casos que podem exigir tratamento especial:
-- Grafos desconectados
-- Nós isolados
-- Grafos muito densos
+Esta seção registra casos de borda e classes de grafos para as quais o
+artigo ou a implementação atual exigem cautela interpretativa. O objetivo
+não é expandir o algoritmo, mas delimitar onde sua aplicação é direta,
+onde é apenas plausível e onde depende de validação empírica adicional.
+
+### 6.1 Grafos desconectados
+
+He et al. (2009) formulam o algoritmo sobre um grafo geral `G = (V, E)`,
+mas a definição de Local Structure pressupõe um subgrafo **conectado**.
+Na prática, quando o grafo original é desconectado, o pipeline precisa
+escolher entre processar cada componente conexa separadamente ou restringir
+a análise à maior componente conexa.
+
+O projeto adotou explicitamente a segunda estratégia no pré-processamento:
+`component: lcc` em `config_example.yml`, retendo apenas a maior componente
+conexa da ego-rede. Essa decisão simplifica a interpretação estrutural do
+algoritmo e evita que componentes triviais ou muito pequenas distorçam o
+agrupamento e as métricas de utilidade.
+
+**Implicação metodológica:** os resultados do baseline dizem respeito à
+LCC da rede selecionada, não ao grafo bruto integral. Isso deve ser
+reportado como recorte deliberado, não como comportamento genérico do
+algoritmo sobre grafos arbitrariamente desconectados.
+
+### 6.2 Nós isolados
+
+Nós isolados constituem um caso especial importante porque sua Local
+Structure, no limite, coincide com um subgrafo unitário sem arestas.
+Sob `d=1`, esse caso é trivial: todos os nós isolados são mutuamente
+isomorfos entre si. Sob `d>1`, a incorporação de nós isolados a LSs
+maiores pode produzir partições estruturalmente pouco informativas e
+artificialmente fáceis de anonimizar.
+
+O pipeline corrente mitiga esse problema indiretamente ao operar sobre a
+maior componente conexa (`component: lcc`), o que tende a eliminar nós
+isolados do domínio efetivo de análise. Se o módulo vier a ser usado sobre
+grafos nos quais nós isolados persistam após o pré-processamento, esse
+caso deve ser tratado explicitamente no relatório experimental.
+
+**Implicação metodológica:** anonimização bem-sucedida sobre nós isolados
+não constitui evidência forte de preservação de privacidade estrutural em
+redes densamente relacionais; é um caso trivial do modelo.
+
+### 6.3 Grafos muito densos
+
+Grafos muito densos representam um caso de atenção por duas razões:
+
+1. a distinção entre adição e remoção de arestas na Fase 2 tende a se
+   comportar de forma diferente da observada em grafos esparsos;
+2. a reconexão pode impor custo estrutural elevado, especialmente se o
+   particionamento inicial não conseguir minimizar suficientemente as
+   arestas inter-partição.
+
+He et al. reportam preservação de utilidade em datasets específicos, mas
+o artigo não fornece garantia teórica de que a variante `add_or_delete`
+terá o mesmo comportamento em grafos muito densos. No protótipo atual,
+não há experimento dedicado a esse regime.
+
+**Implicação metodológica:** resultados do baseline em ego-redes do
+Facebook (não extremas em densidade) não devem ser extrapolados para
+grafos muito densos sem experimentação adicional.
+
+### 6.4 Grafos muito pequenos em relação a `k`
+
+Se o número de LSs disponíveis é pequeno em relação ao `k` configurado,
+o agrupamento pode produzir alta proporção de grupos incompletos (D-06),
+reduzindo drasticamente `coverage_fraction`. Esse risco é particularmente
+agudo em redes pequenas ou após pré-processamentos agressivos.
+
+A decisão de adotar `min_nodes: 200` em `config_example.yml` foi motivada
+justamente por esse tipo de risco: manter um tamanho mínimo compatível com
+os maiores valores de `k` no escopo mínimo. Ainda assim, o limiar é uma
+heurística operacional, não uma garantia formal suficiente para todos os
+casos.
+
+**Implicação metodológica:** quando `n` é pequeno relativamente a `k`, a
+queda de cobertura pode decorrer da geometria do dataset e não de bug no
+anonimizador. O resultado deve ser interpretado à luz de D-06.
+
+### 6.5 Valores de `d > 1`
+
+Embora o artigo formule o modelo para LSs de tamanho variável `d`, a
+validação empírica consolidada até o momento foi obtida com `d=1`. Isso
+transforma a LS em um caso degenerado, no qual o isomorfismo local se
+aproxima da igualdade de grau. Para `d>1`, entram em jogo simultaneamente:
+
+- a qualidade do FSM simplificado (D-01);
+- o balanceamento real das partições (D-04/D-07);
+- o custo do VF2 no verificador (Seção 4.3.1);
+- a possibilidade de violações adicionais além do grupo incompleto.
+
+Portanto, `d>1` não é apenas um novo parâmetro; é uma mudança de regime
+experimental. Os resultados já obtidos para `d=1` não devem ser lidos como
+prova empírica suficiente do comportamento do algoritmo nesse regime mais
+geral.
+
+### 6.6 Relação com `docs/limitations.md`
+
+Os casos especiais desta seção têm interface direta com as limitações
+registradas em `docs/limitations.md`:
+
+- grafos desconectados e nós isolados conectam-se ao recorte de escopo do
+  dataset e do pré-processamento (§1.1);
+- grafos muito densos e `d>1` conectam-se às limitações técnicas relativas
+  ao FSM, ao backend de partição e ao custo do VF2 (§2.1, §2.2, §2.5);
+- grafos muito pequenos em relação a `k` conectam-se diretamente à decisão
+  D-06 (§2.3).
+
+Por essa razão, esta seção deve ser lida como complemento operacional de
+`docs/limitations.md`: lá estão classificadas as limitações; aqui estão
+caracterizados os cenários em que elas tendem a se manifestar com maior
+clareza.
 
 ---
 

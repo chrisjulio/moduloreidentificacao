@@ -1,27 +1,135 @@
 # Definições Operacionais das Métricas
 
 > Definições precisas das métricas de privacidade e utilidade usadas no pipeline.
+>
+> **Referências cruzadas:**
+> - `docs/algorithm_notes.md` §4 (critério de k-anonimato e verificador empírico)
+> - `docs/algorithm_notes.md` §4.4 (relação entre verificador e ataques)
+> - `docs/algorithm_notes.md` §5 (parâmetros e configuração YAML)
+> - `docs/algorithm_notes.md` §5.4 (requisitos de documentação para #26-B)
+> - `docs/limitations.md` (limitações metodológicas que afetam a interpretação das métricas)
+> - `config_example.yml` (chaves `metrics.privacy` e `metrics.utility`)
+
+---
 
 ## Métricas de Privacidade
 
-- **Taxa de reidentificação por ataque**: proporção de nós-alvo corretamente identificados pelo ataque.
-- **Tamanho médio dos grupos de equivalência**: média do número de nós por grupo após anonimização.
+### Taxa de reidentificação por ataque (`reidentification_rate`)
+
+Proporção de nós-alvo corretamente identificados pelo ataque sobre o total
+de nós do grafo anonimizado `G'`:
+
+```
+reidentification_rate = N_correto / N_total
+```
+
+onde `N_correto` é o número de nós para os quais o ataque associou
+corretamente o nó em `G'` ao nó correspondente em `G`, e `N_total = |V(G')|`.
+
+**Cota teórica:** pela Def. 2–3 de He et al. (2009), em um grafo
+structure-aware k-anonymous com k-anonimato pleno (`coverage_fraction = 1.0`),
+a confiança máxima de reidentificação de qualquer nó é `≤ 1/k`.
+Portanto, `reidentification_rate ≤ 1/k` é a cota superior teórica esperada
+para um ataque ótimo sob o modelo adversarial de He et al.
+
+**Interpretação:** se um ataque obtiver `reidentification_rate` significativamente
+acima de `1/k`, isso indica que o modelo adversarial utilizado tem conhecimento
+que escapa do que a Def. 2 considera — não necessariamente um bug no algoritmo.
+Ver `docs/algorithm_notes.md` §4.4 para discussão completa.
+
+**Ataques implementados no baseline:**
+- por grau (`type: degree`, `tolerance: 0`): usa somente o grau do nó como
+  assinatura de ataque; modelo adversarial mais fraco que o de He et al.
+- por subgrafos (`type: subgraph`, `hop_distance: 1`): usa a vizinhança
+  1-hop como assinatura; mais próximo do modelo adversarial do artigo.
+
+Ver `config_example.yml` seção `attacks` para parâmetros de cada ataque.
+
+### Tamanho dos grupos de equivalência (`equivalence_group_size`)
+
+Estatísticas descritivas do tamanho (número de **nós**) dos grupos de
+equivalência estrutural produzidos pelo algoritmo após anonimização.
+O grupo de equivalência estrutural é o conjunto de `k` LSs mutuamente
+isomorfas; o seu tamanho em nós é `k · |LS|` para grupos completos.
+
+Métricas reportadas:
+- **média** (`mean_equivalence_group_size`): média do número de nós por grupo
+  sobre todos os grupos formados (incluindo grupo incompleto, se houver).
+- **mediana** (`median_equivalence_group_size`): mediana do mesmo.
+
+**Relação com o parâmetro `k`:** em um anonimizador ideal sem grupo incompleto
+(D-06), `mean_equivalence_group_size = k · d` (para LSs de tamanho uniforme `d`).
+Desvios indicam a presença de grupo incompleto ou desbalanceamento de LSs (D-07).
+
+Ver `config_example.yml` chave `metrics.privacy.equivalence_group_size`.
+
+---
 
 ## Métricas de Utilidade
 
-- **KS-test (estatística D)**: teste de Kolmogorov-Smirnov sobre a distribuição de grau (original vs. anonimizado).
-- **Variação relativa do clustering**: variação relativa do coeficiente de clustering médio (original vs. anonimizado).
+### KS-test sobre distribuição de grau (`ks_test_degree_distribution`)
+
+Estatística D do teste de Kolmogorov-Smirnov entre a distribuição empírica
+de grau do grafo original `G` e do grafo anonimizado `G'`:
+
+```
+D_KS = sup_x |F_G(x) - F_{G'}(x)|
+```
+
+onde `F_G` e `F_{G'}` são as funções de distribuição empírica acumulada
+(ECDF) das distribuições de grau de `G` e `G'`, respectivamente.
+
+- `D_KS = 0.0`: distribuições idênticas (utilidade máxima).
+- `D_KS = 1.0`: distribuições completamente distintas (utilidade nula).
+- Valores menores indicam maior preservação estrutural da distribuição de grau.
+
+**Nota metodológica:** o KS-test é uma métrica de **forma** da distribuição,
+não de momentos específicos. Ele pode indicar preservação mesmo quando a
+média de grau muda levemente. Para interpretação completa, usar em conjunto
+com a variação relativa do clustering (abaixo).
+
+Ver `config_example.yml` chave `metrics.utility.ks_test_degree_distribution`.
+
+### Variação relativa do clustering (`delta_clustering_coefficient`)
+
+Variação relativa do coeficiente de clustering médio entre o grafo original
+`G` e o grafo anonimizado `G'`:
+
+```
+ΔCC = |CC(G') - CC(G)| / CC(G)
+```
+
+onde `CC(G)` e `CC(G')` são os coeficientes de clustering médios globais
+(média sobre todos os nós do coeficiente local de cada nó).
+
+- `ΔCC = 0.0`: clustering totalmente preservado.
+- Valores maiores indicam maior perturbação das propriedades de triangularizão
+  local da rede.
+
+**Nota de borda:** se `CC(G) = 0` (grafo bipartido ou sem triângulos), `ΔCC`
+é indefinido. Nesse caso, reportar `delta_clustering_coefficient = null` e
+anotar no log estruturado.
+
+Ver `config_example.yml` chave `metrics.utility.delta_clustering_coefficient`.
+
+---
 
 ## Parâmetro principal
 
 `k ∈ {2, 5, 10, 20}`
+
+Os demais parâmetros relevantes para a interpretação das métricas (`d`,
+`sigma`, `partition_backend`, `isomorphism_mode`) estão definidos em
+`docs/algorithm_notes.md` §5 e serão completamente documentados na
+issue #26-B conforme especificado em `docs/algorithm_notes.md` §5.4.
 
 ---
 
 ## k-anonymity-verifier
 
 > **Issue:** [S1] Definir metrics_definitions.md §k-anonymity-verifier (#34).
-> **Referências cruzadas:** `docs/algorithm_notes.md` §4 (decisões D-05 e D-06).
+> **Referências cruzadas:** `docs/algorithm_notes.md` §4 (decisões D-05 e D-06),
+> `docs/algorithm_notes.md` §4.4 (relação com ataques de reidentificação).
 > **Status:** Definido. Consolidado em 20/05/2026. Schema atualizado em 22/05/2026 (DL-01).
 
 O verificador de k-anonimato estrutural é um instrumento de auditoria
@@ -257,8 +365,9 @@ pode degradar significativamente para `d` maiores:
 - O custo total do verificador é `O(c_k · k² · f(d))` onde `c_k = ⌊n/d⌋` é
   o número de grupos e `f(d)` é o custo de uma chamada VF2 sobre LSs de
   tamanho `d`.
-- Para os valores de `d` usados no baseline (`d = 10`, configuração default),
-  o custo é aceitável. Documentar como limitação se `d` for aumentado.
+- Para os valores de `d` usados no baseline (`d = 1` validado; `d = 10`
+  configurado como default), o custo é aceitável. Documentar como limitação
+  se `d` for aumentado. Ver também `docs/limitations.md` §2.5.
 
 #### 7.2 Risco de falso positivo metodológico
 
