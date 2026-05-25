@@ -11,28 +11,27 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-05-23
+**Data da última atualização:** 2026-05-25
 
-**Semana corrente:** Semana 3 (29/05/2026 – início antecipado) — Ataques + Métricas
+**Semana corrente:** Semana 4 (05/06/2026) — Gráficos e tabelas
 
 **Último passo concluído:**
-- Issue #23 implementada: experimento baseline Facebook Ego-Nets.
-  - PR #61 (issue #22 — runner) mergeado em main.
-  - `experiments/configs/he2009_facebook_baseline.yml` criado (ambos os ataques).
-  - Experimento executado: 12 runs (4k × 3 sementes), todas SUCCESS_FULL/PARTIAL.
-  - `docs/results_baseline.md` gerado com tabela bruta + agregações.
-  - `experiments/make_baseline_table.py` script de geração da tabela.
-  - PR a abrir na branch `experiment/facebook-baseline`.
+- Issue #24 implementada: gerador do gráfico privacy-vs-utility.
+  - PR #62 (issue #23 — baseline) mergeado em main antes de iniciar.
+  - `src/visualization/privacy_utility.py` criado com loader, agregação, plot e CLI.
+  - `tests/visualization/test_privacy_utility.py`: 35 testes, todos passando.
+  - Gráfico gerado sobre o baseline: k∈{2,5,10,20}, 3 sementes, barras de erro ±std.
+  - PR #66 aberto na branch `viz/privacy-utility`.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR de issue #23.
-- Semana 4: gráficos e tabelas a partir dos logs JSONL (issue #24 planejada).
+- Revisão humana e merge do PR #66 (issue #24).
+- Avaliar se há próximas tarefas da Semana 4 (tabelas, polimento).
 
 **Bloqueios ativos:**
-- PR de issue #23 aguarda revisão humana.
+- PR #66 (issue #24) aguarda revisão humana.
 
 **Decisões pendentes de validação humana:**
-- Revisão e merge do PR de issue #23.
+- Revisão e merge do PR #66.
 
 ---
 
@@ -53,6 +52,21 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-25 — Gráfico privacy-vs-utility (issue #24)
+
+- **Concluído:** PR #62 (issue #23) confirmado mergeado. Branch `viz/privacy-utility` criada.
+  `src/visualization/privacy_utility.py` implementado com três funções públicas:
+  `load_jsonl_records`, `aggregate_by_k`, `plot_privacy_utility` + CLI
+  `python -m src.visualization.privacy_utility --logs <dir>`.
+  Figura de 2 painéis: Privacidade (taxa de reidentificação % vs k, curva por ataque) e
+  Utilidade (clustering_variation + KS-D vs k), barras de erro = ±1 std entre sementes.
+  PDF + PNG salvos em `results/plots/` (não versionados).
+  35 testes em `tests/visualization/test_privacy_utility.py`, todos passando.
+  Suite completa: 339 passed, 4 skipped. Ruff limpo. PR #66 aberto.
+- **Próximo:** Merge do PR #66. Avaliar tarefas remanescentes da Semana 4.
+- **Bloqueios:** PR #66 aguarda revisão humana.
+- **Decisões pendentes:** Revisão humana do PR #66.
 
 ### 2026-05-23 — Experimento baseline: he2009_facebook_baseline (issue #23)
 
