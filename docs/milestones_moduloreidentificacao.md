@@ -1,7 +1,7 @@
 # Milestones — Módulo de Reidentificação
 
 **Repositório:** [chrisjulio/moduloreidentificacao](https://github.com/chrisjulio/moduloreidentificacao)
-**Atualizado em:** 2026-05-23 (11h12)
+**Atualizado em:** 2026-05-25 (16h35)
 
 ---
 
@@ -50,7 +50,7 @@ Todas as 11 issues de S1 concluídas. Registradas para referência histórica.
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
-| [#16](https://github.com/chrisjulio/moduloreidentificacao/issues/16) | **MARCO 29/05** — Sanidade k=5, d=1 sobre ego-rede Facebook | Executar anonimização com 3 sementes e validar resultado (sucesso pleno ou parcial ≥ 0,9) | ✅ Fechada (22/05) |
+| [#16](https://github.com/chrisjulio/moduloreidentificacao/issues/16) | **MARCO 29/05** — Sanidade k=5, d=1 sobre ego-rede Facebook | Executar anonimização com 3 sementes e validar resultado (sucesso pleno ou parcial ≥ 0,9) | ✅ Fechada (22/05) |
 | [#17](https://github.com/chrisjulio/moduloreidentificacao/issues/17) | Testes de sanidade adicionais: k=2, k=10, k=20 | Estender validação para os demais valores de k do escopo mínimo | ✅ Fechada (22/05) |
 | [#18](https://github.com/chrisjulio/moduloreidentificacao/issues/18) | Documentar resultado do marco 29/05 | Registrar em `docs/milestone_29_05.md` configurações, hashes, resultados e decisão | ✅ Fechada (22/05) |
 
@@ -68,17 +68,19 @@ Todas as 11 issues de S1 concluídas. Registradas para referência histórica.
 
 ---
 
-## S4 — Visualização e documentação técnica (EM ANDAMENTO 🔄)
+## S4 — Visualização e documentação técnica (ENCERRADO ✅)
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
-| [#24](https://github.com/chrisjulio/moduloreidentificacao/issues/24) | Gráfico privacy-vs-utility | Curvas por k com barras de erro — PDF + PNG em `results/plots/` | 🔴 Aberta |
-| [#25](https://github.com/chrisjulio/moduloreidentificacao/issues/25) | Tabelas CSV de resultados | Uma tabela por `(dataset, ataque)` em `results/tables/` | 🔴 Aberta |
-| [#26](https://github.com/chrisjulio/moduloreidentificacao/issues/26) | Documentação técnica final do pipeline | `docs/pipeline.md` com diagrama e comandos de reprodução end-to-end | 🔴 Aberta |
+| [#24](https://github.com/chrisjulio/moduloreidentificacao/issues/24) | Gráfico privacy-vs-utility | Curvas por k com barras de erro — PDF + PNG em `results/plots/` | ✅ Fechada (25/05) |
+| [#25](https://github.com/chrisjulio/moduloreidentificacao/issues/25) | Tabelas CSV de resultados | Uma tabela por `(dataset, ataque)` em `results/tables/` | ✅ Fechada (25/05) |
+| [#26](https://github.com/chrisjulio/moduloreidentificacao/issues/26) | Documentação técnica final do pipeline | `docs/pipeline.md` com diagrama e comandos de reprodução end-to-end | ✅ Fechada (25/05) |
+| [#63](https://github.com/chrisjulio/moduloreidentificacao/issues/63) | [#26-A] Revisão e produção documental acadêmica do pipeline | Revisão de `algorithm_notes.md`, `metrics_definitions.md` e criação de `docs/limitations.md` | ✅ Fechada (23/05) |
+| [#64](https://github.com/chrisjulio/moduloreidentificacao/issues/64) | [#26-B] Produção técnica codificada da documentação do pipeline | `docs/pipeline.md` com diagrama Mermaid, comandos e lista de outputs | ✅ Fechada (25/05) |
 
 ---
 
-## S5 — Validação final e entrega (14/06)
+## S5 — Validação final e entrega (14/06) (EM ANDAMENTO 🔄)
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
@@ -99,4 +101,4 @@ Todas as 11 issues de S1 concluídas. Registradas para referência histórica.
 
 ---
 
-*Documento gerado automaticamente a partir da API do GitHub em 2026-05-23.*
+*Documento gerado automaticamente a partir da API do GitHub em 2026-05-25.*
