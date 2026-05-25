@@ -45,7 +45,7 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 
 - **Concluído:** o que foi feito.
 - **Próximo:** próximo passo imediato.
-- **Bloqueios:** problemas que impedem progresso (ou "Nenhum").
+- **Bloqueios:** bloqueios que impedem progresso (ou "Nenhum").
 - **Decisões pendentes:** pontos que precisam de validação humana (ou "Nenhuma").
 ```
 
@@ -67,6 +67,17 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 - **Próximo:** Merge do PR #66. Avaliar tarefas remanescentes da Semana 4.
 - **Bloqueios:** PR #66 aguarda revisão humana.
 - **Decisões pendentes:** Revisão humana do PR #66.
+
+### 2026-05-25 — Encerramento de S3: PR #65 (#26-A / issue #63)
+
+- **Concluído:** Issue #63 (#26-A) fechada. `docs/limitations.md` produzido;
+  cross-referências entre `algorithm_notes.md` e `metrics_definitions.md`
+  estabelecidas. PR #65 (`docs/pipeline-academic`) em revisão final.
+- **Próximo:** Fechar CI do PR #65; aplicar polimentos ②③④; merge; abrir
+  issue #26-B (parâmetros do pipeline, §5.4). Em seguida, S4: issues #24
+  (gráficos) e #25 (tabelas CSV).
+- **Bloqueios:** CI vermelho no PR #65 (Python 3.11/3.12) — único bloqueio real. [já resolvidos]
+- **Decisões pendentes:** Nenhuma.
 
 ### 2026-05-23 — Experimento baseline: he2009_facebook_baseline (issue #23)
 
