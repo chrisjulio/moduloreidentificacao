@@ -16,22 +16,26 @@
 **Semana corrente:** Semana 4 (05/06/2026) — Gráficos e tabelas
 
 **Último passo concluído:**
-- Issue #24 implementada: gerador do gráfico privacy-vs-utility.
-  - PR #62 (issue #23 — baseline) mergeado em main antes de iniciar.
-  - `src/visualization/privacy_utility.py` criado com loader, agregação, plot e CLI.
-  - `tests/visualization/test_privacy_utility.py`: 35 testes, todos passando.
-  - Gráfico gerado sobre o baseline: k∈{2,5,10,20}, 3 sementes, barras de erro ±std.
-  - PR #66 aberto na branch `viz/privacy-utility`.
+- Issue #25 implementada: gerador de tabelas CSV a partir de logs JSONL.
+  - PR #66 (issue #24 — gráfico privacy-vs-utility) confirmado mergeado.
+  - `src/visualization/tables.py` criado com três funções públicas:
+    `load_jsonl_records`, `record_to_row`, `generate_tables` + CLI
+    `python -m src.visualization.tables --logs <dir>`.
+  - CSV: uma tabela por `(dataset, ataque)`, colunas
+    `k, seed, reid_rate, eq_group_mean, ks_D, ks_p, clustering_var`.
+  - `tests/visualization/test_tables.py`: 43 testes, todos passando.
+  - Suite completa: 382 passed, 4 skipped. Ruff limpo.
+  - PR #67 aberto na branch `viz/tables`.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #66 (issue #24).
-- Avaliar se há próximas tarefas da Semana 4 (tabelas, polimento).
+- Revisão humana e merge do PR #67 (issue #25).
+- Avaliar tarefas remanescentes da Semana 4 (polimento, documentação técnica).
 
 **Bloqueios ativos:**
-- PR #66 (issue #24) aguarda revisão humana.
+- PR #67 (issue #25) aguarda revisão humana.
 
 **Decisões pendentes de validação humana:**
-- Revisão e merge do PR #66.
+- Revisão e merge do PR #67.
 
 ---
 
@@ -52,6 +56,19 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-25 — Tabelas CSV de resultados (issue #25)
+
+- **Concluído:** PR #66 (issue #24) confirmado mergeado. Branch `viz/tables` criada.
+  `src/visualization/tables.py` implementado com três funções públicas:
+  `load_jsonl_records`, `record_to_row`, `generate_tables` + CLI
+  `python -m src.visualization.tables --logs <dir> --out results/tables --dataset facebook`.
+  Uma tabela CSV por `(dataset, ataque)`, colunas: `k, seed, reid_rate, eq_group_mean, ks_D, ks_p, clustering_var`.
+  Saída em `results/tables/` (não versionada). 43 testes em `tests/visualization/test_tables.py`,
+  todos passando. Suite completa: 382 passed, 4 skipped. Ruff limpo. PR #67 aberto.
+- **Próximo:** Merge do PR #67. Avaliar tarefas remanescentes da Semana 4 (polimento/documentação).
+- **Bloqueios:** PR #67 aguarda revisão humana.
+- **Decisões pendentes:** Revisão humana do PR #67.
 
 ### 2026-05-25 — Gráfico privacy-vs-utility (issue #24)
 
