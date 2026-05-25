@@ -16,26 +16,30 @@
 **Semana corrente:** Semana 4 (05/06/2026) — Gráficos e tabelas
 
 **Último passo concluído:**
-- Issue #25 implementada: gerador de tabelas CSV a partir de logs JSONL.
-  - PR #66 (issue #24 — gráfico privacy-vs-utility) confirmado mergeado.
-  - `src/visualization/tables.py` criado com três funções públicas:
-    `load_jsonl_records`, `record_to_row`, `generate_tables` + CLI
-    `python -m src.visualization.tables --logs <dir>`.
-  - CSV: uma tabela por `(dataset, ataque)`, colunas
-    `k, seed, reid_rate, eq_group_mean, ks_D, ks_p, clustering_var`.
-  - `tests/visualization/test_tables.py`: 43 testes, todos passando.
-  - Suite completa: 382 passed, 4 skipped. Ruff limpo.
-  - PR #67 aberto na branch `viz/tables`.
+- Issue #64 implementada: documentação técnica do pipeline.
+  - PR #67 (issue #25 — tabelas CSV) confirmado mergeado.
+  - `docs/pipeline.md` criado com:
+    - Diagrama Mermaid de fluxo de execução (Config YAML → anonimização →
+      ataques → métricas → JSONL → visualizações).
+    - Diagrama Mermaid de arquitetura de módulos (todos os `src/` com
+      dependências e funções públicas).
+    - Comandos reproduzíveis verificados localmente para cada etapa.
+    - Tabela de parâmetros YAML com tipo, obrigatoriedade e descrição.
+    - Tabela de outputs esperados com localização no repositório.
+    - Referências cruzadas para `algorithm_notes.md`, `metrics_definitions.md`
+      e `limitations.md`.
+  - Suite completa: 386 passed. Ruff limpo.
+  - PR #68 aberto na branch `docs/pipeline-technical`.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #67 (issue #25).
-- Avaliar tarefas remanescentes da Semana 4 (polimento, documentação técnica).
+- Revisão humana e merge do PR #68 (issue #64).
+- Avaliar tarefas remanescentes da Semana 4 (issues #27 — cold start, #28 — revisão global docs).
 
 **Bloqueios ativos:**
-- PR #67 (issue #25) aguarda revisão humana.
+- PR #68 (issue #64) aguarda revisão humana.
 
 **Decisões pendentes de validação humana:**
-- Revisão e merge do PR #67.
+- Revisão e merge do PR #68.
 
 ---
 
@@ -56,6 +60,19 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-25 — Documentação técnica do pipeline (issue #64)
+
+- **Concluído:** PR #67 (issue #25) confirmado mergeado. Branch `docs/pipeline-technical` criada.
+  `docs/pipeline.md` criado com: diagrama Mermaid de fluxo de execução (Config YAML → anonimização
+  → ataques → métricas → JSONL → visualizações); diagrama Mermaid de arquitetura de módulos
+  (todos os `src/` com dependências); comandos reproduzíveis verificados localmente para cada etapa;
+  tabela de parâmetros YAML; tabela de outputs com localização; referências cruzadas para
+  `algorithm_notes.md`, `metrics_definitions.md` e `limitations.md`.
+  386 passed. Ruff limpo. PR #68 aberto.
+- **Próximo:** Merge do PR #68. Avaliar issues #27 (cold start) e #28 (revisão global docs).
+- **Bloqueios:** PR #68 aguarda revisão humana.
+- **Decisões pendentes:** Revisão humana do PR #68.
 
 ### 2026-05-25 — Tabelas CSV de resultados (issue #25)
 
