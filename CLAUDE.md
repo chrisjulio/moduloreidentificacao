@@ -184,6 +184,40 @@ Detalhamento e critério de aprovação do marco 29/05:
 
 ---
 
+## Registro de bugs
+
+Toda correção de bug identificada durante o desenvolvimento deve ser
+documentada em dois arquivos canônicos em `bugs/`:
+
+| Arquivo | O que registra |
+|---|---|
+| [`bugs/execution.md`](bugs/execution.md) | Registro técnico de execução: sintoma no CI, arquivo(s) alterado(s), diff, saída dos testes pós-fix, lint |
+| [`bugs/explanation.md`](bugs/explanation.md) | Explicação em alto nível: causa raiz, por que o bug existia, decisão de onde corrigir, lição extraída |
+
+### Protocolo ao corrigir um bug
+
+1. **Diagnóstico** — identificar causa raiz antes de alterar código.
+2. **Fix** — aplicar a correção mínima necessária; confirmar com testes.
+3. **Atualizar `bugs/execution.md`** — adicionar nova seção `---` com:
+   - Data, commit, branch, teste que falhou, runners afetados.
+   - Arquivo(s) alterado(s) com diff e contagem de linhas.
+   - Saída dos testes pós-fix (nome do teste + `PASSED`/`FAILED` + totais).
+   - Resultado do lint.
+4. **Atualizar `bugs/explanation.md`** — adicionar nova seção `---` com:
+   - O que o bug causava (impacto observável).
+   - Por que acontecia (mecanismo interno).
+   - Como foi corrigido (raciocínio da solução).
+   - Por que o fix foi feito onde foi (trade-off de localização).
+   - Impacto em produção.
+   - Lição extraída (padrão a evitar).
+5. **Manter referência cruzada** — cada arquivo aponta para o outro no cabeçalho.
+6. **Cada bug é uma seção** nos arquivos, separada por `---`, em ordem cronológica.
+
+> Os arquivos `bugs/execution.md` e `bugs/explanation.md` são acumulativos —
+> cada novo bug adiciona uma seção; **nunca sobrescrever** registros anteriores.
+
+---
+
 ## Comandos frequentes
 
 ```bash
