@@ -13,33 +13,26 @@
 
 **Data da última atualização:** 2026-05-25
 
-**Semana corrente:** Semana 4 (05/06/2026) — Gráficos e tabelas
+**Semana corrente:** Semana 4 (05/06/2026) → transição para Semana 5
 
 **Último passo concluído:**
-- Issue #64 implementada: documentação técnica do pipeline.
-  - PR #67 (issue #25 — tabelas CSV) confirmado mergeado.
-  - `docs/pipeline.md` criado com:
-    - Diagrama Mermaid de fluxo de execução (Config YAML → anonimização →
-      ataques → métricas → JSONL → visualizações).
-    - Diagrama Mermaid de arquitetura de módulos (todos os `src/` com
-      dependências e funções públicas).
-    - Comandos reproduzíveis verificados localmente para cada etapa.
-    - Tabela de parâmetros YAML com tipo, obrigatoriedade e descrição.
-    - Tabela de outputs esperados com localização no repositório.
-    - Referências cruzadas para `algorithm_notes.md`, `metrics_definitions.md`
-      e `limitations.md`.
-  - Suite completa: 386 passed. Ruff limpo.
-  - PR #68 aberto na branch `docs/pipeline-technical`.
+- Issue #26 fechada: toda a documentação técnica do pipeline concluída.
+  - PR #68 (issue #64 / #26-B) confirmado mergeado.
+  - Sub-issues #63 (#26-A) e #64 (#26-B) encerradas; issue pai #26 fechada.
+  - Critérios atendidos: diagrama Mermaid do pipeline (`docs/pipeline.md` §2/§3),
+    comandos reproduzíveis (§5), lista de outputs com localização (§7),
+    `docs/limitations.md`, cross-referências entre `algorithm_notes.md` e
+    `metrics_definitions.md`.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #68 (issue #64).
-- Avaliar tarefas remanescentes da Semana 4 (issues #27 — cold start, #28 — revisão global docs).
+- Semana 5 (S5): issues #27 (reprodutibilidade end-to-end / cold start) e
+  #28 (README final + revisão global da documentação).
 
 **Bloqueios ativos:**
-- PR #68 (issue #64) aguarda revisão humana.
+- Nenhum.
 
 **Decisões pendentes de validação humana:**
-- Revisão e merge do PR #68.
+- Nenhuma.
 
 ---
 
@@ -60,6 +53,16 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-25 — Encerramento da issue #26
+
+- **Concluído:** PR #68 (issue #64 / #26-B) confirmado mergeado. Issue #26 fechada com
+  comentário de encerramento documentando todos os critérios atendidos. Sub-issues #63 e #64
+  cobriram os 5 critérios da definição de pronto: ①②③ pela #64 (diagramas, comandos, outputs),
+  ④⑤ pela #63 (limitations.md, revisão e cross-referências dos docs).
+- **Próximo:** Semana 5 — issues #27 (reprodutibilidade end-to-end) e #28 (README final + revisão docs).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Nenhuma.
 
 ### 2026-05-25 — Documentação técnica do pipeline (issue #64)
 
