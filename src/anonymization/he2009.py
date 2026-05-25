@@ -443,6 +443,9 @@ def _group_isomorphic(
     Algorithm 1 (Local Structure Grouping, p. 650-651).
     D-01, D-06, D-07 em docs/algorithm_notes.md §7.
     """
+    if k < 1:
+        raise ValueError(f"k must be >= 1, got {k!r}")
+
     rng = np.random.default_rng(seed)
 
     if not local_structures:
