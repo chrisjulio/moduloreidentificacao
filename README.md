@@ -37,22 +37,23 @@ A unidade de progresso é o **gráfico defensável**, não o texto argumentativo
 
 ## Status
 
-**Atualizado em 22/05/2026.**
+**Atualizado em 26/05/2026.**
 
 | Fase | Período | Status |
 |---|---|---|
 | S1: Setup + loader + leitura He et al. | 15–22/05 | ✅ Concluída |
 | S2: Implementação He et al. + validação k-anonimato | 22–29/05 | ✅ Concluída com adiantamento (marco 29/05 cumprido em 21/05) |
-| S3: Ataques + métricas + experimento baseline | 29/05–05/06 | 🔄 Em andamento |
-| S4: Gráficos, tabelas e documentação técnica | 05–12/06 | ⏳ Pendente |
-| S5: Polimento, reprodutibilidade e entrega | 12–14/06 | ⏳ Pendente |
+| S3: Ataques + métricas + experimento baseline | 29/05–05/06 | ✅ Concluída com adiantamento (todos os ataques, métricas, runner e baseline produzidos em 22-23/05) |
+| S4: Gráficos, tabelas e documentação técnica | 05–12/06 | ✅ Concluída com adiantamento (gráficos, tabelas CSV e docs/pipeline.md produzidos em 25/05) |
+| S5: Polimento, reprodutibilidade e entrega | 12–14/06 | 🔄 Em andamento |
 
 **Marco intermediário não-negociável cumprido:** 21/05/2026 (antecipado em 8 dias). k-anonimato empiricamente atingido em todas as configurações do Mínimo (k ∈ {2, 5, 10, 20}) com `satisfied_fraction ≥ 0.9962` — critério DL-01 aprovado. Ver `docs/validacao_k_anonimato.md` e `docs/decision_log.md`.
 
 ### Componentes implementados
 
+**S1–S2 (anonimização e validação)**
 - `src/anonymization/he2009.py` — pipeline completo: `partition_graph`, `_group_local_structures` (FSM+MF), `_modify_structure`, `_reconnect_inter_edges`, `anonymize(g, k, d, seed)`.
-- `src/anonymization/validation.py` — auditor independente `validate_k_anonymity(groups, k) → dict` (36 testes unitários).
+- `src/anonymization/validation.py` — auditor independente `validate_k_anonymity(groups, k) → dict` (36 testes unitários). Campos DL-01: `coverage_fraction`, `uncovered_fraction`, `deficit_fully_structural`.
 - `src/loaders/` — loader Facebook Ego-Nets (SNAP).
 - `experiments/run_milestone_29_05.py` — script de validação do marco (k=5, egonet_id=3437, n=532, m=4812).
 - `experiments/run_k_sweep.py` — k-sweep k ∈ {2, 5, 10, 20}; todos aprovados pelo critério DL-01.
@@ -60,17 +61,37 @@ A unidade de progresso é o **gráfico defensável**, não o texto argumentativo
 - `docs/progress.md` — log de progresso sessão a sessão.
 - CI: GitHub Actions + pre-commit (ruff 0.15.13).
 
-### Próximos componentes (S3)
+**S3 (ataques, métricas e experimento baseline)**
+- `src/attacks/degree.py` — ataque por grau (`degree_attack(g_orig, g_anon, target, tolerance=0) → bool`).
+- `src/attacks/subgraph.py` — ataque por subgrafos via VF2 (`subgraph_attack(g_orig, g_anon, target, hop=1, timeout=None) → bool`).
+- `src/metrics/` — 4 métricas: `reidentification_rate`, `equivalence_group_size`, `ks_test_degree`, `clustering_variation`.
+- `experiments/run.py` — runner orquestrador CLI (`python -m experiments.run --config <yaml>`).
+- `experiments/configs/he2009_facebook_baseline.yml` — config do experimento baseline.
+- `docs/results_baseline.md` — tabela bruta e agregações do experimento baseline.
 
-- `src/attacks/degree.py` — ataque por grau (issue #19)
-- `src/attacks/subgraph.py` — ataque por subgrafos via VF2 (issue #20)
-- `src/metrics/` — 4 métricas: reidentification_rate, equivalence_group_size, ks_test_degree, clustering_variation (issue #21)
-- `experiments/run.py` — runner orquestrador CLI (issue #22)
-- Experimento baseline Facebook Ego-Nets: 4k × 2 ataques × 3 sementes (issue #23)
+**S4 (visualização e documentação técnica)**
+- `src/visualization/privacy_utility.py` — gráfico privacidade-vs-utilidade (2 painéis, barras de erro), saída PDF+PNG em `results/plots/`.
+- `src/visualization/tables.py` — geração de tabelas CSV por `(dataset, ataque)` em `results/tables/`.
+- `docs/pipeline.md` — documentação técnica do pipeline com diagramas Mermaid, comandos reproduzíveis e lista de outputs.
+- `docs/limitations.md` — limitações metodológicas documentadas.
+- `docs/algorithm_notes.md` e `docs/metrics_definitions.md` — revisados e cross-referenciados.
+
+## Resultados do experimento baseline
+
+**Dataset:** Facebook Ego-Net 3437 (n=532, m=4812) — `k ∈ {2, 5, 10, 20}`, 3 sementes (42, 1337, 2718).
+
+| k | Veredito | coverage_fraction | rr_grau (média) | rr_subgrafo (média) | KS-D (média) |
+|---|----------|-------------------|-----------------|---------------------|---------------|
+| 2 | SUCCESS_FULL | 1.0000 | 0.0263 | 0.7914 | 0.0000 |
+| 5 | SUCCESS_PARTIAL | 0.9962 | 0.0081 | 0.4060 | 0.0482 |
+| 10 | SUCCESS_PARTIAL | 0.9962 | 0.0226 | 0.1397 | 0.2356 |
+| 20 | SUCCESS_PARTIAL | 0.9774 | 0.0990 | 0.0000 | 0.6491 |
+
+Gráficos finais em `results/plots/`; tabelas em `results/tables/` (não versionados; gerados localmente). Ver `docs/results_baseline.md` para análise completa.
 
 ## Entregáveis
 
-Três níveis, com linha firme entre **Mínimo** e **Desejável**.
+Três níveis, com linha firme entre **Mínimo** e **Desejável**. Ver `docs/entregaveis.md` para status consolidado.
 
 - **Mínimo defensável.** Pipeline funcional sobre Facebook Ego-Nets aplicando He et al. (2009) com `k ∈ {2, 5, 10, 20}`; ataques por grau e por subgrafos; quatro métricas; mínimo de 3 sementes por configuração; gráfico privacidade-vs-utilidade com barras de erro; repositório versionado com README operacional e arquivo de configuração reproduzível.
 - **Desejável.** Execução adicional sobre Email-Enron; ataque por entropia.
@@ -84,6 +105,7 @@ O Mínimo é entregável defensável em si; o Desejável é entregável discutí
 - Mínimo de 3 execuções independentes por configuração `(k, dataset, ataque)` para barras de erro.
 - Outputs (gráficos, tabelas) gerados a partir de logs JSONL estruturados em `experiments/logs/`, não de execução interativa.
 - Datasets baixados por script versionado; **não** comitados no repositório.
+- Reprodutibilidade end-to-end validada (#27): clone limpo → `pip install` → execução → outputs verificados.
 
 ## Estrutura do repositório
 
@@ -109,6 +131,10 @@ O Mínimo é entregável defensável em si; o Desejável é entregável discutí
   decision_log.md        # registro formal de decisões técnicas (DL-01, D-05, D-06, D-07)
   progress.md            # log de progresso por sessão
   validacao_k_anonimato.md # resultados consolidados da validação empírica (k ∈ {2,5,10,20})
+  results_baseline.md    # tabela bruta + agregações do experimento baseline
+  pipeline.md            # documentação técnica do pipeline com diagramas Mermaid
+  limitations.md         # limitações metodológicas do protótipo
+  entregaveis.md         # lista consolidada de entregáveis por nível (Mínimo/Desejável/Aspiracional)
 requirements.txt
 requirements-dev.txt
 config_example.yml
