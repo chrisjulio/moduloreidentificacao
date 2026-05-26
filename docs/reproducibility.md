@@ -344,3 +344,15 @@ flowchart TD
       documentados.
 - [ ] Gerar `requirements.lock.txt` na máquina de referência e versioná-lo.
 - [ ] Atualizar `docs/progress.md` ao final da sessão.
+
+---
+
+## Fluxograma 1 — reprodução end-to-end (cobre os dois cenários)
+
+![Fluxograma 1 — reprodução end-to-end](img/fluxograma1_reproducibilidade.jpg)
+
+---
+
+## Fluxograma 2 — triagem dos desvios e erros mais comuns
+
+![Fluxograma 2 — triagem dos desvios e erros mais comuns](img/fluxograma2_reproducibilidade.jpg)
