@@ -311,6 +311,8 @@ flowchart TD
     GAP --> TRIAGE
 ```
 
+![Fluxograma 1 — reprodução end-to-end](img/fluxograma1_reproducibilidade.jpg)
+
 ### 9.2 Triagem dos desvios e erros comuns
 
 ```mermaid
@@ -329,6 +331,8 @@ flowchart TD
     R2 -->|Sim| R3[Verificar timeout do subgrafo 60s -<br/>sensível a hardware - e versões numpy/scipy via lockfile]
 ```
 
+![Fluxograma 2 — triagem dos desvios e erros mais comuns](img/fluxograma2_reproducibilidade.jpg)
+
 ---
 
 ## 10. Checklist de entrega da issue #27
@@ -344,3 +348,4 @@ flowchart TD
       documentados.
 - [ ] Gerar `requirements.lock.txt` na máquina de referência e versioná-lo.
 - [ ] Atualizar `docs/progress.md` ao final da sessão.
+
