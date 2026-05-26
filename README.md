@@ -52,14 +52,15 @@ A unidade de progresso é o **gráfico defensável**, não o texto argumentativo
 ### Componentes implementados
 
 **S1–S2 (anonimização e validação)**
-- `src/anonymization/he2009.py` — pipeline completo: `partition_graph`, `_group_local_structures` (FSM+MF), `_modify_structure`, `_reconnect_inter_edges`, `anonymize(g, k, d, seed)`.
+- `src/anonymization/he2009.py` — pipeline completo: `partition_graph`, `_group_local_structures` (FSM+MF), `_modify_structure`, `_reconnect_inter_edges`, `anonymize(g, k, d, seed)`. Backend de particionamento em `src/anonymization/_partition_backend.py`.
 - `src/anonymization/validation.py` — auditor independente `validate_k_anonymity(groups, k) → dict` (36 testes unitários). Campos DL-01: `coverage_fraction`, `uncovered_fraction`, `deficit_fully_structural`.
-- `src/loaders/` — loader Facebook Ego-Nets (SNAP).
-- `experiments/run_milestone_29_05.py` — script de validação do marco (k=5, egonet_id=3437, n=532, m=4812).
+- `src/loaders/facebook_ego.py` — loader Facebook Ego-Nets (SNAP).
+- `src/loaders/download.py` — script versionado para download automático dos datasets.
+- `experiments/run_validacao_k_anonimato.py` — script de validação do k-anonimato (marco 21/05; k=5, egonet_id=3437, n=532, m=4812).
 - `experiments/run_k_sweep.py` — k-sweep k ∈ {2, 5, 10, 20}; todos aprovados pelo critério DL-01.
 - `docs/decision_log.md` — registro de decisões técnicas (DL-01, D-05, D-06, D-07).
 - `docs/progress.md` — log de progresso sessão a sessão.
-- CI: GitHub Actions + pre-commit (ruff 0.15.13).
+- CI: GitHub Actions + pre-commit (ruff v0.15.13).
 
 **S3 (ataques, métricas e experimento baseline)**
 - `src/attacks/degree.py` — ataque por grau (`degree_attack(g_orig, g_anon, target, tolerance=0) → bool`).
@@ -74,6 +75,8 @@ A unidade de progresso é o **gráfico defensável**, não o texto argumentativo
 - `src/visualization/tables.py` — geração de tabelas CSV por `(dataset, ataque)` em `results/tables/`.
 - `docs/pipeline.md` — documentação técnica do pipeline com diagramas Mermaid, comandos reproduzíveis e lista de outputs.
 - `docs/limitations.md` — limitações metodológicas documentadas.
+- `docs/reproducibility.md` — protocolo de reprodutibilidade end-to-end.
+- `docs/preprocessing_decision.md` — decisões de pré-processamento dos datasets.
 - `docs/algorithm_notes.md` e `docs/metrics_definitions.md` — revisados e cross-referenciados.
 
 ## Resultados do experimento baseline
@@ -117,7 +120,7 @@ O Mínimo é entregável defensável em si; o Desejável é entregável discutí
   /anonymization/        # He et al. (2009) [implementado]; placeholder Nettleton & Salas (2016)
   /attacks/              # ataques por grau, subgrafos, entropia
   /metrics/              # cálculo das quatro métricas
-  /loaders/              # carregadores de dataset
+  /loaders/              # carregadores de dataset e script de download
   /visualization/        # gráficos privacy-vs-utility
 /experiments/
   /configs/              # arquivos de configuração (YAML)
@@ -125,6 +128,7 @@ O Mínimo é entregável defensável em si; o Desejável é entregável discutí
 /results/
   /tables/               # tabelas em CSV
   /plots/                # gráficos em PDF/PNG
+/scripts/                # scripts auxiliares de setup/download
 /docs/
   algorithm_notes.md     # notas sobre implementação de He et al. (inclui Seção 9: k-sweep)
   metrics_definitions.md # definições operacionais das métricas
@@ -134,6 +138,8 @@ O Mínimo é entregável defensável em si; o Desejável é entregável discutí
   results_baseline.md    # tabela bruta + agregações do experimento baseline
   pipeline.md            # documentação técnica do pipeline com diagramas Mermaid
   limitations.md         # limitações metodológicas do protótipo
+  reproducibility.md     # protocolo de reprodutibilidade end-to-end
+  preprocessing_decision.md # decisões de pré-processamento dos datasets
   entregaveis.md         # lista consolidada de entregáveis por nível (Mínimo/Desejável/Aspiracional)
 requirements.txt
 requirements-dev.txt
@@ -160,8 +166,8 @@ A organização foi pensada para permitir migração futura para `SyntheticUForg
 
 ## Referências
 
-- He, X. et al. (2009). Preserving privacy in social networks: A structure-aware approach. *Proceedings of the IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT)*.
-- Nettleton, D. F. & Salas, J. (2016). A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, 55, 87–105.
+- He, X., Vaidya, J., Shafiq, B., Adam, N., & Atluri, V. (2009). Preserving privacy in social networks: A structure-aware approach. *2009 IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT)*, pp. 647–654. https://doi.org/10.1109/WI-IAT.2009.108
+- Nettleton, D. F. & Salas, J. (2016). A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, 55, 87–105. https://doi.org/10.1016/j.eswa.2016.02.004
 - Documentação interna do projeto: v19 do artigo decisório (especialmente Seções 4.3 e 7); proposta original da tese.
 
 ---
