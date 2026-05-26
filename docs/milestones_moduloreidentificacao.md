@@ -1,7 +1,7 @@
 # Milestones — Módulo de Reidentificação
 
 **Repositório:** [chrisjulio/moduloreidentificacao](https://github.com/chrisjulio/moduloreidentificacao)
-**Atualizado em:** 2026-05-25 (16h35)
+**Atualizado em:** 2026-05-26 (14h51)
 
 ---
 
@@ -44,15 +44,15 @@ Todas as 11 issues de S1 concluídas. Registradas para referência histórica.
 | [#13](https://github.com/chrisjulio/moduloreidentificacao/issues/13) | `_modify_structure(groups, seed, add_only)` | Modificar estruturalmente grupos de equivalência para satisfazer cardinalidade mínima k | ✅ Fechada |
 | [#14](https://github.com/chrisjulio/moduloreidentificacao/issues/14) | `anonymize(G, k, d, seed)` — pipeline completo com reconexão | Orquestrar as 4 etapas do pipeline incluindo reconexão pós-modificação | ✅ Fechada |
 | [#15](https://github.com/chrisjulio/moduloreidentificacao/issues/15) | `validate_k_anonymity` — auditor independente → dict | Verificador externo de k-anonimato com log estruturado de violações | ✅ Fechada |
-| [#56](https://github.com/chrisjulio/moduloreidentificacao/issues/56) | Testes `validate_k_anonymity`: cobertura dos campos DL-01 | Estender suite de testes para cobrir `coverage_fraction`, `uncovered_fraction` e `deficit_fully_structural` | ✅ Fechada (22/05) |
+| [#56](https://github.com/chrisjulio/moduloreidentificacao/issues/56) | Testes `validate_k_anonymity`: cobertura dos campos DL-01 | Estender suite de testes para cobrir `coverage_fraction`, `uncovered_fraction` e `deficit_fully_structural` | ✅ Fechada |
 
 ### Marco e validação
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
-| [#16](https://github.com/chrisjulio/moduloreidentificacao/issues/16) | **MARCO 29/05** — Sanidade k=5, d=1 sobre ego-rede Facebook | Executar anonimização com 3 sementes e validar resultado (sucesso pleno ou parcial ≥ 0,9) | ✅ Fechada (22/05) |
-| [#17](https://github.com/chrisjulio/moduloreidentificacao/issues/17) | Testes de sanidade adicionais: k=2, k=10, k=20 | Estender validação para os demais valores de k do escopo mínimo | ✅ Fechada (22/05) |
-| [#18](https://github.com/chrisjulio/moduloreidentificacao/issues/18) | Documentar resultado do marco 29/05 | Registrar em `docs/milestone_29_05.md` configurações, hashes, resultados e decisão | ✅ Fechada (22/05) |
+| [#16](https://github.com/chrisjulio/moduloreidentificacao/issues/16) | **MARCO 29/05** — Sanidade k=5, d=1 sobre ego-rede Facebook | Executar anonimização com 3 sementes e validar resultado (sucesso pleno ou parcial ≥ 0,9) | ✅ Fechada |
+| [#17](https://github.com/chrisjulio/moduloreidentificacao/issues/17) | Testes de sanidade adicionais: k=2, k=10, k=20 | Estender validação para os demais valores de k do escopo mínimo | ✅ Fechada |
+| [#18](https://github.com/chrisjulio/moduloreidentificacao/issues/18) | Documentar resultado do marco 29/05 | Registrar em `docs/milestone_29_05.md` configurações, hashes, resultados e decisão | ✅ Fechada |
 
 ---
 
@@ -60,11 +60,11 @@ Todas as 11 issues de S1 concluídas. Registradas para referência histórica.
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
-| [#19](https://github.com/chrisjulio/moduloreidentificacao/issues/19) | `src/attacks/degree.py` | Ataque de reidentificação por grau do nó | ✅ Fechada (22/05) |
-| [#20](https://github.com/chrisjulio/moduloreidentificacao/issues/20) | `src/attacks/subgraph.py` (VF2) | Ataque por isomorfismo de subgrafo induzido via VF2 (1-hop) | ✅ Fechada (22/05) |
-| [#21](https://github.com/chrisjulio/moduloreidentificacao/issues/21) | `src/metrics/` (4 métricas) | Taxa de reidentificação, tamanho de grupo de equivalência, KS-test de grau e variação de clustering | ✅ Fechada (22/05) |
-| [#22](https://github.com/chrisjulio/moduloreidentificacao/issues/22) | `experiments/run.py` (runner CLI) | CLI que orquestra anonimização + ataques + métricas com log JSONL | ✅ Fechada (22/05) |
-| [#23](https://github.com/chrisjulio/moduloreidentificacao/issues/23) | Execução: experimento baseline Facebook Ego-Nets | 4k × 2 ataques × 3 sementes, logs estruturados em `experiments/logs/` | ✅ Fechada (23/05) |
+| [#19](https://github.com/chrisjulio/moduloreidentificacao/issues/19) | `src/attacks/degree.py` | Ataque de reidentificação por grau do nó | ✅ Fechada |
+| [#20](https://github.com/chrisjulio/moduloreidentificacao/issues/20) | `src/attacks/subgraph.py` (VF2) | Ataque por isomorfismo de subgrafo induzido via VF2 (1-hop) | ✅ Fechada |
+| [#21](https://github.com/chrisjulio/moduloreidentificacao/issues/21) | `src/metrics/` (4 métricas) | Taxa de reidentificação, tamanho de grupo de equivalência, KS-test de grau e variação de clustering | ✅ Fechada |
+| [#22](https://github.com/chrisjulio/moduloreidentificacao/issues/22) | `experiments/run.py` (runner CLI) | CLI que orquestra anonimização + ataques + métricas com log JSONL | ✅ Fechada |
+| [#23](https://github.com/chrisjulio/moduloreidentificacao/issues/23) | Execução: experimento baseline Facebook Ego-Nets | 4k × 2 ataques × 3 sementes, logs estruturados em `experiments/logs/` | ✅ Fechada |
 
 ---
 
@@ -72,33 +72,39 @@ Todas as 11 issues de S1 concluídas. Registradas para referência histórica.
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
-| [#24](https://github.com/chrisjulio/moduloreidentificacao/issues/24) | Gráfico privacy-vs-utility | Curvas por k com barras de erro — PDF + PNG em `results/plots/` | ✅ Fechada (25/05) |
-| [#25](https://github.com/chrisjulio/moduloreidentificacao/issues/25) | Tabelas CSV de resultados | Uma tabela por `(dataset, ataque)` em `results/tables/` | ✅ Fechada (25/05) |
-| [#26](https://github.com/chrisjulio/moduloreidentificacao/issues/26) | Documentação técnica final do pipeline | `docs/pipeline.md` com diagrama e comandos de reprodução end-to-end | ✅ Fechada (25/05) |
-| [#63](https://github.com/chrisjulio/moduloreidentificacao/issues/63) | [#26-A] Revisão e produção documental acadêmica do pipeline | Revisão de `algorithm_notes.md`, `metrics_definitions.md` e criação de `docs/limitations.md` | ✅ Fechada (23/05) |
-| [#64](https://github.com/chrisjulio/moduloreidentificacao/issues/64) | [#26-B] Produção técnica codificada da documentação do pipeline | `docs/pipeline.md` com diagrama Mermaid, comandos e lista de outputs | ✅ Fechada (25/05) |
+| [#24](https://github.com/chrisjulio/moduloreidentificacao/issues/24) | Gráfico privacy-vs-utility | Curvas por k com barras de erro — PDF + PNG em `results/plots/` | ✅ Fechada |
+| [#25](https://github.com/chrisjulio/moduloreidentificacao/issues/25) | Tabelas CSV de resultados | Uma tabela por `(dataset, ataque)` em `results/tables/` | ✅ Fechada |
+| [#26](https://github.com/chrisjulio/moduloreidentificacao/issues/26) | Documentação técnica final do pipeline | `docs/pipeline.md` com diagrama e comandos de reprodução end-to-end | ✅ Fechada |
+| [#63](https://github.com/chrisjulio/moduloreidentificacao/issues/63) | [#26-A] Revisão e produção documental acadêmica do pipeline | Revisão de `algorithm_notes.md`, `metrics_definitions.md` e criação de `docs/limitations.md` | ✅ Fechada |
+| [#64](https://github.com/chrisjulio/moduloreidentificacao/issues/64) | [#26-B] Produção técnica codificada da documentação do pipeline | `docs/pipeline.md` com diagrama Mermaid, comandos e lista de outputs | ✅ Fechada |
 
 ---
 
-## S5 — Validação final e entrega (14/06) (EM ANDAMENTO 🔄)
+## S5 — Validação final e entrega (ENCERRADO ✅)
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
-| [#27](https://github.com/chrisjulio/moduloreidentificacao/issues/27) | Reprodutibilidade end-to-end (do zero) | Clonar em ambiente limpo e verificar que todos os outputs se reproduzem | 🔴 Aberta |
-| [#28](https://github.com/chrisjulio/moduloreidentificacao/issues/28) | README final + revisão da documentação | Revisar README, CLAUDE.md, docs/ e gerar `docs/entregaveis.md` | 🔴 Aberta |
+| [#27](https://github.com/chrisjulio/moduloreidentificacao/issues/27) | Reprodutibilidade end-to-end (do zero) | Clonar em ambiente limpo e verificar que todos os outputs se reproduzem | ✅ Fechada (26/05) |
+| [#28](https://github.com/chrisjulio/moduloreidentificacao/issues/28) | README final + revisão da documentação | Revisado README, CLAUDE.md, docs/ e gerado `docs/entregaveis.md` | ✅ Fechada (26/05) |
+
+---
+
+## 🌟 Escopo Mínimo: COMPLETO ✅
+
+Todas as 35 issues do escopo mínimo (S1 a S5) foram fechadas em 2026-05-26.
 
 ---
 
 ## Escopo Desejável / Aspiracional (condicionais)
 
-> Só entram em escopo se o Mínimo estiver consolidado com folga.
+> Condição de entrada: Mínimo consolidado — **atingida em 26/05/2026**.
 
-| # | Rótulo | Condição de entrada | Principal tarefa |
+| # | Rótulo | Principal tarefa | Status |
 |---|---|---|---|
-| [#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29) | DESEJÁVEL | Mínimo consolidado com folga até 05/06 | Loader Email-Enron como dataset secundário |
-| [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | DESEJÁVEL | Após consolidar Mínimo | Ataque por entropia reutilizando grupos de equivalência |
-| [#31](https://github.com/chrisjulio/moduloreidentificacao/issues/31) | ASPIRACIONAL | Desejável consolidado com folga real até 12/06 | Implementação inicial de Nettleton & Salas (2016) |
+| [#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29) | DESEJÁVEL | Loader Email-Enron como dataset secundário | 🔴 Aberta |
+| [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | DESEJÁVEL | Ataque por entropia reutilizando grupos de equivalência | 🔴 Aberta |
+| [#31](https://github.com/chrisjulio/moduloreidentificacao/issues/31) | ASPIRACIONAL | Implementação inicial de Nettleton & Salas (2016) | 🔴 Aberta |
 
 ---
 
-*Documento gerado automaticamente a partir da API do GitHub em 2026-05-25.*
+*Documento gerado automaticamente a partir da API do GitHub em 2026-05-26.*
