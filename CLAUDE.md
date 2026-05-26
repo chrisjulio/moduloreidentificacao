@@ -1,7 +1,7 @@
 # CLAUDE.md — Ponto de entrada para sessões de Claude Code
 
 > Este arquivo é carregado automaticamente pelo Claude Code no início de cada sessão
-> neste repositório. Mantém o agente orientado sem reintrodução manual de contexto.
+> neste repositório. Mantém o agente orientado sem reintroduzão manual de contexto.
 >
 > Fonte de verdade canônica do escopo: [README.md](README.md).
 > Detalhamento algorítmico: [docs/algorithm_notes.md](docs/algorithm_notes.md).
@@ -9,6 +9,8 @@
 > Validação de k-anonimato (resultados consolidados): [docs/validacao_k_anonimato.md](docs/validacao_k_anonimato.md).
 > Protocolo humano de orquestração entre interfaces: [WORKFLOW.md](WORKFLOW.md).
 > Regras escopadas a partes do repositório: [.claude/rules/](.claude/rules/).
+> Limitações metodológicas: [docs/limitations.md](docs/limitations.md).
+> Entregáveis consolidados: [docs/entregaveis.md](docs/entregaveis.md).
 
 ---
 
@@ -68,17 +70,19 @@ doutorado (PPGInf/UFPR) — não propõe mecanismo de privacidade novo.
 
 ## Fase atual
 
-| Período | Semana | Foco |
-|---|---|---|
-| 15-22/05/2026 | 1 | Setup; leitura de He et al. (2009); loader Facebook Ego-Nets |
-| 22-29/05/2026 | 2 | Implementação He et al.; **validação obrigatória de k-anonimato** |
-| 29/05-05/06 | 3 | Ataques (grau → subgrafos); experimentos |
-| 05-12/06 | 4 | Gráficos, tabelas, documentação técnica |
-| 12-14/06 | 5 | Polimento e entrega |
+| Período | Semana | Foco | Status |
+|---|---|---|---|
+| 15-22/05/2026 | 1 | Setup; leitura de He et al. (2009); loader Facebook Ego-Nets | ✅ Concluída |
+| 22-29/05/2026 | 2 | Implementação He et al.; **validação obrigatória de k-anonimato** | ✅ Concluída |
+| 29/05-05/06 | 3 | Ataques (grau → subgrafos); experimentos | ✅ Concluída |
+| 05-12/06 | 4 | Gráficos, tabelas, documentação técnica | ✅ Concluída |
+| 12-14/06 | 5 | Polimento e entrega | 🔄 Em andamento |
 
-**Marco não-negociável: 29/05/2026.** k-anonimato empiricamente atingido em ao
-menos uma configuração (sugestão: k=5, uma ego-rede do Facebook). Se falhar,
-reformular o escopo — não adiar.
+**Marco não-negociável: 29/05/2026.** Cumprido antecipadamente em 21/05/2026. k-anonimato
+empíricamente atingido em todas as configurações do Mínimo (k ∈ {2, 5, 10, 20}).
+
+**Estado atual (S5):** issues #27 (reprodutibilidade end-to-end) e #28 (README final
++ revisão global da documentação). Ver `docs/progress.md` para estado detalhado.
 
 ---
 
@@ -88,7 +92,7 @@ A linha entre Mínimo e Desejável é firme.
 
 - **Mínimo (obrigatório):** He et al. (2009) + Facebook Ego-Nets + k ∈ {2,5,10,20}
   + ataques por grau e subgrafos + 4 métricas + ≥3 sementes + gráfico com barras
-  de erro + README operacional.
+  de erro + README operacional. **✅ Totalmente implementado.**
 - **Desejável (perseguir se houver folga):** Email-Enron + ataque por entropia.
 - **Aspiracional (não perseguir em detrimento do Mínimo):** Nettleton & Salas (2016).
 
@@ -238,8 +242,14 @@ pytest -k "k_anonymity"        # por padrão de nome
 # Download de dataset (uma vez, após implementado)
 python -m src.loaders.download
 
-# Executar experimento (após implementado)
+# Executar experimento
 python -m experiments.run --config experiments/configs/<nome>.yml
+
+# Gerar gráficos
+python -m src.visualization.privacy_utility --logs experiments/logs/<dir>
+
+# Gerar tabelas CSV
+python -m src.visualization.tables --logs experiments/logs/<dir> --out results/tables --dataset facebook
 ```
 
 ---
@@ -248,8 +258,8 @@ python -m experiments.run --config experiments/configs/<nome>.yml
 
 O projeto Claude.ai
 ("Desenvolvimento de módulo de reidentificação de dados anonimizados") é o
-espaço de deliberação estratégica e metodológica. Decisões consolidadas lá
-descem para este repositório atualizando, nesta ordem:
+espacio de deliberação estratégica e metodológica. Decisões consolidadas lá
+descum para este repositório atualizando, nesta ordem:
 
 1. `README.md` (escopo canônico).
 2. Este arquivo (`CLAUDE.md`) — fase atual, convenções, escopo.
