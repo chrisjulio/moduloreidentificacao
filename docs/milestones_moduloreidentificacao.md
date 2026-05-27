@@ -1,7 +1,7 @@
 # Milestones — Módulo de Reidentificação
 
 **Repositório:** [chrisjulio/moduloreidentificacao](https://github.com/chrisjulio/moduloreidentificacao)
-**Atualizado em:** 2026-05-26 (14h51)
+**Atualizado em:** 2026-05-27 (16h28)
 
 ---
 
@@ -50,9 +50,9 @@ Todas as 11 issues de S1 concluídas. Registradas para referência histórica.
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
-| [#16](https://github.com/chrisjulio/moduloreidentificacao/issues/16) | **MARCO 29/05** — Sanidade k=5, d=1 sobre ego-rede Facebook | Executar anonimização com 3 sementes e validar resultado (sucesso pleno ou parcial ≥ 0,9) | ✅ Fechada |
+| [#16](https://github.com/chrisjulio/moduloreidentificacao/issues/16) | **MARCO 29/05** — Sanidade k=5, d=1 sobre ego-rede Facebook | Executar anonimização com 3 sementes e validar resultado | ✅ Fechada |
 | [#17](https://github.com/chrisjulio/moduloreidentificacao/issues/17) | Testes de sanidade adicionais: k=2, k=10, k=20 | Estender validação para os demais valores de k do escopo mínimo | ✅ Fechada |
-| [#18](https://github.com/chrisjulio/moduloreidentificacao/issues/18) | Documentar resultado do marco 29/05 | Registrar em `docs/milestone_29_05.md` configurações, hashes, resultados e decisão | ✅ Fechada |
+| [#18](https://github.com/chrisjulio/moduloreidentificacao/issues/18) | Documentar resultado do marco 29/05 | Registrar em `docs/milestone_29_05.md` | ✅ Fechada |
 
 ---
 
@@ -95,9 +95,25 @@ Todas as 35 issues do escopo mínimo (S1 a S5) foram fechadas em 2026-05-26.
 
 ---
 
-## Escopo Desejável / Aspiracional (condicionais)
+## D-08 — Varredura d>1: k-anonimato structure-aware pleno (EM ANDAMENTO 🔄)
 
-> Condição de entrada: Mínimo consolidado — **atingida em 26/05/2026**.
+Extensão desejável que resolve `docs/limitations.md` §1.3 (com `d=1` o baseline equivale a k-anonimato de grau; `d>1` ativa o structure-aware pleno da Def. 2 de He et al. 2009). Resolve a decisão D-02 antecipada desde o início do projeto.
+
+Branch de trabalho: `experiment/d-sweep`
+
+| # | Fase | Principal tarefa | Status |
+|---|---|---|---|
+| [#72](https://github.com/chrisjulio/moduloreidentificacao/issues/72) | Issue-mãe D-08 | Critério de conclusão geral + índice de fases | 🔴 Aberta |
+| [#73](https://github.com/chrisjulio/moduloreidentificacao/issues/73) | Fase 0 — Enquadramento | Registrar D-08 em `decision_log.md`, atualizar `scope.md` e `progress.md`, criar branch | 🔴 Aberta |
+| [#74](https://github.com/chrisjulio/moduloreidentificacao/issues/74) | Fase 1 — Auditoria de prontidão | Rodar `pytest` com `d>1`, inventariar testes do núcleo (`_group_isomorphic`, `_modify_structure`) | 🔴 Aberta |
+| [#75](https://github.com/chrisjulio/moduloreidentificacao/issues/75) | Fase 2 — Endurecer núcleo | Testes de integração end-to-end `d∈{2,5}`, decisões FSM/conectividade registradas | 🔴 Aberta |
+| [#76](https://github.com/chrisjulio/moduloreidentificacao/issues/76) | Fase 3 — Validador e métricas | `deficit_fully_structural` e `equivalence_group_size` em `d>1`; pré-filtro VF2 | 🔴 Aberta |
+| [#77](https://github.com/chrisjulio/moduloreidentificacao/issues/77) | Fase 4 — Configuração e execução | Criar `he2009_facebook_dsweep.yml` e rodar 48 runs (`d×k×seeds = 4×4×3`) | 🔴 Aberta |
+| [#78](https://github.com/chrisjulio/moduloreidentificacao/issues/78) | Fase 5 — Análise e documentação | `docs/results_dsweep.md` com matriz `d×k`; extender visualizações; `limitations.md` §1.3 atualizada | 🔴 Aberta |
+
+---
+
+## Outros Escopos Desejável / Aspiracional
 
 | # | Rótulo | Principal tarefa | Status |
 |---|---|---|---|
@@ -107,4 +123,4 @@ Todas as 35 issues do escopo mínimo (S1 a S5) foram fechadas em 2026-05-26.
 
 ---
 
-*Documento gerado automaticamente a partir da API do GitHub em 2026-05-26.*
+*Documento gerado automaticamente a partir da API do GitHub em 2026-05-27.*
