@@ -16,16 +16,20 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- Issue #75 / **e2e d=10 concluído**: `TestE2eD10` (6 testes caixa-preta) adicionada a
-  `tests/anonymization/test_he2009_e2e_d.py`. `TestValidatorCoherence` parametrizado
-  para `d∈{2,5,10}` (4 × 3 = 12 testes). Valida Opção A: `s_max=4` fixo funciona
-  corretamente para `d=10 > fsm_max_size=4`. 412 passed (+6 vs G2), ruff limpo.
-  Commit `47bd872` em `experiment/d-sweep`. Sem alteração em `src/`.
+- Issue #76 / **G5(a) concluído**: `tests/anonymization/test_he2009_d_validator.py`
+  criado com 23 testes em 3 classes. `TestDeficitFullyStructuralD`: pipeline d∈{2,5}
+  só produz `incomplete_group` violations; casos sintéticos confirmam `False` com
+  `non_isomorphic`. `TestEquivalenceGroupSizeD`: mean=k·d para grupos completos
+  (d=2→4; d=5→10); mean≠k·d para tamanhos mistos (KL aproximação). 
+  `TestDegenerateComboD10K20`: cycle_graph(20) d=10 k=20 produz 2 LSs residuais
+  → `deficit_fully_structural=True`, `n_violators=20`. Decisões D-09
+  (pré-filtro VF2 = limitação) e D-10 (combo degenerado = incluir, anotar no YAML)
+  registradas em `docs/decision_log.md`. 439 passed (+23 vs G4), ruff limpo.
+  Branch `experiment/d-sweep`.
 
-**Próximo passo planejado (sub-ordem issue #75):**
-- **G5(a)** — início de #76: validador e métricas em `d>1` (verificar se
-  `validate_k_anonymity` e as métricas de `src/metrics/` operam corretamente
-  quando a anonimização usa `d>1`, conforme checkboxes pendentes da issue #75).
+**Próximo passo planejado:**
+- Abrir PR cobrindo toda a branch `experiment/d-sweep` (issues #75 + #76),
+  referenciando ambas as issues. Aguardar revisão humana e merge.
 
 **Bloqueios ativos:**
 - Nenhum.
@@ -53,6 +57,23 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-28 — Issue #76 G5(a): deficit_fully_structural e equivalence_group_size em d>1
+
+- **Concluído:** `tests/anonymization/test_he2009_d_validator.py` criado (23 testes,
+  3 classes). `TestDeficitFullyStructuralD`: pipeline d∈{2,5} → violations apenas
+  `incomplete_group`; casos sintéticos confirmam `deficit_fully_structural=False` com
+  `non_isomorphic` (size mismatch d=2 e d=5; path vs cycle). `TestEquivalenceGroupSizeD`:
+  mean=k·d para grupos completos (d=2→4, d=5→10); mean≠k·d para tamanhos mistos
+  (KL aproximação — limitação registrada). `TestDegenerateComboD10K20`: cycle_graph(20)
+  d=10 k=20 → `deficit_fully_structural=True`, `n_violators=20` — comportamento correto,
+  não bug. Decisões D-09 (pré-filtro VF2: limitação) e D-10 (combo degenerado: incluir
+  no YAML com aviso) registradas em `docs/decision_log.md`. 439 passed, ruff limpo.
+  Branch `experiment/d-sweep`.
+- **Próximo:** Abrir PR para a branch `experiment/d-sweep`, cobrindo issues #75 e #76.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar D-08: d=2 excluído ou anotado como degenerate (D-10
+  registrado; aguarda validação humana no contexto do YAML do d-sweep).
 
 ### 2026-05-28 — Issue #75 e2e d=10: validação da Opção A para d=10
 

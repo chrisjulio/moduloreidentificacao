@@ -27,6 +27,8 @@
 | [D-06](#d-06) | 2026-05-17 | Implementação | Política para grupos incompletos residuais |
 | [D-07](#d-07) | 2026-05-20 | Implementação | Normalização de tamanho de LSs — Opção A adotada |
 | [D-08](#d-08) | 2026-05-28 | Implementação | Política de conectividade de LSs — documentar como aproximação |
+| [D-09](#d-09) | 2026-05-28 | Implementação | Pré-filtro VF2: documentar como limitação do protótipo |
+| [D-10](#d-10) | 2026-05-28 | Implementação | Combo degenerado d=10, k=20: executar e anotar como degenerado no YAML |
 
 ---
 
@@ -567,3 +569,106 @@ fora do escopo do protótipo. Candidato a futura extensão do backend.
 - Issue #75 (Fase 2: endurecer núcleo em d>1)
 - `src/anonymization/_partition_backend.py` — `_partition_pymetis`
 - `src/anonymization/he2009.py` — `_partition_neighborhoods`
+
+---
+
+## D-09 — Pré-filtro VF2: documentar como limitação do protótipo
+
+**Data:** 2026-05-28
+**Issue relacionada:** #76 (checkbox 4)
+**Módulo afetado:** `src/anonymization/validation.py` — `validate_k_anonymity`
+
+### Contexto
+
+D-05 registra: *"Para d > 20, avaliar pré-filtro por invariantes baratos
+(distribuição de graus, espectro do laplaciano) antes da chamada a
+`is_isomorphic`."* A issue #76 solicita avaliação formal para `d ∈ {2, 5, 10}`
+sobre o grafo sintético `cycle_graph(20)` e sobre a ego-rede 3437 (n=534).
+
+### Evidências empíricas (G5, issue #76)
+
+Testes em `tests/anonymization/test_he2009_d_validator.py` executam o validador
+para `d ∈ {2, 5, 10}` sobre `cycle_graph(20)` sem timeout. O experimento de
+baseline completo (issues #23, PR #68) executou `validate_k_anonymity` para
+`k ∈ {2, 5, 10, 20}` com `d=1` e 3 sementes sobre a ego-rede 3437 sem problemas.
+Para os valores `d ∈ {2, 5}`, o número de chamadas VF2 é `O(k(k-1)/2)` por grupo;
+com `k=2` e poucos grupos em `cycle_graph(20)`, o custo é de apenas `1` chamada VF2
+por grupo — negativo do pré-filtro.
+
+### Decisão adotada — Documentar como limitação do protótipo
+
+**Não será implementado pré-filtro VF2** no escopo atual. Razões:
+
+1. **Custo irrelevante para o d-sweep:** `d ∈ {2, 5, 10}` — bem abaixo do
+   limiar `d > 20` citado em D-05. O custo VF2 para grafos de até 10 nós
+   é desprezível.
+2. **Grafo de referência pequeno:** A ego-rede 3437 (n=534) gera c_k ≤ 106
+   partições para `d=5`. Com `k=2`, o custo máximo é 106 chamadas VF2 sobre
+   grafos de 5 nós — sub-segundo.
+3. **Escopo do protótipo:** O módulo é instrumento de medição empírica, não
+   motor de produção. A substituição futura por pré-filtro é viável sem
+   alteração de API.
+
+**Declarar como limitação em `docs/limitations.md`** (seção de desempenho).
+A implementação do pré-filtro é candidata a extensão de tier aspiracional.
+
+### Referências cruzadas
+
+- D-05 (verificador empírico estrito — risco de desempenho VF2 documentado)
+- Issue #76 (checkbox 4 — avaliação e decisão sobre pré-filtro)
+- `src/anonymization/validation.py` — `validate_k_anonymity` (condição 3)
+- `tests/anonymization/test_he2009_d_validator.py` — G5(a) testes
+
+---
+
+## D-10 — Combo degenerado d=10, k=20: executar e anotar como degenerado no YAML
+
+**Data:** 2026-05-28
+**Issue relacionada:** #76 (checkbox 3)
+**Módulo afetado:** `experiments/configs/` — YAML do d-sweep
+
+### Contexto
+
+A issue #76 solicita verificação do comportamento do combo `d=10, k=20` e
+uma decisão: *"executar o combo mesmo assim (marcar como degenerado no YAML)
+ou excluir da varredura?"*
+
+Para `cycle_graph(20)` (n=20), `d=10` produz c_k = 2 partições. Com `k=20`,
+o pipeline forma 1 grupo incompleto com 2 LSs — todas as 20 nós viram
+violadores via D-06. Para a ego-rede 3437 (n=534), `d=10` produziria c_k ≈ 53
+partições; `k=20` formaria ~2 grupos completos (40 nós protegidos) mais ~13
+LSs residuais (~130 nós via D-06).
+
+### Evidências empíricas (G5, issue #76)
+
+`tests/anonymization/test_he2009_d_validator.py::TestDegenerateComboD10K20`
+confirma:
+
+- `anonymize(cycle_graph(20), k=20, d=10, seed=0)` completa sem exceção.
+- Todas as violações são do tipo `incomplete_group` (D-06).
+- `deficit_fully_structural=True` — estado correto, não é bug.
+- `n_violators == 20` — todos os nós da rede sintética são residuais.
+
+### Decisão adotada — Incluir no d-sweep com anotação de degenerado
+
+Seguindo o precedente de D-08 (documentar como aproximação em vez de excluir):
+
+1. **Incluir o combo `d=10, k=20` no YAML do d-sweep** com comentário explícito
+   de degenerado:
+   ```yaml
+   # WARNING: d=10, k=20 degenerate for this graph — c_k < k; all nodes
+   # are structural violators (D-06). Results are methodologically valid
+   # (deficit_fully_structural=True) but provide no k-anonymity guarantees.
+   ```
+2. **Não excluir:** excluir obscurece o comportamento real do algoritmo em
+   configurações extremas — dado relevante para a tese.
+3. **Registrar em `docs/results_dsweep.md`** (a criar em #77) que combos com
+   `c_k < k` produzem cobertura zero, e discutir o trade-off d vs k.
+
+### Referências cruzadas
+
+- D-06 (grupos incompletos residuais — causa raiz do comportamento)
+- D-08 (precedente: documentar como aproximação)
+- Issue #76 (checkbox 3 — verificação e decisão)
+- Issue #77 (d-sweep — config YAML e logging)
+- `tests/anonymization/test_he2009_d_validator.py::TestDegenerateComboD10K20`
