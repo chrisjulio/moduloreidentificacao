@@ -19,13 +19,16 @@
 | ID | Data | Tipo | Título resumido |
 |---|---|---|---|
 | [DL-01](#dl-01) | 2026-05-21 | Desvio de planejamento | Refinamento do critério de passagem do marco #16 |
-| [D-01](#d-01) | 2026-05-17 | Implementação | FSM simplificado com `s_max` configurável |
+| [D-01](#d-01) | 2026-05-17 *(nota G2: 2026-05-28)* | Implementação | FSM simplificado com `s_max` configurável; nota: comportamento quando d > s_max |
 | [D-02](#d-02) | 2026-05-17 | Implementação | `d = 10` como default; variável de configuração YAML |
 | [D-03](#d-03) | 2026-05-17 | Implementação | Matching Fase 1: grau primário + desempate lexicográfico |
 | [D-04](#d-04) | 2026-05-17 *(rev. 2026-05-20)* | Implementação | Motor de particionamento: pymetis primário, KL fallback |
 | [D-05](#d-05) | 2026-05-17 | Implementação | Verificador empírico estrito de k-anonimato |
 | [D-06](#d-06) | 2026-05-17 | Implementação | Política para grupos incompletos residuais |
 | [D-07](#d-07) | 2026-05-20 | Implementação | Normalização de tamanho de LSs — Opção A adotada |
+| [D-08](#d-08) | 2026-05-28 | Implementação | Política de conectividade de LSs — documentar como aproximação |
+| [D-09](#d-09) | 2026-05-28 | Implementação | Pré-filtro VF2: documentar como limitação do protótipo |
+| [D-10](#d-10) | 2026-05-28 | Implementação | Combo degenerado d=10, k=20: executar e anotar como degenerado no YAML |
 
 ---
 
@@ -139,6 +142,60 @@ forma auditável e expõe o trade-off cobertura × custo como variável explíci
 - O parâmetro `fsm_max_size` deve ser exposto no YAML de configuração
   (`anonymization.fsm.max_size`) para reprodutibilidade.
 - Comparação com gSpan completo: fora do escopo mínimo; candidata a trabalho futuro.
+
+### Nota: comportamento quando d > s_max (G2 — issue #75)
+
+**Data da nota:** 2026-05-28
+
+#### Contexto
+
+Na implementação atual, `anonymize()` chama `_group_isomorphic()` sem passar
+`fsm_max_size`, que fica no default 4. Quando `d > 4`, cada LS tem mais nós
+do que `fsm_max_size` — o FSM nunca vê o padrão completo da LS, apenas
+subgrafos conexos induzidos de até 4 nós.
+
+#### Evidências empíricas (G2, issue #75)
+
+Investigação realizada em `cycle_graph(20)` com `d=5`, `k=2`, `sigma=0.5`:
+
+| `fsm_max_size` | Padrões catalogados | Padrões frequentes | Melhor padrão (MF) | Agrupamento |
+|---|---|---|---|---|
+| 4 (atual) | 4 | 4 (tamanhos 1–4) | P4, 3 arestas, suporte=4 | 2 grupos de 2 LSs |
+| 5 (alternativa) | 5 | 5 (tamanhos 1–5) | P5, 4 arestas, suporte=4 | 2 grupos de 2 LSs (idêntico) |
+
+Para LSs homogêneas (todos os padrões ≤4 nós compartilhados por todas as LSs),
+o agrupamento é **idêntico** com `fsm_max_size=4` e `fsm_max_size=d`. Os 20
+testes e2e de G1 (issue #75) passam com `d=5` confirmando comportamento correto.
+
+#### Decisão adotada — Opção A: manter s_max=4 fixo
+
+`fsm_max_size=4` é mantido como sub-padrão para todos os valores de `d`,
+incluindo `d > 4`. Para `d > 4`, o FSM opera sobre sub-padrões de até 4 nós
+— esta é uma aproximação documentada, não um bug.
+
+**Razões:**
+
+1. **Corretude garantida por `_modify_structure`** — o isomorfismo intra-grupo
+   é garantido pela fase de modificação de arestas, não pelo FSM. O FSM apenas
+   orienta a heurística de agrupamento; sub-padrões são suficientes para isso.
+2. **Resultado idêntico verificado** — para `cycle_graph(20)` com `d=5`,
+   `fsm_max_size∈{4,5}` produz o mesmo agrupamento.
+3. **Custo computacional controlado** — `C(d, min(d,4))` subsets por LS vs.
+   `C(d,d)=1` mais todos os menores (exponencial em `d`). Para `d=10`,
+   elevar `s_max` para 10 poderia encontrar padrões tão específicos que
+   nenhuma LS compartilharia, degradando o FSM e forçando agrupamento aleatório.
+4. **Consistência do d-sweep** — manter `s_max` constante elimina um
+   parâmetro confundente na comparação `d=1` vs `d>1` da issue #72.
+
+**Opção B rejeitada** — elevar automaticamente `s_max` para `max(s_max, d)` via
+YAML introduziria custo variável e potencial degradação de qualidade para `d`
+grande. Não implementado.
+
+#### Referências cruzadas (nota G2)
+
+- Issue #75 (Checkbox #2 — Decisão s_max vs d)
+- `src/anonymization/he2009.py:93` — `_group_within_bucket(fsm_max_size=4)`
+- `tests/anonymization/test_he2009_e2e_d.py` — testes e2e G1 (d∈{2,5})
 
 ### Referências cruzadas
 
@@ -432,3 +489,186 @@ k∈{2, 5, 10, 20} (issues #16, #17; PRs #53, #54).
 - `src/anonymization/_partition_backend.py` — campo `meta["sizes"]` (PR #47)
 - `src/anonymization/he2009.py` — `_group_isomorphic` — indexação por tamanho (PR #49)
 - Issue #43 (discussão e votação entre opções; fechada 2026-05-20)
+
+---
+
+## D-08 — Política de conectividade de LSs: documentar como aproximação
+
+**Data:** 2026-05-28
+**Issue relacionada:** #75 (D-08 / Fase 2, G3)
+**Módulo afetado:** `src/anonymization/_partition_backend.py`, `src/anonymization/he2009.py`
+
+### Contexto
+
+He et al. (2009) usa o conceito de *Local Structure* como um subgrafo induzido
+conexo — implicitamente, cada LS deveria corresponder a uma vizinhança local
+coerente do grafo. O algoritmo `_partition_neighborhoods` constrói as LSs como
+subgrafos induzidos das partições geradas pelo pymetis. A questão levantada pela
+issue #75 é: **o pymetis garante que cada partição produz um subgrafo induzido
+conexo?**
+
+### Evidência empírica (ego-rede 3437, seed=42)
+
+Verificação realizada com `partition_graph(g, ck, seed=42, backend="pymetis")`.
+A ego-rede 3437 possui n=534 nós e 2 componentes conexas (532 + 2 nós).
+
+| Parâmetro | ck | Partições vazias | Partições desconexas (não-vazias) | Comportamento |
+|---|---|---|---|---|
+| d=2 | 267 | **199/267 (74,5%)** | 59/68 (86,8%) | Degenerate — pymetis colapsa em grupos de 7–8 |
+| d=5 | 106 | 3/106 (2,8%) | 57/103 (55,3%) | Distribuição razoável (size 5–6), mas conectividade não garantida |
+
+Interpretação do comportamento degenerate em d=2:
+pymetis com ck muito grande (267 para n=534) falha no balanceamento — produz
+199 partições vazias e concentra nós em grupos de tamanho 7–8 em vez de 2. Isso
+é uma limitação conhecida do multilevel k-way para ck ≈ n/2 (partições muito
+pequenas relativas ao tamanho do grafo).
+
+Para d=5, a distribuição de tamanhos é razoável (maioria de tamanho 5–6), porém
+55% dos subgrafos induzidos não são conexos — resultado esperado para uma
+partição que minimiza cortes mas não impõe conectividade.
+
+### Decisão adotada — Opção B: documentar como aproximação
+
+**Não será implementado forçamento de conectividade** no protótipo atual.
+O algoritmo `_partition_neighborhoods` continua retornando subgrafos induzidos
+sem garantia de conectividade. Consequências:
+
+1. **LS desconexas são tratadas como grafos desconexos normais** pelo restante
+   do pipeline (FSM, `_modify_structure`, verificador). Isso é estruturalmente
+   coerente com o código, embora desvie da premissa implícita do artigo.
+2. **d=2 é inviável** nesta ego-rede com pymetis: o comportamento é degenerate.
+   O d-sweep (issue #72) deve usar `d ∈ {5, 10}` ou documentar d=2 como
+   caso degenerate com aviso explícito no YAML e nos resultados.
+3. **d=5 produz partições razoáveis em tamanho** mas com conectividade parcial
+   (~55% desconexas). Aceito como aproximação para o tier desejável; declarar
+   como limitação em `docs/results_dsweep.md`.
+
+### Opção A (forçar conectividade) — classificada como tier desejável
+
+A opção A exigiria:
+1. Detectar partições desconexas pós-pymetis.
+2. Dividir cada partição desconexas em seus componentes conexos.
+3. Re-agrupar fragmentos por tamanho para recompor partições de tamanho ≈ d.
+Custo adicional: O(ck · d) extra pós-partição. Correto semanticamente mas
+fora do escopo do protótipo. Candidato a futura extensão do backend.
+
+### Recomendação operacional para o d-sweep
+
+- **Usar d ∈ {5, 10}** como valores primários do d-sweep (#77).
+- Incluir d=2 apenas se explicitamente anotado como "potencialmente degenerate"
+  no YAML (`# WARNING: d=2 degenerate for this graph with pymetis`) e nos docs.
+- Registrar `partition_backend` no JSONL de log (#77) para rastreabilidade (já
+  previsto em D-04).
+
+### Referências cruzadas
+
+- D-04 (motor de particionamento — pymetis primário, KL fallback)
+- D-06 (grupos incompletos residuais)
+- D-07 (normalização de tamanho de LSs — Opção A)
+- Issue #72 (issue-mãe: d-sweep tier desejável)
+- Issue #75 (Fase 2: endurecer núcleo em d>1)
+- `src/anonymization/_partition_backend.py` — `_partition_pymetis`
+- `src/anonymization/he2009.py` — `_partition_neighborhoods`
+
+---
+
+## D-09 — Pré-filtro VF2: documentar como limitação do protótipo
+
+**Data:** 2026-05-28
+**Issue relacionada:** #76 (checkbox 4)
+**Módulo afetado:** `src/anonymization/validation.py` — `validate_k_anonymity`
+
+### Contexto
+
+D-05 registra: *"Para d > 20, avaliar pré-filtro por invariantes baratos
+(distribuição de graus, espectro do laplaciano) antes da chamada a
+`is_isomorphic`."* A issue #76 solicita avaliação formal para `d ∈ {2, 5, 10}`
+sobre o grafo sintético `cycle_graph(20)` e sobre a ego-rede 3437 (n=534).
+
+### Evidências empíricas (G5, issue #76)
+
+Testes em `tests/anonymization/test_he2009_d_validator.py` executam o validador
+para `d ∈ {2, 5, 10}` sobre `cycle_graph(20)` sem timeout. O experimento de
+baseline completo (issues #23, PR #68) executou `validate_k_anonymity` para
+`k ∈ {2, 5, 10, 20}` com `d=1` e 3 sementes sobre a ego-rede 3437 sem problemas.
+Para os valores `d ∈ {2, 5}`, o número de chamadas VF2 é `O(k(k-1)/2)` por grupo;
+com `k=2` e poucos grupos em `cycle_graph(20)`, o custo é de apenas `1` chamada VF2
+por grupo — negativo do pré-filtro.
+
+### Decisão adotada — Documentar como limitação do protótipo
+
+**Não será implementado pré-filtro VF2** no escopo atual. Razões:
+
+1. **Custo irrelevante para o d-sweep:** `d ∈ {2, 5, 10}` — bem abaixo do
+   limiar `d > 20` citado em D-05. O custo VF2 para grafos de até 10 nós
+   é desprezível.
+2. **Grafo de referência pequeno:** A ego-rede 3437 (n=534) gera c_k ≤ 106
+   partições para `d=5`. Com `k=2`, o custo máximo é 106 chamadas VF2 sobre
+   grafos de 5 nós — sub-segundo.
+3. **Escopo do protótipo:** O módulo é instrumento de medição empírica, não
+   motor de produção. A substituição futura por pré-filtro é viável sem
+   alteração de API.
+
+**Declarar como limitação em `docs/limitations.md`** (seção de desempenho).
+A implementação do pré-filtro é candidata a extensão de tier aspiracional.
+
+### Referências cruzadas
+
+- D-05 (verificador empírico estrito — risco de desempenho VF2 documentado)
+- Issue #76 (checkbox 4 — avaliação e decisão sobre pré-filtro)
+- `src/anonymization/validation.py` — `validate_k_anonymity` (condição 3)
+- `tests/anonymization/test_he2009_d_validator.py` — G5(a) testes
+
+---
+
+## D-10 — Combo degenerado d=10, k=20: executar e anotar como degenerado no YAML
+
+**Data:** 2026-05-28
+**Issue relacionada:** #76 (checkbox 3)
+**Módulo afetado:** `experiments/configs/` — YAML do d-sweep
+
+### Contexto
+
+A issue #76 solicita verificação do comportamento do combo `d=10, k=20` e
+uma decisão: *"executar o combo mesmo assim (marcar como degenerado no YAML)
+ou excluir da varredura?"*
+
+Para `cycle_graph(20)` (n=20), `d=10` produz c_k = 2 partições. Com `k=20`,
+o pipeline forma 1 grupo incompleto com 2 LSs — todas as 20 nós viram
+violadores via D-06. Para a ego-rede 3437 (n=534), `d=10` produziria c_k ≈ 53
+partições; `k=20` formaria ~2 grupos completos (40 nós protegidos) mais ~13
+LSs residuais (~130 nós via D-06).
+
+### Evidências empíricas (G5, issue #76)
+
+`tests/anonymization/test_he2009_d_validator.py::TestDegenerateComboD10K20`
+confirma:
+
+- `anonymize(cycle_graph(20), k=20, d=10, seed=0)` completa sem exceção.
+- Todas as violações são do tipo `incomplete_group` (D-06).
+- `deficit_fully_structural=True` — estado correto, não é bug.
+- `n_violators == 20` — todos os nós da rede sintética são residuais.
+
+### Decisão adotada — Incluir no d-sweep com anotação de degenerado
+
+Seguindo o precedente de D-08 (documentar como aproximação em vez de excluir):
+
+1. **Incluir o combo `d=10, k=20` no YAML do d-sweep** com comentário explícito
+   de degenerado:
+   ```yaml
+   # WARNING: d=10, k=20 degenerate for this graph — c_k < k; all nodes
+   # are structural violators (D-06). Results are methodologically valid
+   # (deficit_fully_structural=True) but provide no k-anonymity guarantees.
+   ```
+2. **Não excluir:** excluir obscurece o comportamento real do algoritmo em
+   configurações extremas — dado relevante para a tese.
+3. **Registrar em `docs/results_dsweep.md`** (a criar em #77) que combos com
+   `c_k < k` produzem cobertura zero, e discutir o trade-off d vs k.
+
+### Referências cruzadas
+
+- D-06 (grupos incompletos residuais — causa raiz do comportamento)
+- D-08 (precedente: documentar como aproximação)
+- Issue #76 (checkbox 3 — verificação e decisão)
+- Issue #77 (d-sweep — config YAML e logging)
+- `tests/anonymization/test_he2009_d_validator.py::TestDegenerateComboD10K20`

@@ -11,28 +11,32 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-05-25
+**Data da última atualização:** 2026-05-28
 
-**Semana corrente:** Semana 4 (05/06/2026) → transição para Semana 5
+**Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- Issue #26 fechada: toda a documentação técnica do pipeline concluída.
-  - PR #68 (issue #64 / #26-B) confirmado mergeado.
-  - Sub-issues #63 (#26-A) e #64 (#26-B) encerradas; issue pai #26 fechada.
-  - Critérios atendidos: diagrama Mermaid do pipeline (`docs/pipeline.md` §2/§3),
-    comandos reproduzíveis (§5), lista de outputs com localização (§7),
-    `docs/limitations.md`, cross-referências entre `algorithm_notes.md` e
-    `metrics_definitions.md`.
+- Issue #76 / **G5(a) concluído**: `tests/anonymization/test_he2009_d_validator.py`
+  criado com 23 testes em 3 classes. `TestDeficitFullyStructuralD`: pipeline d∈{2,5}
+  só produz `incomplete_group` violations; casos sintéticos confirmam `False` com
+  `non_isomorphic`. `TestEquivalenceGroupSizeD`: mean=k·d para grupos completos
+  (d=2→4; d=5→10); mean≠k·d para tamanhos mistos (KL aproximação). 
+  `TestDegenerateComboD10K20`: cycle_graph(20) d=10 k=20 produz 2 LSs residuais
+  → `deficit_fully_structural=True`, `n_violators=20`. Decisões D-09
+  (pré-filtro VF2 = limitação) e D-10 (combo degenerado = incluir, anotar no YAML)
+  registradas em `docs/decision_log.md`. 439 passed (+23 vs G4), ruff limpo.
+  Branch `experiment/d-sweep`.
 
 **Próximo passo planejado:**
-- Semana 5 (S5): issues #27 (reprodutibilidade end-to-end / cold start) e
-  #28 (README final + revisão global da documentação).
+- Abrir PR cobrindo toda a branch `experiment/d-sweep` (issues #75 + #76),
+  referenciando ambas as issues. Aguardar revisão humana e merge.
 
 **Bloqueios ativos:**
 - Nenhum.
 
 **Decisões pendentes de validação humana:**
-- Nenhuma.
+- D-08 (conectividade de LSs): decisão Opção B registrada; confirmar se
+  o d-sweep (#77) deve de fato excluir d=2 ou apenas anotar como degenerate.
 
 ---
 
@@ -53,6 +57,71 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-28 — Issue #76 G5(a): deficit_fully_structural e equivalence_group_size em d>1
+
+- **Concluído:** `tests/anonymization/test_he2009_d_validator.py` criado (23 testes,
+  3 classes). `TestDeficitFullyStructuralD`: pipeline d∈{2,5} → violations apenas
+  `incomplete_group`; casos sintéticos confirmam `deficit_fully_structural=False` com
+  `non_isomorphic` (size mismatch d=2 e d=5; path vs cycle). `TestEquivalenceGroupSizeD`:
+  mean=k·d para grupos completos (d=2→4, d=5→10); mean≠k·d para tamanhos mistos
+  (KL aproximação — limitação registrada). `TestDegenerateComboD10K20`: cycle_graph(20)
+  d=10 k=20 → `deficit_fully_structural=True`, `n_violators=20` — comportamento correto,
+  não bug. Decisões D-09 (pré-filtro VF2: limitação) e D-10 (combo degenerado: incluir
+  no YAML com aviso) registradas em `docs/decision_log.md`. 439 passed, ruff limpo.
+  Branch `experiment/d-sweep`.
+- **Próximo:** Abrir PR para a branch `experiment/d-sweep`, cobrindo issues #75 e #76.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar D-08: d=2 excluído ou anotado como degenerate (D-10
+  registrado; aguarda validação humana no contexto do YAML do d-sweep).
+
+### 2026-05-28 — Issue #75 e2e d=10: validação da Opção A para d=10
+
+- **Concluído:** `TestE2eD10` adicionada a `test_he2009_e2e_d.py` com 6 testes
+  caixa-preta (`anonymize(cycle_graph(20), k=2, d=10, seed∈{0,7})`). `TestValidatorCoherence`
+  estendida de `d∈{2,5}` para `d∈{2,5,10}` (4 testes × 3 valores = 12 casos).
+  Confirma Opção A (G2): `s_max=4` fixo produz pipeline coerente mesmo com `d=10 > fsm_max_size=4`.
+  412 passed, ruff limpo. Commit `47bd872` em `experiment/d-sweep`.
+- **Próximo:** G5(a) — início de #76 (validador e métricas em d>1).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar D-08: d=2 excluído ou anotado como degenerate.
+
+### 2026-05-28 — Issue #75 G2: decisão s_max vs d (D-01, Checkbox #2)
+
+- **Concluído:** Investigação empírica do FSM quando `d > fsm_max_size=4`.
+  `cycle_graph(20)`, d=5: 4 padrões frequentes (tamanhos 1–4); agrupamento idêntico
+  com `fsm_max_size∈{4,5}`. Decisão Opção A registrada em `docs/decision_log.md`
+  (nota G2 sob D-01): manter `s_max=4` fixo para todos os valores de d do d-sweep.
+  Sem alteração em `src/`. 406 passed, ruff limpo.
+- **Próximo:** e2e com d=10 para confirmar Opção A; depois G5(a) / início de #76.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar D-08: d=2 excluído ou anotado como degenerate.
+
+### 2026-05-28 — Issue #75 G1: teste e2e anonymize() d=2 e d=5
+
+- **Concluído:** `tests/anonymization/test_he2009_e2e_d.py` criado com 20 testes
+  em 3 classes. `TestE2eD2` e `TestE2eD5` cobrem caixa-preta de `anonymize()`;
+  `TestValidatorCoherence` (parametrizado d∈{2,5}) verifica coerência do validador
+  (`valid` ou `deficit_fully_structural=True`) e ausência de violações `non_isomorphic`
+  (condição 4.3, VF2). Grafo `cycle_graph(20)`, sementes 0 e 7. 406 passed, ruff limpo.
+  Commit `ba1c10b` em `experiment/d-sweep`.
+- **Próximo:** G2 (Decisão s_max vs d — verificar FSM quando d > fsm_max_size=4;
+  registrar em decision_log.md sob D-01).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar D-08: d=2 excluído ou anotado como degenerate no d-sweep.
+
+### 2026-05-28 — Issue #75 G3: verificação de conectividade de LSs + decisão D-08
+
+- **Concluído:** Branch `experiment/d-sweep` criada. G3 (Checkbox #3 de #75):
+  verificação empírica de conectividade das LSs geradas por pymetis para d ∈ {2, 5}
+  na ego-rede 3437. Achados críticos: (a) ego-rede 3437 é desconexo (2 componentes:
+  532 + 2 nós); (b) d=2 degenerate — pymetis produz 199/267 partições vazias e nós
+  concentrados em grupos 7–8; (c) d=5 razoável em tamanho (5–6) mas 55% desconexas.
+  Decisão D-08 registrada em `docs/decision_log.md`: Opção B (documentar como
+  aproximação); forçamento de conectividade = tier desejável futuro.
+- **Próximo:** G1 (testes e2e `anonymize(g, k=2, d={2,5})` em grafo pequeno ~20 nós).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar se d=2 deve ser excluído ou apenas anotado no d-sweep.
 
 ### 2026-05-25 — Encerramento da issue #26
 
