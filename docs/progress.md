@@ -16,23 +16,16 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- Issue #75 / **G2 concluído**: Decisão s_max vs d (Checkbox #2 da issue #75).
-  Investigação empírica do FSM (`_group_within_bucket`) com `d=5` e `fsm_max_size=4`:
-  - `cycle_graph(20)`, d=5: FSM encontra 4 padrões frequentes (tamanhos 1–4 nós);
-    agrupamento com `fsm_max_size=4` idêntico ao com `fsm_max_size=5`.
-  - Conclusão: o FSM opera corretamente sobre sub-padrões quando `d > s_max`.
-  - **Decisão: Opção A** — manter `s_max=4` fixo para todos os valores de d.
-  - Registrado em `docs/decision_log.md` (nota G2 sob D-01): razões incluem
-    corretude garantida por `_modify_structure`, custo controlado, consistência
-    do d-sweep.
-  - 406 passed, ruff limpo. Sem alteração em `src/`.
+- Issue #75 / **e2e d=10 concluído**: `TestE2eD10` (6 testes caixa-preta) adicionada a
+  `tests/anonymization/test_he2009_e2e_d.py`. `TestValidatorCoherence` parametrizado
+  para `d∈{2,5,10}` (4 × 3 = 12 testes). Valida Opção A: `s_max=4` fixo funciona
+  corretamente para `d=10 > fsm_max_size=4`. 412 passed (+6 vs G2), ruff limpo.
+  Commit `47bd872` em `experiment/d-sweep`. Sem alteração em `src/`.
 
 **Próximo passo planejado (sub-ordem issue #75):**
-- **e2e com d=10** (validação da Opção A para d ainda maior que s_max): confirmar
-  que `anonymize(g, k=2, d=10)` passa nos mesmos critérios caixa-preta dos testes G1.
-  Ponto de partida: estender `test_he2009_e2e_d.py` com `TestE2eD10` e adicionar
-  `d=10` a `TestValidatorCoherence`.
-- **Após e2e d=10**: G5(a) — início de #76 (validador e métricas em d>1).
+- **G5(a)** — início de #76: validador e métricas em `d>1` (verificar se
+  `validate_k_anonymity` e as métricas de `src/metrics/` operam corretamente
+  quando a anonimização usa `d>1`, conforme checkboxes pendentes da issue #75).
 
 **Bloqueios ativos:**
 - Nenhum.
@@ -60,6 +53,17 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-28 — Issue #75 e2e d=10: validação da Opção A para d=10
+
+- **Concluído:** `TestE2eD10` adicionada a `test_he2009_e2e_d.py` com 6 testes
+  caixa-preta (`anonymize(cycle_graph(20), k=2, d=10, seed∈{0,7})`). `TestValidatorCoherence`
+  estendida de `d∈{2,5}` para `d∈{2,5,10}` (4 testes × 3 valores = 12 casos).
+  Confirma Opção A (G2): `s_max=4` fixo produz pipeline coerente mesmo com `d=10 > fsm_max_size=4`.
+  412 passed, ruff limpo. Commit `47bd872` em `experiment/d-sweep`.
+- **Próximo:** G5(a) — início de #76 (validador e métricas em d>1).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar D-08: d=2 excluído ou anotado como degenerate.
 
 ### 2026-05-28 — Issue #75 G2: decisão s_max vs d (D-01, Checkbox #2)
 
