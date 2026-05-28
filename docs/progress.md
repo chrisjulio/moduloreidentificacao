@@ -13,30 +13,32 @@
 
 **Data da última atualização:** 2026-05-28
 
-**Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
+**Semana corrente:** Tier D-tier ativo — enquadramento D-08 (issue #73) e d-sweep (issues #77–#78)
+
+**Marcos encerrados:**
+- **S1–S3** (escopo mínimo): encerrados conforme planejado.
+- **S4** (visualizações e tabelas CSV): encerrado em 25/05/2026 (PRs #62, #66, #67, #68).
+- **S5** (documentação complementar, limitations, pipeline): encerrado em 25/05/2026 (PRs #63–#65, #68).
+- **d-sweep Fases 2–3** (issues #75 e #76): encerradas em 28/05/2026 via PR #79 (mergeado em `main`).
 
 **Último passo concluído:**
 - Issue #76 / **G5(a) concluído**: `tests/anonymization/test_he2009_d_validator.py`
-  criado com 23 testes em 3 classes. `TestDeficitFullyStructuralD`: pipeline d∈{2,5}
-  só produz `incomplete_group` violations; casos sintéticos confirmam `False` com
-  `non_isomorphic`. `TestEquivalenceGroupSizeD`: mean=k·d para grupos completos
-  (d=2→4; d=5→10); mean≠k·d para tamanhos mistos (KL aproximação). 
-  `TestDegenerateComboD10K20`: cycle_graph(20) d=10 k=20 produz 2 LSs residuais
-  → `deficit_fully_structural=True`, `n_violators=20`. Decisões D-09
-  (pré-filtro VF2 = limitação) e D-10 (combo degenerado = incluir, anotar no YAML)
-  registradas em `docs/decision_log.md`. 439 passed (+23 vs G4), ruff limpo.
-  Branch `experiment/d-sweep`.
+  criado com 23 testes em 3 classes. Decisões D-09 e D-10 registradas em
+  `docs/decision_log.md`. 439 passed, ruff limpo. PR #79 mergeado em `main`.
 
 **Próximo passo planejado:**
-- Abrir PR cobrindo toda a branch `experiment/d-sweep` (issues #75 + #76),
-  referenciando ambas as issues. Aguardar revisão humana e merge.
+- **Issue #73** (D-08 / Fase 0 — enquadramento formal): atualizar `scope.md` e
+  `progress.md`; adicionar referência a #73 em D-08 do `decision_log.md`;
+  abrir PR `docs/issue-73-enquadramento-d08`. Em seguida: issue #77 (d-sweep
+  config YAML e logging).
 
 **Bloqueios ativos:**
 - Nenhum.
 
 **Decisões pendentes de validação humana:**
-- D-08 (conectividade de LSs): decisão Opção B registrada; confirmar se
-  o d-sweep (#77) deve de fato excluir d=2 ou apenas anotar como degenerate.
+- D-08 (conectividade de LSs): confirmar se d=2 deve ser excluído ou apenas
+  anotado como degenerate no YAML do d-sweep (issue #77). D-10 registra o
+  padrão geral; a decisão específica para d=2 fica no âmbito de #77.
 
 ---
 
@@ -57,6 +59,19 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-28 — Issue #73 (Fase 0): enquadramento D-08 — scope.md e progress.md
+
+- **Concluído:** Branch `docs/issue-73-enquadramento-d08` criada a partir de `main`.
+  `docs/scope.md` atualizado: tier `[D]` para varredura de `d` formalizado; legenda
+  atualizada com S1–S5 encerrados; entrada explícita para d-sweep com referências
+  a D-08, issue #73 e issue-mãe #72. `docs/progress.md` atualizado: marcos S4/S5
+  declarados encerrados; próximo passo aponta para issue #77. Referência a #73 adicionada
+  em D-08 no `docs/decision_log.md`.
+- **Próximo:** Abrir PR para issue #73 (`docs/issue-73-enquadramento-d08` → `main`).
+  Após merge: iniciar issue #77 (d-sweep YAML e logging).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** D-08 / d=2: excluir ou anotar como degenerate no YAML (#77).
 
 ### 2026-05-28 — Issue #76 G5(a): deficit_fully_structural e equivalence_group_size em d>1
 
@@ -230,56 +245,57 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 
 ### 2026-05-22 — Métricas: src/metrics/ (issue #21)
 
-- **Concluído:** `src/metrics/reidentification_rate.py` (`reidentification_rate(attack_results) -> float`), `src/metrics/equivalence_group_size.py` (`equivalence_group_size(groups) -> tuple[float, int]` — aceita `list[list[nx.Graph]]` idêntico ao `validate_k_anonymity`), `src/metrics/ks_test_degree.py` (`ks_test_degree(g_orig, g_anon) -> tuple[float, float]` via `scipy.stats.ks_2samp`), `src/metrics/clustering_variation.py` (`clustering_variation(g_orig, g_anon) -> float`). `src/metrics/__init__.py` exporta as 4 funções. 52 novos testes em `tests/metrics/` cobrindo edge cases, valores conhecidos, invariantes de tipo e intervalo. 267 passando, 4 skipped; ruff limpo. PR #60 aberto.
+- **Concluído:** `src/metrics/reidentification_rate.py`, `src/metrics/equivalence_group_size.py`, `src/metrics/ks_test_degree.py`, `src/metrics/clustering_variation.py`. `src/metrics/__init__.py` exporta as 4 funções. 52 novos testes em `tests/metrics/`. 267 passando, 4 skipped; ruff limpo. PR #60 aberto.
 - **Próximo:** Aguardar merge dos PRs #60, #59, #58, #57, #55. Implementar issue #22 (runner).
 - **Bloqueios:** PRs #60, #59, #58, #57, #55 aguardam revisão humana.
 - **Decisões pendentes:** Revisão humana dos cinco PRs.
 
 ### 2026-05-22 — Ataque por subgrafos: subgraph_attack (issue #20)
 
-- **Concluído:** `src/attacks/subgraph.py` criado com `subgraph_attack(g_orig, g_anon, target, hop=1, timeout=None) -> bool`. Backend VF2 via `GraphMatcher.is_isomorphic`. Helper `_k_hop_induced_subgraph` encapsula extração de vizinhança. Timeout opcional via `concurrent.futures`. `src/attacks/__init__.py` atualizado para exportar ambos os ataques. `tests/attacks/test_subgraph.py` com 17 casos cobrindo: identificação única (True), múltiplos candidatos (False), zero candidatos (False), hop=2 discrimina onde hop=1 falha (lollipops assimétricos), timeout via mock, inputs inválidos. 215 passando, 4 skipped; ruff limpo. PR #59 aberto.
+- **Concluído:** `src/attacks/subgraph.py` criado. 17 casos de teste. 215 passando, 4 skipped; ruff limpo. PR #59 aberto.
 - **Próximo:** Aguardar merge de PRs #59, #58. Implementar issue #21 (métricas).
 - **Bloqueios:** PRs #59, #58, #57, #55 aguardam revisão humana.
 - **Decisões pendentes:** Revisão humana dos quatro PRs.
 
 ### 2026-05-22 — Ataque por grau: degree_attack (issue #19)
 
-- **Concluído:** `src/attacks/degree.py` criado com `degree_attack(g_orig, g_anon, target, tolerance=0) -> bool`. `src/attacks/__init__.py` criado. `tests/attacks/test_degree.py` com 10 casos cobrindo: identificação única (True), múltiplos candidatos (False), zero candidatos (False), tolerance != 0, target inválido (ValueError), tolerance negativa (ValueError). 198 passando, 4 skipped; ruff limpo. PR #58 aberto.
+- **Concluído:** `src/attacks/degree.py` criado. 10 casos de teste. 198 passando, 4 skipped; ruff limpo. PR #58 aberto.
 - **Próximo:** Aguardar merge de PR #58. Implementar issue #20 (subgraph_attack).
 - **Bloqueios:** PR #58, #57, #55 aguardam revisão humana.
 - **Decisões pendentes:** Revisão humana dos três PRs.
 
-### 2026-05-22 — Testes DL-01: coverage_fraction, uncovered_fraction, deficit_fully_structural (issue #56)
+### 2026-05-22 — Testes DL-01 (issue #56)
 
-- **Concluído:** `TestDL01Fields` adicionada a `tests/anonymization/test_validation.py` com 16 novos casos de teste cobrindo os três campos introduzidos por DL-01. Sem alterações em `src/`. 51 testes passando; ruff limpo. PR #57 aberto.
-- **Próximo:** Aguardar merge de PR #57 e PR #55. Iniciar Semana 3: ataques por grau e subgrafos.
+- **Concluído:** `TestDL01Fields` adicionada. 51 testes passando; ruff limpo. PR #57 aberto.
+- **Próximo:** Aguardar merge de PR #57 e PR #55. Iniciar Semana 3.
 - **Bloqueios:** PR #57 e PR #55 aguardam revisão humana.
 - **Decisões pendentes:** Revisão humana dos dois PRs.
 
 ### 2026-05-22 — Documentação do marco 29/05 (issue #18)
 
-- **Concluído:** `docs/validacao_k_anonimato.md` criado com registro consolidado da validação: data, hashes de commits, tabela de configuração, tabela de resultados para k∈{2,5,10,20} × 3 sementes, análise de violações (nenhuma crítica), decisão de prosseguir para Semana 3. `CLAUDE.md` atualizado com link. PR #55 aberto.
-- **Próximo:** Aguardar merge do PR #55. Iniciar Semana 3: ataques por grau e subgrafos.
+- **Concluído:** `docs/validacao_k_anonimato.md` criado. PR #55 aberto.
+- **Próximo:** Aguardar merge do PR #55. Iniciar Semana 3.
 - **Bloqueios:** PR #55 aguarda revisão humana.
 - **Decisões pendentes:** Revisão humana do PR #55.
 
-### 2026-05-22 — k-Sweep k∈{2,10,20}: todos os k do escopo Mínimo validados (issue #17)
+### 2026-05-22 — k-Sweep k∈{2,10,20} (issue #17)
 
-- **Concluído:** Script `experiments/run_k_sweep.py` + 3 YAMLs (`he2009_facebook_k_sweep_k{2,10,20}.yml`) criados e executados. k=2: SUCCESS_FULL × 3; k=10: SUCCESS_PARTIAL × 3 (sf=0.9962); k=20: SUCCESS_PARTIAL × 3 (sf=0.9774). Resultados documentados em `docs/algorithm_notes.md` Seção 9. PR a abrir.
-- **Próximo:** Abrir PR para issue #17. Aguardar merges (#53 e #17). Iniciar Semana 3: ataques por grau e subgrafos.
-- **Bloqueios:** PRs #53 e k-sweep aguardam revisão humana.
-- **Decisões pendentes:** Revisão humana dos dois PRs.
+- **Concluído:** Script + 3 YAMLs criados e executados. Resultados em `docs/algorithm_notes.md` Seção 9.
+- **Próximo:** Abrir PR para issue #17. Aguardar merges.
+- **Bloqueios:** PRs aguardam revisão humana.
+- **Decisões pendentes:** Revisão humana.
 
 ### 2026-05-21 — Marco 29/05: validação k-anonimato k=5, d=1 (issue #16)
 
-- **Concluído:** Script `experiments/run_milestone_29_05.py` + YAML `experiments/configs/milestone_29_05.yml` criados e executados. Resultado APROVADO nas 3 sementes (satisfaction_fraction=0.9962, apenas incomplete_group). PR #53 aberto.
-- **Próximo:** Merge do PR #53 (revisão humana). Semana 3: ataques por grau e subgrafos.
+- **Concluído:** Script + YAML criados e executados. Resultado APROVADO nas 3 sementes. PR #53 aberto.
+- **Próximo:** Merge do PR #53. Semana 3: ataques por grau e subgrafos.
 - **Bloqueios:** PR #53 aguarda revisão.
 - **Decisões pendentes:** Revisão humana do PR #53.
 
 ### 2026-05-21 — Inicialização do repositório e estrutura de sessão
 
-- **Concluído:** Repositório criado com estrutura completa (src, tests, docs, experiments, scripts, data, results), CLAUDE.md, WORKFLOW.md, CI GitHub Actions, pre-commit, environment.yml, pyproject.toml, config_example.yml. Adicionada instrução de continuidade de sessão ao CLAUDE.md e criado este arquivo.
+- **Concluído:** Repositório criado com estrutura completa. CLAUDE.md, WORKFLOW.md, CI, pre-commit,
+  environment.yml, pyproject.toml, config_example.yml criados.
 - **Próximo:** Implementar loader das Facebook Ego-Nets (`src/loaders/facebook_ego.py`).
 - **Bloqueios:** Nenhum.
 - **Decisões pendentes:** Nenhuma.
