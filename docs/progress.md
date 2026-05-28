@@ -11,28 +11,45 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-05-25
+**Data da última atualização:** 2026-05-28
 
-**Semana corrente:** Semana 4 (05/06/2026) → transição para Semana 5
+**Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- Issue #26 fechada: toda a documentação técnica do pipeline concluída.
-  - PR #68 (issue #64 / #26-B) confirmado mergeado.
-  - Sub-issues #63 (#26-A) e #64 (#26-B) encerradas; issue pai #26 fechada.
-  - Critérios atendidos: diagrama Mermaid do pipeline (`docs/pipeline.md` §2/§3),
-    comandos reproduzíveis (§5), lista de outputs com localização (§7),
-    `docs/limitations.md`, cross-referências entre `algorithm_notes.md` e
-    `metrics_definitions.md`.
+- Issue #75 / G3 concluído: verificação empírica de conectividade de LSs para
+  d ∈ {2, 5} na ego-rede 3437 com backend pymetis; decisão D-08 registrada em
+  `docs/decision_log.md`.
+  - Branch `experiment/d-sweep` criada a partir de `main`.
+  - Achados: d=2 é degenerate (199/267 partições vazias; pymetis colapsa nós em
+    grupos de 7–8 em vez de 2); d=5 produz tamanhos razoáveis (5–6) mas 55% das
+    partições não-triviais são desconexas.
+  - Decisão: **Opção B — documentar como aproximação**; forçamento de
+    conectividade classificado como tier desejável (D-09 futura).
+  - d-sweep deve usar d ∈ {5, 10}; incluir d=2 apenas anotado como degenerate.
 
-**Próximo passo planejado:**
-- Semana 5 (S5): issues #27 (reprodutibilidade end-to-end / cold start) e
-  #28 (README final + revisão global da documentação).
+**Próximo passo planejado (sub-ordem issue #75):**
+- **G1 — Teste end-to-end** (Checkbox #1 da issue #75): implementar teste em
+  `tests/anonymization/` que executa `anonymize(g, k=2, d=2)` e
+  `anonymize(g, k=2, d=5)` sobre grafo pequeno determinístico (~20 nós);
+  assertar execução sem exceção, saída coerente do validador, LSs mutuamente
+  isomorfas via VF2.
+  > **Nota de interface de `anonymize()`**: a função pública atual é
+  > `anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph`
+  > (he2009.py:233). Não expõe `sigma`, `backend`, nem `fsm_max_size` —
+  > todos fixados internamente. Para os testes e2e basta essa assinatura.
+  > G2 (s_max vs d) precisa inspecionar `_group_isomorphic` indiretamente via
+  > `_group_within_bucket(bucket, k, sigma, rng, fsm_max_size=4)` —
+  > o parâmetro relevante é `fsm_max_size`, hardcoded em 4 em `anonymize()`.
+
+- **Após G1**: G2 (Decisão s_max vs d — verificar FSM quando d > 4), depois
+  e2e (validação completa), depois G5(a) (início de #76).
 
 **Bloqueios ativos:**
 - Nenhum.
 
 **Decisões pendentes de validação humana:**
-- Nenhuma.
+- D-08 (conectividade de LSs): decisão Opção B registrada; confirmar se
+  o d-sweep (#77) deve de fato excluir d=2 ou apenas anotar como degenerate.
 
 ---
 
@@ -53,6 +70,19 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-28 — Issue #75 G3: verificação de conectividade de LSs + decisão D-08
+
+- **Concluído:** Branch `experiment/d-sweep` criada. G3 (Checkbox #3 de #75):
+  verificação empírica de conectividade das LSs geradas por pymetis para d ∈ {2, 5}
+  na ego-rede 3437. Achados críticos: (a) ego-rede 3437 é desconexo (2 componentes:
+  532 + 2 nós); (b) d=2 degenerate — pymetis produz 199/267 partições vazias e nós
+  concentrados em grupos 7–8; (c) d=5 razoável em tamanho (5–6) mas 55% desconexas.
+  Decisão D-08 registrada em `docs/decision_log.md`: Opção B (documentar como
+  aproximação); forçamento de conectividade = tier desejável futuro.
+- **Próximo:** G1 (testes e2e `anonymize(g, k=2, d={2,5})` em grafo pequeno ~20 nós).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar se d=2 deve ser excluído ou apenas anotado no d-sweep.
 
 ### 2026-05-25 — Encerramento da issue #26
 

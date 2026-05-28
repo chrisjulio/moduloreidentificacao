@@ -26,6 +26,7 @@
 | [D-05](#d-05) | 2026-05-17 | Implementação | Verificador empírico estrito de k-anonimato |
 | [D-06](#d-06) | 2026-05-17 | Implementação | Política para grupos incompletos residuais |
 | [D-07](#d-07) | 2026-05-20 | Implementação | Normalização de tamanho de LSs — Opção A adotada |
+| [D-08](#d-08) | 2026-05-28 | Implementação | Política de conectividade de LSs — documentar como aproximação |
 
 ---
 
@@ -432,3 +433,83 @@ k∈{2, 5, 10, 20} (issues #16, #17; PRs #53, #54).
 - `src/anonymization/_partition_backend.py` — campo `meta["sizes"]` (PR #47)
 - `src/anonymization/he2009.py` — `_group_isomorphic` — indexação por tamanho (PR #49)
 - Issue #43 (discussão e votação entre opções; fechada 2026-05-20)
+
+---
+
+## D-08 — Política de conectividade de LSs: documentar como aproximação
+
+**Data:** 2026-05-28
+**Issue relacionada:** #75 (D-08 / Fase 2, G3)
+**Módulo afetado:** `src/anonymization/_partition_backend.py`, `src/anonymization/he2009.py`
+
+### Contexto
+
+He et al. (2009) usa o conceito de *Local Structure* como um subgrafo induzido
+conexo — implicitamente, cada LS deveria corresponder a uma vizinhança local
+coerente do grafo. O algoritmo `_partition_neighborhoods` constrói as LSs como
+subgrafos induzidos das partições geradas pelo pymetis. A questão levantada pela
+issue #75 é: **o pymetis garante que cada partição produz um subgrafo induzido
+conexo?**
+
+### Evidência empírica (ego-rede 3437, seed=42)
+
+Verificação realizada com `partition_graph(g, ck, seed=42, backend="pymetis")`.
+A ego-rede 3437 possui n=534 nós e 2 componentes conexas (532 + 2 nós).
+
+| Parâmetro | ck | Partições vazias | Partições desconexas (não-vazias) | Comportamento |
+|---|---|---|---|---|
+| d=2 | 267 | **199/267 (74,5%)** | 59/68 (86,8%) | Degenerate — pymetis colapsa em grupos de 7–8 |
+| d=5 | 106 | 3/106 (2,8%) | 57/103 (55,3%) | Distribuição razoável (size 5–6), mas conectividade não garantida |
+
+Interpretação do comportamento degenerate em d=2:
+pymetis com ck muito grande (267 para n=534) falha no balanceamento — produz
+199 partições vazias e concentra nós em grupos de tamanho 7–8 em vez de 2. Isso
+é uma limitação conhecida do multilevel k-way para ck ≈ n/2 (partições muito
+pequenas relativas ao tamanho do grafo).
+
+Para d=5, a distribuição de tamanhos é razoável (maioria de tamanho 5–6), porém
+55% dos subgrafos induzidos não são conexos — resultado esperado para uma
+partição que minimiza cortes mas não impõe conectividade.
+
+### Decisão adotada — Opção B: documentar como aproximação
+
+**Não será implementado forçamento de conectividade** no protótipo atual.
+O algoritmo `_partition_neighborhoods` continua retornando subgrafos induzidos
+sem garantia de conectividade. Consequências:
+
+1. **LS desconexas são tratadas como grafos desconexos normais** pelo restante
+   do pipeline (FSM, `_modify_structure`, verificador). Isso é estruturalmente
+   coerente com o código, embora desvie da premissa implícita do artigo.
+2. **d=2 é inviável** nesta ego-rede com pymetis: o comportamento é degenerate.
+   O d-sweep (issue #72) deve usar `d ∈ {5, 10}` ou documentar d=2 como
+   caso degenerate com aviso explícito no YAML e nos resultados.
+3. **d=5 produz partições razoáveis em tamanho** mas com conectividade parcial
+   (~55% desconexas). Aceito como aproximação para o tier desejável; declarar
+   como limitação em `docs/results_dsweep.md`.
+
+### Opção A (forçar conectividade) — classificada como tier desejável
+
+A opção A exigiria:
+1. Detectar partições desconexas pós-pymetis.
+2. Dividir cada partição desconexas em seus componentes conexos.
+3. Re-agrupar fragmentos por tamanho para recompor partições de tamanho ≈ d.
+Custo adicional: O(ck · d) extra pós-partição. Correto semanticamente mas
+fora do escopo do protótipo. Candidato a futura extensão do backend.
+
+### Recomendação operacional para o d-sweep
+
+- **Usar d ∈ {5, 10}** como valores primários do d-sweep (#77).
+- Incluir d=2 apenas se explicitamente anotado como "potencialmente degenerate"
+  no YAML (`# WARNING: d=2 degenerate for this graph with pymetis`) e nos docs.
+- Registrar `partition_backend` no JSONL de log (#77) para rastreabilidade (já
+  previsto em D-04).
+
+### Referências cruzadas
+
+- D-04 (motor de particionamento — pymetis primário, KL fallback)
+- D-06 (grupos incompletos residuais)
+- D-07 (normalização de tamanho de LSs — Opção A)
+- Issue #72 (issue-mãe: d-sweep tier desejável)
+- Issue #75 (Fase 2: endurecer núcleo em d>1)
+- `src/anonymization/_partition_backend.py` — `_partition_pymetis`
+- `src/anonymization/he2009.py` — `_partition_neighborhoods`
