@@ -1,7 +1,7 @@
-"""End-to-end integration tests for anonymize() with d > 1 (issue #75, G1).
+"""End-to-end integration tests for anonymize() with d > 1 (issue #75, G1/e2e).
 
-Exercises the full pipeline anonymize(g, k=2, d=2) and anonymize(g, k=2, d=5)
-on a small deterministic graph (~20 nodes).  Verifies:
+Exercises the full pipeline anonymize(g, k=2, d=2), anonymize(g, k=2, d=5),
+and anonymize(g, k=2, d=10) on a small deterministic graph (~20 nodes).  Verifies:
 
 1. No exception raised.
 2. Output type and node count preserved.
@@ -108,6 +108,43 @@ class TestE2eD5:
 
 
 # ---------------------------------------------------------------------------
+# e2e — black-box tests for anonymize() with d=10 (validates Option A: s_max=4 fixed)
+# ---------------------------------------------------------------------------
+
+
+class TestE2eD10:
+    """anonymize(cycle_graph(20), k=2, d=10) must complete coherently.
+
+    d=10 > fsm_max_size=4: confirms Option A (s_max=4 fixed for all d values).
+    """
+
+    def test_no_exception(self) -> None:
+        result = anonymize(BASE_GRAPH, k=2, d=10, seed=0)
+        assert result is not None
+
+    def test_returns_nx_graph(self) -> None:
+        result = anonymize(BASE_GRAPH, k=2, d=10, seed=0)
+        assert isinstance(result, nx.Graph)
+
+    def test_node_count_preserved(self) -> None:
+        result = anonymize(BASE_GRAPH, k=2, d=10, seed=0)
+        assert result.number_of_nodes() == BASE_GRAPH.number_of_nodes()
+
+    def test_node_set_unchanged(self) -> None:
+        result = anonymize(BASE_GRAPH, k=2, d=10, seed=0)
+        assert set(result.nodes()) == set(BASE_GRAPH.nodes())
+
+    def test_no_self_loops(self) -> None:
+        result = anonymize(BASE_GRAPH, k=2, d=10, seed=0)
+        assert not any(u == v for u, v in result.edges())
+
+    def test_determinism(self) -> None:
+        r1 = anonymize(BASE_GRAPH, k=2, d=10, seed=7)
+        r2 = anonymize(BASE_GRAPH, k=2, d=10, seed=7)
+        assert set(r1.edges()) == set(r2.edges())
+
+
+# ---------------------------------------------------------------------------
 # G1c — validator coherence (condition 4.3)
 # ---------------------------------------------------------------------------
 
@@ -115,7 +152,7 @@ class TestE2eD5:
 class TestValidatorCoherence:
     """Validator must return a coherent report for both d=2 and d=5."""
 
-    @pytest.mark.parametrize("d", [2, 5])
+    @pytest.mark.parametrize("d", [2, 5, 10])
     def test_validator_valid_or_structural(self, d: int) -> None:
         """Report must be valid or deficit attributable to structural causes only (D-06)."""
         modified_groups = _pipeline_groups(BASE_GRAPH, k=2, d=d, seed=0)
@@ -124,7 +161,7 @@ class TestValidatorCoherence:
             f"d={d}: validator returned non-structural violations: {report['violations']}"
         )
 
-    @pytest.mark.parametrize("d", [2, 5])
+    @pytest.mark.parametrize("d", [2, 5, 10])
     def test_no_non_isomorphic_violations(self, d: int) -> None:
         """Complete groups must have mutually isomorphic LSs (VF2, condition 4.3)."""
         modified_groups = _pipeline_groups(BASE_GRAPH, k=2, d=d, seed=0)
@@ -132,14 +169,14 @@ class TestValidatorCoherence:
         non_iso = [v for v in report["violations"] if v["type"] == "non_isomorphic"]
         assert non_iso == [], f"d={d}: non_isomorphic violations found: {non_iso}"
 
-    @pytest.mark.parametrize("d", [2, 5])
+    @pytest.mark.parametrize("d", [2, 5, 10])
     def test_coverage_fraction_in_range(self, d: int) -> None:
         """coverage_fraction must be in [0, 1]."""
         modified_groups = _pipeline_groups(BASE_GRAPH, k=2, d=d, seed=0)
         report = validate_k_anonymity(modified_groups, k=2)
         assert 0.0 <= report["coverage_fraction"] <= 1.0
 
-    @pytest.mark.parametrize("d", [2, 5])
+    @pytest.mark.parametrize("d", [2, 5, 10])
     def test_n_violators_consistent(self, d: int) -> None:
         """n_violators must be consistent with coverage_fraction."""
         modified_groups = _pipeline_groups(BASE_GRAPH, k=2, d=d, seed=0)
