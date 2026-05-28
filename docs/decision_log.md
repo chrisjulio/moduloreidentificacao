@@ -19,7 +19,7 @@
 | ID | Data | Tipo | Título resumido |
 |---|---|---|---|
 | [DL-01](#dl-01) | 2026-05-21 | Desvio de planejamento | Refinamento do critério de passagem do marco #16 |
-| [D-01](#d-01) | 2026-05-17 | Implementação | FSM simplificado com `s_max` configurável |
+| [D-01](#d-01) | 2026-05-17 *(nota G2: 2026-05-28)* | Implementação | FSM simplificado com `s_max` configurável; nota: comportamento quando d > s_max |
 | [D-02](#d-02) | 2026-05-17 | Implementação | `d = 10` como default; variável de configuração YAML |
 | [D-03](#d-03) | 2026-05-17 | Implementação | Matching Fase 1: grau primário + desempate lexicográfico |
 | [D-04](#d-04) | 2026-05-17 *(rev. 2026-05-20)* | Implementação | Motor de particionamento: pymetis primário, KL fallback |
@@ -140,6 +140,60 @@ forma auditável e expõe o trade-off cobertura × custo como variável explíci
 - O parâmetro `fsm_max_size` deve ser exposto no YAML de configuração
   (`anonymization.fsm.max_size`) para reprodutibilidade.
 - Comparação com gSpan completo: fora do escopo mínimo; candidata a trabalho futuro.
+
+### Nota: comportamento quando d > s_max (G2 — issue #75)
+
+**Data da nota:** 2026-05-28
+
+#### Contexto
+
+Na implementação atual, `anonymize()` chama `_group_isomorphic()` sem passar
+`fsm_max_size`, que fica no default 4. Quando `d > 4`, cada LS tem mais nós
+do que `fsm_max_size` — o FSM nunca vê o padrão completo da LS, apenas
+subgrafos conexos induzidos de até 4 nós.
+
+#### Evidências empíricas (G2, issue #75)
+
+Investigação realizada em `cycle_graph(20)` com `d=5`, `k=2`, `sigma=0.5`:
+
+| `fsm_max_size` | Padrões catalogados | Padrões frequentes | Melhor padrão (MF) | Agrupamento |
+|---|---|---|---|---|
+| 4 (atual) | 4 | 4 (tamanhos 1–4) | P4, 3 arestas, suporte=4 | 2 grupos de 2 LSs |
+| 5 (alternativa) | 5 | 5 (tamanhos 1–5) | P5, 4 arestas, suporte=4 | 2 grupos de 2 LSs (idêntico) |
+
+Para LSs homogêneas (todos os padrões ≤4 nós compartilhados por todas as LSs),
+o agrupamento é **idêntico** com `fsm_max_size=4` e `fsm_max_size=d`. Os 20
+testes e2e de G1 (issue #75) passam com `d=5` confirmando comportamento correto.
+
+#### Decisão adotada — Opção A: manter s_max=4 fixo
+
+`fsm_max_size=4` é mantido como sub-padrão para todos os valores de `d`,
+incluindo `d > 4`. Para `d > 4`, o FSM opera sobre sub-padrões de até 4 nós
+— esta é uma aproximação documentada, não um bug.
+
+**Razões:**
+
+1. **Corretude garantida por `_modify_structure`** — o isomorfismo intra-grupo
+   é garantido pela fase de modificação de arestas, não pelo FSM. O FSM apenas
+   orienta a heurística de agrupamento; sub-padrões são suficientes para isso.
+2. **Resultado idêntico verificado** — para `cycle_graph(20)` com `d=5`,
+   `fsm_max_size∈{4,5}` produz o mesmo agrupamento.
+3. **Custo computacional controlado** — `C(d, min(d,4))` subsets por LS vs.
+   `C(d,d)=1` mais todos os menores (exponencial em `d`). Para `d=10`,
+   elevar `s_max` para 10 poderia encontrar padrões tão específicos que
+   nenhuma LS compartilharia, degradando o FSM e forçando agrupamento aleatório.
+4. **Consistência do d-sweep** — manter `s_max` constante elimina um
+   parâmetro confundente na comparação `d=1` vs `d>1` da issue #72.
+
+**Opção B rejeitada** — elevar automaticamente `s_max` para `max(s_max, d)` via
+YAML introduziria custo variável e potencial degradação de qualidade para `d`
+grande. Não implementado.
+
+#### Referências cruzadas (nota G2)
+
+- Issue #75 (Checkbox #2 — Decisão s_max vs d)
+- `src/anonymization/he2009.py:93` — `_group_within_bucket(fsm_max_size=4)`
+- `tests/anonymization/test_he2009_e2e_d.py` — testes e2e G1 (d∈{2,5})
 
 ### Referências cruzadas
 

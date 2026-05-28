@@ -16,25 +16,23 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- Issue #75 / **G1 concluído**: teste e2e `anonymize(g, k=2, d={2,5})` em
-  `tests/anonymization/test_he2009_e2e_d.py`. 20 testes, 3 classes:
-  - `TestE2eD2` / `TestE2eD5`: caixa-preta (sem exceção, tipo, contagem de nós,
-    conjunto de nós, sem self-loops, determinismo).
-  - `TestValidatorCoherence` (parametrizado d∈{2,5}): validator coerente
-    (`valid` ou `deficit_fully_structural=True`; sem `non_isomorphic`; fração e
-    n_violators consistentes).
-  - Grafo: `cycle_graph(20)`, sementes 0 e 7. 406 passed, ruff limpo.
-  - Commit: `ba1c10b` em `experiment/d-sweep`.
+- Issue #75 / **G2 concluído**: Decisão s_max vs d (Checkbox #2 da issue #75).
+  Investigação empírica do FSM (`_group_within_bucket`) com `d=5` e `fsm_max_size=4`:
+  - `cycle_graph(20)`, d=5: FSM encontra 4 padrões frequentes (tamanhos 1–4 nós);
+    agrupamento com `fsm_max_size=4` idêntico ao com `fsm_max_size=5`.
+  - Conclusão: o FSM opera corretamente sobre sub-padrões quando `d > s_max`.
+  - **Decisão: Opção A** — manter `s_max=4` fixo para todos os valores de d.
+  - Registrado em `docs/decision_log.md` (nota G2 sob D-01): razões incluem
+    corretude garantida por `_modify_structure`, custo controlado, consistência
+    do d-sweep.
+  - 406 passed, ruff limpo. Sem alteração em `src/`.
 
 **Próximo passo planejado (sub-ordem issue #75):**
-- **G2 — Decisão s_max vs d** (Checkbox #2 da issue #75): verificar comportamento
-  do FSM (`_group_isomorphic` via `_group_within_bucket`) quando `d > fsm_max_size=4`.
-  Ponto de partida: `he2009.py:93` — `_group_within_bucket(bucket, k, sigma, rng,
-  fsm_max_size=4)`; o parâmetro `fsm_max_size` está hardcoded em 4 em `anonymize()`.
-  Registrar decisão em `docs/decision_log.md` (nota sob D-01): manter `s_max=4`
-  como sub-padrão (Opção A conservadora) ou elevar para `max(s_max, d)` via YAML.
-
-- **Após G2**: e2e com d=10 (validação completa), depois G5(a) (início de #76).
+- **e2e com d=10** (validação da Opção A para d ainda maior que s_max): confirmar
+  que `anonymize(g, k=2, d=10)` passa nos mesmos critérios caixa-preta dos testes G1.
+  Ponto de partida: estender `test_he2009_e2e_d.py` com `TestE2eD10` e adicionar
+  `d=10` a `TestValidatorCoherence`.
+- **Após e2e d=10**: G5(a) — início de #76 (validador e métricas em d>1).
 
 **Bloqueios ativos:**
 - Nenhum.
@@ -62,6 +60,17 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-28 — Issue #75 G2: decisão s_max vs d (D-01, Checkbox #2)
+
+- **Concluído:** Investigação empírica do FSM quando `d > fsm_max_size=4`.
+  `cycle_graph(20)`, d=5: 4 padrões frequentes (tamanhos 1–4); agrupamento idêntico
+  com `fsm_max_size∈{4,5}`. Decisão Opção A registrada em `docs/decision_log.md`
+  (nota G2 sob D-01): manter `s_max=4` fixo para todos os valores de d do d-sweep.
+  Sem alteração em `src/`. 406 passed, ruff limpo.
+- **Próximo:** e2e com d=10 para confirmar Opção A; depois G5(a) / início de #76.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar D-08: d=2 excluído ou anotado como degenerate.
 
 ### 2026-05-28 — Issue #75 G1: teste e2e anonymize() d=2 e d=5
 
