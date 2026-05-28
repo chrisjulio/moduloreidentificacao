@@ -16,33 +16,25 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- Issue #75 / G3 concluído: verificação empírica de conectividade de LSs para
-  d ∈ {2, 5} na ego-rede 3437 com backend pymetis; decisão D-08 registrada em
-  `docs/decision_log.md`.
-  - Branch `experiment/d-sweep` criada a partir de `main`.
-  - Achados: d=2 é degenerate (199/267 partições vazias; pymetis colapsa nós em
-    grupos de 7–8 em vez de 2); d=5 produz tamanhos razoáveis (5–6) mas 55% das
-    partições não-triviais são desconexas.
-  - Decisão: **Opção B — documentar como aproximação**; forçamento de
-    conectividade classificado como tier desejável (D-09 futura).
-  - d-sweep deve usar d ∈ {5, 10}; incluir d=2 apenas anotado como degenerate.
+- Issue #75 / **G1 concluído**: teste e2e `anonymize(g, k=2, d={2,5})` em
+  `tests/anonymization/test_he2009_e2e_d.py`. 20 testes, 3 classes:
+  - `TestE2eD2` / `TestE2eD5`: caixa-preta (sem exceção, tipo, contagem de nós,
+    conjunto de nós, sem self-loops, determinismo).
+  - `TestValidatorCoherence` (parametrizado d∈{2,5}): validator coerente
+    (`valid` ou `deficit_fully_structural=True`; sem `non_isomorphic`; fração e
+    n_violators consistentes).
+  - Grafo: `cycle_graph(20)`, sementes 0 e 7. 406 passed, ruff limpo.
+  - Commit: `ba1c10b` em `experiment/d-sweep`.
 
 **Próximo passo planejado (sub-ordem issue #75):**
-- **G1 — Teste end-to-end** (Checkbox #1 da issue #75): implementar teste em
-  `tests/anonymization/` que executa `anonymize(g, k=2, d=2)` e
-  `anonymize(g, k=2, d=5)` sobre grafo pequeno determinístico (~20 nós);
-  assertar execução sem exceção, saída coerente do validador, LSs mutuamente
-  isomorfas via VF2.
-  > **Nota de interface de `anonymize()`**: a função pública atual é
-  > `anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph`
-  > (he2009.py:233). Não expõe `sigma`, `backend`, nem `fsm_max_size` —
-  > todos fixados internamente. Para os testes e2e basta essa assinatura.
-  > G2 (s_max vs d) precisa inspecionar `_group_isomorphic` indiretamente via
-  > `_group_within_bucket(bucket, k, sigma, rng, fsm_max_size=4)` —
-  > o parâmetro relevante é `fsm_max_size`, hardcoded em 4 em `anonymize()`.
+- **G2 — Decisão s_max vs d** (Checkbox #2 da issue #75): verificar comportamento
+  do FSM (`_group_isomorphic` via `_group_within_bucket`) quando `d > fsm_max_size=4`.
+  Ponto de partida: `he2009.py:93` — `_group_within_bucket(bucket, k, sigma, rng,
+  fsm_max_size=4)`; o parâmetro `fsm_max_size` está hardcoded em 4 em `anonymize()`.
+  Registrar decisão em `docs/decision_log.md` (nota sob D-01): manter `s_max=4`
+  como sub-padrão (Opção A conservadora) ou elevar para `max(s_max, d)` via YAML.
 
-- **Após G1**: G2 (Decisão s_max vs d — verificar FSM quando d > 4), depois
-  e2e (validação completa), depois G5(a) (início de #76).
+- **Após G2**: e2e com d=10 (validação completa), depois G5(a) (início de #76).
 
 **Bloqueios ativos:**
 - Nenhum.
@@ -70,6 +62,19 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-28 — Issue #75 G1: teste e2e anonymize() d=2 e d=5
+
+- **Concluído:** `tests/anonymization/test_he2009_e2e_d.py` criado com 20 testes
+  em 3 classes. `TestE2eD2` e `TestE2eD5` cobrem caixa-preta de `anonymize()`;
+  `TestValidatorCoherence` (parametrizado d∈{2,5}) verifica coerência do validador
+  (`valid` ou `deficit_fully_structural=True`) e ausência de violações `non_isomorphic`
+  (condição 4.3, VF2). Grafo `cycle_graph(20)`, sementes 0 e 7. 406 passed, ruff limpo.
+  Commit `ba1c10b` em `experiment/d-sweep`.
+- **Próximo:** G2 (Decisão s_max vs d — verificar FSM quando d > fsm_max_size=4;
+  registrar em decision_log.md sob D-01).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Confirmar D-08: d=2 excluído ou anotado como degenerate no d-sweep.
 
 ### 2026-05-28 — Issue #75 G3: verificação de conectividade de LSs + decisão D-08
 
