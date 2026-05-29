@@ -5,9 +5,11 @@
 > CLAUDE.md responde *como desenvolver*, este documento responde **o que este módulo é,
 > o que ele deliberadamente não é, e por que essa distinção importa**.
 >
-> Estado: consolidado em 22/05/2026, alinhado ao estado do repositório ao final de
-> S2 + S3 parcial. Alterações de escopo devem ser registradas aqui antes de serem
-> implementadas.
+> Estado: atualizado em 28/05/2026. S4 (visualizações) e S5 (testes e documentação
+> complementar) estão encerrados. Escopo mínimo (`[M]`) integralmente implementado.
+> Varredura de `d > 1` (d-sweep) promovida para tier `[D]` (desejável) conforme D-08
+> (issue #73, issue-mãe #72). Alterações de escopo devem ser registradas aqui antes de
+> serem implementadas.
 
 ---
 
@@ -57,8 +59,8 @@ existe eixo de privacidade a ser medido.
 ## 3. Escopo — o que o módulo faz
 
 > **Legenda de estado de implementação:**
-> `[M]` = mínimo (implementado ou em implementação em S3);
-> `[D]` = desejável (planejado para S4–S5);
+> `[M]` = mínimo (implementado — S1 a S5 encerrados em 28/05/2026);
+> `[D]` = desejável (tier ativo — d-sweep em andamento, issues #72–#78);
 > `[A]` = aspiracional (fora do escopo do baseline, candidato a trabalho futuro).
 
 Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
@@ -66,7 +68,11 @@ Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
 - `[M]` Carrega grafos de **datasets públicos de pesquisa** — Facebook Ego-Nets (SNAP)
   como principal, Email-Enron (SNAP, versão estática) como secundário contingente.
 - `[M]` Aplica o algoritmo de anonimização **He et al. (2009)** sobre esses grafos,
-  com suporte a k∈{2, 5, 10, 20}.
+  com suporte a k∈{2, 5, 10, 20} e **d=1** (âncora do baseline, escopo mínimo).
+- `[D]` Executa **varredura de d** (d-sweep) sobre He et al. (2009) com d∈{1, 2, 5, 10},
+  avaliando k-anonimato structure-aware pleno. Decisão D-08 registrada em
+  `docs/decision_log.md` (issue #73, issue-mãe #72). Branch `experiment/d-sweep`
+  (PR #79) já mergeada; configuração YAML e logging pendentes (issue #77).
 - `[A]` Aplica o algoritmo de anonimização **Nettleton & Salas (2016)** como segundo
   ponto de comparação na curva privacidade-vs-utilidade.
 - `[M]` Executa ataque de reidentificação **por grau** contra a saída do pipeline.
@@ -224,6 +230,7 @@ defensáveis da resistência de anonimizações conhecidas.
 
 ---
 
-*Documento de escopo. Consolidado em 22/05/2026. Desvios fundamentados são esperados;
+*Documento de escopo. Atualizado em 28/05/2026 (issue #73). S1–S5 encerrados;
+d-sweep tier `[D]` ativo (issues #72–#78). Desvios fundamentados são esperados;
 desvios não documentados, não. Toda alteração de escopo é registrada aqui antes de ser
 implementada.*
