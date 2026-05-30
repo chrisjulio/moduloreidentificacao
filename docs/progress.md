@@ -11,25 +11,31 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-05-28
+**Data da última atualização:** 2026-05-30
 
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- Issue #76 / **G5(a) concluído**: `tests/anonymization/test_he2009_d_validator.py`
-  criado com 23 testes em 3 classes. `TestDeficitFullyStructuralD`: pipeline d∈{2,5}
-  só produz `incomplete_group` violations; casos sintéticos confirmam `False` com
-  `non_isomorphic`. `TestEquivalenceGroupSizeD`: mean=k·d para grupos completos
-  (d=2→4; d=5→10); mean≠k·d para tamanhos mistos (KL aproximação). 
-  `TestDegenerateComboD10K20`: cycle_graph(20) d=10 k=20 produz 2 LSs residuais
-  → `deficit_fully_structural=True`, `n_violators=20`. Decisões D-09
-  (pré-filtro VF2 = limitação) e D-10 (combo degenerado = incluir, anotar no YAML)
-  registradas em `docs/decision_log.md`. 439 passed (+23 vs G4), ruff limpo.
-  Branch `experiment/d-sweep`.
+- Issue #74 / **Auditoria de prontidão d>1 concluída** (Fase 1, somente leitura,
+  sem alteração em `src/`). Resultado comentado na issue, que foi **mantida
+  aberta** conforme instrução. Achado central: a "conclusão esperada" da issue
+  (cobertura escassa/nula do núcleo com `|LS|>1`) **não se confirmou** —
+  `_group_isomorphic` (`test_he2009_grouping.py`, 28 testes) e `_modify_structure`
+  (`test_he2009_modify.py`, 32 testes) têm cobertura substancial com LSs multi-nó,
+  e o e2e d>1 (TestE2eD2/D5/D10) já existe. A lacuna que #74 anteciparia para a
+  Fase 2 (#75) já foi preenchida por #75/#76, mergeadas via PR #79
+  (`experiment/d-sweep` → `main`, commit `a057519`). Backend: pymetis ausente
+  local **e** na CI (só extra opcional `partition-c` no `pyproject.toml`, não
+  instalado pelo workflow) → ambos usam fallback `networkx-kl`; degradação de
+  sizing para `ck>2` documentada (D-04/D-07, `algorithm_notes.md §7`). Suíte:
+  435 passed, 4 skipped (skips exigem pymetis; idêntico local↔CI). Subprodutos:
+  regra de permissão local read/test em `.claude/settings.local.json` e seção no
+  `CLAUDE.md` ("Inspeção de arquivos e busca de conteúdo") instruindo preferir
+  `Grep`/`Read` a one-liners de shell.
 
 **Próximo passo planejado:**
-- Abrir PR cobrindo toda a branch `experiment/d-sweep` (issues #75 + #76),
-  referenciando ambas as issues. Aguardar revisão humana e merge.
+- Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
+- Confirmar D-08 e o tratamento de d=2 no d-sweep (#77).
 
 **Bloqueios ativos:**
 - Nenhum.
@@ -57,6 +63,31 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-30 — Auditoria #74 (Fase 1) + análise de sessão travada
+
+- **Concluído:** Auditoria de prontidão d>1 (issue #74, somente leitura, sem
+  alteração em `src/`). Estado de PR/`main`: nenhum PR aberto, working tree limpo
+  em `main` @ `74b188c`, `experiment/d-sweep` sincronizada (PR #79 mergeado em
+  `a057519`). Backend de particionamento: pymetis ausente local e na CI (não está
+  em `requirements*.txt`; só extra `partition-c` no `pyproject.toml`) → ambos usam
+  fallback `networkx-kl`; degradação de sizing para `ck>2` confirmada e já
+  documentada (D-04/D-07, `algorithm_notes.md §7`). Testes de particionamento
+  d=2/d=5: 18 passed sob KL. **Inventário do núcleo diverge do esperado:**
+  `_group_isomorphic` (`test_he2009_grouping.py`, 28 testes) e `_modify_structure`
+  (`test_he2009_modify.py`, 32 testes) têm cobertura ampla com `|LS|>1`; e2e d>1
+  em `test_he2009_e2e_d.py` (TestE2eD2/D5/D10 + TestValidatorCoherence). A lacuna
+  prevista para a Fase 2 (#75) já foi preenchida por #75/#76 (PR #79). Suíte: 435
+  passed, 4 skipped (exigem pymetis; idêntico local↔CI). Resultado comentado na
+  issue #74, **mantida aberta** conforme instrução. Diagnosticada a sessão anterior
+  (`d0e51803`, ~23h): ~11 min de trabalho real + travamento de 23,7h num prompt de
+  permissão de um one-liner PowerShell, sessão desacompanhada. Subprodutos: regra
+  de permissão local read/test (`.claude/settings.local.json`) e nova seção no
+  `CLAUDE.md` ("Inspeção de arquivos e busca de conteúdo") preferindo `Grep`/`Read`
+  a one-liners de shell.
+- **Próximo:** Revisão humana e fechamento manual da #74; confirmar D-08 / d=2 no d-sweep (#77).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** D-08 (Opção B registrada; aguarda validação humana).
 
 ### 2026-05-28 — Issue #76 G5(a): deficit_fully_structural e equivalence_group_size em d>1
 

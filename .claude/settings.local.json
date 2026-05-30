@@ -2,7 +2,43 @@
   "permissions": {
     "allow": [
       "Bash(.venv\\\\Scripts\\\\python.exe -m ruff check src/loaders/ tests/loaders/test_download.py)",
-      "Bash(.venv\\\\Scripts\\\\python.exe -m ruff format --check src/loaders/ tests/loaders/test_download.py)"
+      "Bash(.venv\\\\Scripts\\\\python.exe -m ruff format --check src/loaders/ tests/loaders/test_download.py)",
+
+      "PowerShell(pytest:*)",
+      "PowerShell(.venv\\Scripts\\python.exe -m pytest:*)",
+      "PowerShell(.venv\\Scripts\\python.exe -c:*)",
+      "PowerShell(python -c:*)",
+      "PowerShell(git status:*)",
+      "PowerShell(git log:*)",
+      "PowerShell(git branch:*)",
+      "PowerShell(git rev-parse:*)",
+      "PowerShell(git ls-remote:*)",
+      "PowerShell(git diff:*)",
+      "PowerShell(git stash list:*)",
+      "PowerShell(gh pr list:*)",
+      "PowerShell(gh pr view:*)",
+      "PowerShell(gh issue view:*)",
+      "PowerShell(gh issue comment:*)",
+      "PowerShell(ruff check:*)",
+      "PowerShell(ruff format --check:*)",
+
+      "Bash(pytest:*)",
+      "Bash(.venv/Scripts/python.exe -m pytest:*)",
+      "Bash(.venv/Scripts/python.exe -c:*)",
+      "Bash(python -c:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git ls-remote:*)",
+      "Bash(git diff:*)",
+      "Bash(git stash list:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue comment:*)",
+      "Bash(ruff check:*)",
+      "Bash(ruff format --check:*)"
     ]
   }
 }
