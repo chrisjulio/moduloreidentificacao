@@ -399,11 +399,6 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 
 ---
 
-*Repositório associado à tese de doutorado em geração de redes sociais sintéticas
-— PPGInf/UFPR.*
-
----
-
 ## 12. Referências
 [1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
 
@@ -425,5 +420,12 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 
 [10] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
 
+---
+
 - Documentação interna do projeto (não pública): artigo decisório da tese
   (Seções 4.3 e 7) e proposta original.
+
+---
+
+*Repositório associado à tese de doutorado em geração de redes sociais sintéticas
+— PPGInf/UFPR.*
