@@ -1,26 +1,29 @@
-# Configuração do Windows com pymetis (backend METIS)
+# Ajustes Windows — ambiente Conda e backend `pymetis`
 
-> Esta seção é relevante apenas para quem utiliza **Windows** e quer o backend
-> METIS (`pymetis`) ativo. Em Linux/macOS, o `.venv` padrão já inclui `pymetis`
-> via pip; as instruções do README §3.2 são suficientes.
-
----
-
-## Por que `.vscode/` não está versionado
-
-O diretório `.vscode/` está listado no `.gitignore` do projeto. Cada
-desenvolvedor mantém sua própria configuração local — isso evita que caminhos
-absolutos específicos de uma máquina entrem no repositório.
+> Estas instruções são relevantes **apenas** para quem utiliza Windows e quer
+> o backend METIS (`pymetis`) ativo. Em Linux/macOS, o `.venv` padrão já inclui
+> `pymetis` via pip; as instruções do §3.2 do README são suficientes.
 
 ---
 
-## Pré-requisito: criar o ambiente Conda
+## Por que `pymetis` é opcional
 
-Antes de configurar o VS Code, o ambiente Conda precisa existir. Execute uma
-única vez no PowerShell:
+Em Windows, `pip install pymetis` falha porque o pacote depende de extensões C
+sem wheel oficial para a plataforma. A solução é instalar via conda-forge, que
+distribui binários pré-compilados compatíveis.
+
+Quando `pymetis` está ausente, o algoritmo recai automaticamente para o backend
+**Kernighan-Lin** (decisão **D-04** — ver `docs/decision_log.md`). Essa escolha
+**afeta a reprodução**: backends diferentes produzem partições diferentes, por
+isso deve ser controlada ao comparar resultados entre máquinas.
+
+---
+
+## 1. Criar o ambiente Conda
+
+Execute uma única vez no PowerShell, **a partir da raiz do repositório**:
 
 ```powershell
-# A partir da raiz do repositório
 .\scripts\setup_conda_windows.ps1
 ```
 
@@ -29,10 +32,16 @@ que já inclui `pymetis` via conda-forge.
 
 ---
 
-## Criar `.vscode/settings.json` localmente
+## 2. Configurar o VS Code
 
-Crie o arquivo `.vscode/settings.json` na raiz do repositório com o conteúdo
-abaixo, **ajustando o caminho do seu usuário Windows**:
+O diretório `.vscode/` está listado no `.gitignore` — cada desenvolvedor mantém
+sua própria configuração local para evitar que caminhos absolutos específicos de
+uma máquina entrem no repositório.
+
+### 2.1 `settings.json`
+
+Crie `.vscode/settings.json` na raiz do repositório com o conteúdo abaixo,
+**ajustando o caminho do seu usuário Windows**:
 
 ```json
 {
@@ -56,16 +65,14 @@ abaixo, **ajustando o caminho do seu usuário Windows**:
 }
 ```
 
-> Substitua `<seu-usuario>` pelo seu nome de usuário Windows. Para descobrir o
-> caminho exato do interpretador, execute no PowerShell (com o ambiente ativo):
+> Para descobrir o caminho exato do interpretador, execute no PowerShell (com o
+> ambiente ativo):
 > ```powershell
 > conda activate moduloreidentificacao
 > python -c "import sys; print(sys.executable)"
 > ```
 
----
-
-## Criar `.vscode/tasks.json` localmente (opcional)
+### 2.2 `tasks.json` (opcional)
 
 Para que o VS Code execute `scripts\activate_env.ps1` automaticamente ao abrir
 a pasta do projeto, crie `.vscode/tasks.json`:
@@ -103,7 +110,7 @@ opening this folder?"* — clique em **Allow**.
 
 ---
 
-## Verificar que `pymetis` está ativo
+## 3. Verificar que `pymetis` está ativo
 
 Com o ambiente Conda ativo e o interpretador configurado, abra um terminal
 integrado (`Ctrl+\``) e execute:
@@ -113,5 +120,9 @@ python -c "import pymetis; print('pymetis OK — backend METIS-C ativo')"
 ```
 
 Se retornar `pymetis OK`, o backend METIS-C está operacional. Caso contrário,
-o fallback Kernighan-Lin será usado automaticamente (comportamento padrão e
+o fallback Kernighan-Lin será usado automaticamente (comportamento padrão,
 documentado em D-04).
+
+---
+
+*Ver também: `docs/decision_log.md` (D-04) e `docs/reproducibility.md` §8.*
