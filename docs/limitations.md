@@ -20,7 +20,7 @@ conceituais mutuamente exclusivas:
   dentro desse domínio. São elegíveis para expansão em versões futuras, mas
   não constituem defeito do protótipo.
 - **Limitações técnicas** — restrições decorrentes de decisões de implementação
-  que se desviam das premissas formais do artigo de He et al. (2009), ou que
+  que se desviam das premissas formais do artigo de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108), ou que
   introduzem aproximações não cobertas pela garantia teórica. Algumas são
   declaradas como aceitáveis para o protótipo; outras são candidatas a
   superação em versões futuras.
@@ -57,12 +57,12 @@ outras redes sem evidência empírica adicional.
 
 ---
 
-### 1.2 Escopo restrito ao algoritmo de He et al. (2009)
+### 1.2 Escopo restrito ao algoritmo de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108)
 
 **Descrição:** O pipeline implementa exclusivamente o algoritmo de
-k-anonimato estrutural de He et al. (2009). Outros modelos de anonimização
-de grafos (ex.: k-degree anonymity de Liu & Terzi, 1-neighborhood
-isomorphism de Zhou & Pei, métodos baseados em ruído diferencial) não
+k-anonimato estrutural de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108). Outros modelos de anonimização
+de grafos (ex.: k-degree anonymity de [Liu & Terzi](https://doi.org/10.1145/1376616.1376629), 1-neighborhood
+isomorphism de [Zhou & Pei](https://doi.org/10.1109/ICDE.2008.4497459), métodos baseados em ruído diferencial) não
 estão implementados e não fazem parte do escopo de comparação no baseline.
 
 **Natureza:** Escolha deliberada. A comparação com outros modelos está
@@ -123,9 +123,8 @@ identificada com a decisão correspondente no `decision_log` ou em
 
 ### 2.1 FSM simplificado com `s_max` configurável (D-01)
 
-**Descrição:** O algoritmo de He et al. (2009) cita mineração de subgrafos
-frequentes (FSM) sem especificar implementação (referência [18], Wörlein
-et al. 2005). O protótipo usa um FSM simplificado com limite de tamanho
+**Descrição:** O algoritmo de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) cita mineração de subgrafos
+frequentes (FSM) sem especificar implementação (referência [Wörlein et al. (2005)](https://doi.org/10.1007/11564126_32)). O protótipo usa um FSM simplificado com limite de tamanho
 `s_max` configurável, em lugar de gSpan ou equivalente completo.
 
 **Tipo:** Limitação técnica — aproximação do procedimento original.
@@ -145,7 +144,7 @@ alternativa auditável em versão futura.
 ### 2.2 Motor de particionamento KL como fallback sem garantia de balanceamento (D-04, D-07)
 
 **Descrição:** O artigo de He et al. especifica multilevel k-way
-(Karypis & Kumar [14]) como algoritmo de partição. O protótipo usa pymetis
+([Karypis & Kumar](https://doi.org/10.1137/S1064827595287997)) como algoritmo de partição. O protótipo usa pymetis
 como motor primário e `kernighan_lin_bisection` recursivo como fallback
 (D-04). O fallback KL *não garante balanceamento de tamanho* para `ck > 2`:
 partições individuais podem ser menores que `|V| / ck` (D-07).
@@ -314,3 +313,16 @@ para o relatório de qualificação:
 | Validação empírica com `d > 1` e outros datasets | Versão 2 | Alto |
 | Ataques por entropia e background knowledge combinado | Versão 2 | Alto |
 | Comparação com outros algoritmos de anonimização | Versão 2 | Alto |
+---
+
+## 5. Referências
+
+[1] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+
+[2] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
+
+[3] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
+
+[4] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+
+[5] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.

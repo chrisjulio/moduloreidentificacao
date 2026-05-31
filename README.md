@@ -45,11 +45,11 @@ mecanismo de privacidade do framework integrado da tese. A unidade de progresso
 
 | Eixo | Decisão | Justificativa breve |
 |---|---|---|
-| Temporal | Estático | Replicação direta de He et al. (2009); extensão temporal é Fase 2 da tese. |
+| Temporal | Estático | Replicação direta de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108); extensão temporal é Fase 2 da tese. |
 | Dataset principal | Facebook Ego-Nets (SNAP) | Validação alinhada com a literatura contemporânea de privacidade. |
 | Dataset secundário | Email-Enron (SNAP), contingente | Amplia a base de comparação se houver folga; não perseguido no baseline. |
-| Anonimização primária | He et al. (2009) | Algoritmo mais simples e mais bem documentado; ponto de entrada limpo. |
-| Anonimização aspiracional | Nettleton & Salas (2016) | Inclui atributos e t-closeness; fora do escopo do baseline. |
+| Anonimização primária | [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) | Algoritmo mais simples e mais bem documentado; ponto de entrada limpo. |
+| Anonimização aspiracional | [Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004) | Inclui atributos e t-closeness; fora do escopo do baseline. |
 | Ataques | Grau → Subgrafos → Entropia | Ordem de complexidade crescente; os dois primeiros são o compromisso mínimo. |
 
 ### Parâmetro principal
@@ -178,7 +178,7 @@ todas as configurações. Ver [`docs/validacao_k_anonimato.md`](docs/validacao_k
 e [`docs/decision_log.md`](docs/decision_log.md).
 
 Escopo Desejável (Email-Enron, ataque por entropia) e Aspiracional
-(Nettleton & Salas, 2016) permanecem abertos como trabalho futuro — não foram
+([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) permanecem abertos como trabalho futuro — não foram
 perseguidos para não comprometer a consolidação do Mínimo.
 
 ### Componentes implementados
@@ -236,7 +236,7 @@ perseguidos para não comprometer a consolidação do Mínimo.
 ## 5. Resultados do experimento baseline
 
 **Dataset:** Facebook Ego-Net 3437 (n=532, m=4812). **Parâmetros:** algoritmo
-He et al. (2009), `d=1`, `sigma=0.5`, `k ∈ {2, 5, 10, 20}`, 3 sementes
+[He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108), `d=1`, `sigma=0.5`, `k ∈ {2, 5, 10, 20}`, 3 sementes
 (42, 1337, 2718). **Ataques:** grau e subgrafo 1-hop (timeout 60 s). Valores
 abaixo são médias sobre as sementes.
 
@@ -268,7 +268,7 @@ Três níveis, com linha firme entre **Mínimo** e **Desejável**. Status consol
 em [`docs/entregaveis.md`](docs/entregaveis.md).
 
 - **Mínimo defensável (✅ concluído).** Pipeline funcional sobre Facebook Ego-Nets
-  aplicando He et al. (2009) com `k ∈ {2, 5, 10, 20}`; ataques por grau e por
+  aplicando [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) com `k ∈ {2, 5, 10, 20}`; ataques por grau e por
   subgrafos; quatro métricas; mínimo de 3 sementes por configuração; gráfico
   privacidade-vs-utilidade com barras de erro; repositório versionado com README
   operacional e configuração reproduzível.
@@ -289,7 +289,7 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
   /raw/                      # datasets originais (não versionados; baixados por script)
   /processed/                # datasets após pré-processamento
 /src/
-  /anonymization/            # He et al. (2009) [implementado]; placeholder Nettleton & Salas
+  /anonymization/            # [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) [implementado]; placeholder Nettleton & Salas
   /attacks/                  # ataques por grau e subgrafos
   /metrics/                  # cálculo das quatro métricas
   /loaders/                  # carregadores de dataset (Facebook Ego-Nets) e script de download
@@ -342,7 +342,7 @@ schemas documentados — o módulo permanece arquiteturalmente independente.
 Registro completo e categorizado em [`docs/limitations.md`](docs/limitations.md).
 Em resumo:
 
-- **Validade interna.** Aproximações na implementação de He et al. (2009): FSM
+- **Validade interna.** Aproximações na implementação de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108): FSM
   simplificado, fallback de particionamento (D-04), grupos incompletos residuais
   aceitáveis sob D-06, e custo/timeout do ataque por subgrafo.
 - **Validade externa.** Baseline restrito a uma ego-rede específica do Facebook
@@ -384,13 +384,26 @@ exigem novo experimento e pertencem à Fase 2 da tese.
 
 ## 11. Referências
 
-- He, X., Vaidya, J., Shafiq, B., Adam, N., & Atluri, V. (2009). Preserving privacy
-  in social networks: A structure-aware approach. *2009 IEEE/WIC/ACM International
-  Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT)*,
-  pp. 647–654. https://doi.org/10.1109/WI-IAT.2009.108
-- Nettleton, D. F. & Salas, J. (2016). A data driven anonymization system for
-  information rich online social network graphs. *Expert Systems with Applications*,
-  55, 87–105. https://doi.org/10.1016/j.eswa.2016.02.004
+[1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
+
+[2] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+
+[3] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
+
+[4] [LESKOVEC, J.; MCAULEY, J. J.](https://dl.acm.org/doi/10.5555/2999134.2999195) Learning to discover social circles in ego networks. In: *Advances in Neural Information Processing Systems (NIPS 2012)*. [S. l.]: Curran Associates, 2012. p. 539–547.
+
+[5] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
+
+[6] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
+
+[7] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
+
+[8] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+
+[9] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+
+[10] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
+
 - Documentação interna do projeto (não pública): artigo decisório da tese
   (Seções 4.3 e 7) e proposta original.
 

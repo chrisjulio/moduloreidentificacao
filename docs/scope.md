@@ -49,7 +49,7 @@ reidentificado.
 um modelo de pior caso do conhecimento e da capacidade de um atacante hipotético,
 implementado para que a defesa possa ser avaliada contra ele. O adversário é uma
 construção metodológica. Ele não é uma parte interessada real, não tem alvos, e não
-persegue nenhuma pessoa. He et al. (2009) já define, no próprio texto, o adversário
+persegue nenhuma pessoa. [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) já define, no próprio texto, o adversário
 estrutural que sua técnica busca neutralizar; este módulo apenas **implementa** o
 adversário que a literatura de anonimização pressupõe — sem essa implementação, não
 existe eixo de privacidade a ser medido.
@@ -67,13 +67,13 @@ Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
 
 - `[M]` Carrega grafos de **datasets públicos de pesquisa** — Facebook Ego-Nets (SNAP)
   como principal, Email-Enron (SNAP, versão estática) como secundário contingente.
-- `[M]` Aplica o algoritmo de anonimização **He et al. (2009)** sobre esses grafos,
+- `[M]` Aplica o algoritmo de anonimização **[He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108)** sobre esses grafos,
   com suporte a k∈{2, 5, 10, 20} e **d=1** (âncora do baseline, escopo mínimo).
-- `[D]` Executa **varredura de d** (d-sweep) sobre He et al. (2009) com d∈{1, 2, 5, 10},
+- `[D]` Executa **varredura de d** (d-sweep) sobre [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) com d∈{1, 2, 5, 10},
   avaliando k-anonimato structure-aware pleno. Decisão D-08 registrada em
   `docs/decision_log.md` (issue #73, issue-mãe #72). Branch `experiment/d-sweep`
   (PR #79) já mergeada; configuração YAML e logging pendentes (issue #77).
-- `[A]` Aplica o algoritmo de anonimização **Nettleton & Salas (2016)** como segundo
+- `[A]` Aplica o algoritmo de anonimização **[Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004)** como segundo
   ponto de comparação na curva privacidade-vs-utilidade.
 - `[M]` Executa ataque de reidentificação **por grau** contra a saída do pipeline.
 - `[M]` Executa ataque de reidentificação **por subgrafos** (isomorfismo de vizinhança
@@ -145,7 +145,7 @@ subgrafos — e ainda assim são objetos diferentes em todas as dimensões que i
 O critério decisivo está nas linhas **objeto do ataque**, **informação auxiliar
 externa** e **destino do conhecimento**. Uma ferramenta ofensiva define-se precisamente
 pelo movimento de ligar um dado anonimizado a informação externa para reatar uma
-identidade real — o ataque de Narayanan & Shmatikov ao dataset da Netflix é o exemplo
+identidade real — o ataque de [Narayanan & Shmatikov](https://doi.org/10.1109/SP.2008.33) ao dataset da Netflix é o exemplo
 canônico. Este módulo nunca executa esse movimento. O "acerto" de uma reidentificação
 aqui é verificado contra um mapeamento que o próprio pesquisador conhece de antemão,
 porque foi ele quem anonimizou o grafo. Nenhum nó passa a estar exposto que não
@@ -183,8 +183,8 @@ refuta.
 
 - **Datasets.** Facebook Ego-Nets e Email-Enron são datasets públicos, desidentificados
   pela fonte, amplamente utilizados em pesquisa acadêmica de privacidade — inclusive na
-  literatura de anonimização (Nettleton & Salas) e de de-anonimização (Backstrom,
-  Narayanan & Shmatikov). O uso aqui está dentro das condições de licença e de
+  literatura de anonimização ([Nettleton & Salas](https://doi.org/10.1016/j.eswa.2016.02.004)) e de de-anonimização ([Backstrom](https://doi.org/10.1145/1242572.1242598),
+  [Narayanan & Shmatikov](https://doi.org/10.1109/SP.2008.33)). O uso aqui está dentro das condições de licença e de
   propósito. O `README.md` registra essa condição explicitamente.
 - **Sem reatamento de identidade.** O módulo não dispõe de — e não deve adquirir —
   qualquer capacidade de ligar um nó a uma pessoa real do mundo. O ciclo experimental
@@ -208,8 +208,8 @@ refuta.
 ## 8. Relação com a tese e com a deliberação metodológica sobre privacidade
 
 Este módulo é o baseline da Fase 1. O projeto de pesquisa da tese lista quatro vias de
-tratamento da privacidade: k-anonimato estrutural via He et al. (2009); preservação de
-vizinhança com t-closeness via Nettleton & Salas (2016); privacidade diferencial; e
+tratamento da privacidade: k-anonimato estrutural via [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108); preservação de
+vizinhança com t-closeness via [Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004); privacidade diferencial; e
 privacy by design. O módulo **não escolhe** entre elas. Ele aplica as duas primeiras a
 dados reais, mede sua resistência empírica a ataques, e deixa os números orientarem a
 deliberação — incluindo o caminho futuro de extensão ao contexto temporal, que é o caso
@@ -227,6 +227,20 @@ A fronteira firme deste módulo, portanto, é dupla: para trás, ele não substi
 deliberação metodológica da tese; para o lado, ele não é uma ferramenta ofensiva. Entre
 essas duas fronteiras, sua função é única e bem delimitada — produzir medições
 defensáveis da resistência de anonimizações conhecidas.
+
+---
+
+---
+
+## 9. Referências
+
+[1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
+
+[2] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+
+[3] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
+
+[4] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
 
 ---
 
