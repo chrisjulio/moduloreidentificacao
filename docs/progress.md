@@ -11,27 +11,29 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-05-30
+**Data da última atualização:** 2026-05-31
 
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- Issue #74 / **Auditoria de prontidão d>1 concluída** (Fase 1, somente leitura,
-  sem alteração em `src/`). Resultado comentado na issue, que foi **mantida
-  aberta** conforme instrução. Achado central: a "conclusão esperada" da issue
-  (cobertura escassa/nula do núcleo com `|LS|>1`) **não se confirmou** —
-  `_group_isomorphic` (`test_he2009_grouping.py`, 28 testes) e `_modify_structure`
-  (`test_he2009_modify.py`, 32 testes) têm cobertura substancial com LSs multi-nó,
-  e o e2e d>1 (TestE2eD2/D5/D10) já existe. A lacuna que #74 anteciparia para a
-  Fase 2 (#75) já foi preenchida por #75/#76, mergeadas via PR #79
-  (`experiment/d-sweep` → `main`, commit `a057519`). Backend: pymetis ausente
-  local **e** na CI (só extra opcional `partition-c` no `pyproject.toml`, não
-  instalado pelo workflow) → ambos usam fallback `networkx-kl`; degradação de
-  sizing para `ck>2` documentada (D-04/D-07, `algorithm_notes.md §7`). Suíte:
-  435 passed, 4 skipped (skips exigem pymetis; idêntico local↔CI). Subprodutos:
-  regra de permissão local read/test em `.claude/settings.local.json` e seção no
-  `CLAUDE.md` ("Inspeção de arquivos e busca de conteúdo") instruindo preferir
-  `Grep`/`Read` a one-liners de shell.
+- **Backend de particionamento (pymetis) — explicitação e cobertura.** A
+  auditoria #74 reportara pymetis ausente local e na CI; verificou-se que o
+  ambiente conda local (`moduloreidentificacao`, Py 3.12) já tem pymetis
+  **funcional** (suíte 439→443 passed, **0 skipped**). Três gaps tratados em
+  três PRs, **todos mergeados** em `main` (`3410e58`):
+  - **#84** (gap #2, `experiment/log-partition-backend`): runner deixava de
+    registrar o backend; agora grava `partition_backend` em cada entrada JSONL
+    + `partition_backends` no `summary.json` + aviso no relatório.
+    `_partition_neighborhoods` ganhou `return_meta`.
+  - **#85** (gap #1, `setup/ci-pymetis`): novo job `test-pymetis` no CI
+    (micromamba + `environment.yml`/conda-forge) roda a suíte com pymetis; os
+    4 testes antes pulados agora executam. Job verde (~1m). O job `lint-and-test`
+    (pip) segue exercitando o fallback KL — ambos os backends cobertos.
+  - **#86** (gap #3, `feat/backend-explicitness`): corrige erro factual do
+    README §13 (o `.venv` do §3.2 **não** inclui pymetis em nenhum SO); nota em
+    `limitations.md` §2.2; flag opt-in `anonymization.allow_kl_fallback`
+    (padrão `true`) + helper `pymetis_available()`; atualiza nota de CI em
+    `pipeline.md`; remove resíduo `.vscode/.gitkeep_remove`.
 
 **Próximo passo planejado:**
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
@@ -63,6 +65,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-05-31 — pymetis: explicitação do backend + cobertura na CI (#84, #85, #86)
+
+- **Concluído:** Partindo do achado de que o pymetis **já funciona** no ambiente
+  conda local (439→443 passed, 0 skipped), três gaps de visibilidade/cobertura
+  foram fechados, cada um em sua branch/PR, **todos mergeados** em `main`
+  (`3410e58`), na ordem #84 → #85 → #86, com CI verde:
+  - **#84** (gap #2): `partition_backend` gravado em cada entrada JSONL e
+    `partition_backends` no `summary.json`; `_partition_neighborhoods` ganhou
+    `return_meta`. Resultados passam a ser auto-documentados quanto ao backend.
+  - **#85** (gap #1): job `test-pymetis` (micromamba + `environment.yml`,
+    conda-forge) exercita o motor primário na CI — os 4 testes antes pulados
+    agora rodam. `lint-and-test` (pip) mantém cobertura do fallback KL.
+  - **#86** (gap #3): correção do erro factual do README §13 (introduzido por
+    #82/#83 — o `.venv` do §3.2 não inclui pymetis em nenhum SO); nota em
+    `limitations.md` §2.2; flag opt-in `anonymization.allow_kl_fallback`
+    (padrão `true`) + helper `pymetis_available()`; atualização da nota de CI em
+    `pipeline.md`; remoção do resíduo rastreado `.vscode/.gitkeep_remove`.
+- **Próximo:** Fechamento manual da issue #74; confirmar D-08 / d=2 no d-sweep (#77).
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** D-08 (Opção B registrada; aguarda validação humana).
 
 ### 2026-05-30 — Auditoria #74 (Fase 1) + análise de sessão travada
 
