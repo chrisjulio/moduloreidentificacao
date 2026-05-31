@@ -275,6 +275,7 @@ class TestRunOneEndToEnd:
             "d",
             "seed",
             "timestamp",
+            "partition_backend",
             "validate_k_anonymity",
             "reidentification_rate",
             "reidentification_rate_degree",
@@ -284,6 +285,19 @@ class TestRunOneEndToEnd:
         }
         missing = required_keys - result.keys()
         assert not missing, f"Missing keys in result: {missing}"
+
+    def test_partition_backend_recorded(self) -> None:
+        """run_one must record which partition engine was actually used (D-04).
+
+        The value must be one of the two recognised backends so the result
+        is self-documenting: pymetis (faithful to He et al.) or the
+        networkx-kl fallback. Which one runs depends on whether pymetis is
+        installed in the environment, so the test accepts either.
+        """
+        g = _small_graph()
+        result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_DEFAULT_ATTACKS)
+        assert result["error"] is None
+        assert result["partition_backend"] in {"pymetis", "networkx-kl"}
 
     def test_k_and_seed_propagated(self) -> None:
         """The k and seed used must appear verbatim in the result dict."""

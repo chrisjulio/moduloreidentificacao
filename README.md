@@ -89,8 +89,8 @@ O backend de particionamento `pymetis` é **opcional**. Quando ausente, o algori
 recai automaticamente para o backend Kernighan-Lin (decisão **D-04** — ver
 [`docs/decision_log.md`](docs/decision_log.md)). Essa escolha **afeta a
 reprodução**: backends diferentes produzem partições diferentes. Em Windows,
-`pip install pymetis` falha; use o caminho Conda
-(`scripts/setup_conda_windows.ps1`) **apenas** se quiser o backend METIS.
+`pip install pymetis` falha; consulte [`windows_pymetis.md`](windows_pymetis.md)
+para instalar via Conda e configurar o VS Code.
 
 ### 3.2 Ambiente
 
@@ -320,6 +320,7 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
 README.md                    # este arquivo — visão operacional canônica
 CLAUDE.md                    # instruções de desenvolvimento para sessões de agente
 WORKFLOW.md                  # protocolo de orquestração entre interfaces de trabalho
+windows_pymetis.md           # ajustes Windows: ambiente Conda e backend pymetis
 pyproject.toml               # metadados do projeto + configuração de ruff e pytest
 requirements.txt             # dependências de produção
 requirements-dev.txt         # dependências de desenvolvimento (lint, testes)
