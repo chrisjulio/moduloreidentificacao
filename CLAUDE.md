@@ -175,6 +175,29 @@ Para cada issue:
 
 ---
 
+## Inspeção de arquivos e busca de conteúdo
+
+Para ler trechos de arquivos ou buscar padrões no código, **prefira as
+ferramentas dedicadas `Read` e `Grep`** a one-liners de shell (PowerShell
+ou Python embutido via `python -c`). Motivos:
+
+- One-liners complexos para inspecionar arquivos (ex.: `python -c "..."`
+  dentro do PowerShell, escrevendo em arquivo temporário e relendo) disparam
+  prompts de permissão e, em sessão desacompanhada, **bloqueiam a execução
+  indefinidamente** — foi a causa de um travamento de ~23h numa sessão da
+  auditoria #74 (29-30/05/2026): 11 min de trabalho seguidos de 23,7h parados
+  num prompt de permissão de um one-liner PowerShell.
+- `Grep` (ripgrep) é mais rápido, integra com a UI de permissões e dispensa
+  arquivos intermediários. Use `glob`/`type` para filtrar e `-A`/`-B`/`-C`
+  para contexto.
+- `Read` com `offset`/`limit` lê faixas específicas de um arquivo sem montar
+  comandos frágeis.
+
+Reserve o shell para o que ele de fato faz: rodar `pytest`, `git`, `gh`,
+`ruff`. Não o use como substituto de leitura ou busca de conteúdo.
+
+---
+
 ## Validação obrigatória de k-anonimato
 
 Ao implementar qualquer anonimizador, o verificador
