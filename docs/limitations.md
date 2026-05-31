@@ -165,6 +165,23 @@ tamanho, mas aumenta o número de violadores por D-06.
 **Candidato a superação:** Sim — forçar partições exatas via `tpwgts` do
 pymetis em versão de produção.
 
+**Risco de degradação silenciosa e como detectar/evitar:** o ambiente
+padrão do `requirements.txt` (§3.2 do README) **não** instala o `pymetis`
+(ele não instala via pip de forma confiável), de modo que uma execução pode
+recair no fallback KL emitindo apenas um `UserWarning` transitório — fácil de
+passar despercebido pelo pesquisador. Mitigações implementadas:
+- **Rastreabilidade no log:** cada execução grava `partition_backend`
+  (`"pymetis"` | `"networkx-kl"`) em cada entrada JSONL e em
+  `summary.json` (`partition_backends`); o relatório do runner avisa quando o
+  fallback está ativo. Resultados ficam auto-documentados quanto ao backend.
+- **Opt-in de rigor:** a flag `anonymization.allow_kl_fallback` (padrão
+  `true`, preserva o comportamento) pode ser definida como `false` no YAML
+  para **abortar** a execução quando o backend resolvido for `networkx-kl` —
+  garantindo que resultados de produção venham apenas do motor primário.
+- **Como instalar o pymetis:** via conda-forge (`environment.yml` /
+  `scripts/setup_conda_windows.ps1`, todos os SOs) ou, no Linux/macOS,
+  `pip install -e ".[partition-c]"` (compila do fonte).
+
 **Referência:** `docs/algorithm_notes.md` D-04 (revisado 20/05/2026), D-07.
 
 ---

@@ -23,6 +23,10 @@ YAML schema
 Required sections: ``experiment``, ``seeds``, ``dataset``, ``anonymization``.
 Optional sections: ``attacks``, ``runtime``.
 ``anonymization.k`` accepts either a single integer or a list of integers.
+``anonymization.allow_kl_fallback`` (bool, default ``true``) — when ``false``,
+the run is aborted (verdict ``ERROR``) if the partition backend resolves to
+``networkx-kl``, guaranteeing results come only from the pymetis primary
+backend (D-04). The default preserves the historical fallback behaviour.
 
 Log entry schema (issue #22 / DL-01)
 --------------------------------------
@@ -61,6 +65,7 @@ from pathlib import Path
 import networkx as nx
 import yaml
 
+from src.anonymization._partition_backend import pymetis_available
 from src.anonymization.he2009 import (
     _group_isomorphic,
     _modify_structure,
@@ -367,6 +372,42 @@ def run_one(
 
 
 # ---------------------------------------------------------------------------
+# Backend policy
+# ---------------------------------------------------------------------------
+
+
+def check_backend_policy(allow_kl_fallback: bool) -> None:
+    """Enforce the partition-backend policy before running the experiment.
+
+    With ``backend="auto"`` the pipeline silently falls back to the
+    networkx Kernighan-Lin heuristic when pymetis is absent (D-04). When the
+    experiment requires the faithful pymetis backend, this guard fails fast
+    instead of producing KL-approximation results unnoticed.
+
+    Parameters
+    ----------
+    allow_kl_fallback:
+        If ``True`` (default policy), the KL fallback is permitted and this
+        function is a no-op. If ``False`` and pymetis is unavailable, raises.
+
+    Raises
+    ------
+    RuntimeError
+        If ``allow_kl_fallback`` is ``False`` and pymetis is not available,
+        i.e. the run would use the ``networkx-kl`` fallback.
+    """
+    if not allow_kl_fallback and not pymetis_available():
+        raise RuntimeError(
+            "anonymization.allow_kl_fallback=false, but pymetis is not available: "
+            "the run would fall back to the networkx-kl backend (a KL approximation, "
+            "not faithful to He et al. — D-04). Install pymetis (conda-forge via "
+            "environment.yml / scripts/setup_conda_windows.ps1, or on Linux/macOS "
+            '`pip install -e ".[partition-c]"`), or set allow_kl_fallback=true to '
+            "accept the fallback explicitly."
+        )
+
+
+# ---------------------------------------------------------------------------
 # Verdict
 # ---------------------------------------------------------------------------
 
@@ -469,6 +510,16 @@ def main(config_path: Path) -> int:
     )
     d = int(anon_cfg["d"])
     sigma = float(anon_cfg.get("sigma", 0.5))
+
+    # --- Partition backend policy (fail fast before the run loop) ---
+    allow_kl_fallback = bool(anon_cfg.get("allow_kl_fallback", True))
+    check_backend_policy(allow_kl_fallback)
+    if not pymetis_available():
+        logger.warning(
+            "pymetis unavailable — partitioning will use the networkx-kl fallback "
+            "(KL approximation, D-04). Set anonymization.allow_kl_fallback=false to "
+            "require pymetis instead."
+        )
 
     # --- Attacks ---
     attacks_cfg: dict = config.get("attacks", {"degree": {"enabled": True, "tolerance": 0}})

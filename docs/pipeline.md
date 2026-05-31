@@ -185,9 +185,16 @@ graph LR
 | Matplotlib | 3.x | geração de gráficos |
 | pymetis | 2023.x | motor de partição primário (opcional; fallback KL sem C) |
 
-> **Nota:** `pymetis` exige compilação C. Em ambientes sem dependências C
-> (ex.: CI), o backend recai automaticamente para `networkx-kl`
+> **Nota:** `pymetis` exige compilação C e **não** está em `requirements.txt`.
+> Sem ele, o backend recai automaticamente para `networkx-kl`
 > (decisão D-04 — ver [`docs/algorithm_notes.md`](algorithm_notes.md#7-decisões-de-implementação)).
+> Na CI, o job `lint-and-test` (pip) exercita o fallback KL, enquanto o job
+> `test-pymetis` provisiona o `pymetis` via conda-forge e cobre o motor
+> primário — ambos os caminhos são testados. Para instalar localmente, use o
+> `environment.yml` (conda, todos os SOs) ou, no Linux/macOS,
+> `pip install -e ".[partition-c]"`. Cada execução registra o backend efetivo
+> no campo `partition_backend` do JSONL; a flag `anonymization.allow_kl_fallback`
+> permite proibir o fallback.
 
 ### 4.2 Instalação
 

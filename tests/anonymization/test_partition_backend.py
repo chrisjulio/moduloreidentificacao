@@ -20,7 +20,7 @@ from unittest.mock import patch
 import networkx as nx
 import pytest
 
-from src.anonymization._partition_backend import partition_graph
+from src.anonymization._partition_backend import partition_graph, pymetis_available
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -276,3 +276,11 @@ def _pymetis_importable() -> bool:
         return True
     except ImportError:
         return False
+
+
+class TestPymetisAvailable:
+    """O helper público pymetis_available() reflete a importabilidade real."""
+
+    def test_matches_actual_importability(self) -> None:
+        """pymetis_available() deve concordar com a tentativa real de import."""
+        assert pymetis_available() == _pymetis_importable()
