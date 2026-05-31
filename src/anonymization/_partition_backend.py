@@ -37,6 +37,21 @@ except ImportError:
 # ---------------------------------------------------------------------------
 
 
+def pymetis_available() -> bool:
+    """Indica se o backend pymetis pode ser usado neste ambiente.
+
+    Returns
+    -------
+    bool
+        ``True`` se ``import pymetis`` teve sucesso no momento do import
+        deste módulo; ``False`` caso contrário. Como ``backend="auto"``
+        resolve para pymetis exatamente quando ele está disponível, este
+        valor prediz o backend que uma execução ``"auto"`` usará — útil
+        para políticas de pré-execução (ex.: proibir o fallback KL).
+    """
+    return _PYMETIS_AVAILABLE
+
+
 def partition_graph(
     g: nx.Graph,
     ck: int,

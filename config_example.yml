@@ -68,6 +68,14 @@ anonymization:
   # Se falhar para algum k, os resultados associados são inválidos.
   validate_k_anonymity: true
 
+  # Política do backend de particionamento (D-04).
+  #   true  (padrão): permite o fallback Kernighan-Lin quando o pymetis está
+  #                   ausente — preserva o comportamento histórico.
+  #   false:          aborta a execução se o backend resolver para networkx-kl,
+  #                   garantindo que resultados venham apenas do motor primário
+  #                   pymetis (fiel a He et al.). Ver docs/limitations.md §2.2.
+  allow_kl_fallback: true
+
   # Aspiracional: anonimização secundária para comparação no mesmo gráfico
   # algorithm: nettleton_salas_2016
   # t_closeness: 0.2

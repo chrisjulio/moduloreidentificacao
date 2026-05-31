@@ -19,11 +19,13 @@ from __future__ import annotations
 import json
 import textwrap
 from pathlib import Path
+from unittest.mock import patch
 
 import networkx as nx
 import pytest
 
 from experiments.run import (
+    check_backend_policy,
     load_dataset,
     main,
     preprocess_graph,
@@ -109,6 +111,35 @@ class TestLoadDataset:
         cfg = {"name": "nonexistent_dataset", "data_path": "/tmp", "egonet_id": 0}
         with pytest.raises(ValueError, match="nonexistent_dataset"):
             load_dataset(cfg)
+
+
+# ---------------------------------------------------------------------------
+# check_backend_policy
+# ---------------------------------------------------------------------------
+
+
+class TestCheckBackendPolicy:
+    """Opt-in strictness for the partition backend (gap #3 / D-04)."""
+
+    def test_allow_fallback_true_never_raises(self) -> None:
+        """allow_kl_fallback=True is a no-op regardless of pymetis availability."""
+        with patch("experiments.run.pymetis_available", return_value=False):
+            check_backend_policy(allow_kl_fallback=True)  # must not raise
+        with patch("experiments.run.pymetis_available", return_value=True):
+            check_backend_policy(allow_kl_fallback=True)  # must not raise
+
+    def test_disallow_fallback_with_pymetis_available_passes(self) -> None:
+        """allow_kl_fallback=False is fine when pymetis is available."""
+        with patch("experiments.run.pymetis_available", return_value=True):
+            check_backend_policy(allow_kl_fallback=False)  # must not raise
+
+    def test_disallow_fallback_without_pymetis_raises(self) -> None:
+        """allow_kl_fallback=False + pymetis absent must abort with a clear error."""
+        with (
+            patch("experiments.run.pymetis_available", return_value=False),
+            pytest.raises(RuntimeError, match="allow_kl_fallback"),
+        ):
+            check_backend_policy(allow_kl_fallback=False)
 
 
 # ---------------------------------------------------------------------------

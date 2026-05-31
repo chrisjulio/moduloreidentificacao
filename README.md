@@ -409,8 +409,27 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 ## 13. Configuração do VS Code (Windows — ambiente Conda)
 
 Esta seção é relevante apenas para quem utiliza Windows e quer o backend METIS
-(`pymetis`) ativo. Em Linux/macOS, o `.venv` padrão já inclui `pymetis` via pip;
-as instruções do §3.2 são suficientes.
+(`pymetis`) ativo.
+
+> **Atenção — `pymetis` NÃO vem no `.venv` do §3.2.** O `requirements.txt`
+> **não** lista `pymetis` (ele não instala via pip de forma confiável; ver
+> nota no próprio `requirements.txt`). Logo, o ambiente do §3.2 — em
+> **qualquer** sistema operacional, inclusive Linux/macOS — usa o **fallback
+> Kernighan-Lin** por padrão, com apenas um `UserWarning` transitório. Para
+> obter o backend `pymetis` (motor primário, fiel a He et al., D-04) há dois
+> caminhos:
+> - **Conda (recomendado, todos os SOs):** `environment.yml` /
+>   `scripts/setup_conda_windows.ps1` — instala o binário do conda-forge.
+> - **pip no Linux/macOS (compila do fonte):**
+>   `pip install -e ".[partition-c]"` — exige toolchain C e **falha no
+>   Windows/MSVC**.
+>
+> Como confirmar qual backend está ativo: cada execução grava
+> `partition_backend` no JSONL (`"pymetis"` ou `"networkx-kl"`) e o runner
+> avisa no relatório quando o fallback está em uso. Para **proibir** o
+> fallback (abortar se o `pymetis` não estiver disponível), defina
+> `anonymization.allow_kl_fallback: false` no YAML do experimento. Ver
+> [`docs/limitations.md`](docs/limitations.md) §2.2.
 
 ### Por que `.vscode/` não está versionado
 
