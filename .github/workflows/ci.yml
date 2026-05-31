@@ -43,3 +43,39 @@ jobs:
 
       - name: Pytest
         run: pytest --tb=short
+
+  # ---------------------------------------------------------------------------
+  # Job dedicado ao backend primário (pymetis, multilevel k-way — D-04).
+  #
+  # O job lint-and-test acima instala apenas requirements*.txt (sem pymetis),
+  # exercitando o fallback Kernighan-Lin — caminho legítimo e documentado.
+  # Porém, sem este job, o motor primário fiel a He et al. (2009) NUNCA seria
+  # testado na CI, e os testes marcados com skip-if-pymetis-absent (em
+  # tests/anonymization/test_partition_backend.py) nunca rodariam.
+  #
+  # pymetis não instala via pip de forma confiável (compila do fonte; falha no
+  # Windows/MSVC). Usamos o binário conda-forge — mesmo canal de environment.yml.
+  # ---------------------------------------------------------------------------
+  test-pymetis:
+    name: Test with pymetis (primary backend, conda-forge)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}   # ativa o ambiente conda nos steps `run`
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up micromamba + environment.yml (inclui pymetis)
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: environment.yml
+          cache-environment: true
+
+      - name: Verify pymetis is functional
+        run: |
+          python -c "import pymetis; cut, parts = pymetis.part_graph(2, adjacency=[[1,2],[0,2],[0,1]]); print('pymetis OK:', parts)"
+
+      - name: Pytest (pymetis backend; sem skips por pymetis ausente)
+        run: pytest --tb=short
