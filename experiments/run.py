@@ -34,6 +34,7 @@ Each JSONL entry contains:
       "d": <int>,
       "seed": <int>,
       "timestamp": "<ISO-8601>",
+      "partition_backend": "pymetis" | "networkx-kl",  # engine actually used (D-04)
       "validate_k_anonymity": { <full DL-01 dict> },
       "reidentification_rate": <float>,          # degree attack (primary)
       "reidentification_rate_degree": <float>,   # always present when degree enabled
@@ -237,9 +238,21 @@ def run_one(
         # ------------------------------------------------------------------
         # Step 1 — Partition into Local Structures (He et al. §3.1)
         # ------------------------------------------------------------------
-        local_structures = _partition_neighborhoods(g_orig, d=d, seed=seed, backend="auto")
+        local_structures, partition_meta = _partition_neighborhoods(
+            g_orig, d=d, seed=seed, backend="auto", return_meta=True
+        )
         n_ls = len(local_structures)
-        logger.info("  [k=%d, seed=%d] Local structures: %d", k, seed, n_ls)
+        # Record the engine actually used so results are self-documenting:
+        # pymetis (faithful to He et al., D-04) vs networkx-kl (fallback,
+        # known sizing degradation for ck>2). See docs/algorithm_notes.md §7.
+        result["partition_backend"] = partition_meta["backend_used"]
+        logger.info(
+            "  [k=%d, seed=%d] Local structures: %d (backend=%s)",
+            k,
+            seed,
+            n_ls,
+            partition_meta["backend_used"],
+        )
 
         # ------------------------------------------------------------------
         # Step 2 — Group LSs via FSM + MF factor (§3.2)
@@ -513,6 +526,9 @@ def main(config_path: Path) -> int:
         "seeds": seeds,
         "n_runs": len(all_results),
         "any_failure": any_failure,
+        "partition_backends": sorted(
+            {r["partition_backend"] for r in all_results if "partition_backend" in r}
+        ),
         "verdicts": {
             f"k={r['k']}_seed={r['seed']}": r.get("verdict", "UNKNOWN") for r in all_results
         },
@@ -527,6 +543,13 @@ def main(config_path: Path) -> int:
     print("=" * 60)
     print(f"k values: {k_values}  d={d}  sigma={sigma}")
     print(f"Seeds:    {seeds}")
+    backends_used = summary["partition_backends"]
+    print(f"Backend:  {', '.join(backends_used) if backends_used else 'N/A'}")
+    if "networkx-kl" in backends_used:
+        print(
+            "  WARNING: networkx-kl fallback in use (pymetis unavailable). "
+            "Results are a KL approximation — see docs/algorithm_notes.md §7 (D-04)."
+        )
     print()
     for r in all_results:
         validation = r.get("validate_k_anonymity", {})

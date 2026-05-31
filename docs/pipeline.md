@@ -475,6 +475,7 @@ Todos os outputs de dados (logs, gráficos, tabelas, dados brutos) são
   "seed": 42,
   "d": 1,
   "sigma": 0.5,
+  "partition_backend": "pymetis",
   "verdict": "SUCCESS_PARTIAL",
   "satisfied_fraction": 0.9962,
   "coverage_fraction": 0.9962,
@@ -497,8 +498,16 @@ Todos os outputs de dados (logs, gráficos, tabelas, dados brutos) são
 }
 ```
 
+O campo `partition_backend` registra o motor de particionamento
+efetivamente usado na execução — `"pymetis"` (fiel a He et al., D-04) ou
+`"networkx-kl"` (fallback, com degradação de sizing conhecida para `ck>2`).
+Torna cada resultado auto-documentado quanto ao backend, sem depender de
+inspecionar o `UserWarning` transitório de runtime. Ver
+[`docs/algorithm_notes.md`](algorithm_notes.md) §7 (D-04/D-07).
+
 **Arquivo `summary.json`:** agregações por `(k)` sobre as sementes,
-gerado automaticamente junto ao JSONL.
+gerado automaticamente junto ao JSONL. Inclui o campo `partition_backends`
+(lista dos backends distintos observados nas execuções).
 
 ---
 

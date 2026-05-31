@@ -304,7 +304,8 @@ def _partition_neighborhoods(
     d: int,
     seed: int = 0,
     backend: str = "auto",
-) -> list[nx.Graph]:
+    return_meta: bool = False,
+) -> list[nx.Graph] | tuple[list[nx.Graph], dict]:
     """Particiona G em Local Structures usando multilevel k-way partitioning.
 
     Divide o conjunto de nos V em ck = floor(n/d) subconjuntos disjuntos
@@ -336,14 +337,24 @@ def _partition_neighborhoods(
     backend : str, optional
         Motor de particionamento: ``"auto"`` (padrao), ``"pymetis"``
         ou ``"networkx-kl"``. Passado diretamente a ``partition_graph``.
+    return_meta : bool, optional
+        Se ``True``, retorna tambem o dicionario de metadados de
+        ``partition_graph`` (que inclui ``backend_used`` -- o motor de
+        fato utilizado nesta particao). Padrao: ``False`` (mantem a
+        assinatura historica que retorna apenas a lista de LSs).
 
     Retorna
     -------
     list[nx.Graph]
-        Lista de ck subgrafos {C1, C2, ..., Cck}, cada um correspondendo
-        a uma Local Structure LSi com as inter-arestas removidas.
-        Os subgrafos sao copias independentes (``copy()``), nao views
-        do grafo original.
+        Quando ``return_meta=False`` (padrao): lista de ck subgrafos
+        {C1, C2, ..., Cck}, cada um correspondendo a uma Local Structure
+        LSi com as inter-arestas removidas. Os subgrafos sao copias
+        independentes (``copy()``), nao views do grafo original.
+    tuple[list[nx.Graph], dict]
+        Quando ``return_meta=True``: a lista acima e o ``meta`` retornado
+        por ``partition_graph`` (ver chaves em ``_partition_backend``;
+        ``meta["backend_used"]`` registra o motor efetivo para o log
+        estruturado do experimento).
 
     Raises
     ------
@@ -361,7 +372,7 @@ def _partition_neighborhoods(
         raise ValueError(f"d={d} deve ser menor que n={n} para formar ao menos uma particao.")
 
     ck = n // d
-    node_sets, _meta = partition_graph(g, ck, seed=seed, backend=backend)
+    node_sets, meta = partition_graph(g, ck, seed=seed, backend=backend)
 
     local_structures: list[nx.Graph] = []
     for node_set in node_sets:
@@ -370,6 +381,8 @@ def _partition_neighborhoods(
         ls = g.subgraph(node_set).copy()
         local_structures.append(ls)
 
+    if return_meta:
+        return local_structures, meta
     return local_structures
 
 

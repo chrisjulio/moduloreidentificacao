@@ -229,3 +229,30 @@ class TestArgumentValidation:
         assert len(ls) == 10
         assert all(li.number_of_nodes() == 1 for li in ls)
         assert all(li.number_of_edges() == 0 for li in ls)
+
+
+class TestReturnMeta:
+    """return_meta=True expõe o backend efetivamente usado (gap #2 / D-04)."""
+
+    def test_default_returns_only_list(self, petersen: nx.Graph) -> None:
+        """Sem return_meta, a assinatura histórica retorna apenas a lista."""
+        result = _partition_neighborhoods(petersen, d=2, seed=0, backend="networkx-kl")
+        assert isinstance(result, list)
+        assert all(isinstance(li, nx.Graph) for li in result)
+
+    def test_return_meta_returns_tuple_with_backend(self, petersen: nx.Graph) -> None:
+        """Com return_meta=True, retorna (lista, meta) e meta traz backend_used."""
+        ls, meta = _partition_neighborhoods(
+            petersen, d=2, seed=0, backend="networkx-kl", return_meta=True
+        )
+        assert isinstance(ls, list)
+        assert all(isinstance(li, nx.Graph) for li in ls)
+        assert isinstance(meta, dict)
+        assert meta["backend_used"] == "networkx-kl"
+
+    def test_return_meta_backend_used_matches_forced_backend(self, petersen: nx.Graph) -> None:
+        """meta['backend_used'] reflete o backend forçado (networkx-kl)."""
+        _, meta = _partition_neighborhoods(
+            petersen, d=5, seed=0, backend="networkx-kl", return_meta=True
+        )
+        assert meta["backend_used"] == "networkx-kl"
