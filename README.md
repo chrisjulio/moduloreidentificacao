@@ -382,8 +382,29 @@ exigem novo experimento e pertencem à Fase 2 da tese.
 
 ---
 
-## 11. Referências
+## 11. Licença e uso de dados
 
+A licença do código está no arquivo [`LICENSE`](LICENSE).
+
+O uso de dados públicos desidentificados (Facebook Ego-Nets, SNAP) dispensa
+aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2016
+(Art. 1º, §único, III). O enquadramento ético completo está registrado em
+[`docs/scope.md`](docs/scope.md) §7.
+
+---
+
+
+> **Usuários Windows:** para instalar `pymetis` via Conda e configurar o VS Code,
+> consulte [`windows_pymetis.md`](windows_pymetis.md).
+
+---
+
+*Repositório associado à tese de doutorado em geração de redes sociais sintéticas
+— PPGInf/UFPR.*
+
+---
+
+## 12. Referências
 [1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
 
 [2] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
@@ -406,25 +427,3 @@ exigem novo experimento e pertencem à Fase 2 da tese.
 
 - Documentação interna do projeto (não pública): artigo decisório da tese
   (Seções 4.3 e 7) e proposta original.
-
----
-
-## 12. Licença e uso de dados
-
-A licença do código está no arquivo [`LICENSE`](LICENSE).
-
-O uso de dados públicos desidentificados (Facebook Ego-Nets, SNAP) dispensa
-aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2016
-(Art. 1º, §único, III). O enquadramento ético completo está registrado em
-[`docs/scope.md`](docs/scope.md) §7.
-
----
-
-
-> **Usuários Windows:** para instalar `pymetis` via Conda e configurar o VS Code,
-> consulte [`windows_pymetis.md`](windows_pymetis.md).
-
----
-
-*Repositório associado à tese de doutorado em geração de redes sociais sintéticas
-— PPGInf/UFPR.*

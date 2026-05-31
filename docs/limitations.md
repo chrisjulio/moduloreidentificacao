@@ -313,6 +313,7 @@ para o relatório de qualificação:
 | Validação empírica com `d > 1` e outros datasets | Versão 2 | Alto |
 | Ataques por entropia e background knowledge combinado | Versão 2 | Alto |
 | Comparação com outros algoritmos de anonimização | Versão 2 | Alto |
+
 ---
 
 ## 5. Referências
