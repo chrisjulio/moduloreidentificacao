@@ -230,6 +230,11 @@ defensáveis da resistência de anonimizações conhecidas.
 
 ---
 
+*Documento de escopo. Atualizado em 28/05/2026 (issue #73). S1–S5 encerrados;
+d-sweep tier `[D]` ativo (issues #72–#78). Desvios fundamentados são esperados;
+desvios não documentados, não. Toda alteração de escopo é registrada aqui antes de ser
+implementada.*
+
 ---
 
 ## 9. Referências
@@ -241,10 +246,3 @@ defensáveis da resistência de anonimizações conhecidas.
 [3] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
 
 [4] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
-
----
-
-*Documento de escopo. Atualizado em 28/05/2026 (issue #73). S1–S5 encerrados;
-d-sweep tier `[D]` ativo (issues #72–#78). Desvios fundamentados são esperados;
-desvios não documentados, não. Toda alteração de escopo é registrada aqui antes de ser
-implementada.*
