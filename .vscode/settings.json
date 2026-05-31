@@ -1,0 +1,35 @@
+{
+  // ==========================================================================
+  // Interpretador Python: ambiente Conda do projeto
+  // Garante que pymetis e todas as dependências estão disponíveis em toda
+  // execução Python dentro do VS Code (scripts, testes, Jupyter).
+  //
+  // Se o caminho abaixo não existir, ajuste via:
+  //   Ctrl+Shift+P -> Python: Select Interpreter
+  // ==========================================================================
+  "python.defaultInterpreterPath": "C:\\Users\\christiano.brito\\AppData\\Local\\miniconda3\\envs\\moduloreidentificacao\\python.exe",
+
+  // ==========================================================================
+  // Terminal integrado: abre já com o ambiente Conda ativo
+  // Toda vez que abrir um terminal (Ctrl+`) ele inicia com
+  // (moduloreidentificacao) já ativado.
+  // ==========================================================================
+  "terminal.integrated.defaultProfile.windows": "PowerShell (Conda)",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell (Conda)": {
+      "source": "PowerShell",
+      "args": [
+        "-NoExit",
+        "-Command",
+        "conda activate moduloreidentificacao"
+      ]
+    }
+  },
+
+  // ==========================================================================
+  // Pytest: usa o interpretador Conda acima
+  // ==========================================================================
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["tests"],
+  "python.testing.unittestEnabled": false
+}
