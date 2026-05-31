@@ -30,7 +30,7 @@ para o entregável-alvo, cujo critério declarado é uma curva privacidade-vs-ut
 *defensável*.
 
 **`single_egonet`.** As barras de erro derivam apenas das sementes aleatórias.
-Elas medem a estabilidade do algoritmo de He et al. (2009) sobre *uma* rede, dada
+Elas medem a estabilidade do algoritmo de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) sobre *uma* rede, dada
 a aleatoriedade interna da etapa de modificação estrutural. Não respondem, porém,
 à pergunta de robustez que orientação ou banca naturalmente levantam: a curva
 observada é uma propriedade de He et al. + k-anonimato, ou um artefato da
@@ -95,7 +95,7 @@ A remoção do ego pode desconectar o grafo de alters, já que o ego frequenteme
 funcionava como ponte entre sub-círculos. **Decisão: reter o maior componente
 conexo (LCC)** de cada ego-rede após a remoção do ego.
 
-He et al. (2009), operando sobre vizinhanças 1-hop, tolera grafos desconexos.
+[He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108), operando sobre vizinhanças 1-hop, tolera grafos desconexos.
 No entanto, o coeficiente de clustering médio e o ataque por subgrafos produzem
 resultados mais limpos sobre um grafo conexo, e nós isolados (grau 0 após a
 remoção do ego) são degenerados para ambos os ataques. A estrutura de componentes
@@ -269,8 +269,9 @@ de escopo — modo final = `multiple_egonets` — é a registrada neste document
 ## 8. Referências
 
 - Plano operacional do módulo de reidentificação (baseline), Seções 4.1, 4.6, 7 e 8.
-- He, X. et al. (2009). *Preserving privacy in social networks: A structure-aware
-  approach.* WI-IAT.
-- SNAP — Stanford Network Analysis Platform. Dataset *ego-Facebook*
-  (10 ego-redes; arquivos `.edges`, `.circles`, `.feat`, `.egofeat`,
-  `.featnames`; união em `facebook_combined.txt`).
+
+[1] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+
+[2] [LESKOVEC, J.; MCAULEY, J. J.](https://dl.acm.org/doi/10.5555/2999134.2999195) Learning to discover social circles in ego networks. In: *Advances in Neural Information Processing Systems (NIPS 2012)*. [S. l.]: Curran Associates, 2012. p. 539–547.
+
+[3] SNAP — Stanford Network Analysis Platform. Dataset *[ego-Facebook](https://snap.stanford.edu/data/ego-Facebook.html)* (10 ego-redes; arquivos `.edges`, `.circles`, `.feat`, `.egofeat`, `.featnames`; união em `facebook_combined.txt`). Disponível em: <https://snap.stanford.edu/data/ego-Facebook.html>.

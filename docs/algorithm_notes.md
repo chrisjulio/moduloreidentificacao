@@ -1,16 +1,25 @@
-# Notas de Implementação — He et al. (2009)
+# Notas de Implementação — [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108)
 
 > Registro passo a passo do algoritmo de anonimização estrutural.
 > Preencher progressivamente durante a Semana 1 (15–22/05/2026) à medida que
 > a leitura do artigo avança. Cada seção deve ser atualizada antes de iniciar
 > a implementação correspondente.
 
-## Referência
+## Referências
 
-He, X. et al. (2009). Preserving privacy in social networks: A structure-aware
-approach. *Proceedings of the IEEE/WIC/ACM International Joint Conference on
-Web Intelligence and Intelligent Agent Technology (WI-IAT)*.
-DOI: 10.1109/WI-IAT.2009.108
+[1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
+
+[2] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+
+[3] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
+
+[4] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
+
+[5] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+
+[6] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+
+[7] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
 
 ---
 
@@ -24,7 +33,7 @@ DOI: 10.1109/WI-IAT.2009.108
 
 ### 1.0 Nota terminológica: "grupo de equivalência" vs. k-group de estruturas locais
 
-O termo **grupo de equivalência** não aparece em He et al. (2009). O construto
+O termo **grupo de equivalência** não aparece em [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108). O construto
 operacionalmente equivalente no artigo é o conjunto de `k` Local Structures
 agrupadas pela etapa de *grouping* (Seção 3.2, p. 650); os autores não
 atribuem um nome específico a esse conjunto — ele é simplesmente referenciado
@@ -32,7 +41,7 @@ como "a group" ou `G_r` no Algorithm 1.
 
 O vocabulário de **grupo de equivalência** vem da literatura de anonimização
 tabular (tipicamente associado a k-anonymity sobre dados relacionais, ex.
-Sweeney, 2002). Usamos a expressão por conveniência, como ponte para
+[Sweeney, 2002](https://doi.org/10.1142/S0218488502001648)). Usamos a expressão por conveniência, como ponte para
 leitores familiarizados com aquele vocabulário.
 
 Neste documento, adotamos a expressão **grupo de equivalência estrutural**
@@ -75,10 +84,10 @@ Nem grau nem vizinhança de raio fixo: a assinatura é o **isomorfismo do
 subgrafo comunitário local de tamanho variável `d`**. O artigo critica
 explicitamente as duas abordagens anteriores por insuficiência:
 
-- **k-degree anonymity** (Liu & Terzi [5]): baseia-se só no grau,
+- **k-degree anonymity** ([Liu & Terzi](https://doi.org/10.1145/1376616.1376629)): baseia-se só no grau,
   ignorando estrutura. *"[...] this anonymization process completely ignores
   structural information inherent in the graph data."* (p. 647, Seção 1)
-- **1-neighborhood isomorphism** (Zhou & Pei [4]): raio fixo (1-hop)
+- **1-neighborhood isomorphism** ([Zhou & Pei](https://doi.org/10.1109/ICDE.2008.4497459)): raio fixo (1-hop)
   provoca re-anonimizações em cascata e produz grafos degenerados
   (p. 647, Seção 1).
 
@@ -152,13 +161,13 @@ um grafo `G'` structure-aware k-anonymous tal que:
 
 ## 2. Algoritmo principal
 
-> **Fonte:** He et al. (2009), Seção 3, pp. 649–652.
+> **Fonte:** [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108), Seção 3, pp. 649–652.
 
 ### 2.1 Visão geral — três etapas encadeadas
 
 > ⚠️ **Nota de reconciliação (20/05/2026):** O pseudocódigo abaixo foi atualizado
 > para refletir o contrato do skeleton `src/anonymization/he2009.py` (criado em #33).
-> O algoritmo de partição primário passa a ser **multilevel k-way (Karypis & Kumar)**,
+> O algoritmo de partição primário passa a ser **multilevel k-way ([Karypis & Kumar](https://doi.org/10.1137/S1064827595287997))**,
 > fiel à referência [14] do artigo. `kernighan_lin_bisection` permanece como fallback
 > documentado (D-04 revisado). Ver Seção 7.
 
@@ -173,7 +182,7 @@ Etapa 1 — PARTIÇÃO  (Seção 3.1)
 ─────────────────────────────────────────────────────────────
 1.1  Calcular ck = ⌊|V| / d⌋          // número de partições
 1.2  Aplicar particionamento k-way em G
-     → Primário:  multilevel k-way (Karypis & Kumar [14], via pymetis)
+     → Primário:  multilevel k-way ([Karypis & Kumar](https://doi.org/10.1137/S1064827595287997), via pymetis)
      → Fallback:  kernighan_lin_bisection recursivo (D-04; sem dependência C)
      → produz subconjuntos V₁, V₂, ..., V_{ck} de tamanho ≈ d
         tal que arestas inter-partição são minimizadas
@@ -307,7 +316,7 @@ Consequências operacionais:
 
 ## 3. Operações de modificação do grafo
 
-> **Fontes:** He et al. (2009), Seções 3.2 (Phase 2, p. 651) e 3.3 (p. 652).
+> **Fontes:** [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108), Seções 3.2 (Phase 2, p. 651) e 3.3 (p. 652).
 
 ### 3.1 O que o algoritmo modifica
 
@@ -474,7 +483,7 @@ residual.
 
 ## 4. Critério de parada e garantia de k-anonimato
 
-> **Fonte:** He et al. (2009), Seções 2.3 e 3.2; decisões D-05 e D-06.
+> **Fonte:** [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108), Seções 2.3 e 3.2; decisões D-05 e D-06.
 
 ### 4.1 Critério formal do artigo
 
@@ -649,7 +658,7 @@ como tal, não como falha do algoritmo.
 Esta seção reconcilia os parâmetros formais do artigo com as chaves
 concretas do arquivo `config_example.yml`, distinguindo parâmetros já
 expostos em YAML, parâmetros ainda internos à implementação e parâmetros
-que, embora conceitualmente presentes em He et al. (2009), ainda não têm
+que, embora conceitualmente presentes em [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108), ainda não têm
 mapeamento operacional completo no protótipo.
 
 ### 5.1 Mapeamento dos parâmetros do artigo para YAML
@@ -734,7 +743,7 @@ onde é apenas plausível e onde depende de validação empírica adicional.
 
 ### 6.1 Grafos desconectados
 
-He et al. (2009) formulam o algoritmo sobre um grafo geral `G = (V, E)`,
+[He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) formulam o algoritmo sobre um grafo geral `G = (V, E)`,
 mas a definição de Local Structure pressupõe um subgrafo **conectado**.
 Na prática, quando o grafo original é desconectado, o pipeline precisa
 escolher entre processar cada componente conexa separadamente ou restringir
@@ -849,10 +858,10 @@ clareza.
 
 | ID | Data | Decisão | Justificativa | Referência |
 |---|---|---|---|---|
-| D-01 | 2026-05-17 | FSM simplificado com `s_max` configurável (não gSpan completo) | Pragmatismo de prazo; gSpan Python tem manutenção irregular. `s_max` limita espaço de busca de forma auditável. Declarar como aproximação no relatório. | Artigo cita [18] (Wörlein et al. 2005) sem especificar implementação |
+| D-01 | 2026-05-17 | FSM simplificado com `s_max` configurável (não gSpan completo) | Pragmatismo de prazo; gSpan Python tem manutenção irregular. `s_max` limita espaço de busca de forma auditável. Declarar como aproximação no relatório. | Artigo cita [18] ([Wörlein et al. 2005](https://doi.org/10.1007/11564126_32)) sem especificar implementação |
 | D-02 | 2026-05-17 | `d = 10` como default; variável de configuração YAML (`anonymization.d`) | Valor comum na literatura derivada para redes de 1k–10k nós. Varredura sobre `d` excluída do escopo mínimo. | Artigo não fixa default; experimentos usam valores variados (p. 652) |
 | D-03 | 2026-05-17 | Matching Fase 1: grau como critério primário; índice de nó lexicográfico como desempate | Garante determinismo e reprodutibilidade. Artigo diz "based on nodes degree" sem critério de desempate (p. 651). Escolha afeta `G'` e deve ser reportada como parâmetro de reprodutibilidade. | Artigo p. 651, Seção 3.2, Fase 1 |
-| D-04 | 2026-05-17 *(revisado 2026-05-20)* | **Motor primário: `pymetis` (multilevel k-way, Karypis & Kumar [14])**. Motor fallback: `networkx.kernighan_lin_bisection` recursivo, ativado quando `pymetis` não estiver disponível no ambiente (CI sem dependência C) ou via `anonymization.partition_backend: "networkx-kl"`. A divergência entre os dois motores (complexidade `O(\|E\|)` vs `O(\|E\|·log\|V\|)`; qualidade de partição; tamanho de LSs resultante) deve ser reportada como parâmetro metodológico, não como detalhe de implementação. | Artigo cita explicitamente Karypis & Kumar [14] (p. 650): multilevel k-way é o algoritmo de referência. KL bisection é heurística aparentada mas distinta: opera por bisseção recursiva e não garante `k` partições balanceadas diretamente. Revisão de 20/05/2026 reconcilia D-04 com o skeleton de `_partition_neighborhoods` criado em #33 e com o corpo atualizado da issue #11. | Artigo p. 650, Seção 3.1; skeleton `src/anonymization/he2009.py` (#33); issue #11 (corpo atualizado 20/05/2026) |
+| D-04 | 2026-05-17 *(revisado 2026-05-20)* | **Motor primário: `pymetis` (multilevel k-way, [Karypis & Kumar](https://doi.org/10.1137/S1064827595287997))**. Motor fallback: `networkx.kernighan_lin_bisection` recursivo, ativado quando `pymetis` não estiver disponível no ambiente (CI sem dependência C) ou via `anonymization.partition_backend: "networkx-kl"`. A divergência entre os dois motores (complexidade `O(\|E\|)` vs `O(\|E\|·log\|V\|)`; qualidade de partição; tamanho de LSs resultante) deve ser reportada como parâmetro metodológico, não como detalhe de implementação. | Artigo cita explicitamente [Karypis & Kumar](https://doi.org/10.1137/S1064827595287997) (p. 650): multilevel k-way é o algoritmo de referência. KL bisection é heurística aparentada mas distinta: opera por bisseção recursiva e não garante `k` partições balanceadas diretamente. Revisão de 20/05/2026 reconcilia D-04 com o skeleton de `_partition_neighborhoods` criado em #33 e com o corpo atualizado da issue #11. | Artigo p. 650, Seção 3.1; skeleton `src/anonymization/he2009.py` (#33); issue #11 (corpo atualizado 20/05/2026) |
 | D-05 | 2026-05-17 | Critério formal de k-anonimato registrado na Seção 4.1; **verificador empírico estrito** (Def. 2 no nível do nó, via `nx.is_isomorphic`/VF2) com saída em fração de nós satisfeitos; definido em detalhe em `metrics_definitions.md` | Separação de responsabilidades: `algorithm_notes.md` descreve o algoritmo e o critério; `metrics_definitions.md` define os instrumentos de avaliação. Verificador anterior (booleano par-a-par) era estritamente mais fraco que Def. 2 e mascarava violações decorrentes de D-06 e D-07. Risco de desempenho do VF2 declarado (Seção 4.3). | Seção 4 deste documento; [`docs/metrics_definitions.md` §k-anonymity-verifier](metrics_definitions.md#k-anonymity-verifier) (issue #34) |
 | D-06 | 2026-05-17 | Grupos incompletos serão mantidos e reportados como violação parcial; nós residuais tratados como desprotegidos | O verificador estrito captura esses casos como violadores explícitos (count < k-1). O módulo não forçará fusão artificial nem descarte desses grupos no baseline. | Seções 4.1–4.2 deste documento; Def. 2 do artigo |
 | D-07 | 2026-05-20 | **Opção A — Restringir grupos a LSs do mesmo `\|Vi\|`.** Na etapa de agrupamento (#12), LSs são indexadas por tamanho; grupos formam-se apenas entre LSs com mesmo número de nós. LSs sem grupo completo do mesmo tamanho → grupo incompleto (D-06). Declarada como **limitação do protótipo** no relatório de qualificação. A política é aplicada exclusivamente em `_partition_backend.py` (#45) — transparente para `_partition_neighborhoods` (#11), `_group_isomorphic` (#12) e `_modify_structure` (#13). Produção futura pode usar `tpwgts` do pymetis para forçar partições exatas de tamanho `d`, mas isso não é mandatório para o marco de 29/05/2026. | Artigo pressupõe `\|V_i\| = d` estrito (p. 651); D-04 produz partições aproximadas. Opção A preserva a premissa formal do artigo para os grupos que se formam, sem introduzir nós fictícios (Opção B) nem violar a premissa (Opção C). Custo: mais violadores via D-06 — já instrumentados pelo verificador estrito (D-05). Discussão completa em issue #43 (fechada 20/05/2026). | Seção 3.1 deste documento; D-04 revisado; issue #43; issue #45 |
