@@ -1,25 +1,46 @@
 # Ajustes Windows — ambiente Conda e backend `pymetis`
 
-> Estas instruções são relevantes **apenas** para quem utiliza Windows e quer
-> o backend METIS (`pymetis`) ativo. Em Linux/macOS, o `.venv` padrão já inclui
-> `pymetis` via pip; as instruções do §3.2 do README são suficientes.
+> Esta documentação é relevante apenas para quem utiliza Windows e quer o backend
+> METIS (`pymetis`) ativo.
 
 ---
 
-## Por que `pymetis` é opcional
+## Por que `pymetis` não vem no `.venv` padrão
 
-Em Windows, `pip install pymetis` falha porque o pacote depende de extensões C
-sem wheel oficial para a plataforma. A solução é instalar via conda-forge, que
-distribui binários pré-compilados compatíveis.
+O `requirements.txt` **não** lista `pymetis` (ele não instala via pip de forma
+confiável; ver nota no próprio `requirements.txt`). Logo, o ambiente do §3.2 do
+README — em **qualquer** sistema operacional, inclusive Linux/macOS — usa o
+**fallback Kernighan-Lin** por padrão, com apenas um `UserWarning` transitório.
 
-Quando `pymetis` está ausente, o algoritmo recai automaticamente para o backend
-**Kernighan-Lin** (decisão **D-04** — ver `docs/decision_log.md`). Essa escolha
-**afeta a reprodução**: backends diferentes produzem partições diferentes, por
-isso deve ser controlada ao comparar resultados entre máquinas.
+Para obter o backend `pymetis` (motor primário, fiel a He et al., D-04) há dois
+caminhos:
+
+- **Conda (recomendado, todos os SOs):** `environment.yml` /
+  `scripts/setup_conda_windows.ps1` — instala o binário do conda-forge.
+- **pip no Linux/macOS (compila do fonte):**
+  `pip install -e ".[partition-c]"` — exige toolchain C e **falha no
+  Windows/MSVC**.
+
+### Como confirmar qual backend está ativo
+
+Cada execução grava `partition_backend` no JSONL (`"pymetis"` ou
+`"networkx-kl"`) e o runner avisa no relatório quando o fallback está em uso.
+
+Para **proibir** o fallback (abortar se `pymetis` não estiver disponível),
+defina `anonymization.allow_kl_fallback: false` no YAML do experimento. Ver
+[`docs/limitations.md`](docs/limitations.md) §2.2.
 
 ---
 
-## 1. Criar o ambiente Conda
+## 1. Por que `.vscode/` não está versionado
+
+O diretório `.vscode/` está listado no `.gitignore` do projeto. Cada
+desenvolvedor mantém sua própria configuração local — isso evita que caminhos
+absolutos específicos de uma máquina entrem no repositório.
+
+---
+
+## 2. Criar o ambiente Conda
 
 Execute uma única vez no PowerShell, **a partir da raiz do repositório**:
 
@@ -32,16 +53,10 @@ que já inclui `pymetis` via conda-forge.
 
 ---
 
-## 2. Configurar o VS Code
+## 3. Criar `.vscode/settings.json` localmente
 
-O diretório `.vscode/` está listado no `.gitignore` — cada desenvolvedor mantém
-sua própria configuração local para evitar que caminhos absolutos específicos de
-uma máquina entrem no repositório.
-
-### 2.1 `settings.json`
-
-Crie `.vscode/settings.json` na raiz do repositório com o conteúdo abaixo,
-**ajustando o caminho do seu usuário Windows**:
+Crie o arquivo `.vscode/settings.json` na raiz do repositório com o conteúdo
+abaixo, **ajustando o caminho do seu usuário Windows**:
 
 ```json
 {
@@ -65,14 +80,16 @@ Crie `.vscode/settings.json` na raiz do repositório com o conteúdo abaixo,
 }
 ```
 
-> Para descobrir o caminho exato do interpretador, execute no PowerShell (com o
-> ambiente ativo):
+> Substitua `<seu-usuario>` pelo seu nome de usuário Windows. Para descobrir o
+> caminho exato do interpretador, execute no PowerShell (com o ambiente ativo):
 > ```powershell
 > conda activate moduloreidentificacao
 > python -c "import sys; print(sys.executable)"
 > ```
 
-### 2.2 `tasks.json` (opcional)
+---
+
+## 4. Criar `.vscode/tasks.json` localmente (opcional)
 
 Para que o VS Code execute `scripts\activate_env.ps1` automaticamente ao abrir
 a pasta do projeto, crie `.vscode/tasks.json`:
@@ -110,7 +127,7 @@ opening this folder?"* — clique em **Allow**.
 
 ---
 
-## 3. Verificar que `pymetis` está ativo
+## 5. Verificar que `pymetis` está ativo
 
 Com o ambiente Conda ativo e o interpretador configurado, abra um terminal
 integrado (`Ctrl+\``) e execute:
@@ -120,9 +137,10 @@ python -c "import pymetis; print('pymetis OK — backend METIS-C ativo')"
 ```
 
 Se retornar `pymetis OK`, o backend METIS-C está operacional. Caso contrário,
-o fallback Kernighan-Lin será usado automaticamente (comportamento padrão,
+o fallback Kernighan-Lin será usado automaticamente (comportamento padrão e
 documentado em D-04).
 
 ---
 
-*Ver também: `docs/decision_log.md` (D-04) e `docs/reproducibility.md` §8.*
+*Ver também: [`docs/decision_log.md`](docs/decision_log.md) (D-04) e
+[`docs/limitations.md`](docs/limitations.md) §2.2.*
