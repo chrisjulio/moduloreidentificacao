@@ -3,9 +3,9 @@
 Reads structured JSONL logs produced by ``experiments/run.py`` and writes one
 CSV file per ``(dataset, attack)`` combination to ``results/tables/``.
 
-Each CSV row represents one ``(k, seed)`` run and contains:
+Each CSV row represents one ``(k, d, seed)`` run and contains:
 
-    k, seed, reid_rate, eq_group_mean, ks_D, ks_p, clustering_var
+    k, d, seed, reid_rate, eq_group_mean, ks_D, ks_p, clustering_var
 
 Usage::
 
@@ -30,8 +30,12 @@ from typing import Any
 # ---------------------------------------------------------------------------
 
 #: Column names in the output CSV (order is fixed and part of the spec).
+#: ``d`` follows ``k`` so that ``(k, d)`` reads as the anonymisation
+#: configuration; it carries the He et al. (2009) sub-grouping depth swept by
+#: the d-sweep experiment (issue #88) and defaults to ``1`` for baseline logs.
 CSV_COLUMNS: tuple[str, ...] = (
     "k",
+    "d",
     "seed",
     "reid_rate",
     "eq_group_mean",
@@ -146,6 +150,9 @@ def record_to_row(record: dict[str, Any], attack: str) -> dict[str, Any] | None:
 
     return {
         "k": int(record["k"]),
+        # Fallback d=1 protects logs predating the DL-01 schema (issue #22);
+        # every record written by the current runner already carries ``d``.
+        "d": int(record.get("d", 1)),
         "seed": int(record.get("seed", -1)),
         "reid_rate": _safe_float(record[rr_key]),
         "eq_group_mean": eq_mean,
@@ -168,7 +175,7 @@ def generate_tables(
 ) -> dict[str, Path]:
     """Write one CSV per ``(dataset, attack)`` combination to *output_dir*.
 
-    Each CSV is sorted by ``(k, seed)`` for reproducibility.
+    Each CSV is sorted by ``(k, d, seed)`` for reproducibility.
 
     Parameters
     ----------
@@ -212,8 +219,8 @@ def generate_tables(
         if not rows:
             continue  # attack not present in this log set — skip silently
 
-        # Sort by (k, seed) for deterministic output
-        rows.sort(key=lambda r: (r["k"], r["seed"]))
+        # Sort by (k, d, seed) for deterministic output
+        rows.sort(key=lambda r: (r["k"], r["d"], r["seed"]))
 
         csv_path = output_dir / f"{dataset}_{attack}.csv"
         with csv_path.open("w", newline="", encoding="utf-8") as fh:

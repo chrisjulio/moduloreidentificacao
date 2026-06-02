@@ -14,8 +14,10 @@ import pytest
 
 from src.visualization.privacy_utility import (
     aggregate_by_k,
+    aggregate_by_k_d,
     load_jsonl_records,
     plot_privacy_utility,
+    plot_privacy_utility_dsweep,
 )
 
 # ---------------------------------------------------------------------------
@@ -30,11 +32,12 @@ def _make_record(
     rr_subgraph: float = 0.5,
     clust_var: float = 0.05,
     ks_d: float = 0.1,
+    d: int = 1,
 ) -> dict:
     """Build a minimal valid JSONL record with controllable metric values."""
     return {
         "k": k,
-        "d": 1,
+        "d": d,
         "seed": seed,
         "reidentification_rate_degree": rr_degree,
         "reidentification_rate_subgraph": rr_subgraph,
@@ -79,6 +82,35 @@ def sample_records() -> list[dict]:
 def logs_dir(tmp_path: Path, sample_records: list[dict]) -> Path:
     """Temporary directory with a single JSONL file containing all records."""
     _write_jsonl(tmp_path / "runs.jsonl", sample_records)
+    return tmp_path
+
+
+@pytest.fixture
+def dsweep_records() -> list[dict]:
+    """48 records: k in {2,5,10,20} x d in {1,2,5,10} x 3 seeds (the d-sweep grid)."""
+    records = []
+    for k in [2, 5, 10, 20]:
+        for d in [1, 2, 5, 10]:
+            for seed in [42, 1337, 2718]:
+                records.append(
+                    _make_record(
+                        k=k,
+                        seed=seed,
+                        d=d,
+                        # Values depend on both k and d so cells are distinguishable.
+                        rr_degree=0.1 / k + 0.001 * d,
+                        rr_subgraph=0.8 / k + 0.001 * d,
+                        clust_var=0.02 * k + 0.005 * d,
+                        ks_d=0.05 * k,
+                    )
+                )
+    return records
+
+
+@pytest.fixture
+def dsweep_logs_dir(tmp_path: Path, dsweep_records: list[dict]) -> Path:
+    """Temporary directory with a single JSONL file containing the d-sweep grid."""
+    _write_jsonl(tmp_path / "dsweep.jsonl", dsweep_records)
     return tmp_path
 
 
@@ -237,6 +269,79 @@ class TestAggregateByK:
 
 
 # ---------------------------------------------------------------------------
+# aggregate_by_k_d (d-aware)
+# ---------------------------------------------------------------------------
+
+
+class TestAggregateByKD:
+    def test_keys_are_k_d_pairs(self, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        assert set(stats.keys()) == {(k, d) for k in [2, 5, 10, 20] for d in [1, 2, 5, 10]}
+
+    def test_sixteen_cells(self, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        assert len(stats) == 16
+
+    def test_keys_are_sorted(self, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        assert list(stats.keys()) == sorted(stats.keys())
+
+    def test_all_metric_keys_present(self, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        for cell in stats.values():
+            assert set(cell.keys()) == {"rr_degree", "rr_subgraph", "clust_var", "ks_d"}
+            for v in cell.values():
+                assert "mean" in v and "std" in v
+
+    def test_cell_mean_isolates_k_and_d(self, dsweep_records: list[dict]):
+        # rr_degree = 0.1/k + 0.001*d ; for (k=2, d=5): 0.05 + 0.005 = 0.055
+        stats = aggregate_by_k_d(dsweep_records)
+        assert stats[(2, 5)]["rr_degree"]["mean"] == pytest.approx(0.055)
+
+    def test_distinct_d_give_distinct_means(self, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        means = {d: stats[(2, d)]["rr_degree"]["mean"] for d in [1, 2, 5, 10]}
+        assert len(set(means.values())) == 4
+
+    def test_std_zero_within_balanced_cell(self, dsweep_records: list[dict]):
+        # Each (k, d) cell has 3 seeds with identical metric values → std 0.
+        stats = aggregate_by_k_d(dsweep_records)
+        assert stats[(10, 2)]["rr_degree"]["std"] == pytest.approx(0.0)
+
+    def test_raises_on_empty_records(self):
+        with pytest.raises(ValueError, match="No records"):
+            aggregate_by_k_d([])
+
+    def test_fallback_d_one_when_field_absent(self):
+        records = []
+        for seed in range(3):
+            rec = _make_record(k=5, seed=seed)
+            del rec["d"]
+            records.append(rec)
+        stats = aggregate_by_k_d(records)
+        assert set(stats.keys()) == {(5, 1)}
+
+
+class TestAggregateByKBackCompat:
+    """aggregate_by_k must keep its pre-d-sweep behaviour (pools across d)."""
+
+    def test_keys_are_plain_k(self, sample_records: list[dict]):
+        stats = aggregate_by_k(sample_records)
+        assert set(stats.keys()) == {2, 5, 10, 20}
+
+    def test_unchanged_for_baseline_logs(self, sample_records: list[dict]):
+        # sample_records are uniform d=1, so per-k stats are unaffected.
+        stats = aggregate_by_k(sample_records)
+        assert stats[2]["rr_degree"]["mean"] == pytest.approx(0.05)
+
+    def test_pools_across_d(self, dsweep_records: list[dict]):
+        # For k=2, rr_degree spans d in {1,2,5,10}: 0.0501..0.0510 → mean 0.05055.
+        stats = aggregate_by_k(dsweep_records)
+        expected = sum(0.05 + 0.001 * d for d in [1, 2, 5, 10]) / 4
+        assert stats[2]["rr_degree"]["mean"] == pytest.approx(expected)
+
+
+# ---------------------------------------------------------------------------
 # plot_privacy_utility
 # ---------------------------------------------------------------------------
 
@@ -309,6 +414,92 @@ class TestPlotPrivacyUtility:
 
 
 # ---------------------------------------------------------------------------
+# plot_privacy_utility_dsweep (d-aware)
+# ---------------------------------------------------------------------------
+
+
+class TestPlotPrivacyUtilityDSweep:
+    def test_series_creates_pdf_and_png(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        pdf, png = plot_privacy_utility_dsweep(stats, output_dir=tmp_path, layout="series")
+        assert pdf.exists()
+        assert png.exists()
+
+    def test_facets_creates_pdf_and_png(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        pdf, png = plot_privacy_utility_dsweep(stats, output_dir=tmp_path, layout="facets")
+        assert pdf.exists()
+        assert png.exists()
+
+    def test_default_layout_is_series(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        pdf, _png = plot_privacy_utility_dsweep(stats, output_dir=tmp_path)
+        assert pdf.exists()
+
+    def test_default_filename_stem(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        pdf, png = plot_privacy_utility_dsweep(stats, output_dir=tmp_path)
+        assert pdf.name == "privacy_utility_dsweep.pdf"
+        assert png.name == "privacy_utility_dsweep.png"
+
+    def test_custom_filename_stem(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        pdf, png = plot_privacy_utility_dsweep(stats, output_dir=tmp_path, filename_stem="custom_d")
+        assert pdf.name == "custom_d.pdf"
+        assert png.name == "custom_d.png"
+
+    def test_files_are_nonempty(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        for layout in ("series", "facets"):
+            pdf, png = plot_privacy_utility_dsweep(
+                stats, output_dir=tmp_path, layout=layout, filename_stem=f"x_{layout}"
+            )
+            assert pdf.stat().st_size > 0
+            assert png.stat().st_size > 0
+
+    def test_output_dir_created_if_absent(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        new_dir = tmp_path / "deep" / "nested"
+        pdf, png = plot_privacy_utility_dsweep(stats, output_dir=new_dir)
+        assert new_dir.exists()
+        assert pdf.exists() and png.exists()
+
+    def test_returns_absolute_paths(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        pdf, png = plot_privacy_utility_dsweep(stats, output_dir=tmp_path)
+        assert pdf.is_absolute()
+        assert png.is_absolute()
+
+    def test_raises_on_unknown_layout(self, tmp_path: Path, dsweep_records: list[dict]):
+        stats = aggregate_by_k_d(dsweep_records)
+        with pytest.raises(ValueError, match="Unknown layout"):
+            plot_privacy_utility_dsweep(stats, output_dir=tmp_path, layout="spiral")
+
+    def test_raises_on_empty_stats(self, tmp_path: Path):
+        with pytest.raises(ValueError, match="No stats"):
+            plot_privacy_utility_dsweep({}, output_dir=tmp_path)
+
+    def test_single_d_does_not_crash(self, tmp_path: Path):
+        # Degenerate facet grid (one column) must not raise.
+        records = [_make_record(k=k, seed=s, d=2) for k in [2, 5] for s in [1, 2, 3]]
+        stats = aggregate_by_k_d(records)
+        pdf, _png = plot_privacy_utility_dsweep(stats, output_dir=tmp_path, layout="facets")
+        assert pdf.exists()
+
+    def test_fallback_d_one_records(self, tmp_path: Path):
+        records = []
+        for k in [2, 5]:
+            for s in range(3):
+                rec = _make_record(k=k, seed=s)
+                del rec["d"]
+                records.append(rec)
+        stats = aggregate_by_k_d(records)
+        assert set(stats.keys()) == {(2, 1), (5, 1)}
+        pdf, _png = plot_privacy_utility_dsweep(stats, output_dir=tmp_path)
+        assert pdf.exists()
+
+
+# ---------------------------------------------------------------------------
 # main (CLI integration)
 # ---------------------------------------------------------------------------
 
@@ -335,3 +526,36 @@ class TestMain:
 
         with pytest.raises(FileNotFoundError):
             main(["--logs", str(tmp_path / "missing"), "--out", str(tmp_path)])
+
+    def test_main_autodetects_dsweep(self, tmp_path: Path, dsweep_logs_dir: Path):
+        from src.visualization.privacy_utility import main
+
+        out_dir = tmp_path / "plots"
+        main(["--logs", str(dsweep_logs_dir), "--out", str(out_dir)])
+        # More than one distinct d → d-aware plot produced by default.
+        assert (out_dir / "privacy_utility_dsweep.pdf").exists()
+        assert (out_dir / "privacy_utility_dsweep.png").exists()
+
+    def test_main_dsweep_facets_layout(self, tmp_path: Path, dsweep_logs_dir: Path):
+        from src.visualization.privacy_utility import main
+
+        out_dir = tmp_path / "plots"
+        main(["--logs", str(dsweep_logs_dir), "--out", str(out_dir), "--layout", "facets"])
+        assert (out_dir / "privacy_utility_dsweep.pdf").exists()
+
+    def test_main_dsweep_flag_forces_d_aware_on_single_d(self, tmp_path: Path, logs_dir: Path):
+        from src.visualization.privacy_utility import main
+
+        out_dir = tmp_path / "plots"
+        # logs_dir is uniform d=1; --dsweep forces the d-aware path anyway.
+        main(["--logs", str(logs_dir), "--out", str(out_dir), "--dsweep"])
+        assert (out_dir / "privacy_utility_dsweep.pdf").exists()
+
+    def test_main_baseline_path_for_single_d(self, tmp_path: Path, logs_dir: Path):
+        from src.visualization.privacy_utility import main
+
+        out_dir = tmp_path / "plots"
+        # Without --dsweep and only d=1 present → baseline plot.
+        main(["--logs", str(logs_dir), "--out", str(out_dir)])
+        assert (out_dir / "privacy_utility.pdf").exists()
+        assert not (out_dir / "privacy_utility_dsweep.pdf").exists()
