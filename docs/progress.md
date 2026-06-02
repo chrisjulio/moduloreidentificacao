@@ -16,6 +16,23 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #105 (S8-2 / B6): exposição de `isomorphism_mode` como chave lida
+  do YAML.** A variante de isomorfização da Fase 2 deixou de ser
+  `add_only=False` hardcoded: `anonymize()` ganhou o parâmetro
+  `isomorphism_mode: str = "add_or_delete"` (valida o valor e o converte em
+  `add_only = (isomorphism_mode == "add_only")`, repassando a
+  `_modify_structure`); o runner (`experiments/run.py`) lê
+  `anonymization.isomorphism_mode`, valida-o antes do laço, propaga-o a
+  `anonymize()` e ao caminho inline (`_modify_structure(add_only=...)`) e grava
+  o valor efetivo no JSONL e no `summary.json`. Constante
+  `_ISOMORPHISM_MODES = {"add_or_delete", "add_only"}` adicionada a
+  `he2009.py`. Default `add_or_delete` preserva o comportamento histórico.
+  Docs: docstring de `anonymize()`, `algorithm_notes.md`
+  §3.2.1/§3.4/§5.1/§5.2/§5.3, e addendum B6 em `achados_divergencias.md`
+  (status 🔧→✅). Ajuste mínimo no stub `_always_error` de `test_runner.py`
+  (novo kwarg; cobertura de propagação é S8-2b/#112). Suíte **525 passed**,
+  ruff + format limpos. Branch `anonymization/expose-isomorphism-mode-105`.
+
 - **Issue #104 (S8-1 / B5): exposição de `s_max`/`fsm_max_size` como chave lida
   do YAML.** O tamanho máximo de subgrafo do FSM simplificado deixou de ser
   hardcoded: `anonymize()` e `_group_isomorphic()` passaram a aceitar
@@ -54,17 +71,18 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #113 (`anonymization/expose-smax-104`) → fechar
-  #104. **Recomenda-se mergear S8-1 (#104) antes de S8-2 (#105)** — ambas tocam
-  `anonymize()`/`run.py`/§5.1. Em seguida: S8-2 (#105, `isomorphism_mode`),
-  S8-2b (#112, testes de propagação), S8-3 (#106, `config_example.yml`).
+- Revisão humana e merge do PR de `anonymization/expose-isomorphism-mode-105`
+  → fechar #105. Em seguida: S8-2b (#112, testes de propagação de
+  `fsm_max_size`/`isomorphism_mode` pelo runner) e S8-3 (#106,
+  `config_example.yml` — expor `d`/`sigma`/`s_max`/`isomorphism_mode`).
 - Revisão humana e merge do PR `anonymization/dsweep-complementar-80` → fechar a
   issue #80. Com #80 fechada, **toda a engenharia da issue-mãe #72 (d-sweep) está
   concluída** → fechar #72 (umbrella) com comentário de encerramento.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
-- PR #113 (`anonymization/expose-smax-104`) aguarda revisão humana.
+- PR de `anonymization/expose-isomorphism-mode-105` (a abrir) aguardará revisão
+  humana. (PR #113 / #104 já mergeado.)
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -90,6 +108,29 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — Issue #105 (S8-2 / B6): expor isomorphism_mode lido do YAML
+
+- **Concluído:** Corrigida a defasagem B6 — a variante de isomorfização da
+  Fase 2 estava `add_only=False` hardcoded em `anonymize()` e no runner, e a
+  chave YAML `isomorphism_mode` nunca era lida. `anonymize()` (he2009.py)
+  passou a aceitar `isomorphism_mode: str = "add_or_delete"`, validar o valor
+  contra `_ISOMORPHISM_MODES = {"add_or_delete", "add_only"}` (ValueError em
+  valor inválido), convertê-lo em `add_only` e repassá-lo a
+  `_modify_structure`. `experiments/run.py` lê `anonymization.isomorphism_mode`
+  (default `add_or_delete`), valida antes do laço de execução, propaga por
+  `run_one()` a `anonymize()` e ao caminho inline
+  (`_modify_structure(add_only=...)`), e grava o valor efetivo em cada entrada
+  JSONL (`"isomorphism_mode"`) e no `summary.json`. Default preserva o
+  comportamento histórico. Docs: docstring de `anonymize()`,
+  `algorithm_notes.md` §3.2.1/§3.4/§5.1/§5.2/§5.3 (chave YAML ativa) e addendum
+  B6 (🔧→✅) em `achados_divergencias.md` (itens 1–2 das pendências documentais
+  marcados como resolvidos). Stub `_always_error` de `test_runner.py` aceita o
+  novo kwarg (cobertura de propagação é S8-2b/#112). Suíte **525 passed**,
+  ruff + format limpos. Branch `anonymization/expose-isomorphism-mode-105`.
+- **Próximo:** Merge do PR → fechar #105; depois S8-2b (#112) e S8-3 (#106).
+- **Bloqueios:** PR a abrir aguardará revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — Issue #104 (S8-1 / B5): expor s_max/fsm_max_size lido do YAML
 
