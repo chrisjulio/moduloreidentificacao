@@ -241,6 +241,18 @@ ameaças abaixo.
   timeouts menores — daí a instrumentação `subgraph_timeout_count` /
   `subgraph_candidate_counts` (DL-02) para quantificar o efeito caso ocorra.
 
+  > **⚠️ Nota de comparabilidade pré/pós DL-02 (inversão semântica do sentinela
+  > de timeout).** Em logs gerados **antes** do PR #97 (pré-DL-02), `verdict=ERROR`
+  > era prova positiva de timeout: sua ausência total nos 48 runs foi a base do
+  > diagnóstico de H3. Em logs gerados **após** o PR #97 (pós-DL-02), `verdict=ERROR`
+  > por timeout **não ocorre mais** — o `TimeoutError` é capturado por nó e
+  > contabilizado em `subgraph_timeout_count`, sem derrubar o run. Consequência:
+  > **a ausência de `verdict=ERROR` em um log pós-DL-02 não prova ausência de
+  > timeouts**; o campo correto a verificar é `subgraph_timeout_count > 0`.
+  > Comparações cruzadas entre logs de épocas diferentes (ex.: re-execuções do
+  > d-sweep com o runner estendido) devem considerar essa diferença de schema e
+  > de semântica do sentinela. Ver DL-02 em [`docs/decision_log.md`](decision_log.md).
+
 **Validade de construção (o experimento mede o que se propõe a medir?):**
 
 - Com `d > 1`, o construto "privacidade estrutural" deixa de ser um proxy de grau
