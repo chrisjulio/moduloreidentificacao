@@ -52,6 +52,75 @@ def _k_hop_induced_subgraph(g: nx.Graph, node: int, hop: int) -> nx.Graph:
     return g.subgraph(reachable.keys()).copy()
 
 
+def subgraph_candidate_count(
+    g_orig: nx.Graph,
+    g_anon: nx.Graph,
+    target: int,
+    hop: int = 1,
+    timeout: float | None = None,
+) -> int:
+    """Count nodes in ``g_anon`` whose k-hop neighbourhood is isomorphic to the
+    target's neighbourhood in ``g_orig``.
+
+    This is the raw observable behind :func:`subgraph_attack`: the attack
+    succeeds iff this count is exactly ``1`` (unique identification).  Exposing
+    the count separately lets callers distinguish *why* an attack fails —
+    ``0`` candidates (the original neighbourhood fingerprint matches nothing in
+    the anonymised graph) versus ``>1`` candidates (the fingerprint is shared
+    by several nodes) — which a bare ``bool`` collapses together.  See issue #93
+    (diagnostic of ``reidentification_rate_subgraph`` zeros).
+
+    Parameters
+    ----------
+    g_orig, g_anon, target, hop, timeout:
+        As in :func:`subgraph_attack`.
+
+    Returns
+    -------
+    int
+        Number of nodes in ``g_anon`` with a k-hop neighbourhood isomorphic to
+        the target's neighbourhood in ``g_orig`` (``0`` if none, ``>=1`` otherwise).
+
+    Raises
+    ------
+    ValueError
+        If ``target`` is not a node in ``g_orig``, or ``hop`` is not a positive
+        integer.
+    TimeoutError
+        If ``timeout`` is set and the candidate-search loop exceeds it.
+    """
+    if target not in g_orig:
+        raise ValueError(f"Target node {target!r} not found in G_orig.")
+    if not isinstance(hop, int) or hop < 1:
+        raise ValueError(f"hop must be a positive integer; got {hop!r}.")
+
+    s_target = _k_hop_induced_subgraph(g_orig, target, hop)
+
+    def _find_candidates() -> list[int]:
+        candidates: list[int] = []
+        for v in g_anon.nodes():
+            s_v = _k_hop_induced_subgraph(g_anon, v, hop)
+            gm = GraphMatcher(s_target, s_v)
+            if gm.is_isomorphic():
+                candidates.append(v)
+        return candidates
+
+    if timeout is None:
+        candidates = _find_candidates()
+    else:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(_find_candidates)
+            try:
+                candidates = future.result(timeout=timeout)
+            except concurrent.futures.TimeoutError as exc:
+                raise TimeoutError(
+                    f"subgraph_attack exceeded timeout of {timeout}s while "
+                    "searching for candidates."
+                ) from exc
+
+    return len(candidates)
+
+
 def subgraph_attack(
     g_orig: nx.Graph,
     g_anon: nx.Graph,
@@ -125,34 +194,7 @@ def subgraph_attack(
       sufficient to single out one node.
     * Node IDs in ``g_orig`` and ``g_anon`` share the same namespace;
       anonymisation (He et al.) preserves node IDs.
+    * Implemented on top of :func:`subgraph_candidate_count`: a node is
+      uniquely identified iff it has exactly one isomorphic candidate.
     """
-    if target not in g_orig:
-        raise ValueError(f"Target node {target!r} not found in G_orig.")
-    if not isinstance(hop, int) or hop < 1:
-        raise ValueError(f"hop must be a positive integer; got {hop!r}.")
-
-    s_target = _k_hop_induced_subgraph(g_orig, target, hop)
-
-    def _find_candidates() -> list[int]:
-        candidates: list[int] = []
-        for v in g_anon.nodes():
-            s_v = _k_hop_induced_subgraph(g_anon, v, hop)
-            gm = GraphMatcher(s_target, s_v)
-            if gm.is_isomorphic():
-                candidates.append(v)
-        return candidates
-
-    if timeout is None:
-        candidates = _find_candidates()
-    else:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(_find_candidates)
-            try:
-                candidates = future.result(timeout=timeout)
-            except concurrent.futures.TimeoutError as exc:
-                raise TimeoutError(
-                    f"subgraph_attack exceeded timeout of {timeout}s while "
-                    "searching for candidates."
-                ) from exc
-
-    return len(candidates) == 1
+    return subgraph_candidate_count(g_orig, g_anon, target, hop=hop, timeout=timeout) == 1

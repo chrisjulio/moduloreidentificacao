@@ -377,6 +377,93 @@ class TestRunOneEndToEnd:
         assert "reidentification_rate_subgraph" not in result
 
 
+# ---------------------------------------------------------------------------
+# run_one — subgraph diagnostic fields (issue #93 / DL-02)
+# ---------------------------------------------------------------------------
+
+_SUBGRAPH_ATTACKS: dict = {
+    "degree": {"enabled": True, "tolerance": 0},
+    "subgraph": {"enabled": True, "hop": 1, "timeout": 60},
+}
+
+
+class TestRunOneSubgraphDiagnostics:
+    """The subgraph attack records timeout and candidate-count diagnostics."""
+
+    def test_diagnostic_fields_present_when_subgraph_enabled(self) -> None:
+        """subgraph_timeout_count and subgraph_candidate_counts appear together
+        with reidentification_rate_subgraph."""
+        g = _small_graph()
+        result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
+        assert result["error"] is None, f"Unexpected error: {result['error']}"
+        assert "reidentification_rate_subgraph" in result
+        assert "subgraph_timeout_count" in result
+        assert "subgraph_candidate_counts" in result
+
+    def test_diagnostic_fields_absent_when_subgraph_disabled(self) -> None:
+        """No diagnostic fields leak in when the subgraph attack is off."""
+        g = _small_graph()
+        result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_DEFAULT_ATTACKS)
+        assert "subgraph_timeout_count" not in result
+        assert "subgraph_candidate_counts" not in result
+
+    def test_timeout_count_is_nonneg_int(self) -> None:
+        g = _small_graph()
+        result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
+        tc = result["subgraph_timeout_count"]
+        assert isinstance(tc, int)
+        assert tc >= 0
+
+    def test_no_timeout_on_small_graph(self) -> None:
+        """A 20-node graph with a 60 s budget never times out → count 0."""
+        g = _small_graph()
+        result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
+        assert result["subgraph_timeout_count"] == 0
+
+    def test_candidate_counts_schema_and_ranges(self) -> None:
+        """mean/std/max are well-formed; max >= mean >= 0; max bounded by |V|."""
+        g = _small_graph()
+        result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
+        cc = result["subgraph_candidate_counts"]
+        assert set(cc.keys()) == {"mean", "std", "max"}
+        assert cc["mean"] >= 0.0
+        assert cc["std"] >= 0.0
+        assert isinstance(cc["max"], int)
+        assert cc["max"] >= cc["mean"]
+        assert cc["max"] <= g.number_of_nodes()
+
+    def test_rr_subgraph_consistent_with_candidate_max(self) -> None:
+        """If the candidate max is 0, no node is unique → rr_subgraph == 0."""
+        g = _small_graph()
+        result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
+        if result["subgraph_candidate_counts"]["max"] == 0:
+            assert result["reidentification_rate_subgraph"] == 0.0
+
+    def test_diagnostics_are_json_serialisable(self) -> None:
+        g = _small_graph()
+        result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
+        roundtripped = json.loads(json.dumps(result, default=str))
+        assert "subgraph_candidate_counts" in roundtripped
+
+    def test_timeout_counted_not_raised(self) -> None:
+        """A per-node TimeoutError is counted, not propagated to verdict=ERROR.
+
+        Patches subgraph_candidate_count to always time out; the run must still
+        complete with error=None, rr_subgraph=0, and timeout_count == |V|.
+        """
+        g = _small_graph()
+        n = g.number_of_nodes()
+        with patch(
+            "experiments.run.subgraph_candidate_count",
+            side_effect=TimeoutError("simulated"),
+        ):
+            result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
+        assert result["error"] is None
+        assert result["subgraph_timeout_count"] == n
+        assert result["reidentification_rate_subgraph"] == 0.0
+        assert result["subgraph_candidate_counts"]["max"] == 0
+
+
 class TestRunOneErrorHandling:
     """run_one captures pipeline exceptions without raising."""
 
