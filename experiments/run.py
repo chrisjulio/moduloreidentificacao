@@ -39,6 +39,7 @@ Each JSONL entry contains:
       "k": <int>,
       "d": <int>,
       "seed": <int>,
+      "fsm_max_size": <int>,  # simplified-FSM max subgraph size (s_max, B5 / #104)
       "timestamp": "<ISO-8601>",
       "partition_backend": "pymetis" | "networkx-kl",  # engine actually used (D-04)
       "validate_k_anonymity": { <full DL-01 dict> },
@@ -201,6 +202,7 @@ def run_one(
     sigma: float,
     seed: int,
     attacks_cfg: dict,
+    fsm_max_size: int = 4,
 ) -> dict:
     """Execute the full pipeline for a single (k, seed) combination.
 
@@ -227,6 +229,10 @@ def run_one(
         FSM minimum support fraction.
     seed:
         Random seed; must come from the experiment YAML, never hardcoded.
+    fsm_max_size:
+        Maximum subgraph size (nodes) for the simplified FSM (D-01, B5).
+        Read from ``anonymization.s_max`` (alias ``fsm_max_size``) in the
+        experiment YAML; default 4. Recorded in the JSONL for traceability.
     attacks_cfg:
         The ``attacks:`` block from the experiment YAML, controlling which
         attacks are enabled and their hyper-parameters.
@@ -243,6 +249,7 @@ def run_one(
         "k": k,
         "d": d,
         "seed": seed,
+        "fsm_max_size": fsm_max_size,
         "timestamp": datetime.now(tz=UTC).isoformat(),
         "error": None,
     }
@@ -270,7 +277,9 @@ def run_one(
         # ------------------------------------------------------------------
         # Step 2 — Group LSs via FSM + MF factor (§3.2)
         # ------------------------------------------------------------------
-        groups = _group_isomorphic(local_structures, k=k, sigma=sigma, seed=seed)
+        groups = _group_isomorphic(
+            local_structures, k=k, sigma=sigma, seed=seed, fsm_max_size=fsm_max_size
+        )
         n_groups = len(groups)
         group_sizes = [len(grp) for grp in groups]
         complete = sum(1 for s in group_sizes if s >= k)
@@ -552,6 +561,9 @@ def main(config_path: Path) -> int:
         else [int(d) for d in d_values_raw]
     )
     sigma = float(anon_cfg.get("sigma", 0.5))
+    # B5 (issue #104): the simplified-FSM max subgraph size is now a YAML key.
+    # Canonical key is ``s_max``; ``fsm_max_size`` is accepted as an alias.
+    fsm_max_size = int(anon_cfg.get("s_max", anon_cfg.get("fsm_max_size", 4)))
 
     # --- Partition backend policy (fail fast before the run loop) ---
     allow_kl_fallback = bool(anon_cfg.get("allow_kl_fallback", True))
@@ -576,7 +588,12 @@ def main(config_path: Path) -> int:
     log_file = log_dir / f"{exp_name}.jsonl"
 
     logger.info(
-        "k values: %s, d values: %s, sigma=%.2f, seeds=%s", k_values, d_values, sigma, seeds
+        "k values: %s, d values: %s, sigma=%.2f, s_max=%d, seeds=%s",
+        k_values,
+        d_values,
+        sigma,
+        fsm_max_size,
+        seeds,
     )
     logger.info("Log file: %s", log_file)
 
@@ -595,6 +612,7 @@ def main(config_path: Path) -> int:
                     sigma=sigma,
                     seed=seed,
                     attacks_cfg=attacks_cfg,
+                    fsm_max_size=fsm_max_size,
                 )
                 result["experiment"] = exp_name
                 v = verdict_from_result(result)
@@ -619,6 +637,7 @@ def main(config_path: Path) -> int:
         "k_values": k_values,
         "d_values": d_values,
         "sigma": sigma,
+        "fsm_max_size": fsm_max_size,
         "seeds": seeds,
         "n_runs": len(all_results),
         "any_failure": any_failure,
@@ -638,7 +657,7 @@ def main(config_path: Path) -> int:
     print("\n" + "=" * 60)
     print(f"EXPERIMENT: {exp_name}")
     print("=" * 60)
-    print(f"k values: {k_values}  d values: {d_values}  sigma={sigma}")
+    print(f"k values: {k_values}  d values: {d_values}  sigma={sigma}  s_max={fsm_max_size}")
     print(f"Seeds:    {seeds}")
     backends_used = summary["partition_backends"]
     print(f"Backend:  {', '.join(backends_used) if backends_used else 'N/A'}")

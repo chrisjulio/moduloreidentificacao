@@ -155,7 +155,13 @@ não requerem FSM substantivo). Para `d > 1`, o impacto deve ser avaliado.
 **Candidato a superação:** Sim — substituição por gSpan ou implementação
 alternativa auditável em versão futura.
 
-**Referência:** `docs/algorithm_notes.md` D-01, §2.1.
+**Nota (B5 / #104):** `s_max` é agora uma chave **efetivamente lida do YAML**
+(`anonymization.s_max`, alias `fsm_max_size`); o runner a propaga a
+`anonymize()`/`_group_isomorphic()` e grava o valor efetivo no JSONL. Deixou
+de ser fixo no código — a configurabilidade descrita acima é real, não apenas
+planejada.
+
+**Referência:** `docs/algorithm_notes.md` D-01, §2.1, §5.1.
 
 ---
 

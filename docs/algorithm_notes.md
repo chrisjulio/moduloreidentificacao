@@ -657,7 +657,7 @@ mapeamento operacional completo no protótipo.
 | `k` | nível de privacidade; mínimo de candidatos indistinguíveis por nó | `anonymization.k_values` | `[2, 5, 10, 20]` no baseline |
 | `d` | tamanho pretendido de cada Local Structure / partição | *(não exposto em `config_example.yml` atual; previsto como `anonymization.d`)* | `10` como default conceitual (D-02); baseline de validação executado com `d=1` |
 | `σ` | suporte mínimo para o FSM | *(não exposto no exemplo atual; presente nos YAMLs experimentais de runs como `sigma`)* | `0.5` na varredura de k (Seção 9) |
-| `s_max` | tamanho máximo de subgrafo no FSM simplificado | *(não exposto em `config_example.yml` atual; previsto como `anonymization.fsm.max_size`)* | `4` (proposto) — ver D-01 |
+| `s_max` | tamanho máximo de subgrafo no FSM simplificado | **`anonymization.s_max`** (alias `anonymization.fsm_max_size`) — **lida do YAML** pelo runner e propagada a `anonymize()`/`_group_isomorphic()` (B5, #104) | `4` (default) — ver D-01; valor efetivo gravado no JSONL |
 | Variante de isomorfização | política de modificação intra-grupo (Phase 2) | *(não exposto em `config_example.yml` atual; previsto como `anonymization.isomorphism_mode`)* | `"add_or_delete"` (default planejado); alternativa `"add_only"` |
 | Motor de partição | backend da Etapa 1 | *(não exposto em `config_example.yml` atual; previsto como `anonymization.partition_backend`)* | `"auto"` (default planejado) → pymetis se disponível, KL fallback |
 | Verificação empírica do k-anonimato | auditoria pós-anonimização | `anonymization.validate_k_anonymity` | `true` no exemplo atual |
@@ -677,6 +677,13 @@ será responsável por consolidar a documentação técnica operacional do
 pipeline, inclusive a listagem explícita de parâmetros efetivamente
 expostos ao usuário final.
 
+> **Atualização (B5, #104):** `s_max` deixou de ser fixo no código. O runner
+> de experimentos (`experiments/run.py`) agora **lê** a chave
+> `anonymization.s_max` (alias `fsm_max_size`) do YAML do experimento, a
+> propaga a `anonymize()` → `_group_isomorphic()` e grava o valor efetivo no
+> JSONL de saída. A exposição da chave no `config_example.yml` de referência
+> é tratada separadamente em S8-3 (#106).
+
 ### 5.3 Parâmetros efetivamente confirmados no baseline
 
 A Seção 9 deste documento registra os parâmetros usados na varredura de `k`
@@ -694,9 +701,12 @@ deve ser lido assim:
 1. **`k` e validação** já estão representados no YAML público;
 2. **`d` e `sigma`** já aparecem nos YAMLs experimentais usados nos runs,
    ainda que não estejam estabilizados no `config_example.yml` de referência;
-3. **`s_max`, `partition_backend` e `isomorphism_mode`** estão definidos
-   conceitualmente e nas decisões do documento, mas ainda dependem de
-   consolidação documental/técnica na passada de #26-B.
+3. **`s_max`** é **lido do YAML** (`anonymization.s_max`, alias
+   `fsm_max_size`) pelo runner desde B5 (#104) e gravado no JSONL; falta
+   apenas expô-lo no `config_example.yml` de referência (S8-3 / #106).
+   **`partition_backend` e `isomorphism_mode`** estão definidos
+   conceitualmente e nas decisões do documento; `isomorphism_mode` é tratado
+   em S8-2 (#105).
 
 ### 5.4 Requisitos de documentação para #26-B
 

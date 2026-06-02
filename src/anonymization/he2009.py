@@ -230,7 +230,7 @@ def _group_within_bucket(
 # ---------------------------------------------------------------------------
 
 
-def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
+def anonymize(g: nx.Graph, k: int, d: int, seed: int, fsm_max_size: int = 4) -> nx.Graph:
     """Ponto de entrada principal do algoritmo de anonimizacao estrutural.
 
     Executa o pipeline completo de structure-aware kd-anonymity:
@@ -255,6 +255,11 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     seed : int
         Semente aleatoria para reproducibilidade das escolhas nao
         deterministicas durante agrupamento e modificacao estrutural.
+    fsm_max_size : int
+        Tamanho maximo (em nos) dos subgrafos enumerados pelo FSM
+        simplificado no Passo 2 (D-01). Lido da chave YAML
+        ``anonymization.s_max`` (alias ``fsm_max_size``) pelo runner de
+        experimentos; default 4. Ver docs/algorithm_notes.md §5.1 (B5).
 
     Retorna
     -------
@@ -296,7 +301,9 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     # ------------------------------------------------------------------
     # Step 2 — Group Local Structures via FSM + MF factor (Section 3.2)
     # ------------------------------------------------------------------
-    groups = _group_isomorphic(local_structures, k=k, sigma=0.5, seed=seed)
+    groups = _group_isomorphic(
+        local_structures, k=k, sigma=0.5, seed=seed, fsm_max_size=fsm_max_size
+    )
 
     # ------------------------------------------------------------------
     # Step 3 — Make each group isomorphic (Section 3.2, Phases 1 & 2)
@@ -412,6 +419,7 @@ def _group_isomorphic(
     k: int,
     sigma: float,
     seed: int,
+    fsm_max_size: int = 4,
 ) -> list[list[nx.Graph]]:
     """Agrupa Local Structures usando Frequent Subgraph Mining e fator MF.
 
@@ -442,6 +450,11 @@ def _group_isomorphic(
     seed : int
         Semente aleatoria para escolhas nao-deterministicas no agrupamento
         (Algorithm 1, linhas 15, 17, 21 — Secao 3.3 deste documento).
+    fsm_max_size : int
+        Tamanho maximo (em nos) dos subgrafos enumerados pelo FSM
+        simplificado (D-01). Propagado a ``_group_within_bucket``. Lido da
+        chave YAML ``anonymization.s_max`` (alias ``fsm_max_size``) pelo
+        runner; default 4. Ver docs/algorithm_notes.md §5.1 (B5).
 
     Retorna
     -------
@@ -494,7 +507,7 @@ def _group_isomorphic(
     for size in sorted(size_buckets.keys()):
         bucket_indices = size_buckets[size]
         bucket_ls = [local_structures[i] for i in bucket_indices]
-        bucket_groups = _group_within_bucket(bucket_ls, k, sigma, rng)
+        bucket_groups = _group_within_bucket(bucket_ls, k, sigma, rng, fsm_max_size=fsm_max_size)
         all_groups.extend(bucket_groups)
 
     return all_groups
