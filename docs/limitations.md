@@ -75,25 +75,43 @@ alternativa X") não são sustentadas pelos dados do baseline.
 
 ---
 
-### 1.3 Varredura de parâmetros restrita a k ∈ {2, 5, 10, 20} e d = 1
+### 1.3 Varredura de parâmetros restrita a k ∈ {2, 5, 10, 20} e d = 1 — *parcialmente resolvida*
 
-**Descrição:** A varredura experimental do baseline cobriu apenas os
+> **Status:** **Parcialmente resolvida** (2026-06-02). A varredura `d > 1`
+> foi executada e documentada em
+> [`docs/results_dsweep.md`](results_dsweep.md) (experimento
+> `he2009_facebook_dsweep`, issue #88). A limitação permanece *parcial* porque
+> a validação `d > 1` ainda se restringe a **uma única ego-rede (3437)** — ver
+> §1.1 e as ameaças à validade externa em `results_dsweep.md` §5.7.
+
+**Descrição:** A varredura experimental do baseline (#23) cobriu apenas os
 valores de k definidos no escopo mínimo, com `d=1` fixo (Local Structures
 de tamanho unitário — nó central isolado). A varredura sobre `d > 1` foi
-explicitamente excluída do escopo mínimo (decisão D-02).
+excluída do escopo **mínimo** (decisão D-02) e posteriormente realizada no
+tier **desejável** (D-08).
 
 **Natureza:** Escolha deliberada de escopo. A configuração `d=1` simplifica
 a implementação e valida a propriedade formal sem introduzir complexidade
-adicional de FSM.
+adicional de FSM; `d > 1` foi perseguido como funcionalidade desejável.
 
 **Impacto no baseline (#23):** Com `d=1`, a Local Structure de cada nó é
 trivial (subgrafo de um único nó), e o isomorfismo reduz-se a igualdade de
 grau. A garantia de k-anonimato *estrutural* (no sentido pleno da Def. 2 de
-He et al., que considera subgrafos de tamanho variável `d`) não é
-demonstrada empiricamente para `d > 1` nesta versão. Declarar como
-limitação ao reportar os resultados de validação.
+He et al., que considera subgrafos de tamanho variável `d`) **não era**
+demonstrada empiricamente para `d > 1` na versão do baseline.
 
-**Referência:** `docs/algorithm_notes.md` D-02, §9.1.
+**Resolução parcial (d-sweep, #88):** O experimento `he2009_facebook_dsweep`
+varreu o grid `k ∈ {2,5,10,20} × d ∈ {1,2,5,10} × 3 sementes` (48 runs,
+backend pymetis em todos). O contraste `d=1` (≈ k-anonimato de grau) vs.
+`d ∈ {5,10}` (structure-aware pleno) é a evidência empírica de que o módulo
+afere privacidade *estrutural*, não só de grau. Resultados, combos
+degenerados (d=2 D-08; d=10/k=20 D-10) e ameaças à validade em
+[`docs/results_dsweep.md`](results_dsweep.md); resumo em
+`docs/algorithm_notes.md` §9.4. **Resíduo:** generalização a outras
+ego-redes/datasets (validade externa, §1.1) permanece aberta.
+
+**Referência:** `docs/algorithm_notes.md` D-02, §9.1, §9.4;
+`docs/results_dsweep.md`.
 
 ---
 
@@ -295,7 +313,7 @@ para o relatório de qualificação:
 |---|---|---|
 | Resultados de `satisfied_fraction` não generalizáveis a outras redes | Validade externa | 1.1 |
 | Comparação com outros algoritmos de anonimização não suportada | Validade externa | 1.2 |
-| k-anonimato estrutural pleno (d > 1) não validado empiricamente | Validade interna | 1.3 |
+| k-anonimato estrutural pleno (d > 1) validado em **uma só** ego-rede (3437); generalização aberta | Validade externa | 1.3 *(parcialmente resolvida)* |
 | Taxa de reidentificação efetiva pode ser subestimada (ataques incompletos) | Validade de construto | 1.4 |
 | `G'` pode não ser k-anônimo para particionamentos alternativos de `G'` | Validade interna | 2.4 |
 | Determinismo dependente de critério de desempate não especificado no artigo | Reprodutibilidade | 2.6 |

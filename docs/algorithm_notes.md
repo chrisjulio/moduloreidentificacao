@@ -942,6 +942,45 @@ Resultado: APROVADO sob D-06.
    em `experiments/logs/k_sweep/` servem como entrada para a cadeia de
    análise subsequente.
 
+### 9.4 Resultados da varredura de d (d-sweep) — Issues #88 / #78
+
+> **Data:** 2026-06-02  
+> **Experimento:** `he2009_facebook_dsweep` (tier desejável, D-08)  
+> **Config:** `experiments/configs/he2009_facebook_dsweep.yml`  
+> **Log:** `experiments/logs/he2009_facebook_dsweep/he2009_facebook_dsweep.jsonl`  
+> **Dataset:** ego-rede 3437 (n_lcc=532, m_lcc=4812)  
+> **Backend:** **pymetis** em todos os 48 runs (D-04); σ=0.5; sementes [42, 1337, 2718]  
+> **Grid:** k ∈ {2, 5, 10, 20} × d ∈ {1, 2, 5, 10} × 3 sementes = **48 runs**  
+> **Relatório consolidado:** [`docs/results_dsweep.md`](results_dsweep.md)
+
+Enquanto a §9.1 valida a propriedade formal em `d=1`, a varredura de `d`
+estende a §1.3 das limitações de *limitação aberta* para *parcialmente
+resolvida*: ela é a evidência de que o módulo afere privacidade **estrutural**
+(isomorfismo de subgrafo de tamanho `d`), não apenas igualdade de grau.
+
+**Achados principais** (detalhe, tabelas `média ± std` e ameaças à validade
+em `results_dsweep.md`):
+
+1. **Déficit sempre estrutural.** `valid=false` nos 48 runs, porém
+   `deficit_fully_structural=true` em todos — o déficit decorre de violadores
+   estruturais, não de falha do algoritmo (coerente com D-06; verificador
+   independente).
+2. **`d` controla o tamanho do grupo.** EGS ≈ `k·d` em células completas
+   (confirmado: k=2/d=10 → 19.70; k=20/d=10 → 133.0). Aumentar `d` engrossa os
+   grupos, em geral reduz a reidentificação por subgrafo e aumenta a degradação
+   de utilidade (KS D e Δclust).
+3. **Vetores de ataque opostos em k.** O ataque por subgrafo enfraquece com k
+   (mais candidatos indistinguíveis); o ataque por grau se fortalece (a
+   anonimização distorce a distribuição de graus, KS D → ~0.8–0.95). Aumentar
+   `k` desloca o vetor de ataque mais eficaz de subgrafo para grau.
+4. **Combos degenerados, mantidos e anotados.** `d=2` é degenerate na 3437 sob
+   pymetis (D-08, G3: ≈199/267 partições vazias; números fora da tendência);
+   `d=10, k=20` é degenerate esperado (D-10: cobertura 0.752, a menor do grid,
+   `FAILURE_LOW_COVERAGE`). Documentados em vez de ocultados.
+5. **Ressalva de timeouts.** `reid_sub=0` exato em k=20/d∈{1,5} pode refletir
+   timeouts do VF2 (120 s/nó), não segurança real — o JSONL não registra a
+   contagem de timeouts. Ver `results_dsweep.md` §5.5 e §5.7.
+
 ---
 
 ## 10. Referências
