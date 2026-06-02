@@ -32,13 +32,14 @@ def _make_record(
     ks_d: float = 0.12,
     ks_p: float = 0.45,
     clust_var: float = 0.07,
+    d: int = 1,
     *,
     include_subgraph: bool = True,
 ) -> dict:
     """Build a minimal valid JSONL record with controllable metric values."""
     rec: dict = {
         "k": k,
-        "d": 1,
+        "d": d,
         "seed": seed,
         "reidentification_rate": rr_degree,
         "reidentification_rate_degree": rr_degree,
@@ -91,6 +92,56 @@ def logs_dir(tmp_path: Path, sample_records: list[dict]) -> Path:
     log_file = tmp_path / "run.jsonl"
     _write_jsonl(log_file, sample_records)
     return tmp_path
+
+
+@pytest.fixture
+def dsweep_records() -> list[dict]:
+    """48 records: k in {2,5,10,20} x d in {1,2,5,10} x 3 seeds (the d-sweep grid)."""
+    records = []
+    for k in [2, 5, 10, 20]:
+        for d in [1, 2, 5, 10]:
+            for seed in [42, 1337, 2718]:
+                records.append(
+                    _make_record(
+                        k=k,
+                        seed=seed,
+                        d=d,
+                        # Make values depend on both k and d so cells are distinguishable.
+                        rr_degree=0.1 / k + 0.001 * d,
+                        rr_subgraph=0.8 / k + 0.001 * d,
+                        eq_mean=float(k * d),
+                        ks_d=0.05 * k,
+                        ks_p=0.5,
+                        clust_var=0.02 * k,
+                    )
+                )
+    return records
+
+
+# ---------------------------------------------------------------------------
+# CSV_COLUMNS spec
+# ---------------------------------------------------------------------------
+
+
+class TestCsvColumnsSpec:
+    def test_d_column_present(self) -> None:
+        assert "d" in CSV_COLUMNS
+
+    def test_d_immediately_follows_k(self) -> None:
+        assert CSV_COLUMNS[0] == "k"
+        assert CSV_COLUMNS[1] == "d"
+
+    def test_full_column_order(self) -> None:
+        assert CSV_COLUMNS == (
+            "k",
+            "d",
+            "seed",
+            "reid_rate",
+            "eq_group_mean",
+            "ks_D",
+            "ks_p",
+            "clustering_var",
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -210,6 +261,20 @@ class TestRecordToRow:
         assert row is not None
         assert isinstance(row["k"], int)
         assert isinstance(row["seed"], int)
+
+    def test_d_extracted(self) -> None:
+        rec = _make_record(k=10, seed=1337, d=5)
+        row = record_to_row(rec, "degree")
+        assert row is not None
+        assert row["d"] == 5
+        assert isinstance(row["d"], int)
+
+    def test_d_defaults_to_one_when_absent(self) -> None:
+        rec = _make_record(k=5, seed=42)
+        del rec["d"]
+        row = record_to_row(rec, "degree")
+        assert row is not None
+        assert row["d"] == 1
 
     def test_returns_none_if_attack_absent(self) -> None:
         rec = _make_record(k=5, seed=42, include_subgraph=False)
@@ -413,3 +478,63 @@ class TestGenerateTables:
         assert row["ks_p"] == ""
         assert row["eq_group_mean"] == ""
         assert row["clustering_var"] == ""
+
+
+# ---------------------------------------------------------------------------
+# generate_tables — d-sweep (d as a first-class dimension)
+# ---------------------------------------------------------------------------
+
+
+class TestGenerateTablesDSweep:
+    def test_csv_has_d_column(self, tmp_path: Path, dsweep_records: list[dict]) -> None:
+        out = tmp_path / "tables"
+        produced = generate_tables(dsweep_records, out, dataset="facebook")
+        with produced["degree"].open(encoding="utf-8") as fh:
+            reader = csv.DictReader(fh)
+            assert "d" in (reader.fieldnames or [])
+
+    def test_row_count_is_full_grid(self, tmp_path: Path, dsweep_records: list[dict]) -> None:
+        out = tmp_path / "tables"
+        produced = generate_tables(dsweep_records, out, dataset="facebook")
+        with produced["degree"].open(encoding="utf-8") as fh:
+            rows = list(csv.DictReader(fh))
+        # 4 k * 4 d * 3 seeds = 48 rows
+        assert len(rows) == 48
+
+    def test_sixteen_distinct_k_d_cells(self, tmp_path: Path, dsweep_records: list[dict]) -> None:
+        out = tmp_path / "tables"
+        produced = generate_tables(dsweep_records, out, dataset="facebook")
+        with produced["degree"].open(encoding="utf-8") as fh:
+            cells = {(int(r["k"]), int(r["d"])) for r in csv.DictReader(fh)}
+        assert len(cells) == 16
+        assert cells == {(k, d) for k in [2, 5, 10, 20] for d in [1, 2, 5, 10]}
+
+    def test_rows_sorted_by_k_d_seed(self, tmp_path: Path, dsweep_records: list[dict]) -> None:
+        out = tmp_path / "tables"
+        produced = generate_tables(dsweep_records, out, dataset="facebook")
+        with produced["degree"].open(encoding="utf-8") as fh:
+            rows = list(csv.DictReader(fh))
+        triples = [(int(r["k"]), int(r["d"]), int(r["seed"])) for r in rows]
+        assert triples == sorted(triples)
+
+    def test_d_values_distinguish_same_k_seed(
+        self, tmp_path: Path, dsweep_records: list[dict]
+    ) -> None:
+        out = tmp_path / "tables"
+        produced = generate_tables(dsweep_records, out, dataset="facebook")
+        with produced["degree"].open(encoding="utf-8") as fh:
+            rows = [r for r in csv.DictReader(fh) if int(r["k"]) == 2 and int(r["seed"]) == 42]
+        # Same (k, seed) but four distinct d → four distinct rows.
+        assert sorted(int(r["d"]) for r in rows) == [1, 2, 5, 10]
+
+    def test_fallback_d_one_for_records_without_d(self, tmp_path: Path) -> None:
+        records = []
+        for seed in range(3):
+            rec = _make_record(k=5, seed=seed)
+            del rec["d"]
+            records.append(rec)
+        out = tmp_path / "tables"
+        produced = generate_tables(records, out, dataset="facebook", attacks=("degree",))
+        with produced["degree"].open(encoding="utf-8") as fh:
+            rows = list(csv.DictReader(fh))
+        assert all(int(r["d"]) == 1 for r in rows)

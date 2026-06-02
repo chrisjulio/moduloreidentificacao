@@ -16,21 +16,21 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- **d-sweep (#88) — execução concluída, 48/48.** O runner ganhou suporte a
-  `anonymization.d` como lista, varrendo o produto cartesiano `k × d × seed`
-  (uma entrada JSONL por combinação), mantendo compatibilidade com `d` escalar.
-  O experimento `he2009_facebook_dsweep` (k ∈ {2,5,10,20} × d ∈ {1,2,5,10} × 3
-  sementes) rodou as **48 execuções com backend pymetis em todas**, sem erros.
-  Resultado: **33 SUCCESS_PARTIAL / 15 FAILURE_LOW_COVERAGE** (baixa cobertura
-  esperada em k alto, déficit estrutural — D-06/D-08/D-10). Consolidação legível
-  do log em `docs/dsweep_previa_garantia_dados.md`. `summary.json` registra
-  `d_values` e o mapa completo de vereditos por `(k,d,seed)`.
+- **Visualização ciente de `d` (#92) — implementada.** `src/visualization/`
+  passou a tratar `d` como dimensão de primeira classe. `tables.py`: coluna `d`
+  adicionada a `CSV_COLUMNS` logo após `k` (mudança intencional de spec),
+  `record_to_row` extrai `d` com fallback `d=1`, sort por `(k, d, seed)`.
+  `privacy_utility.py`: nova `aggregate_by_k_d` (agrega por `(k, d)`),
+  `aggregate_by_k` mantida com comportamento idêntico (pool por `k`), nova
+  `plot_privacy_utility_dsweep` com dois layouts (`series` padrão + `facets`),
+  CLI com `--dsweep`/`--layout` e auto-detecção quando há mais de um `d`.
+  Tudo verificado end-to-end no log real do d-sweep (48 registros): CSVs com 16
+  células `(k,d)` distintas e ambos os plots gerados. Suíte: **490 passed**;
+  ruff limpo. Branch `viz/dsweep-d-aware`.
 
 **Próximo passo planejado:**
-- **Ferramentas de visualização cientes de `d`** (`viz/dsweep-d-aware`): plots e
-  tabelas em `src/visualization/` ignoram a dimensão `d` (foram feitas para o
-  baseline). Issue a ser criada no GitHub; só então plots/tabelas e o relatório
-  final consolidado do d-sweep podem ser gerados.
+- Revisão humana e merge do PR `viz/dsweep-d-aware` (#92); só então gerar os
+  artefatos finais versionados e o **relatório consolidado do d-sweep**.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
@@ -60,6 +60,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — Visualização ciente de `d` (#92): plots e tabelas d-aware
+
+- **Concluído:** `src/visualization/tables.py` e `privacy_utility.py` estendidos
+  para tratar a dimensão `d` do d-sweep. `tables.py`: `"d"` adicionado a
+  `CSV_COLUMNS` (após `"k"`, mudança intencional de spec), `record_to_row`
+  extrai `record.get("d", 1)`, sort `(k, d, seed)`. `privacy_utility.py`:
+  `aggregate_by_k_d` nova (chaves `(k, d)`); `aggregate_by_k` preservada com
+  comportamento idêntico (pool por `k`, retrocompatível); `plot_privacy_utility_dsweep`
+  nova com dois layouts (`series` — cor por `d`, estilo de linha por ataque/métrica;
+  `facets` — grade 2×4); CLI com `--dsweep`/`--layout` + auto-detecção (mais de um
+  `d` distinto → modo d-aware). Fallback `d=1` em todos os caminhos para logs
+  pré-DL-01. Testes: +6 (tables) e +~30 (privacy_utility), incluindo fixtures de
+  grade 4k×4d×3s e checagem de retrocompat. Verificado end-to-end no log real
+  (48 registros): 16 células `(k,d)` nas CSVs, plots `series` e `facets` gerados.
+  Suíte completa **490 passed**; ruff limpo.
+- **Próximo:** Merge do PR `viz/dsweep-d-aware` (#92); gerar artefatos finais e o
+  relatório consolidado do d-sweep. Fechamento manual da #74.
+- **Bloqueios:** PR `viz/dsweep-d-aware` aguarda revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — d-sweep (#88): execução completa 48/48 + runner d-list
 
