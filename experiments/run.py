@@ -45,6 +45,11 @@ Each JSONL entry contains:
       "reidentification_rate": <float>,          # degree attack (primary)
       "reidentification_rate_degree": <float>,   # always present when degree enabled
       "reidentification_rate_subgraph": <float>, # present when subgraph enabled
+      # Subgraph diagnostics (issue #93 / DL-02) — present when subgraph enabled:
+      "subgraph_timeout_count": <int>,           # nodes whose VF2 hit the timeout
+      "subgraph_candidate_counts": {             # per-node #isomorphic candidates
+          "mean": <float>, "std": <float>, "max": <int>
+      },
       "equivalence_group_size": {"mean": <float>, "median": <int>},
       "ks_test_degree": {"D": <float>, "p": <float>},
       "clustering_variation": <float | null>,
@@ -63,6 +68,7 @@ import sys
 import traceback
 from datetime import UTC, datetime
 from pathlib import Path
+from statistics import fmean, pstdev
 
 import networkx as nx
 import yaml
@@ -75,7 +81,7 @@ from src.anonymization.he2009 import (
     _reconnect_inter_edges,
 )
 from src.anonymization.validation import validate_k_anonymity
-from src.attacks import degree_attack, subgraph_attack
+from src.attacks import degree_attack, subgraph_candidate_count
 from src.loaders.facebook_ego import load_facebook_egonet
 from src.metrics import (
     clustering_variation,
@@ -327,16 +333,45 @@ def run_one(
         if subgraph_cfg.get("enabled", False):
             hop = int(subgraph_cfg.get("hop", 1))
             timeout = subgraph_cfg.get("timeout", None)
-            subgraph_results = [
-                subgraph_attack(g_orig, g_anon, node, hop=hop, timeout=timeout) for node in nodes
-            ]
+            # Per-node loop with explicit TimeoutError handling (issue #93).
+            # A timed-out node is counted (subgraph_timeout_count) and treated
+            # as *not re-identified* — matching the documented config intent
+            # ("Timeouts NÃO são crash; o nó conta como não reidentificado").
+            # Previously a single TimeoutError propagated to the run-level
+            # except block, producing verdict=ERROR for the whole run; the
+            # absence of ERROR across the 48 d-sweep runs is what discards the
+            # "masked timeout" hypothesis (H3). We also record the distribution
+            # of candidate counts so a zero rate is distinguishable as "no
+            # candidates" (H1/H2) vs "many candidates" — see decision DL-02.
+            timeout_count = 0
+            candidate_counts: list[int] = []
+            for node in nodes:
+                try:
+                    n_cand = subgraph_candidate_count(
+                        g_orig, g_anon, node, hop=hop, timeout=timeout
+                    )
+                except TimeoutError:
+                    timeout_count += 1
+                    n_cand = 0  # node counts as non-reidentified
+                candidate_counts.append(n_cand)
+            subgraph_results = [c == 1 for c in candidate_counts]
             rr_subgraph = reidentification_rate(subgraph_results)
             result["reidentification_rate_subgraph"] = rr_subgraph
+            result["subgraph_timeout_count"] = timeout_count
+            result["subgraph_candidate_counts"] = {
+                "mean": fmean(candidate_counts) if candidate_counts else 0.0,
+                "std": pstdev(candidate_counts) if len(candidate_counts) > 1 else 0.0,
+                "max": max(candidate_counts) if candidate_counts else 0,
+            }
             logger.info(
-                "  [k=%d, seed=%d] Subgraph attack: reidentification_rate=%.4f",
+                "  [k=%d, seed=%d] Subgraph attack: reidentification_rate=%.4f "
+                "(timeouts=%d, candidates mean=%.2f max=%d)",
                 k,
                 seed,
                 rr_subgraph,
+                timeout_count,
+                result["subgraph_candidate_counts"]["mean"],
+                result["subgraph_candidate_counts"]["max"],
             )
 
         # Canonical "reidentification_rate": subgraph if enabled, else degree.

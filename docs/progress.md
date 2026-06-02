@@ -16,22 +16,30 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- **Issue #78 (D-08 / Fase 5: análise, gráficos e documentação) — itens
-  remanescentes da DoD fechados.** As seções 1 (viz d-aware) e 2
-  (`results_dsweep.md`) já haviam sido entregues por #92/#94 e #88; esta sessão
-  fechou a seção 3 (atualização de docs existentes) e a seção 4 (ameaças à
-  validade): (a) **`results_dsweep.md`** ganhou §5.7 "Ameaças à validade"
-  (interna: `s_max × d`, pymetis vs KL, LS não conexa, custo VF2/timeouts;
-  construção: contraste `d=1` vs `d>1` como evidência de privacidade estrutural;
-  externa: única ego-rede 3437); (b) **`limitations.md §1.3`** marcada como
-  **parcialmente resolvida** (resíduo = generalização a outras redes), com
-  entrada da tabela de ameaças ajustada para validade externa; (c)
-  **`algorithm_notes.md §9`** ganhou §9.4 com os achados do d-sweep e ponteiro
-  para o relatório. Suíte **490 passed**, ruff limpo (mudanças só de docs).
-  Branch `docs/dsweep-analysis-78`.
+- **Issue #93 (D-08 / Fase 6: sanitização diagnóstica dos zeros de
+  `reidentification_rate_subgraph` em k=20, d∈{5,10}).** Passo 1 (inspeção do log
+  do d-sweep, sem reexecução): **nenhum `verdict=ERROR`** nos 48 runs → como o
+  `timeout` era 120 s e qualquer estouro geraria `ERROR` no código vigente, prova
+  que **nenhuma chamada VF2 atingiu o timeout** → **H3 (timeout mascarado)
+  descartada**; os zeros são genuínos (H1/H2: vizinhança original sem
+  correspondência única em `G'` sob EGS grande). Passo 2: runner estendido
+  (`experiments/run.py`) — laço do subgrafo agora captura `TimeoutError` por nó,
+  conta em `subgraph_timeout_count` e trata o nó como não-reidentificado
+  (alinhando o código ao comentário do YAML); novos campos JSONL
+  `subgraph_timeout_count` e `subgraph_candidate_counts {mean,std,max}`; novo
+  observável `subgraph_candidate_count` em `src/attacks/subgraph.py`
+  (`subgraph_attack` reescrito como `count == 1`, sem mudança de comportamento).
+  Schema DL-01 atualizado; decisão **DL-02** + nota de encerramento de **D-08** no
+  `decision_log.md`. Passo 3 (reexecução seletiva): **opcional** (Passo 1
+  conclusivo) — criado `experiments/configs/he2009_facebook_dsweep_k20_diag.yml`
+  como artefato de reprodução, não executado (≈3 h/run). Passo 4: `results_dsweep.md`
+  §5.5 reescrita (ressalva → resolvida) e §5.7 (ameaça de timeout afastada para
+  este log). +16 testes (subgraph_candidate_count + diagnósticos do runner);
+  suíte **506 passed**, ruff limpo. Branch `diag/subgraph-zeros-k20`.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `docs/dsweep-analysis-78` → fechar a issue #78.
+- Revisão humana e merge do PR `diag/subgraph-zeros-k20` → fechar a issue #93
+  (com comentário de fechamento: verdict do Passo 1 + H3 descartada).
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
@@ -61,6 +69,31 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — Issue #93 (D-08 / Fase 6): diagnóstico dos zeros de reid_sub (k=20, d∈{5,10})
+
+- **Concluído:** Sanitização diagnóstica dos zeros de
+  `reidentification_rate_subgraph`. **Passo 1** (sem reexecução): log do d-sweep
+  (48 runs) sem nenhum `verdict=ERROR` nem campo `error` → como o `timeout` era
+  120 s e qualquer estouro produziria `ERROR` no código vigente, **nenhuma
+  chamada VF2 atingiu o limite** → **H3 (timeout mascarado) descartada**; zeros
+  genuínos (H1/H2). **Passo 2:** `experiments/run.py` — laço do ataque por
+  subgrafo captura `TimeoutError` por nó (conta em `subgraph_timeout_count`,
+  trata o nó como não-reidentificado, eliminando `verdict=ERROR` espúrio e
+  alinhando ao comentário do YAML); novos campos `subgraph_timeout_count` e
+  `subgraph_candidate_counts {mean,std,max}` no JSONL; `subgraph_candidate_count`
+  adicionado a `src/attacks/subgraph.py` (e exportado), com `subgraph_attack`
+  reescrito como `count == 1` (comportamento idêntico). Schema DL-01 no docstring
+  atualizado. **DL-02** + nota de encerramento de **D-08** em `decision_log.md`.
+  **Passo 3:** opcional (Passo 1 conclusivo) — `he2009_facebook_dsweep_k20_diag.yml`
+  criado como artefato de reprodução, não executado (custo ≈3 h/run). **Passo 4:**
+  `results_dsweep.md` §5.5 (ressalva → resolvida) e §5.7 (ameaça de timeout
+  afastada para este log). +16 testes; suíte **506 passed**, ruff limpo. Branch
+  `diag/subgraph-zeros-k20`.
+- **Próximo:** Merge do PR `diag/subgraph-zeros-k20` → fechar #93 (comentário com
+  verdict do Passo 1). Fechamento manual da #74.
+- **Bloqueios:** PR `diag/subgraph-zeros-k20` aguarda revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — Issue #78 (D-08 / Fase 5): docs do d-sweep + ameaças à validade
 

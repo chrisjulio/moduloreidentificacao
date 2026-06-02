@@ -19,7 +19,11 @@ from unittest.mock import patch
 import networkx as nx
 import pytest
 
-from src.attacks.subgraph import _k_hop_induced_subgraph, subgraph_attack
+from src.attacks.subgraph import (
+    _k_hop_induced_subgraph,
+    subgraph_attack,
+    subgraph_candidate_count,
+)
 
 # ---------------------------------------------------------------------------
 # Helper: k-hop induced subgraph
@@ -259,3 +263,76 @@ class TestSubgraphAttackInvalidInputs:
         g = nx.path_graph(3)
         with pytest.raises(ValueError, match="positive integer"):
             subgraph_attack(g, g, target=0, hop=1.5)
+
+
+# ---------------------------------------------------------------------------
+# subgraph_candidate_count — diagnostic observable (issue #93)
+# ---------------------------------------------------------------------------
+
+
+class TestSubgraphCandidateCount:
+    """subgraph_candidate_count returns the raw #isomorphic candidates.
+
+    This is the observable that distinguishes a *zero* re-identification rate
+    as "no candidates" (H1/H2) vs "many candidates", which subgraph_attack's
+    bool collapses.
+    """
+
+    def test_unique_candidate_count_one(self) -> None:
+        """A uniquely identifiable target has exactly one candidate."""
+        g = nx.star_graph(4)
+        assert subgraph_candidate_count(g, g, target=0) == 1
+
+    def test_zero_candidates_when_absent_from_anon(self) -> None:
+        """Rich neighbourhood absent from G_anon → zero candidates (H1/H2)."""
+        g_orig = nx.star_graph(3)
+        g_anon = nx.Graph()
+        g_anon.add_nodes_from(g_orig.nodes())  # same nodes, no edges
+        assert subgraph_candidate_count(g_orig, g_anon, target=0) == 0
+
+    def test_multiple_candidates_in_symmetric_graph(self) -> None:
+        """path_graph(5): nodes 1 and 3 share node 1's hop-1 fingerprint.
+
+        The three interior nodes (1, 2, 3) all have a P3 hop-1 neighbourhood,
+        so node 1's fingerprint matches three candidates.
+        """
+        g = nx.path_graph(5)
+        assert subgraph_candidate_count(g, g, target=1) == 3
+
+    def test_all_candidates_in_regular_graph(self) -> None:
+        """cycle_graph(5): every node matches → count equals |V|."""
+        g = nx.cycle_graph(5)
+        assert subgraph_candidate_count(g, g, target=0) == 5
+
+    def test_attack_is_count_equals_one(self) -> None:
+        """subgraph_attack is exactly the predicate count == 1."""
+        for g, target in [
+            (nx.star_graph(4), 0),  # unique → 1
+            (nx.path_graph(5), 1),  # 3 candidates
+            (nx.cycle_graph(5), 0),  # 5 candidates
+        ]:
+            count = subgraph_candidate_count(g, g, target=target)
+            assert subgraph_attack(g, g, target=target) is (count == 1)
+
+    def test_invalid_target_raises(self) -> None:
+        """Same validation contract as subgraph_attack."""
+        g = nx.path_graph(3)
+        with pytest.raises(ValueError, match="not found in G_orig"):
+            subgraph_candidate_count(g, g, target=99)
+
+    def test_invalid_hop_raises(self) -> None:
+        g = nx.path_graph(3)
+        with pytest.raises(ValueError, match="positive integer"):
+            subgraph_candidate_count(g, g, target=0, hop=0)
+
+    def test_timeout_raises_timeout_error(self) -> None:
+        """A timed-out search raises TimeoutError (caller decides how to count)."""
+        g = nx.cycle_graph(5)
+        with (
+            patch(
+                "concurrent.futures.Future.result",
+                side_effect=concurrent.futures.TimeoutError,
+            ),
+            pytest.raises(TimeoutError, match="exceeded timeout"),
+        ):
+            subgraph_candidate_count(g, g, target=0, hop=1, timeout=0.001)

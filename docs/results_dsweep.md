@@ -166,16 +166,37 @@ monotônico por causa da aproximação de particionamento e dos combos degenerad
   true`) mas **sem garantia de k-anonimato**. Incluído deliberadamente para
   expor o comportamento do algoritmo em configuração extrema.
 
-### 5.5 Ressalva sobre `reid_sub = 0` em k alto
+### 5.5 Interpretação de `reid_sub = 0` em k alto (diagnóstico #93 — resolvido)
 
-`reid_sub = 0.000` exato ocorre em k=20/d∈{1,5} (todas as sementes). **Atenção
-na interpretação:** nós cujo ataque de subgrafo atinge o timeout de 120 s contam
-como *não reidentificados*. Em k alto o VF2 é caro e os timeouts são frequentes,
-de modo que parte desses zeros pode refletir custo computacional, não segurança
-real. O JSONL atual **não registra a contagem de timeouts por run**, então o
-cruzamento quantitativo não é possível a partir deste log — fica como limitação
-metodológica conhecida (candidata a um campo `subgraph_timeouts` em execução
-futura). Ver também [`docs/limitations.md`](limitations.md).
+`reid_sub = 0.000` exato ocorre em k=20/d∈{1,5} (todas as sementes); em
+k=20/d=10 é quase-zero (~0.006–0.008). A interpretação foi **ambígua a priori**:
+zero por privacidade real/degeneração estrutural (H1/H2) ou por timeout do VF2
+mascarado (H3, a descartar). A issue #93 (D-08 / Fase 6) resolveu a questão.
+
+**H3 (timeout mascarado) está descartada.** A inspeção do log (48 runs) mostra
+**nenhum `verdict=ERROR`** e nenhum campo `error` preenchido. No código que
+gerou este log, o ataque por subgrafo era chamado por nó **sem** tratar
+`TimeoutError` individualmente: um único nó que estourasse o `timeout` de 120 s
+propagaria a exceção até o bloco `except` do run, gravando `verdict=ERROR` — não
+`reid_sub = 0`. Como `ERROR` **não aparece em nenhum run**, conclui-se que
+**nenhuma chamada VF2 atingiu 120 s**. Os zeros são, portanto, **genuínos**:
+refletem H1/H2 — sob grupos de equivalência grandes (EGS ≈ k·d), a vizinhança
+original do alvo deixa de ter correspondência **única** em `G'` (zero ou
+múltiplos candidatos isomórficos). Note que `reid_deg > reid_sub` em k=20 é
+coerente: a anonimização destrói o *fingerprint* de vizinhança que o ataque por
+subgrafo exige, enquanto assinaturas de grau singulares sobrevivem (§5.2).
+
+**Instrumentação para execuções futuras (DL-02).** O runner foi estendido (#93)
+para gravar, por run, `subgraph_timeout_count` (nós cujo VF2 estoura o timeout —
+agora capturado por nó, contado e tratado como não-reidentificado, alinhando o
+código ao comentário do YAML) e `subgraph_candidate_counts` (`mean`/`std`/`max`
+de candidatos por nó). Esses campos tornam a distinção "zero por ausência de
+candidatos" vs. "zero por timeout" **diretamente observável**; o log atual,
+anterior à extensão, não os possui, mas a conclusão de H3 não depende deles. A
+reexecução opcional das 6 células está em
+`experiments/configs/he2009_facebook_dsweep_k20_diag.yml`. Ver
+[`docs/decision_log.md`](decision_log.md) (DL-02, nota de encerramento de D-08) e
+[`docs/limitations.md`](limitations.md).
 
 ### 5.6 Custo
 
@@ -210,12 +231,15 @@ ameaças abaixo.
   é degenerate (≈ 199/267 partições vazias). "Estrutura" agrupada por isomorfismo
   inclui, portanto, subgrafos desconexos — uma aproximação documentada, não a
   noção de vizinhança conexa do artigo.
-- **Custo de isomorfização em `d > 1` (timeouts VF2).** Conforme §5.5, `reid_sub`
-  conta nós com timeout de 120 s como *não reidentificados*. Como o custo do VF2
-  cresce com o EGS (≈ `k·d`), `d` alto agrava os timeouts e pode **inflar
-  artificialmente** a aparência de privacidade do ataque por subgrafo. O JSONL não
-  registra a contagem de timeouts, então o efeito não é quantificável a partir
-  deste log.
+- **Custo de isomorfização em `d > 1` (timeouts VF2) — ameaça afastada para este
+  log.** A preocupação era que nós com timeout de 120 s, contados como *não
+  reidentificados*, pudessem **inflar artificialmente** a privacidade aparente do
+  ataque por subgrafo (custo do VF2 cresce com o EGS ≈ `k·d`). O diagnóstico da
+  issue #93 (§5.5) **afasta essa ameaça neste log**: a ausência de `verdict=ERROR`
+  prova que nenhuma chamada VF2 atingiu o timeout, logo os zeros não são artefato
+  de custo. A ressalva permanece *prospectiva* para `d`/`k` ainda maiores ou
+  timeouts menores — daí a instrumentação `subgraph_timeout_count` /
+  `subgraph_candidate_counts` (DL-02) para quantificar o efeito caso ocorra.
 
 **Validade de construção (o experimento mede o que se propõe a medir?):**
 
@@ -238,7 +262,8 @@ ameaças abaixo.
 
 Referência cruzada das ameaças metodológicas transversais:
 [`docs/limitations.md`](limitations.md) (§1.3 atualizada para *parcialmente
-resolvida*) e [`docs/decision_log.md`](decision_log.md) (D-01, D-04, D-07, D-08, D-10).
+resolvida*) e [`docs/decision_log.md`](decision_log.md) (D-01, D-04, D-07, D-08,
+D-10, DL-02).
 
 ---
 

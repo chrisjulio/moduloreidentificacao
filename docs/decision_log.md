@@ -19,6 +19,7 @@
 | ID | Data | Tipo | Título resumido |
 |---|---|---|---|
 | [DL-01](#dl-01) | 2026-05-21 | Desvio de planejamento | Refinamento do critério de passagem do marco #16 |
+| [DL-02](#dl-02) | 2026-06-02 | Extensão de schema | Campos de diagnóstico do ataque por subgrafo (timeouts + candidatos) |
 | [D-01](#d-01) | 2026-05-17 *(nota G2: 2026-05-28)* | Implementação | FSM simplificado com `s_max` configurável; nota: comportamento quando d > s_max |
 | [D-02](#d-02) | 2026-05-17 | Implementação | `d = 10` como default; variável de configuração YAML |
 | [D-03](#d-03) | 2026-05-17 | Implementação | Matching Fase 1: grau primário + desempate lexicográfico |
@@ -111,6 +112,78 @@ Os relatórios de risco de reidentificação distinguem explicitamente:
 - `docs/algorithm_notes.md` §4 e §7 (D-06, D-07)
 - `docs/metrics_definitions.md` §k-anonymity-verifier
 - Plano operacional, Seções 4.3, 7 e 11
+
+---
+
+## DL-02 — Campos de diagnóstico do ataque por subgrafo (timeouts + candidatos)
+
+**Data:** 2026-06-02
+**Issue relacionada:** #93 (D-08 / Fase 6 — sanitização diagnóstica dos zeros de
+`reidentification_rate_subgraph` em k=20, d ∈ {5, 10})
+**Módulo afetado:** `experiments/run.py`, `src/attacks/subgraph.py`
+
+### Contexto
+
+O schema JSONL DL-01 (issue #22) registra `reidentification_rate_subgraph` como
+um único `float`. Um valor `0.0` é **interpretativamente ambíguo**: pode refletir
+ausência de candidatos isomórficos (privacidade real / degeneração estrutural —
+H1/H2), pluralidade de candidatos, ou — hipótese a descartar — timeouts do VF2
+mascarados (H3). O log do d-sweep (#88) não distinguia esses casos.
+
+Além disso, o runner anterior chamava `subgraph_attack(...)` por nó sem tratar
+`TimeoutError`: um único nó que estourasse o `timeout` propagava a exceção até o
+bloco `except Exception` do run inteiro, gravando `verdict=ERROR`. Isso
+**contradizia** o comentário do YAML do d-sweep (*"Timeouts NÃO são crash — são
+registrados e o nó conta como não reidentificado"*), que descrevia um
+comportamento ainda não implementado.
+
+### Passo 1 (diagnóstico, sem reexecução) — H3 descartada
+
+A inspeção do log existente (`he2009_facebook_dsweep.jsonl`, 48 runs) mostrou
+**nenhum** `verdict=ERROR` e **nenhum** campo `error` preenchido. Como o
+`timeout` era 120 s e qualquer timeout teria produzido `ERROR` no código
+anterior, a ausência de `ERROR` **prova** que nenhuma chamada VF2 atingiu 120 s.
+**H3 está descartada** e o diagnóstico do Passo 1 é conclusivo — a reexecução
+seletiva (Passo 3) torna-se opcional.
+
+### Decisão adotada — estender o schema e alinhar o tratamento de timeout
+
+1. **Novo observável `subgraph_candidate_count`** em `src/attacks/subgraph.py`:
+   retorna o número de nós de `G'` cuja vizinhança hop-1 é isomórfica à do alvo.
+   `subgraph_attack` passa a ser exatamente o predicado `count == 1` — sem
+   mudança de comportamento (API e exceções idênticas; testes preexistentes
+   verdes).
+2. **Tratamento de timeout por nó** no runner: o `TimeoutError` é capturado por
+   nó, contabilizado em `subgraph_timeout_count` e o nó conta como **não
+   reidentificado** (`count = 0`). Isso alinha o código ao comentário do YAML e
+   elimina o `verdict=ERROR` espúrio por um único nó lento.
+3. **Dois campos novos no JSONL** (presentes só quando o ataque por subgrafo
+   está habilitado):
+   - `subgraph_timeout_count: <int>` — nós cujo VF2 estourou o timeout.
+   - `subgraph_candidate_counts: {"mean": <float>, "std": <float>, "max": <int>}`
+     — distribuição de candidatos isomórficos por nó, antes de filtrar por
+     unicidade. Transforma "por que zero?" em dado observável: zero por ausência
+     de candidatos (`max` baixo) vs. zero por timeout (`count > 0`).
+
+### O que não muda
+
+- O comportamento do ataque (valor de `timeout`, estratégia VF2, `hop`) é
+  preservado — fora do escopo da issue #93.
+- Logs DL-01 anteriores permanecem válidos; os campos novos são aditivos e só
+  aparecem em execuções futuras com o ataque por subgrafo habilitado.
+- O critério de veredito (`verdict_from_result`) não muda — `FAILURE_LOW_COVERAGE`
+  em k=20, d ∈ {5, 10} continua decorrendo de `coverage_fraction < 0.9`, não de
+  exceção.
+
+### Referências cruzadas
+
+- DL-01 (schema JSONL base, issue #22)
+- D-08 (nota de encerramento do diagnóstico — abaixo), D-06, D-10
+- Issue #93 (esta decisão); issue #88 (log do d-sweep); issue #78 (análise)
+- `experiments/run.py` — laço do ataque por subgrafo (campos novos)
+- `src/attacks/subgraph.py` — `subgraph_candidate_count`
+- `experiments/configs/he2009_facebook_dsweep_k20_diag.yml` — reexecução opcional
+- `docs/results_dsweep.md` §5.5 (ressalva atualizada para resolvida)
 
 ---
 
@@ -560,13 +633,29 @@ fora do escopo do protótipo. Candidato a futura extensão do backend.
 - Registrar `partition_backend` no JSONL de log (#77) para rastreabilidade (já
   previsto em D-04).
 
+### Nota de encerramento do diagnóstico (issue #93, 2026-06-02)
+
+A issue #93 (D-08 / Fase 6) fechou a ambiguidade interpretativa dos zeros de
+`reidentification_rate_subgraph` em k=20, d ∈ {5, 10}. O Passo 1 (inspeção do
+log do d-sweep, sem reexecução) confirmou **ausência de `verdict=ERROR`** nos 48
+runs: como o `timeout` era 120 s e qualquer estouro teria gerado `ERROR` no
+código então vigente, **nenhuma chamada VF2 atingiu o limite** — a hipótese de
+timeout mascarado (H3) está **descartada**. Os zeros decorrem de privacidade
+real / degeneração estrutural (H1/H2): sob EGS grande (≈ k·d), a vizinhança
+original do alvo deixa de ter correspondência única em `G'` (zero ou múltiplos
+candidatos). O runner foi instrumentado (DL-02) com `subgraph_timeout_count` e
+`subgraph_candidate_counts` para tornar essa distinção observável em execuções
+futuras. Ver DL-02 e `docs/results_dsweep.md` §5.5.
+
 ### Referências cruzadas
 
 - D-04 (motor de particionamento — pymetis primário, KL fallback)
 - D-06 (grupos incompletos residuais)
 - D-07 (normalização de tamanho de LSs — Opção A)
+- DL-02 (campos de diagnóstico do ataque por subgrafo — encerramento via #93)
 - Issue #72 (issue-mãe: d-sweep tier desejável)
 - Issue #75 (Fase 2: endurecer núcleo em d>1)
+- Issue #93 (Fase 6: sanitização diagnóstica dos zeros — H3 descartada)
 - `src/anonymization/_partition_backend.py` — `_partition_pymetis`
 - `src/anonymization/he2009.py` — `_partition_neighborhoods`
 

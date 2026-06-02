@@ -1,0 +1,78 @@
+# ============================================================
+# Diagnóstico d-sweep: zeros de reidentification_rate_subgraph (issue #93)
+# Subconjunto das 6 células problemáticas: k=20 × d ∈ {5, 10} × 3 sementes.
+# ============================================================
+#
+# CONTEXTO
+# --------
+# O d-sweep completo (he2009_facebook_dsweep.yml, issue #88) produziu
+# reidentification_rate_subgraph ≈ 0 em k=20, d ∈ {5, 10}. A issue #93 investiga
+# se esse zero é (H1) privacidade real, (H2) degeneração estrutural documentada
+# (D-06/D-10) ou (H3) timeout do VF2 mascarado.
+#
+# RESULTADO DO PASSO 1 (inspeção do log existente, sem reexecução):
+# nenhum dos 48 runs tem verdict=ERROR nem campo error preenchido. Como o
+# timeout do subgrafo era 120 s e — no código anterior à issue #93 — um único
+# TimeoutError propagava até o bloco except do run, gerando verdict=ERROR, a
+# ausência de ERROR prova que NENHUMA chamada VF2 atingiu 120 s. Logo H3 está
+# DESCARTADA e o Passo 1 é CONCLUSIVO. Esta reexecução é, portanto, OPCIONAL.
+#
+# QUANDO USAR
+# -----------
+# O runner foi estendido (issue #93 / DL-02) para gravar, por run:
+#   - subgraph_timeout_count: nós cujo VF2 estourou o timeout (agora capturado
+#     por nó, contabilizado e tratado como não-reidentificado — não mais ERROR).
+#   - subgraph_candidate_counts: {mean, std, max} de candidatos isomórficos por nó.
+# Rode este config se quiser POPULAR esses campos para as 6 células e confirmar
+# quantitativamente que os zeros vêm de ausência de candidatos (mean/max baixos),
+# não de timeouts (count > 0). Custo: ~3 h por run (VF2 sob EGS grande) → caro.
+#
+# Uso:
+#   python -m experiments.run --config experiments/configs/he2009_facebook_dsweep_k20_diag.yml
+#
+# Saída:
+#   experiments/logs/he2009_facebook_dsweep_k20_diag/he2009_facebook_dsweep_k20_diag.jsonl
+#
+# Parâmetros idênticos ao d-sweep original (mesmo dataset, sigma, backend,
+# timeout) para que os campos novos sejam comparáveis célula a célula.
+# Referências: decision_log.md D-08, D-10, DL-02; docs/results_dsweep.md §5.5.
+
+experiment:
+  name: he2009_facebook_dsweep_k20_diag
+  description: >
+    Subconjunto diagnóstico do d-sweep (issue #93): k=20 × d ∈ {5, 10} × 3
+    sementes, com o runner estendido (subgraph_timeout_count,
+    subgraph_candidate_counts). Reexecução OPCIONAL — H3 já descartada pelo
+    Passo 1 (ausência de verdict=ERROR no log original).
+
+seeds: [42, 1337, 2718]
+
+dataset:
+  name: facebook_ego_nets
+  source: snap
+  data_path: data/raw/facebook/
+  preprocessing_mode: single_egonet
+  egonet_id: 3437
+  include_ego: false
+  component: lcc
+  min_nodes: 200
+
+anonymization:
+  algorithm: he_2009
+  k: [20]
+  d: [5, 10]
+  sigma: 0.5
+  allow_kl_fallback: true
+
+attacks:
+  degree:
+    enabled: true
+    tolerance: 0
+  subgraph:
+    enabled: true
+    hop: 1
+    timeout: 120        # idêntico ao d-sweep original (comparabilidade)
+
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/
