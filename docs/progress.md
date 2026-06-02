@@ -11,40 +11,35 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-05-31
+**Data da última atualização:** 2026-06-02
 
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- **Backend de particionamento (pymetis) — explicitação e cobertura.** A
-  auditoria #74 reportara pymetis ausente local e na CI; verificou-se que o
-  ambiente conda local (`moduloreidentificacao`, Py 3.12) já tem pymetis
-  **funcional** (suíte 439→443 passed, **0 skipped**). Três gaps tratados em
-  três PRs, **todos mergeados** em `main` (`3410e58`):
-  - **#84** (gap #2, `experiment/log-partition-backend`): runner deixava de
-    registrar o backend; agora grava `partition_backend` em cada entrada JSONL
-    + `partition_backends` no `summary.json` + aviso no relatório.
-    `_partition_neighborhoods` ganhou `return_meta`.
-  - **#85** (gap #1, `setup/ci-pymetis`): novo job `test-pymetis` no CI
-    (micromamba + `environment.yml`/conda-forge) roda a suíte com pymetis; os
-    4 testes antes pulados agora executam. Job verde (~1m). O job `lint-and-test`
-    (pip) segue exercitando o fallback KL — ambos os backends cobertos.
-  - **#86** (gap #3, `feat/backend-explicitness`): corrige erro factual do
-    README §13 (o `.venv` do §3.2 **não** inclui pymetis em nenhum SO); nota em
-    `limitations.md` §2.2; flag opt-in `anonymization.allow_kl_fallback`
-    (padrão `true`) + helper `pymetis_available()`; atualiza nota de CI em
-    `pipeline.md`; remove resíduo `.vscode/.gitkeep_remove`.
+- **d-sweep (#88) — execução concluída, 48/48.** O runner ganhou suporte a
+  `anonymization.d` como lista, varrendo o produto cartesiano `k × d × seed`
+  (uma entrada JSONL por combinação), mantendo compatibilidade com `d` escalar.
+  O experimento `he2009_facebook_dsweep` (k ∈ {2,5,10,20} × d ∈ {1,2,5,10} × 3
+  sementes) rodou as **48 execuções com backend pymetis em todas**, sem erros.
+  Resultado: **33 SUCCESS_PARTIAL / 15 FAILURE_LOW_COVERAGE** (baixa cobertura
+  esperada em k alto, déficit estrutural — D-06/D-08/D-10). Consolidação legível
+  do log em `docs/dsweep_previa_garantia_dados.md`. `summary.json` registra
+  `d_values` e o mapa completo de vereditos por `(k,d,seed)`.
 
 **Próximo passo planejado:**
+- **Ferramentas de visualização cientes de `d`** (`viz/dsweep-d-aware`): plots e
+  tabelas em `src/visualization/` ignoram a dimensão `d` (foram feitas para o
+  baseline). Issue a ser criada no GitHub; só então plots/tabelas e o relatório
+  final consolidado do d-sweep podem ser gerados.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
-- Confirmar D-08 e o tratamento de d=2 no d-sweep (#77).
 
 **Bloqueios ativos:**
 - Nenhum.
 
 **Decisões pendentes de validação humana:**
-- D-08 (conectividade de LSs): decisão Opção B registrada; confirmar se
-  o d-sweep (#77) deve de fato excluir d=2 ou apenas anotar como degenerate.
+- D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
+  d=2 (anotado como potencialmente degenerate, precedente D-10) em vez de excluir;
+  confirmar se essa escolha é a definitiva.
 
 ---
 
@@ -65,6 +60,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — d-sweep (#88): execução completa 48/48 + runner d-list
+
+- **Concluído:** O runner (`experiments/run.py`) passou a aceitar
+  `anonymization.d` como **lista** (além de escalar), varrendo o produto
+  cartesiano `k × d × seed` com uma entrada JSONL por combinação; `summary.json`
+  grava `d_values` e vereditos por `(k,d,seed)`. 4 testes novos em
+  `tests/experiments/test_runner.py` (produto cartesiano, presença de cada `d`,
+  registro no summary, compat. com `d` escalar). O experimento
+  `he2009_facebook_dsweep` rodou **48/48 com pymetis em todos os runs**, sem
+  erros (≈31 h de parede, dominadas pelo VF2 do ataque por subgrafo em k alto);
+  o processo sobreviveu a uma desconexão do terminal do VSCode (processo
+  independente, gravação JSONL incremental). Vereditos: 33 SUCCESS_PARTIAL /
+  15 FAILURE_LOW_COVERAGE. Consolidação legível em
+  `docs/dsweep_previa_garantia_dados.md` (nasceu como prévia de garantia de dados
+  a 43/48, atualizada para o estado final).
+- **Próximo:** criar issue `viz/dsweep-d-aware` (plots/tabelas ignoram `d`); só
+  então gerar artefatos finais e o relatório consolidado.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** D-08 — d=2 foi mantido (anotado degenerate, D-10) em vez
+  de excluído; confirmar se é a escolha definitiva.
 
 ### 2026-05-31 — pymetis: explicitação do backend + cobertura na CI (#84, #85, #86)
 

@@ -22,7 +22,9 @@ YAML schema
 -----------
 Required sections: ``experiment``, ``seeds``, ``dataset``, ``anonymization``.
 Optional sections: ``attacks``, ``runtime``.
-``anonymization.k`` accepts either a single integer or a list of integers.
+``anonymization.k`` and ``anonymization.d`` each accept either a single
+integer or a list of integers; the runner sweeps the full Cartesian product
+``k x d x seed`` (one JSONL entry per combination).
 ``anonymization.allow_kl_fallback`` (bool, default ``true``) — when ``false``,
 the run is aborted (verdict ``ERROR``) if the partition backend resolves to
 ``networkx-kl``, guaranteeing results come only from the pymetis primary
@@ -508,7 +510,12 @@ def main(config_path: Path) -> int:
         if isinstance(k_values_raw, (int, float))
         else [int(k) for k in k_values_raw]
     )
-    d = int(anon_cfg["d"])
+    d_values_raw = anon_cfg["d"]
+    d_values: list[int] = (
+        [int(d_values_raw)]
+        if isinstance(d_values_raw, (int, float))
+        else [int(d) for d in d_values_raw]
+    )
     sigma = float(anon_cfg.get("sigma", 0.5))
 
     # --- Partition backend policy (fail fast before the run loop) ---
@@ -533,7 +540,9 @@ def main(config_path: Path) -> int:
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / f"{exp_name}.jsonl"
 
-    logger.info("k values: %s, d=%d, sigma=%.2f, seeds=%s", k_values, d, sigma, seeds)
+    logger.info(
+        "k values: %s, d values: %s, sigma=%.2f, seeds=%s", k_values, d_values, sigma, seeds
+    )
     logger.info("Log file: %s", log_file)
 
     # --- Run pipeline ---
@@ -541,38 +550,39 @@ def main(config_path: Path) -> int:
     any_failure = False
 
     for k in k_values:
-        for seed in seeds:
-            logger.info("--- k=%d, seed=%d ---", k, seed)
-            result = run_one(
-                g_orig,
-                k=k,
-                d=d,
-                sigma=sigma,
-                seed=seed,
-                attacks_cfg=attacks_cfg,
-            )
-            result["experiment"] = exp_name
-            v = verdict_from_result(result)
-            result["verdict"] = v
+        for d in d_values:
+            for seed in seeds:
+                logger.info("--- k=%d, d=%d, seed=%d ---", k, d, seed)
+                result = run_one(
+                    g_orig,
+                    k=k,
+                    d=d,
+                    sigma=sigma,
+                    seed=seed,
+                    attacks_cfg=attacks_cfg,
+                )
+                result["experiment"] = exp_name
+                v = verdict_from_result(result)
+                result["verdict"] = v
 
-            if v not in {"SUCCESS_FULL", "SUCCESS_PARTIAL"}:
-                any_failure = True
-                logger.error("  FAILURE: k=%d, seed=%d → %s", k, seed, v)
-            else:
-                logger.info("  OK: k=%d, seed=%d → %s", k, seed, v)
+                if v not in {"SUCCESS_FULL", "SUCCESS_PARTIAL"}:
+                    any_failure = True
+                    logger.error("  FAILURE: k=%d, d=%d, seed=%d → %s", k, d, seed, v)
+                else:
+                    logger.info("  OK: k=%d, d=%d, seed=%d → %s", k, d, seed, v)
 
-            # Write to JSONL immediately — don't accumulate failures silently.
-            with log_file.open("a", encoding="utf-8") as fh:
-                fh.write(json.dumps(result, default=str) + "\n")
+                # Write to JSONL immediately — don't accumulate failures silently.
+                with log_file.open("a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(result, default=str) + "\n")
 
-            all_results.append(result)
+                all_results.append(result)
 
     # --- Summary ---
     summary = {
         "experiment": exp_name,
         "config": str(config_path),
         "k_values": k_values,
-        "d": d,
+        "d_values": d_values,
         "sigma": sigma,
         "seeds": seeds,
         "n_runs": len(all_results),
@@ -581,7 +591,8 @@ def main(config_path: Path) -> int:
             {r["partition_backend"] for r in all_results if "partition_backend" in r}
         ),
         "verdicts": {
-            f"k={r['k']}_seed={r['seed']}": r.get("verdict", "UNKNOWN") for r in all_results
+            f"k={r['k']}_d={r['d']}_seed={r['seed']}": r.get("verdict", "UNKNOWN")
+            for r in all_results
         },
         "timestamp": datetime.now(tz=UTC).isoformat(),
     }
@@ -592,7 +603,7 @@ def main(config_path: Path) -> int:
     print("\n" + "=" * 60)
     print(f"EXPERIMENT: {exp_name}")
     print("=" * 60)
-    print(f"k values: {k_values}  d={d}  sigma={sigma}")
+    print(f"k values: {k_values}  d values: {d_values}  sigma={sigma}")
     print(f"Seeds:    {seeds}")
     backends_used = summary["partition_backends"]
     print(f"Backend:  {', '.join(backends_used) if backends_used else 'N/A'}")
@@ -609,7 +620,7 @@ def main(config_path: Path) -> int:
         cov_str = f"{cov:.4f}" if isinstance(cov, float) else str(cov)
         rr_str = f"{rr:.4f}" if isinstance(rr, float) else str(rr)
         print(
-            f"  k={r['k']:>2}, seed={r['seed']:>6}: "
+            f"  k={r['k']:>2}, d={r['d']:>2}, seed={r['seed']:>6}: "
             f"{r.get('verdict', 'UNKNOWN'):<25} "
             f"coverage={cov_str:<8} rr={rr_str}"
         )

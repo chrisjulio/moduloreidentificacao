@@ -1,0 +1,102 @@
+# ============================================================
+# Experimento d-sweep: He et al. (2009) + Facebook Ego-Net 3437
+# Issues #88 / #77 / #72 (tier DESEJÁVEL) — varredura d > 1
+# Escopo: d ∈ {1, 2, 5, 10} × k ∈ {2, 5, 10, 20} × 3 sementes = 48 execuções
+# ============================================================
+#
+# Uso:
+#   python -m experiments.run --config experiments/configs/he2009_facebook_dsweep.yml
+#
+# Saída:
+#   experiments/logs/he2009_facebook_dsweep/he2009_facebook_dsweep.jsonl
+#   experiments/logs/he2009_facebook_dsweep/summary.json
+#
+# ------------------------------------------------------------
+# PRÉ-CONDIÇÃO — backend de particionamento (D-04)
+# ------------------------------------------------------------
+# partition_backend: auto → usa pymetis se disponível; caso contrário cai no
+# fallback networkx-kl (aproximação KL, com degradação de sizing para ck>2,
+# docs/algorithm_notes.md §7). A análise de degeneração de d=2/d=5 (D-08) foi
+# feita COM pymetis; reproduza este experimento no ambiente conda
+# (environment.yml / scripts/setup_conda_windows.ps1) para obter o backend fiel.
+# O campo partition_backend é gravado em cada linha do JSONL para rastreabilidade.
+#
+# ------------------------------------------------------------
+# AVISOS DE COMBOS DEGENERADOS
+# ------------------------------------------------------------
+# WARNING: d=2 degenerate for this graph with pymetis — a ego-rede 3437 colapsa
+#   em ~199/267 partições vazias e nós concentrados em grupos 7-8 (D-08, G3).
+#   d=1 é a âncora de comparação com o baseline; d ∈ {5, 10} são os valores
+#   primários. d=2 é mantido (não excluído) e anotado como potencialmente
+#   degenerate — precedente D-10: documentar em vez de ocultar.
+#
+# WARNING: d=10, k=20 degenerate for this graph — c_k < k; todos os nós tendem a
+#   ser violadores estruturais (D-06). Resultados são metodologicamente válidos
+#   (deficit_fully_structural=True) mas não oferecem garantia de k-anonimato.
+#   Incluído deliberadamente (D-10): expõe o comportamento do algoritmo em
+#   configurações extremas — dado relevante para a tese.
+#
+# Referências: decision_log.md D-04, D-06, D-08, D-10.
+
+experiment:
+  name: he2009_facebook_dsweep
+  description: >
+    Varredura d-sweep: anonimização He et al. (2009) + ataque por grau +
+    ataque por subgrafo + métricas (reidentification_rate,
+    equivalence_group_size, ks_test_degree, clustering_variation), sobre a
+    ego-rede 3437 do Facebook Ego-Nets (n_lcc=532, m_lcc=4812), varrendo
+    d ∈ {1, 2, 5, 10} e k ∈ {2, 5, 10, 20} com 3 sementes. d=1 âncora de
+    comparação com o baseline; d=2 anotado como degenerate (D-08); combo
+    d=10/k=20 incluído como degenerate esperado (D-10).
+
+# ------------------------------------------------------------
+# Sementes — mínimo 3 por .claude/rules/seeds.md
+# Nunca hardcoded no código de produção; sempre lidas deste YAML.
+# ------------------------------------------------------------
+seeds: [42, 1337, 2718]
+
+# ------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------
+dataset:
+  name: facebook_ego_nets
+  source: snap
+  data_path: data/raw/facebook/
+  preprocessing_mode: single_egonet
+  egonet_id: 3437       # n_lcc=532, m_lcc=4812, density=0.034068 (issue #40)
+  include_ego: false    # nó ego excluído (decisão Seção 3.1)
+  component: lcc        # reter maior componente conexo (decisão Seção 3.2)
+  min_nodes: 200        # 10 * k_max = 10 * 20 = 200
+
+# ------------------------------------------------------------
+# Anonimização
+# k e d: listas de inteiros — o runner varre o produto cartesiano k × d × seed.
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k: [2, 5, 10, 20]    # escopo Mínimo completo
+  d: [1, 2, 5, 10]     # d=1 âncora; d=2 degenerate (D-08); d∈{5,10} primários
+  sigma: 0.5           # suporte mínimo do FSM simplificado (D-01)
+  allow_kl_fallback: true   # aceita fallback KL se pymetis ausente (D-04)
+
+# ------------------------------------------------------------
+# Ataques
+# Ambos habilitados. timeout do subgrafo elevado para 120s (de 60s no baseline):
+# G' tende a ser mais denso com d>1, encarecendo as checagens VF2.
+# Timeouts NÃO são crash — são registrados e o nó conta como não reidentificado.
+# ------------------------------------------------------------
+attacks:
+  degree:
+    enabled: true
+    tolerance: 0        # correspondência exata de grau
+  subgraph:
+    enabled: true
+    hop: 1
+    timeout: 120        # segundos por nó alvo; elevado para G' mais denso (d>1)
+
+# ------------------------------------------------------------
+# Execução
+# ------------------------------------------------------------
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/

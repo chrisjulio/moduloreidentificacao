@@ -565,6 +565,119 @@ class TestMainJsonlOutput:
 
 
 # ---------------------------------------------------------------------------
+# main — d-sweep (anonymization.d as a list)
+# ---------------------------------------------------------------------------
+
+
+class TestMainDSweep:
+    """main() must sweep a list of d values (issue #88 / #77).
+
+    The runner historically accepted only a scalar ``anonymization.d``. The
+    d-sweep requires iterating over the full ``k x d x seed`` product, one
+    JSONL entry per combination.
+    """
+
+    @pytest.fixture
+    def dsweep_config(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+        """Config with d as a list; load_dataset monkeypatched to a small graph."""
+        g = _small_graph()
+        monkeypatch.setattr("experiments.run.load_dataset", lambda _cfg: g)
+
+        cfg_text = textwrap.dedent("""
+            experiment:
+              name: test_dsweep_output
+
+            seeds: [0, 1]
+
+            dataset:
+              name: facebook_ego_nets
+              data_path: data/raw/facebook/
+              egonet_id: 3437
+
+            anonymization:
+              algorithm: he_2009
+              k: 2
+              d: [2, 5]
+              sigma: 0.5
+
+            attacks:
+              degree:
+                enabled: true
+                tolerance: 0
+
+            runtime:
+              log_level: WARNING
+              log_dir: "{log_dir}"
+        """).format(log_dir=str(tmp_path).replace("\\", "/"))
+
+        cfg_file = tmp_path / "test_dsweep_output.yml"
+        cfg_file.write_text(cfg_text, encoding="utf-8")
+        return cfg_file
+
+    def test_entry_count_is_cartesian_product(self, dsweep_config: Path, tmp_path: Path) -> None:
+        """k=[2] x d=[2,5] x seeds=[0,1] -> 4 JSONL entries."""
+        main(dsweep_config)
+        log_file = tmp_path / "test_dsweep_output" / "test_dsweep_output.jsonl"
+        lines = [line for line in log_file.read_text(encoding="utf-8").splitlines() if line.strip()]
+        assert len(lines) == 4
+
+    def test_each_d_value_present(self, dsweep_config: Path, tmp_path: Path) -> None:
+        """Both d values must appear in the logged entries."""
+        main(dsweep_config)
+        log_file = tmp_path / "test_dsweep_output" / "test_dsweep_output.jsonl"
+        d_seen = {
+            json.loads(line)["d"]
+            for line in log_file.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        }
+        assert d_seen == {2, 5}
+
+    def test_summary_records_d_values(self, dsweep_config: Path, tmp_path: Path) -> None:
+        """summary.json must record d_values as the full list."""
+        main(dsweep_config)
+        summary_file = tmp_path / "test_dsweep_output" / "summary.json"
+        summary = json.loads(summary_file.read_text(encoding="utf-8"))
+        assert summary["d_values"] == [2, 5]
+        assert summary["n_runs"] == 4
+
+    def test_scalar_d_still_supported(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A scalar anonymization.d must still work (backward compatibility)."""
+        g = _small_graph()
+        monkeypatch.setattr("experiments.run.load_dataset", lambda _cfg: g)
+
+        cfg_text = textwrap.dedent("""
+            experiment:
+              name: test_scalar_d
+
+            seeds: [0]
+
+            dataset:
+              name: facebook_ego_nets
+              data_path: data/raw/facebook/
+              egonet_id: 3437
+
+            anonymization:
+              k: 2
+              d: 2
+              sigma: 0.5
+
+            runtime:
+              log_level: WARNING
+              log_dir: "{log_dir}"
+        """).format(log_dir=str(tmp_path).replace("\\", "/"))
+        cfg_file = tmp_path / "test_scalar_d.yml"
+        cfg_file.write_text(cfg_text, encoding="utf-8")
+
+        main(cfg_file)
+        summary_file = tmp_path / "test_scalar_d" / "summary.json"
+        summary = json.loads(summary_file.read_text(encoding="utf-8"))
+        assert summary["d_values"] == [2]
+        assert summary["n_runs"] == 1
+
+
+# ---------------------------------------------------------------------------
 # CLI argument parsing
 # ---------------------------------------------------------------------------
 
