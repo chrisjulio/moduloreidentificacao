@@ -611,7 +611,7 @@ class TestMainJsonlOutput:
         # Monkeypatch run_one to always return an error result.
         import experiments.run as runner_mod
 
-        def _always_error(g, *, k, d, sigma, seed, attacks_cfg):
+        def _always_error(g, *, k, d, sigma, seed, attacks_cfg, fsm_max_size=4):
             return {
                 "k": k,
                 "d": d,

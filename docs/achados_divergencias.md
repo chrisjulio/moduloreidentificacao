@@ -129,6 +129,12 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   como inócuo no caso testado (`cycle_graph(20)`, d=5 → mesmo agrupamento com
   `s_max∈{4,5}`), pois a corretude do isomorfismo é garantida por
   `_modify_structure`, não pelo FSM.
+- **Atualização (B5 / #104).** O `s_max=4` **deixou de ser hardcoded**:
+  `anonymize()` e `_group_isomorphic()` passaram a aceitar `fsm_max_size`
+  (default 4) e o runner lê `anonymization.s_max` (alias `fsm_max_size`) do
+  YAML, propaga-o e grava o valor efetivo no JSONL. A descrição "Executado"
+  acima reflete o estado **anterior** a #104; o achado permanece fiel como
+  registro histórico. Ver B5.
 - **Status.** ✅ Bem documentado (D-01, nota G2, limitations §2.1).
 
 ### A3 — Premissa `|Vᵢ| = d` estrita (Opção A)
@@ -303,9 +309,16 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 - **Impacto.** A documentação conceitual está à frente da interface pública.
   `s_max` e `isomorphism_mode` documentados como parâmetros "configuráveis" são,
   na prática, constantes — afirmar configurabilidade é impreciso.
-- **Status.** 🔧 Defasagem a corrigir na etapa 2: `algorithm_notes.md` §5.1
-  deveria marcar `s_max` e `isomorphism_mode` como "fixos no código (não
-  expostos)", não como chaves YAML planejadas/ativas.
+- **Atualização (#104, parte `s_max`).** Em vez de marcar `s_max` como "fixo
+  no código", optou-se por **expor a chave de verdade**: `anonymize()`/
+  `_group_isomorphic()` recebem `fsm_max_size` e o runner lê
+  `anonymization.s_max` (alias `fsm_max_size`) do YAML, propaga-o e grava o
+  valor efetivo no JSONL. `algorithm_notes.md` §5.1/§5.2 atualizadas. Restam,
+  sob B5: expor `d`/`sigma`/`s_max` no `config_example.yml` (S8-3 / #106) e
+  `isomorphism_mode` (B6 / S8-2 / #105).
+- **Status.** 🔧 Defasagem em correção: parte `s_max` resolvida na raiz por
+  #104 (chave YAML lida, não mais "fixo no código"); restam `config_example.yml`
+  (#106) e `isomorphism_mode` (#105).
 
 ### B6 — Variante de isomorfização: implementada, mas hardcoded e não exposta
 
