@@ -52,6 +52,18 @@ mecanismo de privacidade do framework integrado da tese. A unidade de progresso
 | Anonimização aspiracional | [Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004) | Inclui atributos e t-closeness; fora do escopo do baseline. |
 | Ataques | Grau → Subgrafos → Entropia | Ordem de complexidade crescente; os dois primeiros são o compromisso mínimo. |
 
+<details>
+<summary>Legenda das colunas</summary>
+
+| Coluna | Significado |
+|---|---|
+| `Eixo` | Dimensão do escopo sendo definida (ex.: dataset, algoritmo de anonimização, tipo de ataque). |
+| `Decisão` | Escolha adotada para esse eixo no escopo corrente do módulo. |
+| `Justificativa breve` | Razão objetiva da escolha, com referência bibliográfica quando aplicável. |
+
+Definições completas dos parâmetros em [`docs/data_dictionary.md`](docs/data_dictionary.md).
+</details>
+
 ### Parâmetro principal
 
 `k ∈ {2, 5, 10, 20}` — da anonimização fraca (k=2) à forte (k=20).
@@ -84,6 +96,17 @@ O resumo operacional está abaixo.
 | Python | 3.11 ou 3.12 (`requires-python = ">=3.11"`; CI testa 3.11 e 3.12) |
 | Git | qualquer versão recente |
 | Acesso à internet | necessário na etapa de download do dataset (SNAP) |
+
+<details>
+<summary>Legenda das colunas</summary>
+
+| Coluna | Significado |
+|---|---|
+| `Componente` | Nome do software ou recurso necessário para reprodução do experimento. |
+| `Requisito` | Versão mínima aceita ou condição de disponibilidade exigida para execução. |
+
+Definições completas dos parâmetros de configuração em [`docs/data_dictionary.md`](docs/data_dictionary.md) §1.
+</details>
 
 O backend de particionamento `pymetis` é **opcional**. Quando ausente, o algoritmo
 recai automaticamente para o backend Kernighan-Lin (decisão **D-04** — ver
@@ -169,6 +192,17 @@ Ver [`docs/reproducibility.md`](docs/reproducibility.md) §8.
 | S3: Ataques + métricas + experimento baseline | 29/05–05/06 | ✅ Concluída (adiantada para 22–23/05) |
 | S4: Gráficos, tabelas e documentação técnica | 05–12/06 | ✅ Concluída (adiantada para 25/05) |
 | S5: Polimento, reprodutibilidade e entrega | 12–14/06 | ✅ Concluída (em 26/05) |
+
+<details>
+<summary>Legenda das colunas</summary>
+
+| Coluna | Significado |
+|---|---|
+| `Fase` | Sprint de desenvolvimento, identificada por código (`S1`–`S5`) e descrição funcional do escopo da etapa. |
+| `Período planejado` | Intervalo de datas originalmente previsto no planejamento inicial. |
+| `Status` | Estado de conclusão: ✅ Concluída (com indicação de adiantamento quando aplicável). A data efetiva consta do [`docs/progress.md`](docs/progress.md). |
+
+</details>
 
 **Marco intermediário não-negociável cumprido:** 21/05/2026 (antecipado em 8 dias).
 k-anonimato empiricamente atingido em todas as configurações do Mínimo
@@ -281,6 +315,24 @@ Escopo Desejável (Email-Enron, ataque por entropia) e Aspiracional
 | 10 | SUCCESS_PARTIAL | 0.9962 | 0.023 | 0.140 | 0.236 | 0.158 |
 | 20 | SUCCESS_PARTIAL | 0.9774 | 0.099 | 0.000 | 0.649 | 0.090 |
 
+<details>
+<summary>Legenda das colunas</summary>
+
+> `rr_grau` e `rr_subgrafo` são taxas de acerto contra rótulos internos de nós no experimento fechado — não identificação de pessoas reais.
+
+| Coluna | Significado |
+|---|---|
+| `k` | Parâmetro de k-anonimato configurado na anonimização He et al. (2009). Define o tamanho mínimo dos grupos de equivalência estrutural. Valores testados: `{2, 5, 10, 20}` — do mais fraco ao mais forte. |
+| `Veredito` | Resultado da auditoria do verificador independente (`validation.py`). `SUCCESS_FULL` = cobertura total (todos os nós em grupos ≥ k). `SUCCESS_PARTIAL` = cobertura ≥ 0.9 com nós residuais atribuíveis ao grupo incompleto estrutural (D-06). |
+| `coverage_fraction` | Fração dos nós do grafo anonimizado `G'` em grupos de equivalência com tamanho ≥ k. `1.0` = cobertura total; valores < `1.0` indicam nós residuais do grupo incompleto final (D-06 — aceitável). |
+| `rr_grau` | Taxa de reidentificação por grau: `N_correto / N_total` usando apenas a assinatura de grau do nó (`tolerance=0`). Modelo adversarial mais fraco — linha de base. |
+| `rr_subgrafo` | Taxa de reidentificação por subgrafo: `N_correto / N_total` por isomorfismo de vizinhança 1-hop (VF2, `timeout=60 s`). Modelo mais próximo do adversarial de He et al. Cota teórica: `≤ 1/k` sob k-anonimato pleno. |
+| `KS-D` | Estatística D do KS-test entre distribuições de grau de `G` e `G'`. `0.0` = idênticas (utilidade máxima); `1.0` = completamente distintas. |
+| `clustering_var` | Variação relativa do clustering médio: `|CC(G') − CC(G)| / CC(G)`. `0.0` = clustering totalmente preservado. |
+
+Definições operacionais formais em [`docs/metrics_definitions.md`](docs/metrics_definitions.md) e [`docs/data_dictionary.md`](docs/data_dictionary.md) §2–3.
+</details>
+
 Análise completa e tabela bruta em [`docs/results_baseline.md`](docs/results_baseline.md).
 
 ### 5.2 d-sweep — `d ∈ {1, 2, 5, 10}` (48 runs, backend pymetis)
@@ -299,6 +351,26 @@ excluídos.
 | 5 | 0.949 | 0.056 ± 0.005 | 0.012 ± 0.004 | 0.229 ± 0.028 | 0.210 ± 0.020 | SUCCESS_PARTIAL |
 | 10 | 0.846 | 0.015 ± 0.015 | 0.219 ± 0.116 | 0.745 ± 0.029 | 0.043 ± 0.027 | ⚠️ FAILURE_LOW_COVERAGE |
 | 20 | 0.752 | 0.000 ± 0.000 | 0.055 ± 0.000 | 0.927 ± 0.000 | 0.403 ± 0.007 | ⚠️ FAILURE_LOW_COVERAGE |
+
+<details>
+<summary>Legenda das colunas</summary>
+
+> Colunas com formato `média ± dp` reportam média e desvio-padrão sobre as 3 sementes (42, 1337, 2718). `coverage_fraction` não tem desvio-padrão — calculada sobre a estrutura do grafo, não sensível a semente.
+>
+> `rr_grau` e `rr_subgrafo` são taxas de acerto contra rótulos internos de nós no experimento fechado — não identificação de pessoas reais.
+
+| Coluna | Significado |
+|---|---|
+| `k` | Parâmetro de k-anonimato (idêntico à tabela baseline). |
+| `coverage_fraction` | Fração de nós cobertos por grupos de equivalência com tamanho ≥ k (idêntico à tabela baseline, sem variação por semente). |
+| `rr_subgrafo` | Taxa de reidentificação por subgrafo — `média ± dp` sobre 3 sementes. `timeout=120 s/nó` (elevado em relação ao baseline para acomodar grafos mais densos com `d > 1`). |
+| `rr_grau` | Taxa de reidentificação por grau — `média ± dp` sobre 3 sementes. |
+| `KS-D` | Estatística KS — `média ± dp` sobre 3 sementes. |
+| `clustering_var` | Variação do clustering — `média ± dp` sobre 3 sementes. |
+| `veredito` | `SUCCESS_PARTIAL` = k-anonimato satisfeito com nós residuais aceitáveis. `⚠️ FAILURE_LOW_COVERAGE` = `coverage_fraction < 0.9` — combinação k×d excessivamente restritiva para esta ego-rede. **Este veredito não aparece no baseline `d=1`** — é específico de configurações com `d > 1`. |
+
+Definições operacionais formais em [`docs/metrics_definitions.md`](docs/metrics_definitions.md) e [`docs/data_dictionary.md`](docs/data_dictionary.md) §2–5.
+</details>
 
 **Achados principais:**
 
@@ -484,6 +556,18 @@ tier. A decisão sobre sequenciamento está em discussão na
 | Issue | Título | Natureza |
 |---|---|---|
 | [#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99) | Encaminhamentos pós-D-08 — próximos passos do módulo | Planejamento |
+
+<details>
+<summary>Legenda das colunas (válida para as três subtabelas abaixo)</summary>
+
+| Coluna | Significado |
+|---|---|
+| `Issue` | Link para a issue correspondente no GitHub com seu número identificador. |
+| `Título` | Descrição curta da tarefa ou atividade planejada. |
+| `Natureza` *(encaminhamentos imediatos)* | Categoria da issue: `Planejamento`, `Técnica`, etc. |
+| `Dependência` *(S6 e Aspiracional)* | Pré-requisito técnico que precisa preceder esta issue; `Nenhuma` indica que pode ser iniciada de forma independente. |
+
+</details>
 
 Pendências específicas identificadas no ciclo D-08:
 - Fechar o milestone S7 após conferir que todas as issues estão encerradas.
