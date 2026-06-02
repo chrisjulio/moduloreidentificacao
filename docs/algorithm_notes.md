@@ -360,8 +360,10 @@ confirmam essa correlação para os datasets testados (CompGeo e GBA), sem
 garantia teórica extensível a outros grafos.
 
 A escolha entre as duas variantes é **parâmetro de execução**, não
-resolvido automaticamente pelo algoritmo. Mapeamento para a configuração
-YAML em Seção 5.
+resolvido automaticamente pelo algoritmo. Desde B6 (#105) é uma chave YAML
+ativa — `anonymization.isomorphism_mode` (`"add_or_delete"` | `"add_only"`;
+default `"add_or_delete"`) — lida pelo runner e propagada a
+`_modify_structure(add_only=...)`. Mapeamento completo na Seção 5.1.
 
 #### 3.2.2 Fase de reconexão (Seção 3.3)
 
@@ -453,9 +455,13 @@ residual.
 
 - A configuração YAML deve expor a variante de isomorfização como parâmetro
   explícito (`anonymization.isomorphism_mode`), não decisão hardcoded.
+  **Implementado em B6 (#105):** o runner lê `anonymization.isomorphism_mode`
+  (`"add_or_delete"` | `"add_only"`; default `"add_or_delete"`) e a propaga a
+  `anonymize()` → `_modify_structure(add_only=...)`.
 - A variante usada deve ser **registrada no log estruturado** da execução,
   junto com seed e parâmetros, para que comparações entre execuções sejam
-  interpretáveis.
+  interpretáveis. **Implementado em B6 (#105):** o valor efetivo de
+  `isomorphism_mode` é gravado em cada entrada JSONL e no `summary.json`.
 - O log estruturado deve registrar também o número de arestas modificadas
   **por fase** (Fase 2 intra-grupo e reconexão) separadamente, para
   permitir que o módulo de avaliação de risco identifique qual fonte de
@@ -658,7 +664,7 @@ mapeamento operacional completo no protótipo.
 | `d` | tamanho pretendido de cada Local Structure / partição | *(não exposto em `config_example.yml` atual; previsto como `anonymization.d`)* | `10` como default conceitual (D-02); baseline de validação executado com `d=1` |
 | `σ` | suporte mínimo para o FSM | *(não exposto no exemplo atual; presente nos YAMLs experimentais de runs como `sigma`)* | `0.5` na varredura de k (Seção 9) |
 | `s_max` | tamanho máximo de subgrafo no FSM simplificado | **`anonymization.s_max`** (alias `anonymization.fsm_max_size`) — **lida do YAML** pelo runner e propagada a `anonymize()`/`_group_isomorphic()` (B5, #104) | `4` (default) — ver D-01; valor efetivo gravado no JSONL |
-| Variante de isomorfização | política de modificação intra-grupo (Phase 2) | *(não exposto em `config_example.yml` atual; previsto como `anonymization.isomorphism_mode`)* | `"add_or_delete"` (default planejado); alternativa `"add_only"` |
+| Variante de isomorfização | política de modificação intra-grupo (Phase 2) | **`anonymization.isomorphism_mode`** — **lida do YAML** pelo runner e propagada a `anonymize()` → `_modify_structure(add_only=...)` (B6, #105) | `"add_or_delete"` (default); alternativa `"add_only"`; valor efetivo gravado no JSONL |
 | Motor de partição | backend da Etapa 1 | *(não exposto em `config_example.yml` atual; previsto como `anonymization.partition_backend`)* | `"auto"` (default planejado) → pymetis se disponível, KL fallback |
 | Verificação empírica do k-anonimato | auditoria pós-anonimização | `anonymization.validate_k_anonymity` | `true` no exemplo atual |
 | Sementes aleatórias | controle de reprodutibilidade | `seeds` | `[42, 1337, 2718]` |
@@ -670,6 +676,10 @@ O `config_example.yml` atualmente versionado expõe `k_values` e
 `partition_backend` e `isomorphism_mode` como chaves estáveis de
 configuração. Isso significa que a documentação conceitual do algoritmo
 está **mais adiantada** do que a interface pública do YAML.
+
+(`s_max` e `isomorphism_mode` já são **lidos do YAML** pelo runner desde
+B5/#104 e B6/#105, respectivamente; o pendente é apenas estabilizá-los no
+`config_example.yml` de referência — S8-3 / #106.)
 
 Esta divergência é aceitável na fronteira entre #26-A e #26-B: a presente
 issue documenta o escopo conceitual e a nomenclatura correta; a issue #26-B
@@ -683,6 +693,15 @@ expostos ao usuário final.
 > propaga a `anonymize()` → `_group_isomorphic()` e grava o valor efetivo no
 > JSONL de saída. A exposição da chave no `config_example.yml` de referência
 > é tratada separadamente em S8-3 (#106).
+
+> **Atualização (B6, #105):** a variante de isomorfização deixou de ser uma
+> constante `add_only=False` hardcoded. O runner (`experiments/run.py`)
+> agora **lê** a chave `anonymization.isomorphism_mode` (valores
+> `"add_or_delete"` | `"add_only"`; default `"add_or_delete"`), valida o
+> valor antes do laço de execução, a propaga a `anonymize()` (que a converte
+> em `add_only`) e ao caminho inline (`_modify_structure(add_only=...)`), e
+> grava o valor efetivo no JSONL e no `summary.json`. A exposição da chave no
+> `config_example.yml` de referência é tratada em S8-3 (#106).
 
 ### 5.3 Parâmetros efetivamente confirmados no baseline
 
@@ -701,12 +720,12 @@ deve ser lido assim:
 1. **`k` e validação** já estão representados no YAML público;
 2. **`d` e `sigma`** já aparecem nos YAMLs experimentais usados nos runs,
    ainda que não estejam estabilizados no `config_example.yml` de referência;
-3. **`s_max`** é **lido do YAML** (`anonymization.s_max`, alias
-   `fsm_max_size`) pelo runner desde B5 (#104) e gravado no JSONL; falta
-   apenas expô-lo no `config_example.yml` de referência (S8-3 / #106).
-   **`partition_backend` e `isomorphism_mode`** estão definidos
-   conceitualmente e nas decisões do documento; `isomorphism_mode` é tratado
-   em S8-2 (#105).
+3. **`s_max`** (`anonymization.s_max`, alias `fsm_max_size`, B5/#104) e
+   **`isomorphism_mode`** (`anonymization.isomorphism_mode`, B6/#105) são
+   **lidos do YAML** pelo runner e gravados no JSONL; falta apenas expô-los
+   no `config_example.yml` de referência (S8-3 / #106). **`partition_backend`**
+   permanece definido conceitualmente e nas decisões do documento, ainda não
+   exposto como chave YAML.
 
 ### 5.4 Requisitos de documentação para #26-B
 

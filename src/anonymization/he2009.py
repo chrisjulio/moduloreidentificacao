@@ -23,6 +23,11 @@ import numpy as np
 
 from src.anonymization._partition_backend import partition_graph
 
+# Accepted values for ``anonymize(isomorphism_mode=...)`` (B6, issue #105).
+# ``add_or_delete`` is the historical default (Edge Adding/Deleting);
+# ``add_only`` restricts Phase 2 to edge additions (Edge Adding).
+_ISOMORPHISM_MODES = frozenset({"add_or_delete", "add_only"})
+
 # ---------------------------------------------------------------------------
 # Private helpers — Simplified FSM (D-01)
 # ---------------------------------------------------------------------------
@@ -230,7 +235,14 @@ def _group_within_bucket(
 # ---------------------------------------------------------------------------
 
 
-def anonymize(g: nx.Graph, k: int, d: int, seed: int, fsm_max_size: int = 4) -> nx.Graph:
+def anonymize(
+    g: nx.Graph,
+    k: int,
+    d: int,
+    seed: int,
+    fsm_max_size: int = 4,
+    isomorphism_mode: str = "add_or_delete",
+) -> nx.Graph:
     """Ponto de entrada principal do algoritmo de anonimizacao estrutural.
 
     Executa o pipeline completo de structure-aware kd-anonymity:
@@ -260,6 +272,22 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int, fsm_max_size: int = 4) -> 
         simplificado no Passo 2 (D-01). Lido da chave YAML
         ``anonymization.s_max`` (alias ``fsm_max_size``) pelo runner de
         experimentos; default 4. Ver docs/algorithm_notes.md §5.1 (B5).
+    isomorphism_mode : str
+        Variante de isomorfizacao usada no Passo 3 (Fase 2). Lido da chave
+        YAML ``anonymization.isomorphism_mode`` pelo runner de experimentos
+        (B6, issue #105); valores aceitos:
+
+        * ``"add_or_delete"`` (default): Edge Adding/Deleting -- permite
+          adicionar e remover arestas, minimizando a perturbacao media.
+        * ``"add_only"``: Edge Adding -- apenas adiciona arestas (nunca
+          remove), preservando todas as arestas originais ao custo de maior
+          densificacao.
+
+        Convertido internamente para ``add_only = (isomorphism_mode ==
+        "add_only")`` e repassado a ``_modify_structure``. O default
+        ``add_or_delete`` preserva o comportamento historico. Ver
+        docs/algorithm_notes.md §5.1 (B6). Levanta ``ValueError`` para
+        qualquer outro valor.
 
     Retorna
     -------
@@ -283,16 +311,27 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int, fsm_max_size: int = 4) -> 
     * ``sigma=0.5``: suporte minimo de 50 % para o FSM simplificado
       (D-01). Valor conservador que garante padroes estruturalmente
       representativos sem restringir demais o agrupamento.
-    * ``add_only=False``: variante Edge Adding/Deleting para menor
-      perturbacao media (``anonymization.isomorphism_mode="add_or_delete"``
-      na Tabela de parametros, Secao 5 de docs/algorithm_notes.md).
     * ``backend="auto"``: pymetis quando disponivel, fallback KL (D-04).
+
+    A variante de isomorfizacao (``add_only`` vs ``add_or_delete``) deixou
+    de ser uma constante hardcoded e passou a ser controlada pelo parametro
+    ``isomorphism_mode`` (B6, issue #105), lido do YAML pelo runner.
 
     Referencia
     ----------
     He et al. (2009), Secao 3 -- Anonymization Techniques.
     Secoes 2.3 (Definicao 3) e 3 (visao geral do pipeline de 3 passos).
     """
+    # B6 (issue #105): isomorphism_mode controls the Phase-2 variant. Convert
+    # the public string to the internal ``add_only`` flag; reject unknown
+    # values so a typo in the YAML fails fast instead of silently falling back.
+    if isomorphism_mode not in _ISOMORPHISM_MODES:
+        raise ValueError(
+            f"invalid isomorphism_mode {isomorphism_mode!r}; "
+            f"expected one of {sorted(_ISOMORPHISM_MODES)}"
+        )
+    add_only = isomorphism_mode == "add_only"
+
     # ------------------------------------------------------------------
     # Step 1 — Partition G into Local Structures (Section 3.1)
     # ------------------------------------------------------------------
@@ -309,7 +348,7 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int, fsm_max_size: int = 4) -> 
     # Step 3 — Make each group isomorphic (Section 3.2, Phases 1 & 2)
     # ------------------------------------------------------------------
     modified_groups, edges_modified_phase2 = _modify_structure(
-        groups, seed=seed, add_only=False, return_counts=True
+        groups, seed=seed, add_only=add_only, return_counts=True
     )
 
     # ------------------------------------------------------------------

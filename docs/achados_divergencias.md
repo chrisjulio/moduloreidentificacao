@@ -337,9 +337,21 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   algoritmo), mas operacionalmente o experimento só exerce `add_or_delete`. O
   texto deve dizer "variante add_or_delete (a de menor perturbação); a
   alternativa add_only está implementada e testada, mas não foi varrida".
-- **Status.** 🔧 Defasagem a corrigir: a docstring de `anonymize()` (he2009.py:282)
-  e `algorithm_notes.md` §5.1 falam da chave `isomorphism_mode` como se fosse a
-  via de configuração; na prática é constante de código.
+- **Atualização (#105).** Corrigida na raiz, não só documentalmente:
+  `anonymize()` ganhou o parâmetro `isomorphism_mode: str = "add_or_delete"`
+  (valida o valor; converte para `add_only = (isomorphism_mode == "add_only")`
+  e repassa a `_modify_structure`). O runner (`experiments/run.py`) **lê** a
+  chave `anonymization.isomorphism_mode`, valida-a antes do laço de execução,
+  propaga-a a `anonymize()` e ao caminho inline (`_modify_structure(add_only=...)`)
+  e grava o valor efetivo em cada entrada JSONL e no `summary.json`. Default
+  `add_or_delete` preserva o comportamento histórico. Docstring de `anonymize()`,
+  `algorithm_notes.md` §3.2.1/§3.4/§5.1/§5.2/§5.3 atualizadas. Resta, sob B5:
+  expor a chave no `config_example.yml` (S8-3 / #106); testes de propagação em
+  S8-2b (#112).
+- **Status.** 🔧→✅ Defasagem resolvida na raiz por #105 (chave YAML lida e
+  propagada, não mais constante de código). Pendência residual: estabilizar a
+  chave no `config_example.yml` (#106). Migração formal do status na
+  tabela-resumo deixada para S8-8 (#111).
 
 ### B7 — Log do d-sweep sem contagem de timeouts (campos retroativos)
 
@@ -380,13 +392,15 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 Pontos onde a documentação existente ainda descreve o *proposto* como se fosse o
 *executado* e deveriam ser ajustados depois de revisarmos estes achados:
 
-1. **`algorithm_notes.md` §5.1 (B5/B6).** Marcar `s_max`/`fsm_max_size` e
-   `isomorphism_mode` como **fixos no código (não expostos em YAML)**, em vez de
-   "previsto como chave YAML". Hoje a tabela sugere configurabilidade que não
-   existe.
-2. **`he2009.py` docstring de `anonymize()` (B6).** A nota fala de
-   `anonymization.isomorphism_mode="add_or_delete"` "na Tabela de parâmetros"
-   como se fosse a via de configuração — é constante de código; reformular.
+1. ~~**`algorithm_notes.md` §5.1 (B5/B6).** Marcar `s_max`/`fsm_max_size` e
+   `isomorphism_mode` como fixos no código.~~ **Resolvido de forma oposta:**
+   em vez de marcar como "fixos no código", as duas chaves passaram a ser
+   **lidas de verdade do YAML** — `s_max` por #104 e `isomorphism_mode` por
+   #105. §5.1 agora descreve ambas como chaves YAML ativas.
+2. ~~**`he2009.py` docstring de `anonymize()` (B6).**~~ **Resolvido (#105):**
+   `anonymize()` recebe `isomorphism_mode` como parâmetro real e a docstring
+   descreve a chave YAML como a via de configuração efetiva (não mais
+   constante de código).
 3. **`results_baseline.md` (A1).** Tornar explícito que o baseline `d=1` rodou no
    **fallback KL** (não pymetis), e que isso é inócuo para `d=1`.
 4. **`config_example.yml` (B5).** Decidir se vale expor `d`/`sigma` no exemplo de
