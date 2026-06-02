@@ -40,6 +40,7 @@ Each JSONL entry contains:
       "d": <int>,
       "seed": <int>,
       "fsm_max_size": <int>,  # simplified-FSM max subgraph size (s_max, B5 / #104)
+      "isomorphism_mode": "add_or_delete" | "add_only",  # Phase-2 variant (B6 / #105)
       "timestamp": "<ISO-8601>",
       "partition_backend": "pymetis" | "networkx-kl",  # engine actually used (D-04)
       "validate_k_anonymity": { <full DL-01 dict> },
@@ -76,6 +77,7 @@ import yaml
 
 from src.anonymization._partition_backend import pymetis_available
 from src.anonymization.he2009 import (
+    _ISOMORPHISM_MODES,
     _group_isomorphic,
     _modify_structure,
     _partition_neighborhoods,
@@ -203,6 +205,7 @@ def run_one(
     seed: int,
     attacks_cfg: dict,
     fsm_max_size: int = 4,
+    isomorphism_mode: str = "add_or_delete",
 ) -> dict:
     """Execute the full pipeline for a single (k, seed) combination.
 
@@ -233,6 +236,11 @@ def run_one(
         Maximum subgraph size (nodes) for the simplified FSM (D-01, B5).
         Read from ``anonymization.s_max`` (alias ``fsm_max_size``) in the
         experiment YAML; default 4. Recorded in the JSONL for traceability.
+    isomorphism_mode:
+        Phase-2 isomorphization variant (B6, issue #105): ``"add_or_delete"``
+        (default, Edge Adding/Deleting) or ``"add_only"`` (Edge Adding). Read
+        from ``anonymization.isomorphism_mode`` in the experiment YAML and
+        recorded in the JSONL for traceability.
     attacks_cfg:
         The ``attacks:`` block from the experiment YAML, controlling which
         attacks are enabled and their hyper-parameters.
@@ -250,6 +258,7 @@ def run_one(
         "d": d,
         "seed": seed,
         "fsm_max_size": fsm_max_size,
+        "isomorphism_mode": isomorphism_mode,
         "timestamp": datetime.now(tz=UTC).isoformat(),
         "error": None,
     }
@@ -295,7 +304,9 @@ def run_one(
         # ------------------------------------------------------------------
         # Step 3 — Make each group isomorphic (§3.2, Phases 1 & 2)
         # ------------------------------------------------------------------
-        modified_groups = _modify_structure(groups, seed=seed, add_only=False)
+        modified_groups = _modify_structure(
+            groups, seed=seed, add_only=(isomorphism_mode == "add_only")
+        )
 
         # ------------------------------------------------------------------
         # Step 4 — Reconnect inter-partition edges → G' (§3.3)
@@ -564,6 +575,15 @@ def main(config_path: Path) -> int:
     # B5 (issue #104): the simplified-FSM max subgraph size is now a YAML key.
     # Canonical key is ``s_max``; ``fsm_max_size`` is accepted as an alias.
     fsm_max_size = int(anon_cfg.get("s_max", anon_cfg.get("fsm_max_size", 4)))
+    # B6 (issue #105): the Phase-2 isomorphization variant is now a YAML key.
+    # Default ``add_or_delete`` preserves the historical behaviour. Validate
+    # eagerly so a typo fails fast before the (expensive) run loop starts.
+    isomorphism_mode = str(anon_cfg.get("isomorphism_mode", "add_or_delete"))
+    if isomorphism_mode not in _ISOMORPHISM_MODES:
+        raise ValueError(
+            f"anonymization.isomorphism_mode={isomorphism_mode!r} is invalid; "
+            f"expected one of {sorted(_ISOMORPHISM_MODES)}"
+        )
 
     # --- Partition backend policy (fail fast before the run loop) ---
     allow_kl_fallback = bool(anon_cfg.get("allow_kl_fallback", True))
@@ -588,11 +608,12 @@ def main(config_path: Path) -> int:
     log_file = log_dir / f"{exp_name}.jsonl"
 
     logger.info(
-        "k values: %s, d values: %s, sigma=%.2f, s_max=%d, seeds=%s",
+        "k values: %s, d values: %s, sigma=%.2f, s_max=%d, isomorphism_mode=%s, seeds=%s",
         k_values,
         d_values,
         sigma,
         fsm_max_size,
+        isomorphism_mode,
         seeds,
     )
     logger.info("Log file: %s", log_file)
@@ -613,6 +634,7 @@ def main(config_path: Path) -> int:
                     seed=seed,
                     attacks_cfg=attacks_cfg,
                     fsm_max_size=fsm_max_size,
+                    isomorphism_mode=isomorphism_mode,
                 )
                 result["experiment"] = exp_name
                 v = verdict_from_result(result)
@@ -638,6 +660,7 @@ def main(config_path: Path) -> int:
         "d_values": d_values,
         "sigma": sigma,
         "fsm_max_size": fsm_max_size,
+        "isomorphism_mode": isomorphism_mode,
         "seeds": seeds,
         "n_runs": len(all_results),
         "any_failure": any_failure,
@@ -657,7 +680,10 @@ def main(config_path: Path) -> int:
     print("\n" + "=" * 60)
     print(f"EXPERIMENT: {exp_name}")
     print("=" * 60)
-    print(f"k values: {k_values}  d values: {d_values}  sigma={sigma}  s_max={fsm_max_size}")
+    print(
+        f"k values: {k_values}  d values: {d_values}  sigma={sigma}  "
+        f"s_max={fsm_max_size}  isomorphism_mode={isomorphism_mode}"
+    )
     print(f"Seeds:    {seeds}")
     backends_used = summary["partition_backends"]
     print(f"Backend:  {', '.join(backends_used) if backends_used else 'N/A'}")
