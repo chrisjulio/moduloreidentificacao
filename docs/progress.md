@@ -16,21 +16,22 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- **Relatório consolidado final do d-sweep (#88) — escrito.** Com a visualização
-  ciente de `d` já mergeada em `main` (#92/#94), o último entregável pendente da
-  DoD da #88 foi produzido: `docs/results_dsweep.md`, o **relatório consolidado
-  final** (metadados, cobertura do grid, tabelas `média ± std` por `(k,d)`,
-  análise das tendências opostas grau×subgrafo, combos degenerados D-08/D-10,
-  ressalva de timeouts em k alto, comandos de reprodução). Artefatos regenerados
-  do log via fluxo `config→run→log→parse→plot/table`: CSVs d-aware
-  (`results/tables/facebook_{degree,subgraph}.csv`) e dois layouts de figura
-  (`privacy_utility_dsweep_{series,facets}`) — não versionados, conforme regra.
-  A prévia (`dsweep_previa_garantia_dados.md`) foi rebaixada a snapshot histórico
-  com ponteiro para o relatório final. Branch `docs/results-dsweep`.
+- **Issue #78 (D-08 / Fase 5: análise, gráficos e documentação) — itens
+  remanescentes da DoD fechados.** As seções 1 (viz d-aware) e 2
+  (`results_dsweep.md`) já haviam sido entregues por #92/#94 e #88; esta sessão
+  fechou a seção 3 (atualização de docs existentes) e a seção 4 (ameaças à
+  validade): (a) **`results_dsweep.md`** ganhou §5.7 "Ameaças à validade"
+  (interna: `s_max × d`, pymetis vs KL, LS não conexa, custo VF2/timeouts;
+  construção: contraste `d=1` vs `d>1` como evidência de privacidade estrutural;
+  externa: única ego-rede 3437); (b) **`limitations.md §1.3`** marcada como
+  **parcialmente resolvida** (resíduo = generalização a outras redes), com
+  entrada da tabela de ameaças ajustada para validade externa; (c)
+  **`algorithm_notes.md §9`** ganhou §9.4 com os achados do d-sweep e ponteiro
+  para o relatório. Suíte **490 passed**, ruff limpo (mudanças só de docs).
+  Branch `docs/dsweep-analysis-78`.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `docs/results-dsweep`; com isso, **todos os itens
-  da DoD da #88 atendidos** → fechar a issue #88 via PR.
+- Revisão humana e merge do PR `docs/dsweep-analysis-78` → fechar a issue #78.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
@@ -60,6 +61,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — Issue #78 (D-08 / Fase 5): docs do d-sweep + ameaças à validade
+
+- **Concluído:** Fechados os itens remanescentes da DoD da #78. As seções 1
+  (visualizações d-aware) e 2 (`results_dsweep.md`) já tinham sido entregues por
+  #92/#94 e #88; esta sessão cobriu a seção 3 e a seção 4. (a) `results_dsweep.md`:
+  nova §5.7 "Ameaças à validade" (interna — interação `s_max × d`, pymetis vs KL,
+  k-way não garante LS conexa, custo VF2/timeouts; construção — contraste `d=1` vs
+  `d>1` como evidência de privacidade estrutural; externa — única ego-rede 3437).
+  (b) `limitations.md §1.3`: rebaixada de limitação aberta para **parcialmente
+  resolvida** (resíduo = generalização a outras ego-redes/datasets), com a entrada
+  correspondente na tabela de ameaças reclassificada para validade externa.
+  (c) `algorithm_notes.md §9`: nova §9.4 com os achados do d-sweep (déficit sempre
+  estrutural; EGS ≈ k·d; vetores de ataque opostos em k; combos degenerados
+  D-08/D-10; ressalva de timeouts) e ponteiro para o relatório. Sem alteração em
+  `src/` — viz e runner d-aware já em `main`. Suíte **490 passed**, ruff limpo.
+  Branch `docs/dsweep-analysis-78`.
+- **Próximo:** Merge do PR `docs/dsweep-analysis-78` → fechar #78. Fechamento
+  manual da #74.
+- **Bloqueios:** PR `docs/dsweep-analysis-78` aguarda revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — Relatório consolidado final do d-sweep (#88): docs/results_dsweep.md
 

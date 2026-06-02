@@ -184,6 +184,62 @@ pelo VF2 do ataque por subgrafo sob grupos de equivalência grandes. A varredura
 completa levou ≈ 31 h e sobreviveu a uma desconexão do terminal do VSCode
 (processo independente, gravação JSONL incremental).
 
+### 5.7 Ameaças à validade
+
+A varredura `d > 1` é o que distingue este experimento do baseline `d = 1`
+(≈ k-anonimato de grau): com `d > 1` a "estrutura" que o módulo afere passa a
+incluir a topologia da vizinhança (Local Structures de tamanho `d`), não apenas
+o grau. Isso é, simultaneamente, o ganho de validade de construção e a fonte das
+ameaças abaixo.
+
+**Validade interna (o que pode contaminar a relação medida `(k, d)` → privacidade/utilidade):**
+
+- **Interação `s_max × d`.** O FSM simplificado fixa `s_max = 4` (D-01). Quando
+  `d > s_max` (notadamente `d = 10`), o tamanho-alvo das LSs excede o maior
+  padrão frequente que o FSM enumera; o agrupamento opera sobre padrões truncados.
+  A decisão (Opção A, D-01/G2) foi manter `s_max = 4` fixo após verificar
+  empiricamente que o agrupamento é idêntico para `s_max ∈ {4, 5}` na 3437 — mas
+  isso é uma aproximação, não uma equivalência garantida para `d` arbitrário.
+- **pymetis vs. KL.** Todos os 48 runs usaram **pymetis** (fiel a He et al., D-04),
+  registrado em cada linha JSONL (`partition_backend`). Não há mistura de backend
+  neste log, então a comparação entre células `(k, d)` é homogênea; o fallback KL
+  (`networkx-kl`), quando usado em outros experimentos, degrada o sizing para
+  `c_k > 2` (D-04/D-07) e **não** é comparável célula a célula com estes resultados.
+- **Particionamento k-way não garante LS conexa.** A verificação de conectividade
+  (D-08, G3) mostrou que, na 3437, 55% das LSs de `d = 5` são desconexas e `d = 2`
+  é degenerate (≈ 199/267 partições vazias). "Estrutura" agrupada por isomorfismo
+  inclui, portanto, subgrafos desconexos — uma aproximação documentada, não a
+  noção de vizinhança conexa do artigo.
+- **Custo de isomorfização em `d > 1` (timeouts VF2).** Conforme §5.5, `reid_sub`
+  conta nós com timeout de 120 s como *não reidentificados*. Como o custo do VF2
+  cresce com o EGS (≈ `k·d`), `d` alto agrava os timeouts e pode **inflar
+  artificialmente** a aparência de privacidade do ataque por subgrafo. O JSONL não
+  registra a contagem de timeouts, então o efeito não é quantificável a partir
+  deste log.
+
+**Validade de construção (o experimento mede o que se propõe a medir?):**
+
+- Com `d > 1`, o construto "privacidade estrutural" deixa de ser um proxy de grau
+  e passa a depender de isomorfismo de subgrafo de tamanho `d`. O contraste
+  `d = 1` (âncora) vs. `d ∈ {5, 10}` na §3 é a **evidência direta** de que o
+  módulo afere privacidade estrutural — o ataque por subgrafo e o EGS respondem a
+  `d`, não só a `k`. Isso **fortalece** a validade de construção relativamente ao
+  baseline. A ressalva é a confusão construto/artefato introduzida pelos timeouts
+  (acima) e pelos combos degenerados (§5.4), que devem ser lidos como tais.
+
+**Validade externa (generalização):**
+
+- **Única ego-rede (3437).** Todos os resultados vêm de um só grafo
+  (LCC n=532, m=4812). Tendências em `(k, d)`, combos degenerados e magnitudes de
+  reidentificação são **específicos desta topologia**; não há base para
+  extrapolar para outras ego-redes, outros datasets (ex.: Email-Enron, tier
+  desejável) ou outras densidades. Generalização exige replicar a varredura em
+  ≥ 1 grafo adicional.
+
+Referência cruzada das ameaças metodológicas transversais:
+[`docs/limitations.md`](limitations.md) (§1.3 atualizada para *parcialmente
+resolvida*) e [`docs/decision_log.md`](decision_log.md) (D-01, D-04, D-07, D-08, D-10).
+
 ---
 
 ## 6. Reprodução
