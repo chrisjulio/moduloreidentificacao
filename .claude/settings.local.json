@@ -3,7 +3,6 @@
     "allow": [
       "Bash(.venv\\\\Scripts\\\\python.exe -m ruff check src/loaders/ tests/loaders/test_download.py)",
       "Bash(.venv\\\\Scripts\\\\python.exe -m ruff format --check src/loaders/ tests/loaders/test_download.py)",
-
       "PowerShell(pytest:*)",
       "PowerShell(.venv\\Scripts\\python.exe -m pytest:*)",
       "PowerShell(.venv\\Scripts\\python.exe -c:*)",
@@ -21,7 +20,6 @@
       "PowerShell(gh issue comment:*)",
       "PowerShell(ruff check:*)",
       "PowerShell(ruff format --check:*)",
-
       "Bash(pytest:*)",
       "Bash(.venv/Scripts/python.exe -m pytest:*)",
       "Bash(.venv/Scripts/python.exe -c:*)",
@@ -38,7 +36,12 @@
       "Bash(gh issue view:*)",
       "Bash(gh issue comment:*)",
       "Bash(ruff check:*)",
-      "Bash(ruff format --check:*)"
+      "Bash(ruff format --check:*)",
+      "Bash(python -m pytest tests/anonymization/test_he2009_anonymize.py -q)",
+      "Bash(python -m pytest tests/anonymization/test_he2009_modify.py -q)",
+      "Bash(python -m pytest tests/anonymization/test_he2009_partition.py -q -rP)",
+      "Bash(python -m pytest tests/anonymization/test_he2009_partition.py::TestLocalStructureConnectivityDGt1 -q -s)",
+      "Bash(python -m pytest -q)"
     ]
   }
 }
