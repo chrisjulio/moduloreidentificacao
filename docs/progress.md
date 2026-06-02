@@ -16,6 +16,16 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #104 (S8-1 / B5): exposição de `s_max`/`fsm_max_size` como chave lida
+  do YAML.** O tamanho máximo de subgrafo do FSM simplificado deixou de ser
+  hardcoded: `anonymize()` e `_group_isomorphic()` passaram a aceitar
+  `fsm_max_size` (default 4) e o runner (`experiments/run.py`) lê
+  `anonymization.s_max` (alias `fsm_max_size`) do YAML, propaga por `run_one()`
+  e grava o valor efetivo no JSONL e no `summary.json`. Docs atualizadas:
+  `algorithm_notes.md` §5.1/§5.2/§5.3 (chave YAML lida), `limitations.md` §2.1,
+  e addenda em `achados_divergencias.md` (A2, B5). Suíte **525 passed**, ruff
+  limpo. Branch `anonymization/expose-smax-104`, PR #113 (`Closes #104`).
+
 - **Issue #80 (D-08 / Fase 2 — Complementar: G1, G2, G3, G5-a), o único trabalho
   de engenharia ainda aberto sob a issue-mãe #72.** As quatro pendências
   derivadas dos comentários pós-merge da #75 foram implementadas em
@@ -44,13 +54,17 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
+- Revisão humana e merge do PR #113 (`anonymization/expose-smax-104`) → fechar
+  #104. **Recomenda-se mergear S8-1 (#104) antes de S8-2 (#105)** — ambas tocam
+  `anonymize()`/`run.py`/§5.1. Em seguida: S8-2 (#105, `isomorphism_mode`),
+  S8-2b (#112, testes de propagação), S8-3 (#106, `config_example.yml`).
 - Revisão humana e merge do PR `anonymization/dsweep-complementar-80` → fechar a
   issue #80. Com #80 fechada, **toda a engenharia da issue-mãe #72 (d-sweep) está
   concluída** → fechar #72 (umbrella) com comentário de encerramento.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
-- Nenhum.
+- PR #113 (`anonymization/expose-smax-104`) aguarda revisão humana.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -76,6 +90,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — Issue #104 (S8-1 / B5): expor s_max/fsm_max_size lido do YAML
+
+- **Concluído:** Corrigida a defasagem B5 (achado A2) — `s_max`/`fsm_max_size`
+  estava hardcoded (nem `anonymize()` nem o runner passavam o parâmetro →
+  `_group_within_bucket` usava default 4). `anonymize()` e `_group_isomorphic()`
+  passaram a aceitar `fsm_max_size: int = 4` e propagá-lo até
+  `_group_within_bucket`; `experiments/run.py` lê `anonymization.s_max` (alias
+  `fsm_max_size`) do YAML, propaga por `run_one()` e grava o valor efetivo em
+  cada entrada JSONL (`"fsm_max_size"`) e no `summary.json` (sem alterar a
+  assinatura de retorno de `anonymize()`; default 4 preserva o comportamento).
+  Docs: `algorithm_notes.md` §5.1 (chave YAML lida)/§5.2 (nota B5)/§5.3,
+  `limitations.md` §2.1, addenda em `achados_divergencias.md` (A2, B5; migração
+  formal do status 🔧→✅ na tabela-resumo deixada para S8-8/#111). Ajuste mínimo
+  no stub `_always_error` de `test_runner.py` para aceitar o novo kwarg (nova
+  cobertura é S8-2b/#112). Suíte **525 passed**, ruff + format limpos. Branch
+  `anonymization/expose-smax-104`, PR #113.
+- **Próximo:** Merge do PR #113 → fechar #104. Recomendado mergear S8-1 antes de
+  S8-2 (#105, `isomorphism_mode`); depois S8-2b (#112) e S8-3 (#106).
+- **Bloqueios:** PR #113 aguarda revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — Issue #80 (D-08 / Fase 2 — Complementar): G1, G2, G3, G5-a
 
