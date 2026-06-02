@@ -5,8 +5,8 @@
 > de reidentificação. Componente preparatório da tese de doutorado em geração de
 > redes sociais sintéticas — PPGInf/UFPR.
 >
-> **Estado:** escopo mínimo concluído (S1–S5). Repositório em condições de entrega
-> acadêmica. Última revisão: 26/05/2026.
+> **Estado:** escopo mínimo (S1–S5) + D-08 (d-sweep k×d) concluídos. Repositório em
+> condições de entrega acadêmica. Última revisão: 02/06/2026.
 
 ![CI](https://github.com/chrisjulio/moduloreidentificacao/actions/workflows/ci.yml/badge.svg)
 
@@ -177,9 +177,19 @@ k-anonimato empiricamente atingido em todas as configurações do Mínimo
 todas as configurações. Ver [`docs/validacao_k_anonimato.md`](docs/validacao_k_anonimato.md)
 e [`docs/decision_log.md`](docs/decision_log.md).
 
+**D-08 — d-sweep (He et al., d > 1): CONCLUÍDO em 02/06/2026.**
+Varredura completa do grid k ∈ {2, 5, 10, 20} × d ∈ {1, 2, 5, 10} × 3 sementes
+(48 runs, 100% sem erros, backend pymetis em todos). Ciclo composto pelas issues
+#72–#78, #80, #88 e #93, encerradas em 7 fases. Decisões D-08, D-09, D-10 e
+DL-02 registradas em [`docs/decision_log.md`](docs/decision_log.md). Relatório
+consolidado com matriz d×k, análise e ameaças à validade em
+[`docs/results_dsweep.md`](docs/results_dsweep.md). Limitação §1.3 de
+[`docs/limitations.md`](docs/limitations.md) marcada como **parcialmente resolvida**.
+Issue de encaminhamentos pós-D-08: [#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99).
+
 Escopo Desejável (Email-Enron, ataque por entropia) e Aspiracional
-([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) permanecem abertos como trabalho futuro — não foram
-perseguidos para não comprometer a consolidação do Mínimo.
+([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) permanecem abertos como trabalho futuro. Ver
+[Seção 12 — Próximos passos](#12-próximos-passos).
 
 ### Componentes implementados
 
@@ -231,34 +241,90 @@ perseguidos para não comprometer a consolidação do Mínimo.
 - `docs/entregaveis.md` — lista consolidada de entregáveis por nível.
 - Revisão global de README, `CLAUDE.md` e `docs/` (issue #28).
 
+**D-08 — d-sweep e diagnóstico (issues #72–#78, #80, #88, #93)**
+- `experiments/configs/he2009_facebook_dsweep.yml` — config do d-sweep
+  (k ∈ {2,5,10,20} × d ∈ {1,2,5,10}, 3 sementes, pymetis obrigatório via
+  `allow_kl_fallback: false`).
+- `experiments/configs/he2009_facebook_dsweep_k20_diag.yml` — reexecução
+  opcional das 6 células k=20 com instrumentação DL-02 (issue #93).
+- `src/attacks/subgraph.py` — atualizado com instrumentação DL-02:
+  `subgraph_timeout_count` (nós cujo VF2 atingiu timeout, tratados como
+  não-reidentificados) e `subgraph_candidate_counts` (`mean`/`std`/`max`
+  de candidatos por nó). Esses campos tornam a distinção entre zero por
+  ausência de candidatos e zero por timeout diretamente observável em logs
+  pós-PR #97. **Atenção:** logs pré-PR #97 têm semântica diferente de
+  `verdict=ERROR` — ver nota de comparabilidade DL-02 em
+  [`docs/decision_log.md`](docs/decision_log.md) e
+  [`docs/results_dsweep.md`](docs/results_dsweep.md) §5.7.
+- `docs/results_dsweep.md` — relatório consolidado final do d-sweep: matriz
+  d×k com médias e desvios-padrão de todas as métricas, análise das tendências,
+  combos degenerados (d=2 D-08; d=10/k=20 D-10), diagnóstico H3 (zeros de
+  reid_sub em k=20) e ameaças à validade.
+- `docs/dsweep_previa_garantia_dados.md` — snapshot histórico do estado
+  intermediário do d-sweep; substituído por `results_dsweep.md` como
+  documento canônico.
+
 ---
 
-## 5. Resultados do experimento baseline
+## 5. Resultados
 
-**Dataset:** Facebook Ego-Net 3437 (n=532, m=4812). **Parâmetros:** algoritmo
-[He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108), `d=1`, `sigma=0.5`, `k ∈ {2, 5, 10, 20}`, 3 sementes
-(42, 1337, 2718). **Ataques:** grau e subgrafo 1-hop (timeout 60 s). Valores
-abaixo são médias sobre as sementes.
+### 5.1 Baseline — `d=1` (âncora)
+
+**Dataset:** Facebook Ego-Net 3437 (n=532, m=4812). **Parâmetros:** He et al.
+(2009), `d=1`, `sigma=0.5`, `k ∈ {2, 5, 10, 20}`, 3 sementes (42, 1337, 2718).
+**Ataques:** grau e subgrafo 1-hop (timeout 60 s). Valores: médias sobre sementes.
 
 | k | Veredito | coverage_fraction | rr_grau | rr_subgrafo | KS-D | clustering_var |
 |---|---|---|---|---|---|---|
-| 2 | SUCCESS_FULL | 1.0000 | 0.0263 | 0.7914 | 0.0000 | 0.0000 |
-| 5 | SUCCESS_PARTIAL | 0.9962 | 0.0081 | 0.4060 | 0.0482 | 0.0670 |
-| 10 | SUCCESS_PARTIAL | 0.9962 | 0.0226 | 0.1397 | 0.2356 | 0.1575 |
-| 20 | SUCCESS_PARTIAL | 0.9774 | 0.0990 | 0.0000 | 0.6491 | 0.0904 |
+| 2 | SUCCESS_FULL | 1.0000 | 0.026 | 0.791 | 0.000 | 0.000 |
+| 5 | SUCCESS_PARTIAL | 0.9962 | 0.008 | 0.406 | 0.048 | 0.067 |
+| 10 | SUCCESS_PARTIAL | 0.9962 | 0.023 | 0.140 | 0.236 | 0.158 |
+| 20 | SUCCESS_PARTIAL | 0.9774 | 0.099 | 0.000 | 0.649 | 0.090 |
 
-**Leitura preliminar e prudente.** O ataque por subgrafo cai expressivamente com
-o aumento de `k`, chegando a zero em `k=20`. O ataque por grau é menos intenso e
-**não** perfeitamente monotônico (mínimo em `k=5`, maior valor em `k=20`). O KS-D
-cresce fortemente em `k=10` e `k=20`, indicando maior distorção da distribuição
-de grau — ou seja, mais privacidade estrutural local custa utilidade topológica.
-A variação de clustering não cresce monotonicamente e exige interpretação
-separada. A curva privacidade-vs-utilidade deve, portanto, ser lida em múltiplos
-eixos, não como narrativa linear única.
+Análise completa e tabela bruta em [`docs/results_baseline.md`](docs/results_baseline.md).
 
-Gráficos finais em `results/plots/`; tabelas em `results/tables/` (não versionados;
-gerados localmente). Análise completa e tabela bruta em
-[`docs/results_baseline.md`](docs/results_baseline.md).
+### 5.2 d-sweep — `d ∈ {1, 2, 5, 10}` (48 runs, backend pymetis)
+
+Varredura completa do grid k × d. Valores `d=1` replicam o baseline com novo
+timeout (120 s/nó) e servem de âncora de comparação. **`d=5` é o valor primário**
+para análise structure-aware. `d=2` é degenerate para esta ego-rede (D-08) e
+`d=10/k=20` é combo deliberadamente extremo (D-10) — ambos documentados, não
+excluídos.
+
+**Coluna `d=5` — médias ± dp sobre 3 sementes:**
+
+| k | coverage_fraction | rr_subgrafo | rr_grau | KS-D | clustering_var | veredito |
+|---|---|---|---|---|---|---|
+| 2 | 0.989 | 0.211 ± 0.016 | 0.036 ± 0.011 | 0.031 ± 0.003 | 0.031 ± 0.009 | SUCCESS_PARTIAL |
+| 5 | 0.949 | 0.056 ± 0.005 | 0.012 ± 0.004 | 0.229 ± 0.028 | 0.210 ± 0.020 | SUCCESS_PARTIAL |
+| 10 | 0.846 | 0.015 ± 0.015 | 0.219 ± 0.116 | 0.745 ± 0.029 | 0.043 ± 0.027 | ⚠️ FAILURE_LOW_COVERAGE |
+| 20 | 0.752 | 0.000 ± 0.000 | 0.055 ± 0.000 | 0.927 ± 0.000 | 0.403 ± 0.007 | ⚠️ FAILURE_LOW_COVERAGE |
+
+**Achados principais:**
+
+- **Tendências opostas dos ataques em k.** `rr_subgrafo` cai com k (de ~0.14–0.21
+  em k=2 para ~0.00–0.04 em k=20): grupos maiores criam mais candidatos
+  indistinguíveis. `rr_grau` sobe com k (de ~0.02–0.04 em k=2 para ~0.05–0.36
+  em k=20): a anonimização para k alto distorce fortemente a distribuição de
+  graus (KS-D → 0.75–0.93), criando assinaturas mais singulares. Aumentar `k`
+  **desloca** o vetor de ataque mais eficaz — não garante melhora monotônica de
+  privacidade.
+- **Zeros de `rr_subgrafo` em k=20 são genuínos** (diagnóstico #93 / DL-02).
+  Hipótese de timeout mascarando zeros (H3) descartada: nenhum `verdict=ERROR`
+  nos 48 runs do log pré-DL-02, provando que nenhuma chamada VF2 atingiu os
+  120 s. Os zeros refletem ausência de correspondência única em `G'` sob grupos
+  de equivalência grandes (EGS ≈ k·d).
+- **Nota de comparabilidade de logs (DL-02).** Em logs **pós-PR #97**, a
+  semântica do sentinela de timeout muda: `TimeoutError` é capturado por nó e
+  acumulado em `subgraph_timeout_count`; `verdict=ERROR` deixa de ser prova de
+  timeout. Comparações cruzadas entre logs de épocas diferentes devem verificar
+  o campo `subgraph_timeout_count`, não a ausência de `verdict=ERROR`. Ver
+  [`docs/decision_log.md`](docs/decision_log.md) (DL-02) e
+  [`docs/results_dsweep.md`](docs/results_dsweep.md) §5.7.
+
+Matriz completa k × d (todas as métricas, combos degenerados, ameaças à
+validade) em [`docs/results_dsweep.md`](docs/results_dsweep.md). Gráficos
+d-aware em `results/plots/` (não versionados; regeneráveis — ver §3.3).
 
 ---
 
@@ -295,9 +361,11 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
   /loaders/                  # carregadores de dataset (Facebook Ego-Nets) e script de download
   /visualization/            # gráfico privacy-vs-utility e tabelas CSV
 /experiments/
-  /configs/                  # arquivos de configuração (YAML)
+  /configs/                  # arquivos de configuração (YAML); inclui baseline, d-sweep e diagnóstico k=20
   /logs/                     # logs estruturados JSONL das execuções (não versionados)
   run.py                     # runner orquestrador CLI
+  run_k_sweep.py             # k-sweep k ∈ {2,5,10,20} (issue #17)
+  run_validacao_k_anonimato.py  # validação k-anonimato marco 21/05 (issue #16)
 /results/
   /tables/                   # tabelas em CSV (não versionadas; regeneráveis)
   /plots/                    # gráficos em PDF/PNG (não versionados; regeneráveis)
@@ -306,14 +374,17 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
 /bugs/                       # registro acumulativo de bugs (execução + explicação + decisão)
 /docs/
   scope.md                   # escopo, não-escopo e condições de contorno ética
-  algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep)
+  algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep e d>1)
   metrics_definitions.md     # definições operacionais das métricas
-  decision_log.md            # registro formal de decisões técnicas (DL-01, D-04 a D-07)
+  decision_log.md            # registro formal de decisões técnicas (DL-01/DL-02, D-04 a D-10)
   progress.md                # log de progresso sessão a sessão
   validacao_k_anonimato.md   # resultados consolidados da validação empírica de k-anonimato
-  results_baseline.md        # tabela bruta + agregações do experimento baseline
+  results_baseline.md        # tabela bruta + agregações do experimento baseline (d=1)
+  results_dsweep.md          # relatório consolidado do d-sweep — matriz k×d, análise, ameaças
+  dsweep_previa_garantia_dados.md  # snapshot histórico intermediário do d-sweep (não canônico)
+  milestones_moduloreidentificacao.md  # acompanhamento de issues por milestone
   pipeline.md                # documentação técnica do pipeline com diagramas Mermaid
-  limitations.md             # limitações metodológicas do protótipo
+  limitations.md             # limitações metodológicas (§1.3 parcialmente resolvida)
   reproducibility.md         # guia de reprodução end-to-end
   preprocessing_decision.md  # decisões de pré-processamento dos datasets
   entregaveis.md             # entregáveis consolidados por nível
@@ -345,8 +416,10 @@ Em resumo:
 - **Validade interna.** Aproximações na implementação de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108): FSM
   simplificado, fallback de particionamento (D-04), grupos incompletos residuais
   aceitáveis sob D-06, e custo/timeout do ataque por subgrafo.
-- **Validade externa.** Baseline restrito a uma ego-rede específica do Facebook
-  Ego-Nets; sem Email-Enron, sem redes temporais e sem dados sintéticos nesta fase.
+- **Validade externa.** Baseline (`d=1`) restrito a uma ego-rede específica; o
+  d-sweep (`d ∈ {1,2,5,10}`) resolve parcialmente a limitação §1.3 mas ainda
+  opera sobre a mesma ego-rede 3437 — generalização exige replicação em outros
+  grafos. Sem Email-Enron, sem redes temporais e sem dados sintéticos nesta fase.
 - **Validade de construção.** A "reidentificação" medida é acerto contra rótulos
   internos de nós, não identificação de pessoas; similaridade estrutural não é
   identidade.
@@ -399,7 +472,52 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 
 ---
 
-## 12. Referências
+## 12. Próximos passos
+
+O escopo mínimo (S1–S5) e o ciclo D-08 (d-sweep) estão concluídos. As issues
+abaixo definem as fronteiras abertas do módulo, organizadas por prioridade e
+tier. A decisão sobre sequenciamento está em discussão na
+[issue #99](https://github.com/chrisjulio/moduloreidentificacao/issues/99).
+
+### Encaminhamentos imediatos (pós-D-08)
+
+| Issue | Título | Natureza |
+|---|---|---|
+| [#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99) | Encaminhamentos pós-D-08 — próximos passos do módulo | Planejamento |
+
+Pendências específicas identificadas no ciclo D-08:
+- Fechar o milestone S7 após conferir que todas as issues estão encerradas.
+- Verificar resultado dos testes G3 (issue #80) e atualizar o status da nota
+  `algorithm_notes.md §3.2.2` (fórmula k(k−1) — marcada como interpretativa e
+  dependente de validação empírica; em avaliação).
+
+### Escopo Desejável — milestone S6
+
+| Issue | Título | Dependência |
+|---|---|---|
+| [#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29) | Loader Email-Enron como dataset secundário | Nenhuma — ampliar validade externa |
+| [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | Ataque por entropia reutilizando grupos de equivalência | Depende de `src/attacks/` existente |
+
+### Escopo Aspiracional
+
+| Issue | Título | Dependência |
+|---|---|---|
+| [#31](https://github.com/chrisjulio/moduloreidentificacao/issues/31) | Implementação inicial de [Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004) | Alto esforço; comparação entre duas anonimizações |
+
+### Horizonte — integração com o EpiCNet
+
+Com o módulo de avaliação de risco consolidado, a integração futura com o
+framework central da tese deve ocorrer apenas por interfaces explícitas e schemas
+documentados. Pontos de ancoragem:
+- `docs/results_dsweep.md` como evidência metodológica para a qualificação.
+- Interface de entrada: grafo anonimizado/sintético + metadados de parâmetros.
+- Interface de saída: relatório de risco agregado (privacidade-vs-utilidade).
+- O módulo permanece arquiteturalmente independente do EpiCNet — ver
+  [`docs/scope.md`](docs/scope.md).
+
+---
+
+## 13. Referências
 [1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
 
 [2] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
