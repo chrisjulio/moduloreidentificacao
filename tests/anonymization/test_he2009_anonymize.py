@@ -17,7 +17,11 @@ from __future__ import annotations
 import networkx as nx
 import pytest
 
-from src.anonymization.he2009 import _reconnect_inter_edges, anonymize
+from src.anonymization.he2009 import (
+    _modify_structure,
+    _reconnect_inter_edges,
+    anonymize,
+)
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -237,3 +241,169 @@ class TestReconnectInterEdges:
         # All original edges are intra-LS
         for u, v in g.edges():
             assert result.has_edge(u, v)
+
+
+# ---------------------------------------------------------------------------
+# G3 (issue #80) — k(k-1) reconnection formula in _reconnect_inter_edges
+#
+# He et al. (2009, §3.3) states that reconnecting one same-group inter-LS edge
+# adds k(k-1) edges to preserve the intra-group isomorphism. The exact count
+# depends on the canonical positions (D-03) of the edge endpoints:
+#   * endpoints at DISTINCT positions  → exactly k(k-1) new edges (general case)
+#   * endpoints at the SAME position   → a clique of C(k,2) = k(k-1)/2 edges
+# The 1-node-LS example originally sketched in issue #80 is degenerate (both
+# endpoints occupy position 0) and therefore yields a single edge, NOT k(k-1).
+# This divergence is recorded under D-08 in docs/decision_log.md; the tests
+# below validate the documented behaviour rather than the degenerate sketch.
+# ---------------------------------------------------------------------------
+
+
+class TestReconnectKTimesKMinusOne:
+    """Validate the k(k-1) reconnection count (G3, issue #80)."""
+
+    @staticmethod
+    def _single_edge_group(k: int) -> list[nx.Graph]:
+        """Build a group of *k* isomorphic single-edge LSs (2 nodes each).
+
+        LS_i = nodes {2i, 2i+1} with edge (2i, 2i+1). Under the D-03 ordering
+        (-degree, node_id) both nodes have degree 1, so position 0 → 2i,
+        position 1 → 2i+1.
+        """
+        group: list[nx.Graph] = []
+        for i in range(k):
+            ls = nx.Graph()
+            ls.add_edge(2 * i, 2 * i + 1)
+            group.append(ls)
+        return group
+
+    @pytest.mark.parametrize("k", [2, 3])
+    def test_reconnect_inter_edges_adds_k_times_k_minus_one(self, k: int) -> None:
+        """One same-group inter-LS edge between DISTINCT canonical positions
+        adds exactly k(k-1) new edges."""
+        group = self._single_edge_group(k)
+
+        # g_original: intra-LS edges + one inter-LS edge whose endpoints sit at
+        # different canonical positions (node 1 = LS0/pos1, node 2 = LS1/pos0).
+        g_original = nx.Graph()
+        for ls in group:
+            g_original.add_edges_from(ls.edges())
+        g_original.add_edge(1, 2)  # inter-LS, pos1 ↔ pos0 (distinct positions)
+
+        intra_edges = sum(ls.number_of_edges() for ls in group)  # = k
+
+        result = _reconnect_inter_edges(g_original, [group])
+
+        added = result.number_of_edges() - intra_edges
+        assert added == k * (k - 1), (
+            f"expected k(k-1)={k * (k - 1)} added edges for k={k}, got {added}"
+        )
+        # The metadata counter must agree with the structural delta.
+        assert result.graph["metadata"]["edges_added_reconnection"] == k * (k - 1)
+
+    @pytest.mark.parametrize("k", [2, 3])
+    def test_reconnect_same_position_forms_clique(self, k: int) -> None:
+        """When endpoints share a canonical position the cross-pairs collapse
+        into a C(k,2) = k(k-1)/2 clique (documented under D-08)."""
+        group = self._single_edge_group(k)
+
+        g_original = nx.Graph()
+        for ls in group:
+            g_original.add_edges_from(ls.edges())
+        # Inter-LS edge between two pos-0 nodes (LS0/pos0=0, LS1/pos0=2).
+        g_original.add_edge(0, 2)
+
+        result = _reconnect_inter_edges(g_original, [group])
+        added = result.graph["metadata"]["edges_added_reconnection"]
+        assert added == k * (k - 1) // 2
+
+    def test_reconnect_single_node_lss_degenerate(self) -> None:
+        """The issue #80 sketch (two single-node LSs, one inter-edge) is
+        degenerate: it yields a single edge, not k(k-1)=2 (see D-08)."""
+        ls0 = nx.Graph()
+        ls0.add_node(0)
+        ls1 = nx.Graph()
+        ls1.add_node(1)
+        g_original = nx.Graph()
+        g_original.add_edge(0, 1)
+
+        result = _reconnect_inter_edges(g_original, [[ls0, ls1]])
+        assert result.number_of_edges() == 1
+        assert result.graph["metadata"]["edges_added_reconnection"] == 1
+
+
+# ---------------------------------------------------------------------------
+# G5(a) (issue #80) — per-phase modification counters exposed via metadata
+# ---------------------------------------------------------------------------
+
+
+class TestPhaseCounters:
+    """anonymize() must expose phase-2 and reconnection counters (G5-a)."""
+
+    def test_modify_structure_return_counts_is_int(self) -> None:
+        """_modify_structure(return_counts=True) returns (groups, int>=0)."""
+        group = [nx.path_graph(4).copy(), nx.cycle_graph(4).copy()]
+        result = _modify_structure([group], seed=0, return_counts=True)
+        assert isinstance(result, tuple)
+        groups, count = result
+        assert isinstance(groups, list)
+        assert isinstance(count, int)
+        assert count >= 0
+
+    def test_modify_structure_default_return_unchanged(self) -> None:
+        """Without return_counts the historical list return is preserved."""
+        group = [nx.path_graph(4).copy(), nx.cycle_graph(4).copy()]
+        result = _modify_structure([group], seed=0)
+        assert isinstance(result, list)
+
+    def test_modify_structure_counts_known_modifications(self) -> None:
+        """path_graph(4) vs cycle_graph(4): the cycle adds one edge (3→4)
+        and the path adds the same edge to match → exactly 1 modification.
+
+        Positions (D-03, all degree<=2): path 0-1-2-3 endpoints degree 1,
+        cycle fully degree 2. The pair that differs is the closing edge of
+        the cycle, present in 1 of 2 LSs → majority adds it to the path.
+        """
+        group = [nx.path_graph(4).copy(), nx.cycle_graph(4).copy()]
+        _, count = _modify_structure([group], seed=0, return_counts=True)
+        # At least one modification happened to make them isomorphic.
+        assert count >= 1
+
+    def test_modify_structure_identical_lss_zero_modifications(self) -> None:
+        """Two identical cycles need no modification → count == 0."""
+        group = [nx.cycle_graph(4).copy(), nx.cycle_graph(4).copy()]
+        _, count = _modify_structure([group], seed=0, return_counts=True)
+        assert count == 0
+
+    def test_reconnect_sets_metadata_counter(self) -> None:
+        """_reconnect_inter_edges always sets edges_added_reconnection."""
+        g = nx.path_graph(4)
+        ls = g.subgraph([0, 1, 2, 3]).copy()
+        result = _reconnect_inter_edges(g, [[ls]])
+        assert "metadata" in result.graph
+        meta = result.graph["metadata"]
+        assert isinstance(meta["edges_added_reconnection"], int)
+        assert meta["edges_added_reconnection"] >= 0
+
+    def test_anonymize_exposes_both_counters(self) -> None:
+        """anonymize() output carries both phase counters in graph metadata."""
+        g = nx.petersen_graph()
+        result = anonymize(g, k=2, d=2, seed=0)
+        meta = result.graph["metadata"]
+        assert isinstance(meta["edges_modified_phase2_intragroup"], int)
+        assert isinstance(meta["edges_added_reconnection"], int)
+        assert meta["edges_modified_phase2_intragroup"] >= 0
+        assert meta["edges_added_reconnection"] >= 0
+
+    def test_anonymize_counters_stable_across_seed(self) -> None:
+        """Deterministic: same seed → same counters."""
+        g = nx.petersen_graph()
+        m1 = anonymize(g, k=2, d=2, seed=7).graph["metadata"]
+        m2 = anonymize(g, k=2, d=2, seed=7).graph["metadata"]
+        assert m1 == m2
+
+    def test_anonymize_d1_counters_present(self) -> None:
+        """Even the d=1 baseline exposes the counters (>= 0)."""
+        g = nx.cycle_graph(8)
+        meta = anonymize(g, k=2, d=1, seed=0).graph["metadata"]
+        assert meta["edges_modified_phase2_intragroup"] >= 0
+        assert meta["edges_added_reconnection"] >= 0

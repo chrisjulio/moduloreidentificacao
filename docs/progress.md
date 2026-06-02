@@ -16,30 +16,37 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- **Issue #93 (D-08 / Fase 6: sanitização diagnóstica dos zeros de
-  `reidentification_rate_subgraph` em k=20, d∈{5,10}).** Passo 1 (inspeção do log
-  do d-sweep, sem reexecução): **nenhum `verdict=ERROR`** nos 48 runs → como o
-  `timeout` era 120 s e qualquer estouro geraria `ERROR` no código vigente, prova
-  que **nenhuma chamada VF2 atingiu o timeout** → **H3 (timeout mascarado)
-  descartada**; os zeros são genuínos (H1/H2: vizinhança original sem
-  correspondência única em `G'` sob EGS grande). Passo 2: runner estendido
-  (`experiments/run.py`) — laço do subgrafo agora captura `TimeoutError` por nó,
-  conta em `subgraph_timeout_count` e trata o nó como não-reidentificado
-  (alinhando o código ao comentário do YAML); novos campos JSONL
-  `subgraph_timeout_count` e `subgraph_candidate_counts {mean,std,max}`; novo
-  observável `subgraph_candidate_count` em `src/attacks/subgraph.py`
-  (`subgraph_attack` reescrito como `count == 1`, sem mudança de comportamento).
-  Schema DL-01 atualizado; decisão **DL-02** + nota de encerramento de **D-08** no
-  `decision_log.md`. Passo 3 (reexecução seletiva): **opcional** (Passo 1
-  conclusivo) — criado `experiments/configs/he2009_facebook_dsweep_k20_diag.yml`
-  como artefato de reprodução, não executado (≈3 h/run). Passo 4: `results_dsweep.md`
-  §5.5 reescrita (ressalva → resolvida) e §5.7 (ameaça de timeout afastada para
-  este log). +16 testes (subgraph_candidate_count + diagnósticos do runner);
-  suíte **506 passed**, ruff limpo. Branch `diag/subgraph-zeros-k20`.
+- **Issue #80 (D-08 / Fase 2 — Complementar: G1, G2, G3, G5-a), o único trabalho
+  de engenharia ainda aberto sob a issue-mãe #72.** As quatro pendências
+  derivadas dos comentários pós-merge da #75 foram implementadas em
+  `anonymization/dsweep-complementar-80`:
+  - **G5(a):** `anonymize()` agora expõe contadores de modificação por fase em
+    `g_prime.graph["metadata"]` — `edges_modified_phase2_intragroup` (Fase 2,
+    via `_modify_structure(return_counts=True)`, opt-in) e
+    `edges_added_reconnection` (reconexão, contado em `_reconnect_inter_edges` e
+    gravado no atributo do grafo). Sem mudança na assinatura de retorno
+    (pré-requisito de G5-b na #77). +8 testes.
+  - **G3:** validação isolada da fórmula `k(k−1)` em `_reconnect_inter_edges`
+    (k∈{2,3}). **Achado:** o exemplo literal da #80 (LSs de 1 nó → k(k−1)=2)
+    está **incorreto** — é degenerate (extremos na posição 0 colapsam para 1
+    aresta). A fórmula k(k−1) vale para extremos em **posições canônicas
+    distintas**; mesma posição → clique de C(k,2)=k(k−1)/2. Divergência
+    registrada sob **D-08** no `decision_log.md` (correção de núcleo ≠ ajuste de
+    teste); docstring de `_reconnect_inter_edges` atualizada (fecha o item
+    "derivação interpretativa pendente" de `algorithm_notes §3.2.2`). +5 testes.
+  - **G1:** `test_local_structures_connected_d_gt_1` mede e registra o % de LSs
+    desconexas na ego-rede 3437 (LCC, backend auto) para d∈{2,5}; não força
+    conectividade. Reproduz D-08: d=2 199/266 vazias + 86,6% desconexas
+    (degenerate); d=5 56,2% desconexas. Pulado se `data/raw` ausente. +2 testes.
+  - **G2:** caso adversarial K₄/P₄/K₁,₃ em `_modify_structure` — assertiva (a)
+    mutuamente isomorfos, (b) arestas adicionadas ≤ k·|E(K₄)|=18, (c) sem
+    self-loop/multi-aresta. +4 testes.
+  Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `diag/subgraph-zeros-k20` → fechar a issue #93
-  (com comentário de fechamento: verdict do Passo 1 + H3 descartada).
+- Revisão humana e merge do PR `anonymization/dsweep-complementar-80` → fechar a
+  issue #80. Com #80 fechada, **toda a engenharia da issue-mãe #72 (d-sweep) está
+  concluída** → fechar #72 (umbrella) com comentário de encerramento.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
@@ -69,6 +76,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — Issue #80 (D-08 / Fase 2 — Complementar): G1, G2, G3, G5-a
+
+- **Concluído:** Implementadas as quatro pendências da #80 (último trabalho de
+  engenharia aberto sob a issue-mãe #72). **G5(a):** contadores por fase
+  (`edges_modified_phase2_intragroup`, `edges_added_reconnection`) expostos em
+  `g_prime.graph["metadata"]` por `anonymize()`, via `_modify_structure(
+  return_counts=True)` (opt-in) e contagem em `_reconnect_inter_edges`, sem
+  alterar a assinatura de retorno. **G3:** validação isolada de `k(k−1)` na
+  reconexão (k∈{2,3}) — achado de que o exemplo de 1 nó da #80 é degenerate
+  (colapsa para 1 aresta); a fórmula vale para extremos em posições canônicas
+  distintas (mesma posição → C(k,2)); registrado sob D-08 no `decision_log.md` e
+  na docstring. **G1:** `test_local_structures_connected_d_gt_1` mede/registra o
+  % de LSs desconexas na 3437 (d∈{2,5}; reproduz D-08: d=2 degenerate, d=5 ~56%),
+  pulado sem `data/raw`. **G2:** caso K₄/P₄/K₁,₃ em `_modify_structure` com as
+  assertivas (a)(b)(c). +19 testes; suíte **525 passed**, ruff limpo. Branch
+  `anonymization/dsweep-complementar-80`.
+- **Próximo:** Merge do PR → fechar #80; depois fechar a umbrella #72 (toda a
+  engenharia do d-sweep concluída). Fechamento manual da #74.
+- **Bloqueios:** PR `anonymization/dsweep-complementar-80` aguarda revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — Issue #93 (D-08 / Fase 6): diagnóstico dos zeros de reid_sub (k=20, d∈{5,10})
 
