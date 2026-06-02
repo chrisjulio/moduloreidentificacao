@@ -19,9 +19,16 @@ algorithmic significance for the tests below.
 
 from __future__ import annotations
 
-import networkx as nx
+from unittest.mock import patch
 
-from src.anonymization.he2009 import _modify_structure
+import networkx as nx
+import pytest
+
+from src.anonymization.he2009 import (
+    _group_isomorphic,
+    _modify_structure,
+    anonymize,
+)
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -440,3 +447,135 @@ class TestEdgeCases:
         result = _modify_structure([group], seed=0)
         for ls in result[0]:
             assert ls.number_of_edges() == n_edges
+
+
+# ---------------------------------------------------------------------------
+# S8-2b (issue #112) — propagation through the public anonymize() entry point
+#
+# Issues #104 (s_max / fsm_max_size, B5) and #105 (isomorphism_mode, B6) made
+# both parameters YAML-read instead of hardcoded. These tests verify that
+# anonymize() actually wires each parameter through to the internal helper that
+# realises its behaviour — _group_isomorphic for fsm_max_size, _modify_structure
+# for isomorphism_mode — and that the historical defaults are preserved.
+#
+# Seeds are fixed (0 / 7); approved exception per .claude/rules/seeds.md
+# (deterministic tests). cycle_graph(20) with d=5 is the same fixture used to
+# settle decision G2/D-01: its frequent subgraphs span sizes 1..4, so s_max in
+# {4, 5} yields identical grouping.
+# ---------------------------------------------------------------------------
+
+
+class TestAnonymizeIsomorphismModePropagation:
+    """anonymize() propagates isomorphism_mode to _modify_structure (B6, #105)."""
+
+    def test_add_only_propagates_as_add_only_true(self) -> None:
+        """isomorphism_mode='add_only' reaches _modify_structure(add_only=True)."""
+        g = nx.cycle_graph(20)
+        with patch(
+            "src.anonymization.he2009._modify_structure",
+            wraps=_modify_structure,
+        ) as spy:
+            anonymize(g, k=2, d=2, seed=0, isomorphism_mode="add_only")
+        assert spy.call_args.kwargs["add_only"] is True
+
+    def test_default_propagates_as_add_only_false(self) -> None:
+        """The default (add_or_delete) reaches _modify_structure(add_only=False)."""
+        g = nx.cycle_graph(20)
+        with patch(
+            "src.anonymization.he2009._modify_structure",
+            wraps=_modify_structure,
+        ) as spy:
+            anonymize(g, k=2, d=2, seed=0)
+        assert spy.call_args.kwargs["add_only"] is False
+
+    def test_add_only_removes_no_edge_effect(self) -> None:
+        """Effect check (issue scenario): under add_only no intra-group edge is
+        removed — every edge of every input LS survives in _modify_structure's
+        output for the call made inside anonymize()."""
+        g = nx.cycle_graph(20)
+        captured: dict = {}
+
+        def _spy(groups, **kwargs):
+            result = _modify_structure(groups, **kwargs)
+            captured["in"] = groups
+            captured["out"] = result[0] if kwargs.get("return_counts") else result
+            captured["add_only"] = kwargs.get("add_only")
+            return result
+
+        with patch("src.anonymization.he2009._modify_structure", side_effect=_spy):
+            anonymize(g, k=2, d=2, seed=0, isomorphism_mode="add_only")
+
+        assert captured["add_only"] is True
+        for in_grp, out_grp in zip(captured["in"], captured["out"], strict=True):
+            for in_ls, out_ls in zip(in_grp, out_grp, strict=True):
+                in_edges = {frozenset(e) for e in in_ls.edges()}
+                out_edges = {frozenset(e) for e in out_ls.edges()}
+                assert in_edges <= out_edges, "add_only removed an edge"
+
+    def test_explicit_add_or_delete_matches_default(self) -> None:
+        """Passing the default value explicitly equals the historical baseline."""
+        g = nx.cycle_graph(20)
+        g_default = anonymize(g, k=2, d=5, seed=0)
+        g_explicit = anonymize(g, k=2, d=5, seed=0, isomorphism_mode="add_or_delete")
+        assert set(g_default.edges()) == set(g_explicit.edges())
+
+    def test_invalid_mode_raises_value_error(self) -> None:
+        """An unknown isomorphism_mode fails fast with a clear ValueError."""
+        g = nx.cycle_graph(20)
+        with pytest.raises(ValueError, match="isomorphism_mode"):
+            anonymize(g, k=2, d=2, seed=0, isomorphism_mode="foo")
+
+
+class TestAnonymizeFsmMaxSizePropagation:
+    """anonymize() propagates fsm_max_size to _group_isomorphic (B5, #104)."""
+
+    def test_fsm_max_size_propagates_to_group_isomorphic(self) -> None:
+        """A non-default fsm_max_size reaches _group_isomorphic verbatim."""
+        g = nx.cycle_graph(20)
+        with patch(
+            "src.anonymization.he2009._group_isomorphic",
+            wraps=_group_isomorphic,
+        ) as spy:
+            anonymize(g, k=2, d=5, seed=0, fsm_max_size=5)
+        assert spy.call_args.kwargs["fsm_max_size"] == 5
+
+    def test_default_fsm_max_size_is_4(self) -> None:
+        """Omitting fsm_max_size reaches _group_isomorphic with the default 4."""
+        g = nx.cycle_graph(20)
+        with patch(
+            "src.anonymization.he2009._group_isomorphic",
+            wraps=_group_isomorphic,
+        ) as spy:
+            anonymize(g, k=2, d=5, seed=0)
+        assert spy.call_args.kwargs["fsm_max_size"] == 4
+
+    @pytest.mark.parametrize("seed", [0, 7])
+    def test_grouping_identical_for_s_max_4_and_5_on_cycle20(self, seed: int) -> None:
+        """G2/D-01: on cycle_graph(20) with d=5 the frequent subgraphs span
+        sizes 1..4, so s_max in {4, 5} produces identical grouping — and hence a
+        bit-for-bit identical anonymized graph."""
+        g = nx.cycle_graph(20)
+        g4 = anonymize(g, k=2, d=5, seed=seed, fsm_max_size=4)
+        g5 = anonymize(g, k=2, d=5, seed=seed, fsm_max_size=5)
+        assert set(g4.edges()) == set(g5.edges())
+
+
+class TestAnonymizeRegressionDefaults:
+    """Without the new keys, anonymize() reproduces the historical baseline."""
+
+    @pytest.mark.parametrize("d", [1, 2])
+    def test_default_equals_explicit_historical_defaults(self, d: int) -> None:
+        """A default call equals one passing fsm_max_size=4 / add_or_delete."""
+        g = nx.cycle_graph(20)
+        g_default = anonymize(g, k=2, d=d, seed=0)
+        g_explicit = anonymize(
+            g, k=2, d=d, seed=0, fsm_max_size=4, isomorphism_mode="add_or_delete"
+        )
+        assert set(g_default.edges()) == set(g_explicit.edges())
+
+    def test_default_baseline_d1_is_deterministic(self) -> None:
+        """Two default d=1 runs with the same seed are bit-for-bit identical."""
+        g = nx.cycle_graph(20)
+        g1 = anonymize(g, k=2, d=1, seed=0)
+        g2 = anonymize(g, k=2, d=1, seed=0)
+        assert set(g1.edges()) == set(g2.edges())
