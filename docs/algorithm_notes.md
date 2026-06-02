@@ -231,7 +231,7 @@ Retornar G'
 | FSM simplificado (enumeração até `s_max`) | `O(|LS|^s_max)` por LS — controlado por `s_max` | Interpretativa — não declarada no artigo |
 | Agrupamento (Algorithm 1) | `O(c_k · m)` por iteração; `c_k/k` iterações → `O(n·m / d·k)` | Interpretativa |
 | Isomorfização (Fases 1+2) | `O(k · |V(LS)|²)` por grupo | Interpretativa |
-| Reconexão | `O(|E_inter| · k²)` | Interpretativa — artigo cita "k(k-1) edges per inter-edge" (p. 652) |
+| Reconexão | `O(|E_inter| · k²)` | **Confirmada empiricamente** — fórmula k(k−1) validada por `TestReconnectKTimesKMinusOne` (k∈{2,3}, PR #98, G3 issue #80); válida para posições canônicas distintas (caso geral). Ver §3.2.2. |
 
 > ⚠️ **Atenção:** apenas a complexidade da partição via METIS é **declarada
 > explicitamente** no artigo (`O(|E|)`). Todas as demais são **interpretativas**
@@ -384,14 +384,21 @@ complementares:
 | Custo por inter-aresta | `k(k−1)` arestas adicionais |
 | Custo total | `O(|E_inter| · k²)` |
 
-> **Nota de implementação (a verificar):** O artigo não demonstra a
-> derivação de `k(k−1)`. A interpretação mais natural é: cada inter-aresta
-> `(u, v)` entre `LS_a` e `LS_b` precisa ser replicada para todos os pares
-> de posições equivalentes nos `k` grupos que contêm `LS_a` e `LS_b`
-> respectivamente, resultando em `k² − k = k(k−1)` arestas adicionais.
-> Esta interpretação deve ser validada durante a implementação. Se
-> incorreta, a estimativa de `O(|E_inter| · k²)` também precisa ser
-> revisada.
+> **Status (G3, issue #80 — confirmado em 02/06/2026, PR #98):** A fórmula
+> `k(k−1)` foi validada empiricamente por `TestReconnectKTimesKMinusOne`
+> para k ∈ {2, 3}. Aplica-se quando os extremos da inter-aresta ocupam
+> **posições canônicas distintas** (D-03) — o caso geral descrito no artigo.
+> Dois casos especiais emergem da construção não-direcionada:
+>
+> - **Mesma posição canônica:** os pares ordenados (i, j) colapsam →
+>   C(k,2) = k(k−1)/2 arestas (clique dentro da posição).
+> - **LSs de 1 nó (degenerate):** ambos os extremos na posição 0 →
+>   apenas a inter-aresta original (1 aresta), não k(k−1). O esboço
+>   literal da issue #80 era incorreto; o núcleo está correto.
+>
+> A estimativa `O(|E_inter| · k²)` permanece válida para o caso geral.
+> A docstring de `_reconnect_inter_edges` e a nota sob D-08 em
+> `docs/decision_log.md` registram essa distinção de casos.
 
 Esta é a **terceira fonte de modificação estrutural** e não está coberta
 pelas variantes da Seção 3.2.1 — a reconexão é obrigatoriamente aditiva.
