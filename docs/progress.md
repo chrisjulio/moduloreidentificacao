@@ -16,21 +16,21 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
-- **Visualização ciente de `d` (#92) — implementada.** `src/visualization/`
-  passou a tratar `d` como dimensão de primeira classe. `tables.py`: coluna `d`
-  adicionada a `CSV_COLUMNS` logo após `k` (mudança intencional de spec),
-  `record_to_row` extrai `d` com fallback `d=1`, sort por `(k, d, seed)`.
-  `privacy_utility.py`: nova `aggregate_by_k_d` (agrega por `(k, d)`),
-  `aggregate_by_k` mantida com comportamento idêntico (pool por `k`), nova
-  `plot_privacy_utility_dsweep` com dois layouts (`series` padrão + `facets`),
-  CLI com `--dsweep`/`--layout` e auto-detecção quando há mais de um `d`.
-  Tudo verificado end-to-end no log real do d-sweep (48 registros): CSVs com 16
-  células `(k,d)` distintas e ambos os plots gerados. Suíte: **490 passed**;
-  ruff limpo. Branch `viz/dsweep-d-aware`.
+- **Relatório consolidado final do d-sweep (#88) — escrito.** Com a visualização
+  ciente de `d` já mergeada em `main` (#92/#94), o último entregável pendente da
+  DoD da #88 foi produzido: `docs/results_dsweep.md`, o **relatório consolidado
+  final** (metadados, cobertura do grid, tabelas `média ± std` por `(k,d)`,
+  análise das tendências opostas grau×subgrafo, combos degenerados D-08/D-10,
+  ressalva de timeouts em k alto, comandos de reprodução). Artefatos regenerados
+  do log via fluxo `config→run→log→parse→plot/table`: CSVs d-aware
+  (`results/tables/facebook_{degree,subgraph}.csv`) e dois layouts de figura
+  (`privacy_utility_dsweep_{series,facets}`) — não versionados, conforme regra.
+  A prévia (`dsweep_previa_garantia_dados.md`) foi rebaixada a snapshot histórico
+  com ponteiro para o relatório final. Branch `docs/results-dsweep`.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `viz/dsweep-d-aware` (#92); só então gerar os
-  artefatos finais versionados e o **relatório consolidado do d-sweep**.
+- Revisão humana e merge do PR `docs/results-dsweep`; com isso, **todos os itens
+  da DoD da #88 atendidos** → fechar a issue #88 via PR.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
@@ -60,6 +60,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — Relatório consolidado final do d-sweep (#88): docs/results_dsweep.md
+
+- **Concluído:** Fechado o último item pendente da DoD da issue #88. Com a viz
+  d-aware (#92/#94) mergeada em `main`, regenerei os artefatos do log do d-sweep
+  (48 registros, `experiments/logs/he2009_facebook_dsweep/`) via as ferramentas
+  já existentes: tabelas CSV d-aware (`results/tables/facebook_{degree,subgraph}.csv`,
+  agora com coluna `d`) e duas figuras (`privacy_utility_dsweep_series` e
+  `..._facets`), ambas não versionadas conforme `.claude/rules/experiments.md`.
+  Escrevi `docs/results_dsweep.md` (relatório final): metadados, cobertura 16/16
+  células, tabelas `média ± std` por `(k,d)`, análise (déficit estrutural em
+  48/48 com `valid=false`+`deficit_fully_structural=true`; tendências opostas
+  grau×subgrafo em k; efeito de `d`; combos degenerados D-08 d=2 e D-10 d=10/k=20;
+  ressalva de que `reid_sub=0` em k alto pode refletir timeouts VF2, não
+  segurança — o JSONL não registra contagem de timeouts), comandos de reprodução
+  e referências cruzadas. `dsweep_previa_garantia_dados.md` rebaixada a snapshot
+  histórico com ponteiro para o relatório final. Branch `docs/results-dsweep`.
+- **Próximo:** Merge do PR `docs/results-dsweep` → fechar #88. Fechamento manual da #74.
+- **Bloqueios:** PR `docs/results-dsweep` aguarda revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — Visualização ciente de `d` (#92): plots e tabelas d-aware
 

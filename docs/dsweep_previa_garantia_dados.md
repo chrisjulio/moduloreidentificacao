@@ -1,5 +1,10 @@
 # Consolidação de dados — d-sweep (issue #88)
 
+> 📄 **O relatório final já existe:** [`docs/results_dsweep.md`](results_dsweep.md).
+> Este arquivo é mantido apenas como **snapshot histórico** do estado
+> intermediário (prévia de garantia de dados). Para os números canônicos,
+> tabelas e figuras regeneradas do log, use o relatório final.
+
 > ⚠️ **ESTE NÃO É O RELATÓRIO FINAL.**
 >
 > Este documento nasceu como **prévia de garantia de dados (data-preservation
