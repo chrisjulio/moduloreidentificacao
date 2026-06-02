@@ -647,6 +647,56 @@ candidatos). O runner foi instrumentado (DL-02) com `subgraph_timeout_count` e
 `subgraph_candidate_counts` para tornar essa distinção observável em execuções
 futuras. Ver DL-02 e `docs/results_dsweep.md` §5.5.
 
+### Nota complementar (issue #80, 2026-06-02): G1 automatizado + esclarecimento da fórmula k(k−1) (G3)
+
+A issue #80 (Fase 2 — Complementar) fechou quatro pendências derivadas dos
+comentários pós-merge da #75. Duas geram registro aqui:
+
+**G1 — conectividade das LSs agora é teste automatizado.** A verificação
+manual da tabela acima virou `test_local_structures_connected_d_gt_1`
+(`tests/anonymization/test_he2009_partition.py`), que mede e registra o
+percentual de LSs desconexas por `d` na ego-rede 3437 (LCC, n=532, backend
+`auto`/pymetis). O teste **não força** conectividade — apenas mede, coerente
+com a Opção B. Valores reproduzidos (seed=0), consistentes com a tabela:
+
+| d | ck | LSs vazias | LSs não-vazias | desconexas (não-vazias) |
+|---|---|---|---|---|
+| 2 | 266 | 199 (74,8%) | 67 | 58/67 (86,6%) |
+| 5 | 106 | 1 (0,9%) | 105 | 59/105 (56,2%) |
+
+O teste é pulado quando `data/raw/facebook/` está ausente (CI sem download);
+o artefato é produzido localmente. Pequenas diferenças vs. a tabela original
+(seed=42 ali, seed=0 aqui; e LCC vs. grafo bruto de 534 nós) não alteram o
+diagnóstico: d=2 permanece degenerate e d=5 ~56% desconexas.
+
+**G3 — a fórmula k(k−1) da reconexão é dependente da posição canônica.**
+A validação isolada de `_reconnect_inter_edges` (`TestReconnectKTimesKMinusOne`)
+expôs que o exemplo literal esboçado na #80 ("2 LSs de 1 nó cada → k(k−1)=2
+arestas") está **incorreto**: ele é degenerate. O número de arestas adicionadas
+ao reconectar **uma** inter-aresta de mesmo grupo depende das posições canônicas
+(D-03) dos extremos:
+
+- **extremos em posições distintas** → exatamente **k(k−1)** arestas novas
+  (caso geral do artigo; verificado para k ∈ {2,3});
+- **extremos na mesma posição** → um clique de **C(k,2) = k(k−1)/2** arestas
+  entre os nós daquela posição;
+- **LSs de 1 nó** (esboço da #80) → ambos os extremos na posição 0; os pares
+  ordenados (i,j) colapsam e resta apenas a própria inter-aresta original
+  (1 aresta), **não** k(k−1)=2.
+
+Isto é **comportamento correto da construção não-direcionada**, não um bug do
+núcleo — por isso a divergência é registrada aqui (conforme instrução da #80:
+"divergência é correção de núcleo, não ajuste de teste") e os testes validam a
+semântica documentada, não o esboço degenerate. A docstring de
+`_reconnect_inter_edges` foi atualizada com essa ressalva, fechando o item
+"derivação interpretativa pendente" de `algorithm_notes.md §3.2.2`.
+
+**G5(a) — contadores de modificação por fase** (`edges_modified_phase2_intragroup`,
+`edges_added_reconnection`) passam a ser expostos em
+`g_prime.graph["metadata"]` por `anonymize()`, sem alterar sua assinatura de
+retorno (pré-requisito declarado de G5-b na #77). **G2** acrescentou o caso
+adversarial K₄/P₄/K₁,₃ a `_modify_structure`.
+
 ### Referências cruzadas
 
 - D-04 (motor de particionamento — pymetis primário, KL fallback)
@@ -655,6 +705,7 @@ futuras. Ver DL-02 e `docs/results_dsweep.md` §5.5.
 - DL-02 (campos de diagnóstico do ataque por subgrafo — encerramento via #93)
 - Issue #72 (issue-mãe: d-sweep tier desejável)
 - Issue #75 (Fase 2: endurecer núcleo em d>1)
+- Issue #80 (Fase 2 — Complementar: G1, G2, G3, G5-a)
 - Issue #93 (Fase 6: sanitização diagnóstica dos zeros — H3 descartada)
 - `src/anonymization/_partition_backend.py` — `_partition_pymetis`
 - `src/anonymization/he2009.py` — `_partition_neighborhoods`

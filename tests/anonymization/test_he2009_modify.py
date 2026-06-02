@@ -254,6 +254,61 @@ class TestIsomorphism:
 
 
 # ---------------------------------------------------------------------------
+# G2 (issue #80) — topologically heterogeneous LSs in _modify_structure
+#
+# K4 (complete), P4 (path), K1,3 (star) all have 4 nodes but very different
+# topologies. This is the adversarial case that d>1 activates and d=1 never
+# exercises (with d=1 every LS is a single node). It checks that the
+# isomorphization handles maximally heterogeneous degree sequences.
+# ---------------------------------------------------------------------------
+
+
+class TestHeterogeneousLocalStructures:
+    """K4 / P4 / K1,3 bucket: the d>1 adversarial isomorphization case (G2)."""
+
+    @staticmethod
+    def _bucket() -> list[nx.Graph]:
+        """Three 4-node LSs with distinct topologies: K4, P4, K1,3."""
+        return [
+            nx.complete_graph(4).copy(),  # K4   — 6 edges, 3-regular
+            nx.path_graph(4).copy(),  # P4   — 3 edges, degrees 1,2,2,1
+            nx.star_graph(3).copy(),  # K1,3 — 3 edges, degrees 3,1,1,1
+        ]
+
+    def test_a_all_mutually_isomorphic(self) -> None:
+        """(a) After modification all three LSs are mutually isomorphic."""
+        result = _modify_structure([self._bucket()], seed=0, add_only=False)
+        assert _all_isomorphic(result[0])
+
+    def test_b_edges_added_within_trivial_upper_bound(self) -> None:
+        """(b) Total edges added across the group is plausible:
+        <= k * |E(K4)| = 3 * 6 = 18 (trivial upper bound)."""
+        bucket = self._bucket()
+        original_counts = [ls.number_of_edges() for ls in bucket]
+        result = _modify_structure([bucket], seed=0, add_only=False)
+        edges_added = sum(
+            max(0, modified.number_of_edges() - orig)
+            for orig, modified in zip(original_counts, result[0], strict=True)
+        )
+        k = len(bucket)
+        upper_bound = k * nx.complete_graph(4).number_of_edges()  # 3 * 6 = 18
+        assert edges_added <= upper_bound
+
+    def test_c_no_self_loops_or_multi_edges(self) -> None:
+        """(c) No LS gains a self-loop or multi-edge."""
+        result = _modify_structure([self._bucket()], seed=0, add_only=False)
+        for ls in result[0]:
+            assert not _has_self_loops(ls)
+            assert _is_simple(ls)
+
+    def test_counter_consistent_with_heterogeneous_bucket(self) -> None:
+        """return_counts surfaces a positive modification count for this
+        maximally heterogeneous bucket (it cannot already be isomorphic)."""
+        _, count = _modify_structure([self._bucket()], seed=0, return_counts=True)
+        assert count >= 1
+
+
+# ---------------------------------------------------------------------------
 # D-06: incomplete groups (< k members) pass through unchanged
 # ---------------------------------------------------------------------------
 

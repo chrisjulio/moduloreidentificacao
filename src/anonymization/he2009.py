@@ -260,7 +260,17 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     -------
     nx.Graph
         Copia do grafo com estrutura modificada satisfazendo
-        structure-aware k-anonimato (Definicao 3 do artigo).
+        structure-aware k-anonimato (Definicao 3 do artigo). O atributo
+        ``g_prime.graph["metadata"]`` carrega os contadores de modificacao
+        por fase (G5-a, issue #80):
+
+        * ``edges_modified_phase2_intragroup``: total de arestas
+          adicionadas/removidas pela isomorfizacao intra-grupo (Fase 2).
+        * ``edges_added_reconnection``: total de arestas novas adicionadas
+          pela reconexao de inter-arestas (Secao 3.3).
+
+        Ambos sao inteiros >= 0 e permitem atribuir o efeito sobre a
+        utilidade entre isomorfizacao e reconexao.
 
     Notas
     -----
@@ -291,12 +301,23 @@ def anonymize(g: nx.Graph, k: int, d: int, seed: int) -> nx.Graph:
     # ------------------------------------------------------------------
     # Step 3 — Make each group isomorphic (Section 3.2, Phases 1 & 2)
     # ------------------------------------------------------------------
-    modified_groups = _modify_structure(groups, seed=seed, add_only=False)
+    modified_groups, edges_modified_phase2 = _modify_structure(
+        groups, seed=seed, add_only=False, return_counts=True
+    )
 
     # ------------------------------------------------------------------
     # Step 4 — Reconnect inter-partition edges (Section 3.3)
     # ------------------------------------------------------------------
-    return _reconnect_inter_edges(g, modified_groups)
+    g_prime = _reconnect_inter_edges(g, modified_groups)
+
+    # G5-a (issue #80): expose per-phase modification counters via a graph
+    # attribute so downstream consumers (e.g. the experiment runner, G5-b in
+    # issue #77) can attribute perturbation to isomorphization vs. reconnection
+    # without changing the return signature of anonymize().
+    g_prime.graph.setdefault("metadata", {})
+    g_prime.graph["metadata"]["edges_modified_phase2_intragroup"] = edges_modified_phase2
+
+    return g_prime
 
 
 def _partition_neighborhoods(
@@ -483,7 +504,8 @@ def _modify_structure(
     groups: list[list[nx.Graph]],
     seed: int,
     add_only: bool = False,
-) -> list[list[nx.Graph]]:
+    return_counts: bool = False,
+) -> list[list[nx.Graph]] | tuple[list[list[nx.Graph]], int]:
     """Torna isomorfas as Local Structures de cada grupo (Fases 1 e 2).
 
     Implementa a anonimizacao intra-grupo em duas fases:
@@ -521,13 +543,25 @@ def _modify_structure(
         Se True, aplica apenas adicao de arestas (Edge Adding).
         Se False, aplica adicao e remocao (Edge Adding/Deleting),
         que gera menor perturbacao estrutural. Padrao: False.
+    return_counts : bool, optional
+        Se ``True``, retorna tambem o numero total de operacoes de aresta
+        (adicoes + remocoes) aplicadas na Fase 2 sobre todos os grupos
+        completos -- o contador ``edges_modified_phase2_intragroup``
+        exposto por ``anonymize`` (G5-a, issue #80). Padrao: ``False``
+        (mantem a assinatura historica que retorna apenas a lista).
 
     Retorna
     -------
     list[list[nx.Graph]]
-        Grupos com Local Structures modificadas e isomorfas entre si,
-        prontas para reconexao.  Grupos incompletos (D-06) sao
-        retornados sem modificacao.
+        Quando ``return_counts=False`` (padrao): grupos com Local
+        Structures modificadas e isomorfas entre si, prontas para
+        reconexao.  Grupos incompletos (D-06) sao retornados sem
+        modificacao.
+    tuple[list[list[nx.Graph]], int]
+        Quando ``return_counts=True``: a lista acima e o total de arestas
+        adicionadas/removidas pela isomorfizacao intra-grupo (Fase 2).
+        Cada adicao ou remocao efetiva conta como uma modificacao;
+        grupos incompletos e de tamanho misto nao contribuem.
 
     Notas
     -----
@@ -549,6 +583,7 @@ def _modify_structure(
     _rng = np.random.default_rng(seed)  # reserved for future tie-break use
 
     result_groups: list[list[nx.Graph]] = []
+    edges_modified = 0  # G5-a: Phase 2 add/remove operations across complete groups
 
     for group in groups:
         # Grupos com menos de 2 LSs nao precisam de isomorfizacao (D-06).
@@ -606,6 +641,7 @@ def _modify_structure(
                                 u = inv_maps[ls_idx][pos_i]
                                 v = inv_maps[ls_idx][pos_j]
                                 modified[ls_idx].add_edge(u, v)
+                                edges_modified += 1
                 else:
                     # Edge Adding/Deleting: majority-vote per pair.
                     if count_with >= count_without:
@@ -615,6 +651,7 @@ def _modify_structure(
                                 u = inv_maps[ls_idx][pos_i]
                                 v = inv_maps[ls_idx][pos_j]
                                 modified[ls_idx].add_edge(u, v)
+                                edges_modified += 1
                     else:
                         # Remove from all LSs that have the edge.
                         for ls_idx in range(k_size):
@@ -622,9 +659,12 @@ def _modify_structure(
                                 u = inv_maps[ls_idx][pos_i]
                                 v = inv_maps[ls_idx][pos_j]
                                 modified[ls_idx].remove_edge(u, v)
+                                edges_modified += 1
 
         result_groups.append(modified)
 
+    if return_counts:
+        return result_groups, edges_modified
     return result_groups
 
 
@@ -657,12 +697,29 @@ def _reconnect_inter_edges(
     -------
     nx.Graph
         Grafo final anonimizado e reconectado, satisfazendo
-        structure-aware k-anonimato.
+        structure-aware k-anonimato. O atributo
+        ``g_prime.graph["metadata"]["edges_added_reconnection"]`` registra
+        o numero de arestas efetivamente adicionadas nesta etapa de
+        reconexao (G5-a, issue #80) -- novas arestas apenas, exclui as
+        intra-LS ja presentes na uniao das LSs modificadas.
+
+    Notas
+    -----
+    **Contagem k(k-1) (G3, issue #80).** Para uma inter-aresta de mesmo
+    grupo cujos extremos ocupam **posicoes canonicas distintas** (D-03) em
+    suas LSs, a reconexao adiciona exatamente ``k(k-1)`` arestas novas
+    (verificado empiricamente para k in {2,3}). Quando os extremos
+    compartilham a mesma posicao canonica, os pares ordenados (i, j)
+    colapsam e a construcao forma um clique de ``C(k,2)=k(k-1)/2`` arestas
+    entre os nos daquela posicao (no caso degenerate de LSs de 1 no, isso
+    se reduz a propria inter-aresta original). Ver nota sob D-08 em
+    ``docs/decision_log.md``.
 
     Referencia
     ----------
     He et al. (2009), Secao 3.3 -- Reconnecting Local Structures (p. 652).
-    Para cada inter-aresta reconectada: k(k-1) arestas adicionadas.
+    Para cada inter-aresta reconectada (extremos em posicoes distintas):
+    k(k-1) arestas adicionadas.
     """
     # ------------------------------------------------------------------
     # Build lookup: node_id → (group_idx, ls_idx)
@@ -717,12 +774,21 @@ def _reconnect_inter_edges(
     #     add back the original edge only (isomorphism across groups is
     #     not enforced by the He et al. algorithm).
     # ------------------------------------------------------------------
+    edges_added_reconnection = 0  # G5-a: new edges introduced by reconnection only
+
+    def _add_reconnection_edge(a: object, b: object) -> None:
+        """Add edge (a, b) to g_prime, counting it only if it is new."""
+        nonlocal edges_added_reconnection
+        if not g_prime.has_edge(a, b):
+            g_prime.add_edge(a, b)
+            edges_added_reconnection += 1
+
     for u, v in g_original.edges():
         u_loc = node_location.get(u)
         v_loc = node_location.get(v)
         if u_loc is None or v_loc is None:
             # Node absent from all LSs — should not happen for valid input.
-            g_prime.add_edge(u, v)
+            _add_reconnection_edge(u, v)
             continue
 
         u_g, u_l = u_loc
@@ -744,9 +810,11 @@ def _reconnect_inter_edges(
                     node_u = inv_maps[u_g][i][u_pos]  # u-equivalent in LS_i
                     node_v = inv_maps[v_g][j][v_pos]  # v-equivalent in LS_j
                     if node_u != node_v:
-                        g_prime.add_edge(node_u, node_v)
+                        _add_reconnection_edge(node_u, node_v)
         else:
             # Cross-group inter-LS edge: restore original edge.
-            g_prime.add_edge(u, v)
+            _add_reconnection_edge(u, v)
+
+    g_prime.graph["metadata"] = {"edges_added_reconnection": edges_added_reconnection}
 
     return g_prime
