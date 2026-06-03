@@ -16,6 +16,25 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #108 (S8-5 / B1): frase-síntese `d=1` = k-anonimato de grau; d-sweep =
+  estrutural — inserida no README e em `results_baseline.md`.** Fechado o achado
+  de maior consequência interpretativa (B1). A síntese — "no regime `d=1` os
+  resultados rotulados 'He et al. structure-aware' equivalem a k-anonimato de
+  grau; a propriedade estrutural só é exercida no d-sweep `d∈{5,10}`; o contraste
+  `d=1` vs. `d∈{5,10}` é a evidência empírica de privacidade estrutural" — entrou
+  em **dois** pontos de destaque: (1) `README.md` §5, callout "Leitura-chave" no
+  topo da seção de Resultados, antes da tabela do baseline; (2)
+  `results_baseline.md`, nova seção "Leitura-chave — `d=1` afere k-anonimato de
+  grau", junto à apresentação do baseline. Para não contradizer S8-4/A1 (mesmo
+  arquivo, PR #117 já mergeado), as duas ressalvas foram declaradas
+  **ortogonais**: uma trata do *parâmetro* `d` (grau vs. estrutura), a outra do
+  *motor* (KL vs. pymetis). Em `achados_divergencias.md`, status detalhado de B1
+  migrado ⚠️→✅ e item 5 das pendências documentais riscado; migração formal na
+  tabela-resumo (linha 77) deixada para S8-8/#111. Referências citadas
+  verificadas (D-02; `algorithm_notes.md` §5.3/§6.5/§9.1). Somente docs — sem
+  alteração em `src/` ou testes; `ruff check .` limpo. Branch
+  `docs/synthesis-d1-degree-vs-structural-108`, PR #118 (`Closes #108`).
+
 - **Issue #107 (S8-4 / A1): `results_baseline.md` declara explicitamente que o
   baseline `d=1` rodou no fallback Kernighan-Lin — não pymetis.** O número-título
   do baseline ("k-anonimato atingido") foi produzido pelo motor **não fiel** ao
@@ -130,10 +149,12 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #117 (`docs/baseline-declare-kl-fallback-107`) →
-  fechar #107. Em seguida: **S8-5** (frase-síntese de B1: o baseline `d=1` afere
-  k-anonimato de grau, o d-sweep exercita a propriedade estrutural — também edita
-  `results_baseline.md`, seriada após S8-4).
+- Revisão humana e merge do PR #118 (`docs/synthesis-d1-degree-vs-structural-108`)
+  → fechar #108. Com S8-4 (#107) já mergeado e S8-5 (#108) entregue, a próxima
+  edição de `results_baseline.md` está livre de seriação pendente.
+- **S8-8 (#111):** migração formal dos status na tabela-resumo de
+  `achados_divergencias.md` (inclui a linha 77 de B1, ⚠️→✅, agora desbloqueada
+  por #108, além de A1/B5/etc.).
 - Revisão humana e merge do PR `docs/config-example-expose-params-106` → fechar
   #106. Em seguida: S8-8 (#111 — migração formal dos status na tabela-resumo de
   `achados_divergencias.md`), que #106 e #107 desbloqueiam.
@@ -171,6 +192,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #108 (S8-5 / B1): frase-síntese d=1 = k-anon de grau, d-sweep = estrutural
+
+- **Concluído:** Fechado o achado B1 (maior consequência interpretativa). A
+  frase-síntese — `d=1` (baseline) afere **k-anonimato de grau**; a propriedade
+  *structure-aware* só é exercida no d-sweep `d∈{5,10}`; o contraste é a
+  evidência empírica de privacidade estrutural — inserida em dois pontos de
+  destaque: `README.md` §5 (callout "Leitura-chave" no topo dos Resultados,
+  antes da tabela do baseline) e `results_baseline.md` (nova seção "Leitura-chave
+  — `d=1` afere k-anonimato de grau", junto à apresentação do baseline). Para não
+  contradizer S8-4/A1 (mesmo arquivo), as duas ressalvas foram declaradas
+  **ortogonais** (parâmetro `d` vs. motor KL/pymetis). Em `achados_divergencias.md`,
+  status detalhado de B1 ⚠️→✅ e item 5 das pendências riscado; tabela-resumo
+  (linha 77) deixada para S8-8/#111. Referências citadas verificadas (D-02;
+  `algorithm_notes.md` §5.3/§6.5/§9.1). Somente docs; `ruff check .` limpo.
+  Branch `docs/synthesis-d1-degree-vs-structural-108`, PR #118.
+- **Próximo:** Merge do PR #118 → fechar #108; depois S8-8 (#111, migração formal
+  dos status na tabela-resumo, incl. B1 linha 77). Merges pendentes de #106/#112.
+- **Bloqueios:** PR #118 aguarda revisão humana (S8-4/#107 já em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #107 (S8-4 / A1): results_baseline.md declara baseline d=1 em KL
 

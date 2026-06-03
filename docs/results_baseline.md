@@ -13,6 +13,28 @@ Ver ressalva "[Motor de particionamento](#motor-de-particionamento--baseline-d1-
 
 ---
 
+## Leitura-chave — `d=1` afere k-anonimato de grau (achado B1)
+
+> **Síntese interpretativa (achado B1).** Neste baseline `d=1` os resultados
+> rotulados como "He et al. *structure-aware*" equivalem a **k-anonimato de
+> grau**. Com `d=1`, a estrutura local (Local Structure) de cada nó é um subgrafo
+> de um único nó e o isomorfismo de vizinhança reduz-se a **igualdade de grau** —
+> a propriedade *structure-aware* que distingue He et al. (2009) de Liu & Terzi
+> **não** é exercida aqui.
+
+A propriedade estrutural propriamente dita só é exercida no **d-sweep**
+(`d ∈ {5, 10}`, ver [`results_dsweep.md`](results_dsweep.md)). **O contraste
+`d=1` vs. `d ∈ {5, 10}` é a evidência empírica de que o módulo afere privacidade
+estrutural — e deve ser apresentado como tal, não como detalhe de
+configuração.** Esta ressalva é ortogonal à do motor de particionamento abaixo:
+uma trata do *parâmetro* `d` (grau vs. estrutura), a outra do *motor* que
+executou o particionamento (KL vs. pymetis); ambas valem para este baseline.
+
+**Referências:** D-02 em [`decision_log.md`](decision_log.md); `algorithm_notes.md`
+§5.3, §6.5, §9.1; `limitations.md` §1.3; configs `he2009_facebook_*` com `d=1`.
+
+---
+
 ## Motor de particionamento — baseline d=1 rodou em KL
 
 > **Ressalva metodológica (achado A1).** O número-título deste baseline

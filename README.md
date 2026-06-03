@@ -302,6 +302,17 @@ Escopo Desejável (Email-Enron, ataque por entropia) e Aspiracional
 
 ## 5. Resultados
 
+> **Leitura-chave (achado B1).** No regime `d=1` (baseline mínimo — §5.1), os
+> resultados rotulados como "He et al. *structure-aware*" equivalem a
+> **k-anonimato de grau**: com `d=1` a estrutura local de cada nó reduz-se ao seu
+> próprio grau, e o isomorfismo de vizinhança degenera em igualdade de grau. A
+> propriedade *structure-aware* propriamente dita só é exercida no **d-sweep**
+> (`d ∈ {5, 10}` — §5.2). **O contraste `d=1` vs. `d ∈ {5, 10}` é a evidência
+> empírica de que o módulo afere privacidade estrutural — e deve ser lido como
+> tal, não como detalhe de configuração.** Ver D-02 em
+> [`docs/decision_log.md`](docs/decision_log.md); `algorithm_notes.md` §5.3, §6.5,
+> §9.1; `limitations.md` §1.3.
+
 ### 5.1 Baseline — `d=1` (âncora)
 
 **Dataset:** Facebook Ego-Net 3437 (n=532, m=4812). **Parâmetros:** He et al.
