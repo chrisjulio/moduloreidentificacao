@@ -261,8 +261,15 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   equivalentes a k-anonimato de grau. O contraste `d=1` vs. `d∈{5,10}` do
   d-sweep é a evidência empírica de que o módulo afere privacidade estrutural — e
   deve ser apresentado como tal, não como detalhe.
-- **Status.** ⚠️ Documentado, mas espalhado entre D-02, §6.5, §9.4 e
-  limitations §1.3. Vale uma frase única e direta no texto do artigo.
+- **Status.** ✅ Resolvido por **S8-5 (#108)**: a frase-síntese única e direta foi
+  inserida em dois pontos de destaque — `README.md` §5 (callout "Leitura-chave" no
+  topo da seção de Resultados, antes do baseline) e `docs/results_baseline.md`
+  (seção "Leitura-chave — `d=1` afere k-anonimato de grau", junto à apresentação
+  do baseline). Ambos contrastam `d=1` (k-anon de grau) vs. `d∈{5,10}` (estrutural)
+  e remetem a D-02/§5.3/§6.5/§9.1/§1.3. Linguagem alinhada à ressalva do motor de
+  particionamento (S8-4/A1): em `results_baseline.md` as duas notas são declaradas
+  **ortogonais** (parâmetro `d` vs. motor KL/pymetis), sem contradição. Migração
+  formal do status na tabela-resumo (linha 77, ⚠️→✅) deixada para **S8-8/#111**.
 
 ### B2 — Um único dataset (ego-rede 3437); Enron não executado
 
@@ -434,9 +441,14 @@ Pontos onde a documentação existente ainda descreve o *proposto* como se fosse
    (#106 / DL-03):** o exemplo passou a expor `d`, `sigma`, `s_max` e
    `isomorphism_mode` (todas lidas pelo runner) e a chave `k` foi corrigida
    (`k_values`→`k`). Resíduo: `partition_backend` segue não exposto.
-5. **Frase-síntese de B1.** Inserir, no README e/ou `results_baseline.md`, uma
+5. ~~**Frase-síntese de B1.** Inserir, no README e/ou `results_baseline.md`, uma
    afirmação direta de que o baseline `d=1` afere k-anonimato de grau e que o
-   d-sweep é o que exercita a propriedade estrutural.
+   d-sweep é o que exercita a propriedade estrutural.~~ **Resolvido (#108):**
+   inserida em **dois** pontos de destaque — callout "Leitura-chave" no topo de
+   `README.md` §5 (antes do baseline) e seção "Leitura-chave — `d=1` afere
+   k-anonimato de grau" em `results_baseline.md` (junto à apresentação do
+   baseline), ambas contrastando `d=1` (grau) vs. `d∈{5,10}` (estrutural) e
+   declaradas ortogonais à ressalva do motor (A1/#107).
 
 > Esta seção é deliberadamente **não-acionada** neste documento: corrigir os
 > docs acima é a etapa seguinte, após revisão conjunta destes achados.
