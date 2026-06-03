@@ -549,15 +549,49 @@ class TestAnonymizeFsmMaxSizePropagation:
             anonymize(g, k=2, d=5, seed=0)
         assert spy.call_args.kwargs["fsm_max_size"] == 4
 
+    @staticmethod
+    def _grouping_signature(groups: list[list[nx.Graph]]) -> list:
+        """Backend-independent signature of a grouping.
+
+        Each LS is identified by its (disjoint) node set; each group by the
+        sorted tuple of its LS node sets; the grouping by the sorted list of
+        group signatures. Two groupings compare equal iff they assign the same
+        Local Structures to the same groups, regardless of order.
+        """
+        grp_sigs = [tuple(sorted(tuple(sorted(ls.nodes())) for ls in grp)) for grp in groups]
+        return sorted(grp_sigs)
+
     @pytest.mark.parametrize("seed", [0, 7])
-    def test_grouping_identical_for_s_max_4_and_5_on_cycle20(self, seed: int) -> None:
-        """G2/D-01: on cycle_graph(20) with d=5 the frequent subgraphs span
-        sizes 1..4, so s_max in {4, 5} produces identical grouping — and hence a
-        bit-for-bit identical anonymized graph."""
-        g = nx.cycle_graph(20)
-        g4 = anonymize(g, k=2, d=5, seed=seed, fsm_max_size=4)
-        g5 = anonymize(g, k=2, d=5, seed=seed, fsm_max_size=5)
-        assert set(g4.edges()) == set(g5.edges())
+    def test_grouping_identical_for_s_max_4_and_5_below_threshold(self, seed: int) -> None:
+        """G2/D-01 regime, made backend-independent: when every Local Structure
+        has at most 4 nodes, ``s_max in {4, 5}`` enumerates the same connected
+        subgraphs (a 5-node subset cannot exist), so ``_group_isomorphic``
+        returns an identical grouping.
+
+        This exercises the documented invariant directly on a fixed LS bucket,
+        bypassing the partition step — the alternative (asserting on the output
+        of ``anonymize(cycle_graph(20), d=5)``) is fragile because the partition
+        backend (pymetis vs the networkx-kl fallback) yields different 5-node
+        Local Structures, and for some of those a size-5 enumeration *does*
+        change the grouping.
+        """
+        # Six 4-node LSs (two each of K4, P4, K1,3) relabelled to disjoint node
+        # ranges so the grouping can be compared by node sets.
+        factories = [
+            lambda: nx.complete_graph(4),
+            lambda: nx.complete_graph(4),
+            lambda: nx.path_graph(4),
+            lambda: nx.path_graph(4),
+            lambda: nx.star_graph(3),
+            lambda: nx.star_graph(3),
+        ]
+        lss = [
+            nx.relabel_nodes(f(), {n: n + 10 * i for n in range(4)})
+            for i, f in enumerate(factories)
+        ]
+        groups_4 = _group_isomorphic(lss, k=2, sigma=0.5, seed=seed, fsm_max_size=4)
+        groups_5 = _group_isomorphic(lss, k=2, sigma=0.5, seed=seed, fsm_max_size=5)
+        assert self._grouping_signature(groups_4) == self._grouping_signature(groups_5)
 
 
 class TestAnonymizeRegressionDefaults:
