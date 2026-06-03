@@ -55,7 +55,7 @@ dataset:
   source: snap
   data_path: data/raw/enron/   # lê email-Enron.txt (baixado por download_enron.py)
   component: lcc               # reter maior componente conexo (decisão Seção 3.2)
-  min_nodes: 200               # 10 * k_max = 10 * 20 = 200 (trivial para o Enron)
+  min_nodes: 200               # convenção 10 * k_max = 10 * 20 = 200 (D-14); trivial p/ Enron
 
 # ------------------------------------------------------------
 # Anonimização
@@ -84,7 +84,11 @@ attacks:
   subgraph:
     enabled: true
     hop: 1              # vizinhança 1-hop apenas — NÃO aumentar (DoD #126)
-    timeout: 120        # segundos por nó alvo; safety margin VF2 na escala do Enron
+    # timeout = cláusula de escape de laço, NÃO orçamento de hardware (D-12): cerca
+    # a varredura completa de candidatos de um nó-alvo; nó que estoura é contado em
+    # subgraph_timeout_count e tratado como não-reidentificado (DL-02). Validade da
+    # execução exige subgraph_timeout_count == 0 (D-13) — ver docs/decision_log.md.
+    timeout: 120        # segundos por nó alvo; valor fixo, independente da máquina (D-12)
 
 # ------------------------------------------------------------
 # Execução

@@ -76,14 +76,22 @@ Condição: perseguir se houver folga após consolidação do Mínimo.
 
 | Entregável | Arquivo/Componente | Status |
 |---|---|---|
-| Loader Email-Enron (SNAP) | `src/loaders/` (issue #29) | ⏳ Não iniciado |
-| Config YAML para Enron | `experiments/configs/` (issue #29) | ⏳ Não iniciado |
-| Execução baseline Email-Enron | — (issue #29) | ⏳ Não iniciado |
+| Download Email-Enron (SNAP) | `src/loaders/download_enron.py` (issue #123, S9-1) | ✅ Implementado |
+| Loader Email-Enron (direcionado→não-dir., OR) | `src/loaders/enron.py` (issue #124, S9-2) | ✅ Implementado |
+| Integração runner (`enron` em `load_dataset`) | `experiments/run.py` (issue #125, S9-3) | ✅ Implementado |
+| Config YAML para Enron | `experiments/configs/he2009_enron_secondary.yml` (issue #126, S9-4) | ✅ Implementado |
+| Execução secundária Email-Enron (grau + subgrafo hop=1) | — (issue #127, S9-5) | ⏳ Não iniciado |
+| Comparativo Facebook vs. Enron + `results_enron.md` | `docs/results_enron.md` (issue #128, S9-6) | ⏳ Não iniciado |
 | Ataque por entropia | `src/attacks/entropy.py` (issue #30) | ⏳ Não iniciado |
 
-> Não perseguidos: o Mínimo foi consolidado com adiantamento consideraável,
-> mas o tempo disponível até 14/06 foi consumido pela profundidade do Mínimo.
-> Ambos os itens são resultados científicos válidos para discussão futura.
+> Atualização (S9, 03/06/2026): o tier Desejável foi parcialmente perseguido. A
+> infraestrutura do dataset secundário Email-Enron (download, loader, integração
+> ao runner e config YAML) está implementada e testada (issues #122–#126,
+> decisão central D-11; semântica de timeout D-12, critério de validade D-13,
+> convenção `min_nodes` D-14). Resta a execução (#127) e o comparativo (#128),
+> sob o gate D-13 (`subgraph_timeout_count == 0`). O ataque por entropia (#30)
+> permanece não iniciado. Itens pendentes são resultados científicos válidos
+> para discussão futura.
 
 ---
 

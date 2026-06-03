@@ -32,6 +32,9 @@
 | [D-09](#d-09) | 2026-05-28 | Implementação | Pré-filtro VF2: documentar como limitação do protótipo |
 | [D-10](#d-10) | 2026-05-28 | Implementação | Combo degenerado d=10, k=20: executar e anotar como degenerado no YAML |
 | [D-11](#d-11) | 2026-06-03 | Implementação | Email-Enron direcionado → não-direcionado: simetrização por OR |
+| [D-12](#d-12) | 2026-06-03 | Implementação | `timeout` do ataque por subgrafo: cláusula de escape de laço (120 s no Enron) |
+| [D-13](#d-13) | 2026-06-03 | Implementação | Critério de validade da execução secundária Enron: `subgraph_timeout_count == 0` |
+| [D-14](#d-14) | 2026-06-03 | Implementação | Convenção `min_nodes = 10 × k_max` para o piso de tamanho do grafo |
 
 ---
 
@@ -977,3 +980,156 @@ associação controlada", "mensurar vulnerabilidade agregada" — nunca
 - Issue #122 (S9-0 — âncora: decisão e enquadramento, sem código de loader)
 - `docs/scope.md` §3 (Enron declarado tier `[D]`) e §7 (condições éticas — dataset público desidentificado)
 - `src/loaders/` (loader a implementar em issue posterior do S9)
+
+
+
+---
+
+## D-12 — `timeout` do ataque por subgrafo: cláusula de escape de laço (não orçamento de hardware)
+
+**Data:** 2026-06-03
+**Issues relacionadas:** #126 (S9-4 — config Enron), #29 (issue-mãe), #93/DL-02 (campos de diagnóstico de timeout)
+**Módulo afetado:** `experiments/configs/he2009_enron_secondary.yml` (`attacks.subgraph.timeout`); semântica em `src/attacks/subgraph.py` e `experiments/run.py`
+
+### Contexto
+
+A DoD da #126 pedia um `timeout` por nó no ataque por subgrafo "com margem de
+segurança VF2", sem fixar um valor. O config secundário do Enron adotou
+`attacks.subgraph.timeout: 120` (segundos), o dobro do baseline implícito de
+60 s usado no Facebook. Esta decisão registra **o que o número significa** e
+**por que 120 s** — ponto levantado na revisão de implementação do S9.
+
+### Semântica real do parâmetro (confirmada no código)
+
+O `timeout` **não** cerca o custo VF2 de um par de subgrafos. Em
+`src/attacks/subgraph.py` (`subgraph_candidate_count`), o relógio
+(`future.result(timeout=...)`) envolve a função `_find_candidates()` **inteira**:
+um nó-alvo varre **todos os \(n\) nós** do grafo anonimizado, rodando um teste
+`GraphMatcher.is_isomorphic()` por candidato. O timeout é, portanto, o tempo
+máximo concedido a **um alvo** para concluir a varredura completa de candidatos
+em sua vizinhança 1-hop.
+
+Quando o limite é atingido, o alvo é abortado, contado em
+`subgraph_timeout_count` e **tratado como não-reidentificado** (`run.py`; ver
+DL-02). O timeout é, por construção, um parâmetro que pode **enviesar a taxa de
+reidentificação para baixo** — mais estouros → grafo aparentemente "mais
+seguro", por custo computacional e não por privacidade real.
+
+### Decisão adotada
+
+O `timeout` é declarado **cláusula de escape de laço** — uma fronteira de
+"desisto deste alvo" para garantir terminação finita mesmo diante de um nó
+patológico (alto grau / vizinhança grande) que faça o VF2 explodir
+combinatorialmente. **Não** é um orçamento de hardware: o valor 120 s é fixo e
+independente da máquina, porque seu papel é limitar o pior caso combinatório,
+não calibrar desempenho.
+
+**Valor adotado:** `120 s` por nó-alvo no Enron (2× o baseline de 60 s do
+Facebook), refletindo a escala maior do grafo secundário.
+
+### Ressalva de reprodutibilidade
+
+Como o relógio cerca o laço completo (e não um par), o **número de timeouts**
+pode variar entre máquinas mais lentas e mais rápidas para o mesmo valor de
+120 s: uma máquina mais lenta gera mais estouros e, logo, uma taxa de
+reidentificação potencialmente diferente. Isso é um risco de **reprodutibilidade
+dos resultados**, distinto da reprodutibilidade do código. Por isso:
+`subgraph_timeout_count > 0` deve ser lido como **sinal de resultado dependente
+de hardware**, exigindo reexecução ou inspeção — nunca silenciado. O critério de
+validade derivado disso está em **D-13**.
+
+### Alternativa considerada
+
+Cercar o timeout por **par** de subgrafos (granularidade fina) tornaria o
+número de timeouts menos sensível à máquina, mas exigiria reescrever
+`_find_candidates()` e não resolve o viés para baixo (um alvo lento ainda seria
+parcialmente avaliado). **Não adotada** neste ciclo; registrada como refatoração
+candidata futura, independente de D-13/D-14.
+
+### Referências cruzadas
+
+- `experiments/configs/he2009_enron_secondary.yml` (`attacks.subgraph.timeout: 120`)
+- `src/attacks/subgraph.py` (`subgraph_candidate_count`, bloco `ThreadPoolExecutor`)
+- DL-02 (campos `subgraph_timeout_count` / distribuição de candidatos)
+- D-13 (critério de validade da execução derivado deste timeout)
+
+---
+
+## D-13 — Critério de validade da execução secundária Enron: `subgraph_timeout_count == 0`
+
+**Data:** 2026-06-03
+**Issues relacionadas:** #127 (S9-5 — execução secundária), #128 (S9-6 — comparativo), #126 (config), #29 (issue-mãe)
+**Módulo afetado:** protocolo experimental do dataset secundário Enron (execução e reporte)
+
+### Contexto
+
+Decorre diretamente de D-12: como um timeout no ataque por subgrafo é contado
+como não-reidentificação, estouros silenciosos contaminariam a taxa de
+reidentificação e tornariam a comparação Facebook vs. Enron (S9-6) indefensável.
+É preciso um critério explícito de quando a execução do subgrafo é válida.
+
+### Decisão adotada
+
+A execução secundária do Enron só é considerada **válida para a métrica de
+reidentificação por subgrafo** quando `subgraph_timeout_count == 0` para o par
+\((k, \text{seed})\) em questão. Qualquer estouro:
+
+1. **invalida** a comparação de subgrafo daquele \((k, \text{seed})\) específico;
+2. deve ser **reportado** (número de timeouts e, quando disponível, os nós
+   afetados), **nunca silenciado**;
+3. demanda reexecução (eventualmente em máquina mais rápida) ou análise
+   explícita antes de qualquer uso em curvas privacidade×utilidade.
+
+O ataque **por grau** não é afetado por este critério (não usa VF2 nem timeout)
+e permanece válido independentemente.
+
+### Consequência
+
+A DoD da execução (#127) e do fechamento (#129) deve verificar
+`subgraph_timeout_count == 0` como gate antes de declarar resultados de
+subgrafo do Enron utilizáveis. Mantém o sentido do timeout como escape (D-12)
+sem deixar o parâmetro contaminar a métrica.
+
+### Referências cruzadas
+
+- D-12 (semântica do timeout como cláusula de escape)
+- DL-02 (campo `subgraph_timeout_count`)
+- Issues #127 (execução) e #129 (fechamento / DoD #29)
+
+---
+
+## D-14 — Convenção `min_nodes = 10 × k_max` para o piso de tamanho do grafo
+
+**Data:** 2026-06-03
+**Issues relacionadas:** #126 (S9-4 — config Enron), #29 (issue-mãe)
+**Módulo afetado:** `experiments/configs/he2009_enron_secondary.yml` (`dataset.min_nodes`); aplicável a configs futuros
+
+### Contexto
+
+A DoD da #126 exigia `min_nodes` "coerente com `k_max`", sem fixar a relação. O
+config do Enron adotou `min_nodes: 200`, derivado como `10 × k_max`
+(`k_max = 20`). Esta decisão promove a escolha pontual a **convenção
+reutilizável**, para que configs futuros não reinventem o piso de forma ad hoc.
+
+### Decisão adotada
+
+O piso de tamanho do grafo após pré-processamento é fixado, por convenção, em
+`min_nodes = 10 × k_max`, onde `k_max` é o maior valor da lista
+`anonymization.k`. Racionalízio:
+
+- garante pelo menos uma ordem de grandeza de nós acima do maior grupo de
+  equivalência exigido, reduzindo o risco de instabilidade do k-anonimato em
+  grafos pequenos;
+- é uma regra simples, auditável e independente do dataset;
+- para o Enron (LCC ≈ 33 696 nós) o piso de 200 é trivialmente satisfeito — ele
+  protege configs futuros menores, não o Enron em si.
+
+A convenção é um **piso recomendado**, não uma trava rígida: um experimento pode
+justificar outro valor, desde que o desvio seja documentado (Seção 11 do plano
+operacional).
+
+### Referências cruzadas
+
+- `experiments/configs/he2009_enron_secondary.yml` (`dataset.min_nodes: 200`)
+- `experiments/run.py` (`preprocess_graph`, validação `min_nodes`)
+- Issue #126 (DoD: `min_nodes` coerente com `k_max`)

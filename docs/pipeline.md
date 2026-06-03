@@ -416,7 +416,7 @@ baseline. Para a discussão conceitual de parâmetros futuros (`s_max`,
 
 | Chave | Tipo | Obrigatório | Descrição |
 |-------|------|-------------|-----------|
-| `name` | `str` | sim | `facebook_ego_nets` ou `email_enron` |
+| `name` | `str` | sim | `facebook_ego_nets` ou `enron` |
 | `source` | `str` | sim | `snap` |
 | `data_path` | `str` | sim | Caminho para os dados brutos (ex.: `data/raw/facebook/`) |
 | `preprocessing_mode` | `str` | sim | `single_egonet` (baseline) ou `multiple_egonets` |
