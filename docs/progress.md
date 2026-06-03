@@ -11,11 +11,29 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-02
+**Data da última atualização:** 2026-06-03
 
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #107 (S8-4 / A1): `results_baseline.md` declara explicitamente que o
+  baseline `d=1` rodou no fallback Kernighan-Lin — não pymetis.** O número-título
+  do baseline ("k-anonimato atingido") foi produzido pelo motor **não fiel** ao
+  artigo: à época (issue #23, 2026-05-23) pymetis estava ausente local e na CI
+  (confirmado pela auditoria #74, 30/05), e `backend="auto"` resolveu para o KL;
+  o JSONL do baseline é anterior à gravação de `partition_backend` (#84). Nova
+  seção **"Motor de particionamento — baseline d=1 rodou em KL"** com (1) o motor
+  efetivo, (2) inocuidade para `d=1` (partições triviais de 1 nó → o
+  desbalanceamento do KL p/ `ck>2`, D-04, é irrelevante; validação do marco 29/05
+  permanece válida) e (3) contraste com o d-sweep (#88: pymetis em 48/48). Bloco
+  de metadados ganhou a linha do motor de particionamento. Em
+  `achados_divergencias.md`, A1 (status detalhado + item 3 das pendências
+  documentais) migrado ⚠️→✅; números de linha da evidência atualizados
+  (`he2009.py:338`, `run.py:271`, `config_example.yml:109`); migração formal na
+  tabela-resumo deixada para S8-8/#111. Somente docs — sem alteração em `src/` ou
+  testes; `ruff check .` limpo. Branch `docs/baseline-declare-kl-fallback-107`,
+  PR #117 (`Closes #107`).
+
 - **Issue #106 (S8-3 / B5): `config_example.yml` passa a expor
   `d`/`sigma`/`s_max`/`isomorphism_mode` (chaves agora lidas).** Com S8-1 (#104)
   e S8-2 (#105) tornando `s_max`/`fsm_max_size` e `isomorphism_mode` chaves YAML
@@ -112,9 +130,13 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
+- Revisão humana e merge do PR #117 (`docs/baseline-declare-kl-fallback-107`) →
+  fechar #107. Em seguida: **S8-5** (frase-síntese de B1: o baseline `d=1` afere
+  k-anonimato de grau, o d-sweep exercita a propriedade estrutural — também edita
+  `results_baseline.md`, seriada após S8-4).
 - Revisão humana e merge do PR `docs/config-example-expose-params-106` → fechar
   #106. Em seguida: S8-8 (#111 — migração formal dos status na tabela-resumo de
-  `achados_divergencias.md`), que a #106 desbloqueia.
+  `achados_divergencias.md`), que #106 e #107 desbloqueiam.
 - Revisão humana e merge do PR de `test/config-propagation-112` → fechar #112.
 - Revisão humana e merge do PR `anonymization/dsweep-complementar-80` → fechar a
   issue #80. Com #80 fechada, **toda a engenharia da issue-mãe #72 (d-sweep) está
@@ -149,6 +171,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #107 (S8-4 / A1): results_baseline.md declara baseline d=1 em KL
+
+- **Concluído:** Fechado o achado A1 — `results_baseline.md` declara
+  explicitamente que o número-título do baseline `d=1` ("k-anonimato atingido")
+  veio do fallback Kernighan-Lin, **não** pymetis (ausente local e na CI à época;
+  auditoria #74). Nova seção "Motor de particionamento — baseline d=1 rodou em
+  KL": (1) motor efetivo (KL via `backend="auto"`; JSONL anterior à gravação de
+  `partition_backend`/#84); (2) inocuidade para `d=1` (partições triviais → o
+  desbalanceamento do KL p/ `ck>2`, D-04, é irrelevante; validação do marco 29/05
+  válida); (3) contraste com o d-sweep (#88: pymetis em 48/48). Linha do motor
+  adicionada ao bloco de metadados. Em `achados_divergencias.md`, A1 (status
+  detalhado + item 3 das pendências) migrado ⚠️→✅ e line numbers da evidência
+  atualizados; migração da tabela-resumo deixada para S8-8/#111. Somente docs;
+  `ruff check .` limpo. Branch `docs/baseline-declare-kl-fallback-107`, PR #117.
+- **Próximo:** Merge do PR #117 → fechar #107; depois S8-5 (frase-síntese B1,
+  também edita `results_baseline.md`). Merges pendentes de #106/#112; depois
+  S8-8 (#111, migração formal dos status).
+- **Bloqueios:** PR #117 aguarda revisão humana (#104/#105/#106 já em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #106 (S8-3 / B5): config_example.yml expõe d/sigma/s_max/isomorphism_mode
 
