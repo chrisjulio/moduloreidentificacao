@@ -16,6 +16,23 @@
 **Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #123 (S9-1): download idempotente do Email-Enron (SNAP) — SHA-256 +
+  gzip. ✅ (código + teste).** Primeiro código de loader do ciclo S9, espelhando
+  `src/loaders/download.py` (Facebook). **(1)** `src/loaders/download_enron.py`:
+  `download_enron(dest=RAW_DIR)` baixa `email-Enron.txt.gz` de
+  `https://snap.stanford.edu/data/email-Enron.txt.gz` e descompacta para
+  `data/raw/enron/email-Enron.txt`; idempotente (sai cedo se o arquivo já existe);
+  loga **SHA-256** e tamanho do `.gz` (rastreabilidade, como no Facebook); reusa
+  `_ProgressHook` e `_sha256` importados de `download.py` (sem duplicação);
+  rejeita payload não-gzip cedo (`BadGzipFile`). Diferença vs. Facebook: arquivo
+  único `.gz` via `gzip`, não tar. **(2)** `tests/loaders/test_download_enron.py`
+  (rede mockada, 7 testes). **(3)** `data/raw/enron/.gitkeep` versionado; regra de
+  negação adicionada ao `.gitignore` (`!/data/raw/enron/` + `/data/raw/enron/*` +
+  `!/data/raw/enron/.gitkeep`) — dados brutos seguem ignorados. A projeção OR
+  (D-11) é responsabilidade do **loader**, não deste downloader. `ruff check .`
+  limpo; suíte de loaders **18 passed**. Branch `loader/enron-download`, PR #131
+  (`Closes #123`).
+
 - **Issue #122 (S9-0): âncora do Loader Email-Enron — decisão direcionado→não-dir.
   (OR) + enquadramento. ✅ (somente docs/setup; sem código de loader).** Abertura do
   ciclo S9 espelhando o padrão de âncora do S7/S8. **(1) Decisão D-11** registrada em
@@ -228,17 +245,18 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `loader/enron` (S9-0/#122) → fechar #122.
-- Próximas sub-issues do S9 (issue-mãe #29): implementação do loader Email-Enron
-  em `src/loaders/` (download versionado + projeção OR conforme D-11), depois
-  experimento/config YAML reaproveitando o runner existente.
+- Revisão humana e merge do PR #131 `loader/enron-download` (S9-1/#123) → fechar #123.
+- Próxima sub-issue do S9 (issue-mãe #29): **parser/loader** do Email-Enron em
+  `src/loaders/` (ler `email-Enron.txt` → grafo NetworkX com projeção OR conforme
+  D-11), depois experimento/config YAML reaproveitando o runner existente.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 - (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum. Milestone S8 concluído (PR #121 mergeado em `main`,
-  `2026-06-03T14:46:35Z`); 17/17 achados ✅.
+- PR #131 (`loader/enron-download`, S9-1/#123) aguarda CI + revisão humana;
+  dependência S9-0/#122 já em `main` (`e641c33`). Milestone S8 concluído
+  (PR #121 mergeado em `main`, `2026-06-03T14:46:35Z`); 17/17 achados ✅.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -264,6 +282,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #123 (S9-1): download idempotente do Email-Enron (SNAP) — SHA-256
+
+- **Concluído:** Primeiro código de loader do ciclo **S9** (Email-Enron, tier
+  desejável, issue-mãe #29), espelhando `src/loaders/download.py` (Facebook).
+  **(1)** `src/loaders/download_enron.py`: `download_enron(dest=RAW_DIR)` baixa
+  `email-Enron.txt.gz` de `https://snap.stanford.edu/data/email-Enron.txt.gz` e
+  descompacta para `data/raw/enron/email-Enron.txt`; **idempotente** (sai cedo se
+  o arquivo já existe); loga **SHA-256** e tamanho do `.gz` (rastreabilidade);
+  reusa `_ProgressHook`/`_sha256` importados de `download.py` (sem duplicação);
+  rejeita payload não-gzip cedo (`BadGzipFile`). Diferença vs. Facebook: arquivo
+  único `.gz` via `gzip`, não tar. **(2)** `tests/loaders/test_download_enron.py`
+  (rede mockada, 7 testes). **(3)** `data/raw/enron/.gitkeep` versionado + regra
+  de negação no `.gitignore` (dados brutos seguem ignorados). A projeção OR (D-11)
+  fica para o loader, não para este downloader. `ruff check .` limpo; loaders
+  **18 passed**. Branch `loader/enron-download`, PR #131.
+- **Próximo:** Merge do PR #131 → fechar #123. Depois: parser/loader Email-Enron
+  (`email-Enron.txt` → grafo NetworkX, projeção OR/D-11) e config YAML.
+- **Bloqueios:** PR #131 aguarda CI + revisão humana (S9-0/#122 já em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #122 (S9-0): âncora do Loader Email-Enron — decisão OR + enquadramento
 
