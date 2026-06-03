@@ -98,6 +98,10 @@ desktop.ini
 /data/processed/*
 !/data/raw/.gitkeep
 !/data/processed/.gitkeep
+# Subdiretório do Enron: versionar apenas o .gitkeep (dados brutos seguem ignorados)
+!/data/raw/enron/
+/data/raw/enron/*
+!/data/raw/enron/.gitkeep
 
 # Logs estruturados das execuções
 /experiments/logs/*
