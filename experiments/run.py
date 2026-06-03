@@ -85,6 +85,7 @@ from src.anonymization.he2009 import (
 )
 from src.anonymization.validation import validate_k_anonymity
 from src.attacks import degree_attack, subgraph_candidate_count
+from src.loaders.enron import load_enron
 from src.loaders.facebook_ego import load_facebook_egonet
 from src.metrics import (
     clustering_variation,
@@ -183,8 +184,18 @@ def load_dataset(dataset_cfg: dict) -> nx.Graph:
             g_raw.number_of_nodes(),
             g_raw.number_of_edges(),
         )
+    elif name == "enron":
+        data_dir = Path(dataset_cfg["data_path"])
+        g_raw = load_enron(data_dir)
+        logger.info(
+            "Raw graph loaded: dataset=enron, n=%d, m=%d",
+            g_raw.number_of_nodes(),
+            g_raw.number_of_edges(),
+        )
     else:
-        raise ValueError(f"Unknown dataset name: {name!r}. Supported datasets: facebook_ego_nets")
+        raise ValueError(
+            f"Unknown dataset name: {name!r}. Supported datasets: facebook_ego_nets, enron"
+        )
 
     component = dataset_cfg.get("component", "lcc")
     min_nodes = int(dataset_cfg.get("min_nodes", 0))

@@ -16,6 +16,23 @@
 **Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #125 (S9-3): integração no runner — ramo `enron` em `load_dataset()`.
+  ✅ (código + teste).** Único ponto de contato do loader Enron com o núcleo do
+  pipeline. **(1)** `experiments/run.py`: `load_dataset()` ganha o ramo
+  `elif name == "enron"`, que chama `load_enron(Path(dataset_cfg["data_path"]))`
+  e loga `n`/`m` do grafo bruto (espelhando o Facebook); `import load_enron`
+  adicionado. Mensagem de erro de dataset desconhecido passa a listar os dois
+  datasets suportados: `facebook_ego_nets, enron`. O pós-processamento
+  `component` (LCC) / `min_nodes` **não foi duplicado** — já é genérico e roda
+  após `load_dataset`. Sem toque em ataques/métricas/visualização. **(2)**
+  `tests/experiments/test_run_enron_dataset.py` (6 testes, espelha
+  `test_run_config_propagation.py`): dispatch `name: enron` → `load_enron` com
+  simetrização OR (D-11); LCC + `min_nodes` fluindo pelo novo ramo; edge list
+  ausente → `FileNotFoundError`; mensagem de erro lista ambos os datasets;
+  `main()` end-to-end com config Enron (edge list real em `tmp_path`) → SUCCESS +
+  `summary.json`/JSONL. Suíte completa **568 passed**; `ruff check`/`format`
+  limpos. Branch `loader/enron-runner`, PR #133 (`Closes #125`).
+
 - **Issue #124 (S9-2): loader `load_enron` — conversão direcionado→não-dir. por
   simetrização OR (D-11). ✅ (código + teste).** Segundo código de loader do ciclo
   S9, espelhando o contrato de `load_facebook_egonet`. **(1)** `src/loaders/enron.py`:
@@ -259,19 +276,18 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #132 `loader/enron-load` (S9-2/#124) → fechar #124.
-- Próxima sub-issue do S9 (issue-mãe #29): **integração no runner** —
-  `load_dataset` (`experiments/run.py`) passa a despachar `name: enron` para
-  `load_enron`; depois experimento/config YAML (`he2009_enron_*.yml`)
-  reaproveitando o runner existente (≥3 sementes, `k ∈ {2,5,10,20}`).
+- Revisão humana e merge do PR #133 `loader/enron-runner` (S9-3/#125) → fechar #125.
+- Próxima sub-issue do S9 (issue-mãe #29): **config YAML do Enron**
+  (`he2009_enron_*.yml`) reaproveitando o runner já integrado (≥3 sementes,
+  `k ∈ {2,5,10,20}`), seguida da execução do experimento secundário.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 - (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR #132 (`loader/enron-load`, S9-2/#124) aguarda CI + revisão humana;
-  dependências S9-0/#122 e S9-1/#123 já em `main` (PR #131 mergeado,
-  `2026-06-03T17:12:02Z`). Milestone S8 concluído (PR #121 em `main`); 17/17 ✅.
+- PR #133 (`loader/enron-runner`, S9-3/#125) aguarda CI + revisão humana;
+  dependência S9-2/#124 já em `main` (PR #132 mergeado, `2026-06-03T17:27:17Z`).
+  Milestone S8 concluído (PR #121 em `main`); 17/17 ✅.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -297,6 +313,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #125 (S9-3): integração runner — ramo enron em load_dataset()
+
+- **Concluído:** Integração do loader Email-Enron ao runner (S9-3, parte de #29),
+  no único ponto de contato com o núcleo do pipeline. **(1)** `experiments/run.py`:
+  `load_dataset()` ganha o ramo `elif name == "enron"` → `load_enron(Path(
+  dataset_cfg["data_path"]))`, com log de `n`/`m` do grafo bruto (espelha o
+  Facebook); `import load_enron` adicionado. Mensagem de erro de dataset
+  desconhecido agora lista `facebook_ego_nets, enron`. Pós-processamento
+  `component`/`min_nodes` **não duplicado** (genérico, roda após `load_dataset`).
+  Sem toque em ataques/métricas/viz. **(2)**
+  `tests/experiments/test_run_enron_dataset.py` (6 testes, espelha
+  `test_run_config_propagation.py`): dispatch `enron` → `load_enron` com OR
+  (D-11); LCC/`min_nodes` pelo novo ramo; edge list ausente → `FileNotFoundError`;
+  erro lista ambos os datasets; `main()` end-to-end com config Enron (edge list
+  real em `tmp_path`) → SUCCESS + `summary.json`/JSONL. Suíte **568 passed**;
+  `ruff check`/`format` limpos. Branch `loader/enron-runner`, PR #133.
+- **Próximo:** Merge do PR #133 → fechar #125. Depois: config YAML do Enron
+  (`he2009_enron_*.yml`) e execução do experimento secundário.
+- **Bloqueios:** PR #133 aguarda CI + revisão humana (S9-2/#124 já em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #124 (S9-2): loader load_enron — conversão direcionado→não-dir. (OR)
 
