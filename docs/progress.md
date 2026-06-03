@@ -16,6 +16,20 @@
 **Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #124 (S9-2): loader `load_enron` — conversão direcionado→não-dir. por
+  simetrização OR (D-11). ✅ (código + teste).** Segundo código de loader do ciclo
+  S9, espelhando o contrato de `load_facebook_egonet`. **(1)** `src/loaders/enron.py`:
+  `load_enron(data_dir: Path) -> nx.Graph` lê `data_dir/email-Enron.txt` (edgelist
+  SNAP, comentários `#` ignorados pelo `read_edgelist`); lê em `nx.DiGraph` e aplica
+  `.to_undirected()` — **simetrização OR (D-11)**: `{u, v}` existe se `u→v` **ou**
+  `v→u`; pares recíprocos e de mão única colapsam para 1 aresta; rótulos inteiros;
+  `FileNotFoundError` com caminho claro (padrão Facebook). `lcc`/`min_nodes` ficam
+  com o runner (fora de escopo, agnóstico ao dataset). Docstring NumPy-style citando
+  D-11. **(2)** `tests/loaders/test_enron.py` (fixtures sintéticas, sem rede, 6
+  testes): não-direcionado, rótulos inteiros, OR par recíproco, OR par de mão única,
+  comentários ignorados, arquivo ausente. `ruff check .` limpo; loaders **24 passed**.
+  Branch `loader/enron-load`, PR #132 (`Closes #124`).
+
 - **Issue #123 (S9-1): download idempotente do Email-Enron (SNAP) — SHA-256 +
   gzip. ✅ (código + teste).** Primeiro código de loader do ciclo S9, espelhando
   `src/loaders/download.py` (Facebook). **(1)** `src/loaders/download_enron.py`:
@@ -245,18 +259,19 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #131 `loader/enron-download` (S9-1/#123) → fechar #123.
-- Próxima sub-issue do S9 (issue-mãe #29): **parser/loader** do Email-Enron em
-  `src/loaders/` (ler `email-Enron.txt` → grafo NetworkX com projeção OR conforme
-  D-11), depois experimento/config YAML reaproveitando o runner existente.
+- Revisão humana e merge do PR #132 `loader/enron-load` (S9-2/#124) → fechar #124.
+- Próxima sub-issue do S9 (issue-mãe #29): **integração no runner** —
+  `load_dataset` (`experiments/run.py`) passa a despachar `name: enron` para
+  `load_enron`; depois experimento/config YAML (`he2009_enron_*.yml`)
+  reaproveitando o runner existente (≥3 sementes, `k ∈ {2,5,10,20}`).
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 - (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR #131 (`loader/enron-download`, S9-1/#123) aguarda CI + revisão humana;
-  dependência S9-0/#122 já em `main` (`e641c33`). Milestone S8 concluído
-  (PR #121 mergeado em `main`, `2026-06-03T14:46:35Z`); 17/17 achados ✅.
+- PR #132 (`loader/enron-load`, S9-2/#124) aguarda CI + revisão humana;
+  dependências S9-0/#122 e S9-1/#123 já em `main` (PR #131 mergeado,
+  `2026-06-03T17:12:02Z`). Milestone S8 concluído (PR #121 em `main`); 17/17 ✅.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -282,6 +297,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #124 (S9-2): loader load_enron — conversão direcionado→não-dir. (OR)
+
+- **Concluído:** Segundo código de loader do ciclo **S9** (Email-Enron, tier
+  desejável, issue-mãe #29), espelhando o contrato de `load_facebook_egonet`.
+  **(1)** `src/loaders/enron.py`: `load_enron(data_dir) -> nx.Graph` lê
+  `data_dir/email-Enron.txt` (edgelist SNAP; comentários `#` ignorados pelo
+  `read_edgelist`); lê em `nx.DiGraph` e aplica `.to_undirected()` —
+  **simetrização OR (D-11)**: `{u, v}` existe se `u→v` **ou** `v→u`; pares
+  recíprocos e de mão única colapsam para 1 aresta; rótulos inteiros;
+  `FileNotFoundError` com caminho claro (padrão Facebook). `lcc`/`min_nodes`
+  ficam com o runner (fora de escopo). Docstring NumPy-style citando D-11.
+  **(2)** `tests/loaders/test_enron.py` (fixtures sintéticas, sem rede, 6
+  testes): não-direcionado, rótulos inteiros, OR par recíproco, OR par de mão
+  única, comentários ignorados, arquivo ausente. `ruff check .` limpo; loaders
+  **24 passed**. Branch `loader/enron-load`, PR #132 (`Closes #124`).
+- **Próximo:** Merge do PR #132 → fechar #124. Depois: integração no runner
+  (`load_dataset` despacha `name: enron` → `load_enron`) e config YAML do Enron.
+- **Bloqueios:** PR #132 aguarda CI + revisão humana (S9-0/#122 e S9-1/#123 já
+  em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #123 (S9-1): download idempotente do Email-Enron (SNAP) — SHA-256
 
