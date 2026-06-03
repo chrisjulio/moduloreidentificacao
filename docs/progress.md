@@ -13,9 +13,25 @@
 
 **Data da última atualização:** 2026-06-03
 
-**Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
+**Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #122 (S9-0): âncora do Loader Email-Enron — decisão direcionado→não-dir.
+  (OR) + enquadramento. ✅ (somente docs/setup; sem código de loader).** Abertura do
+  ciclo S9 espelhando o padrão de âncora do S7/S8. **(1) Decisão D-11** registrada em
+  `docs/decision_log.md` (índice + entrada): simetrização **OR** (aresta `A — B` se
+  houver e-mail em qualquer direção) como projeção direcionado→não-direcionado do
+  Email-Enron, com justificativa (convenção SNAP/comparabilidade; retenção de
+  estrutura, paralelo ao LCC do Facebook; cenário de risco conservador), impacto
+  estrutural (densidade/conectividade maiores; núcleo intocado — projeção é
+  responsabilidade do loader) e **alternativa rejeitada** (reciprocidade AND →
+  candidata a análise de sensibilidade futura). **(2) `docs/scope.md` §3** atualizado:
+  Facebook permanece `[M]` (principal); **Enron destacado em linha própria `[D]`**
+  (secundário do tier desejável, simetrização OR, cross-ref D-11/#29/#122); header e
+  rodapé com data/estado de S9. **(3) Branch base `loader/enron`** criada a partir de
+  `main` (PR #121/S8 já em `main`). Sem alteração em `src/` ou testes; `ruff check .`
+  limpo. Branch `loader/enron` (`Closes #122`).
+
 - **Issue #111 (S8-8): fechamento do milestone S8 — revisão cruzada + migração
   formal dos status em `achados_divergencias.md` (§4 executada). ✅** Última issue
   do milestone. **(1) Revisão cruzada de consistência** das mudanças S8 verificada
@@ -212,18 +228,17 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `docs/s8-closure-cross-review-111` → fechar #111.
-  Com #111 mergeada, **todo o milestone S8 está concluído** (defasagens 🔧
-  corrigidas no código; pontos ⚠️ explícitos; auditoria incorporada; §4 executada;
-  17/17 achados ✅).
+- Revisão humana e merge do PR `loader/enron` (S9-0/#122) → fechar #122.
+- Próximas sub-issues do S9 (issue-mãe #29): implementação do loader Email-Enron
+  em `src/loaders/` (download versionado + projeção OR conforme D-11), depois
+  experimento/config YAML reaproveitando o runner existente.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 - (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR `docs/s8-closure-cross-review-111` (S8-8/#111) aguarda revisão humana.
-  (Todas as dependências serial — #104/#105/#112/#106/#107/#108/#109/#110 —
-  já fechadas/mergeadas em `main`.)
+- Nenhum. Milestone S8 concluído (PR #121 mergeado em `main`,
+  `2026-06-03T14:46:35Z`); 17/17 achados ✅.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -249,6 +264,28 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #122 (S9-0): âncora do Loader Email-Enron — decisão OR + enquadramento
+
+- **Concluído:** Abertura do ciclo **S9** (Loader Email-Enron, tier desejável,
+  issue-mãe #29), espelhando o padrão de âncora do S7/S8 — **somente docs/setup,
+  sem código de loader** (conforme "Não fazer" da #122). **(1) Decisão D-11** em
+  `docs/decision_log.md` (índice + entrada completa): simetrização **OR** (aresta
+  `A — B` se houver e-mail em qualquer direção) como projeção direcionado→não-dir.
+  do Email-Enron; justificativa (convenção SNAP/comparabilidade; retenção de
+  estrutura, paralelo ao LCC do Facebook; cenário de risco conservador); impacto
+  estrutural (maior densidade/conectividade; núcleo de anonimização/ataques/métricas
+  intocado — projeção é responsabilidade do loader); **alternativa rejeitada**
+  (reciprocidade AND, candidata a análise de sensibilidade futura); nota de
+  terminologia de aferição. **(2) `docs/scope.md` §3:** Facebook segue `[M]`
+  (principal); **Enron promovido a linha própria `[D]`** (secundário do tier
+  desejável, com a regra OR e cross-ref D-11/#29/#122); header e rodapé atualizados
+  para 03/06/2026 / S9. **(3) Branch base `loader/enron`** criada de `main`. Sem
+  alteração em `src/`/testes; `ruff check .` limpo. Branch `loader/enron`.
+- **Próximo:** Merge do PR `loader/enron` → fechar #122. Depois, sub-issues do S9:
+  loader em `src/loaders/` (download versionado + projeção OR por D-11) e config YAML.
+- **Bloqueios:** Nenhum (S8 concluído; PR #121 em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #111 (S8-8): fechamento do milestone S8 — revisão cruzada + §4 executada
 
