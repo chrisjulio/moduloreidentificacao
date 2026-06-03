@@ -78,7 +78,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 | B2 | Datasets | Facebook (principal) + Email-Enron (secundário) | **só ego-rede 3437**; Enron não executado | ⚠️ |
 | B3 | Ataque por entropia | tier aspiracional | **não implementado** | ✅ |
 | B4 | Nettleton & Salas (2016) | tier aspiracional | **placeholder apenas** | ✅ |
-| B5 | YAML público | expor d, σ, s_max, partition_backend, isomorphism_mode | `config_example.yml` **não expõe** essas chaves | 🔧 |
+| B5 | YAML público | expor d, σ, s_max, partition_backend, isomorphism_mode | `config_example.yml` agora expõe d, σ, s_max, isomorphism_mode (#106); só `partition_backend` resta | ✅ |
 | B6 | Variante de isomorfização | add_only vs add_or_delete como parâmetro | ambas implementadas+testadas, mas `add_or_delete` **hardcoded**; chave YAML nunca lida | 🔧 |
 | B7 | Diagnóstico de `reid_sub=0` | — | log do d-sweep gerado **sem** contagem de timeouts; campos adicionados depois | ⚠️ |
 | B8 | Critério do marco | verificação binária | rebaixado p/ `satisfied_fraction≥0.9` + `deficit_fully_structural` | ✅ |
@@ -319,10 +319,17 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 - **Atualização (#112, S8-2b).** A propagação de `s_max`/`fsm_max_size`
   (config→runner→`_group_isomorphic`, e `anonymize()`→`_group_isomorphic`)
   ganhou cobertura de teste dedicada — ver detalhamento sob B6.
-- **Status.** 🔧 Defasagem em correção: parte `s_max` resolvida na raiz por
-  #104 (chave YAML lida, não mais "fixo no código") e coberta por testes em
-  #112; restam `config_example.yml` (#106) e `isomorphism_mode` (#105, já
-  resolvido — ver B6).
+- **Atualização (#106, S8-3).** O `config_example.yml` de referência passou a
+  **expor** `d`, `sigma`, `s_max` (alias `fsm_max_size`) e `isomorphism_mode`,
+  todas com comentários e defaults corretos e **todas efetivamente lidas** pelo
+  runner. A chave `k` foi corrigida no exemplo (antes `k_values`, que o runner
+  não lê → configurabilidade fantasma) para refletir a interface real. Decisão
+  registrada em `docs/decision_log.md` (DL-03); `algorithm_notes.md` §5.1–5.3
+  atualizadas. Resta apenas `partition_backend` não exposto como chave YAML.
+- **Status.** 🔧→✅ Defasagem resolvida: `s_max` (#104) e `isomorphism_mode`
+  (#105) lidas do YAML e cobertas por testes (#112); exposição no
+  `config_example.yml` estabilizada por #106 (DL-03). Resíduo único:
+  `partition_backend` ainda não é chave YAML (só `allow_kl_fallback`).
 
 ### B6 — Variante de isomorfização: implementada, mas hardcoded e não exposta
 
@@ -415,9 +422,12 @@ Pontos onde a documentação existente ainda descreve o *proposto* como se fosse
    constante de código).
 3. **`results_baseline.md` (A1).** Tornar explícito que o baseline `d=1` rodou no
    **fallback KL** (não pymetis), e que isso é inócuo para `d=1`.
-4. **`config_example.yml` (B5).** Decidir se vale expor `d`/`sigma` no exemplo de
-   referência (hoje só nos YAMLs experimentais) para alinhar exemplo e prática —
-   ou documentar por que o exemplo permanece mínimo.
+4. ~~**`config_example.yml` (B5).** Decidir se vale expor `d`/`sigma` no exemplo
+   de referência (hoje só nos YAMLs experimentais) para alinhar exemplo e
+   prática — ou documentar por que o exemplo permanece mínimo.~~ **Resolvido
+   (#106 / DL-03):** o exemplo passou a expor `d`, `sigma`, `s_max` e
+   `isomorphism_mode` (todas lidas pelo runner) e a chave `k` foi corrigida
+   (`k_values`→`k`). Resíduo: `partition_backend` segue não exposto.
 5. **Frase-síntese de B1.** Inserir, no README e/ou `results_baseline.md`, uma
    afirmação direta de que o baseline `d=1` afere k-anonimato de grau e que o
    d-sweep é o que exercita a propriedade estrutural.

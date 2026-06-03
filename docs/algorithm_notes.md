@@ -660,32 +660,33 @@ mapeamento operacional completo no protótipo.
 
 | Parâmetro do artigo | Papel no algoritmo | Chave YAML | Valor(es) usados / planejados |
 |---|---|---|---|
-| `k` | nível de privacidade; mínimo de candidatos indistinguíveis por nó | `anonymization.k_values` | `[2, 5, 10, 20]` no baseline |
-| `d` | tamanho pretendido de cada Local Structure / partição | *(não exposto em `config_example.yml` atual; previsto como `anonymization.d`)* | `10` como default conceitual (D-02); baseline de validação executado com `d=1` |
-| `σ` | suporte mínimo para o FSM | *(não exposto no exemplo atual; presente nos YAMLs experimentais de runs como `sigma`)* | `0.5` na varredura de k (Seção 9) |
-| `s_max` | tamanho máximo de subgrafo no FSM simplificado | **`anonymization.s_max`** (alias `anonymization.fsm_max_size`) — **lida do YAML** pelo runner e propagada a `anonymize()`/`_group_isomorphic()` (B5, #104) | `4` (default) — ver D-01; valor efetivo gravado no JSONL |
-| Variante de isomorfização | política de modificação intra-grupo (Phase 2) | **`anonymization.isomorphism_mode`** — **lida do YAML** pelo runner e propagada a `anonymize()` → `_modify_structure(add_only=...)` (B6, #105) | `"add_or_delete"` (default); alternativa `"add_only"`; valor efetivo gravado no JSONL |
+| `k` | nível de privacidade; mínimo de candidatos indistinguíveis por nó | `anonymization.k` (lida pelo runner; aceita int ou lista) | `[2, 5, 10, 20]` no baseline |
+| `d` | tamanho pretendido de cada Local Structure / partição | **`anonymization.d`** — **lida do YAML** pelo runner; exposta no `config_example.yml` (S8-3, #106) | `10` como default conceitual (D-02); baseline de validação executado com `d=1` (achado B1) |
+| `σ` | suporte mínimo para o FSM | **`anonymization.sigma`** — **lida do YAML** pelo runner; exposta no `config_example.yml` (S8-3, #106) | `0.5` (default) na varredura de k (Seção 9) |
+| `s_max` | tamanho máximo de subgrafo no FSM simplificado | **`anonymization.s_max`** (alias `anonymization.fsm_max_size`) — **lida do YAML** pelo runner e propagada a `anonymize()`/`_group_isomorphic()` (B5, #104); exposta no `config_example.yml` (S8-3, #106) | `4` (default) — ver D-01; valor efetivo gravado no JSONL |
+| Variante de isomorfização | política de modificação intra-grupo (Phase 2) | **`anonymization.isomorphism_mode`** — **lida do YAML** pelo runner e propagada a `anonymize()` → `_modify_structure(add_only=...)` (B6, #105); exposta no `config_example.yml` (S8-3, #106) | `"add_or_delete"` (default); alternativa `"add_only"`; valor efetivo gravado no JSONL |
 | Motor de partição | backend da Etapa 1 | *(não exposto em `config_example.yml` atual; previsto como `anonymization.partition_backend`)* | `"auto"` (default planejado) → pymetis se disponível, KL fallback |
 | Verificação empírica do k-anonimato | auditoria pós-anonimização | `anonymization.validate_k_anonymity` | `true` no exemplo atual |
 | Sementes aleatórias | controle de reprodutibilidade | `seeds` | `[42, 1337, 2718]` |
 
-### 5.2 Divergência entre o YAML de exemplo e o estado conceitual do protótipo
+### 5.2 Alinhamento entre o YAML de exemplo e o estado do protótipo
 
-O `config_example.yml` atualmente versionado expõe `k_values` e
-`validate_k_anonymity`, mas **não expõe ainda** `d`, `σ`, `s_max`,
-`partition_backend` e `isomorphism_mode` como chaves estáveis de
-configuração. Isso significa que a documentação conceitual do algoritmo
-está **mais adiantada** do que a interface pública do YAML.
+Desde S8-3 (#106), o `config_example.yml` de referência expõe `k`, `d`,
+`sigma`, `s_max` (alias `fsm_max_size`) e `isomorphism_mode` — todas
+**efetivamente lidas** pelo runner (`experiments/run.py`) — além de
+`validate_k_anonymity` e `allow_kl_fallback`. A defasagem histórica (a
+documentação conceitual adiantada à interface pública) foi assim **fechada**
+para esses parâmetros. A chave `k` foi corrigida no exemplo (antes versionada
+como `k_values`, que o runner não lê) para refletir a interface real e não
+documentar configurabilidade fantasma — a mesma classe de erro que originou
+B5/B6.
 
-(`s_max` e `isomorphism_mode` já são **lidos do YAML** pelo runner desde
-B5/#104 e B6/#105, respectivamente; o pendente é apenas estabilizá-los no
-`config_example.yml` de referência — S8-3 / #106.)
-
-Esta divergência é aceitável na fronteira entre #26-A e #26-B: a presente
-issue documenta o escopo conceitual e a nomenclatura correta; a issue #26-B
-será responsável por consolidar a documentação técnica operacional do
-pipeline, inclusive a listagem explícita de parâmetros efetivamente
-expostos ao usuário final.
+O único parâmetro de He et al. ainda **não exposto** como chave estável é o
+**motor de partição** (`partition_backend`), definido conceitualmente e nas
+decisões (D-04) mas não lido como chave YAML — apenas `allow_kl_fallback`
+controla a política de fallback. `validate_k_anonymity` permanece exposta como
+documentação de política, embora a auditoria do runner atual rode sempre
+(chave reservada para tornar a auditoria opcional no futuro).
 
 > **Atualização (B5, #104):** `s_max` deixou de ser fixo no código. O runner
 > de experimentos (`experiments/run.py`) agora **lê** a chave
@@ -718,12 +719,13 @@ Para fins de rastreabilidade metodológica, o estado atual do protótipo
 deve ser lido assim:
 
 1. **`k` e validação** já estão representados no YAML público;
-2. **`d` e `sigma`** já aparecem nos YAMLs experimentais usados nos runs,
-   ainda que não estejam estabilizados no `config_example.yml` de referência;
+2. **`d` e `sigma`** são **lidos do YAML** pelo runner e, desde S8-3 (#106),
+   estabilizados também no `config_example.yml` de referência (além dos YAMLs
+   experimentais);
 3. **`s_max`** (`anonymization.s_max`, alias `fsm_max_size`, B5/#104) e
    **`isomorphism_mode`** (`anonymization.isomorphism_mode`, B6/#105) são
-   **lidos do YAML** pelo runner e gravados no JSONL; falta apenas expô-los
-   no `config_example.yml` de referência (S8-3 / #106). **`partition_backend`**
+   **lidos do YAML** pelo runner, gravados no JSONL e, desde S8-3 (#106),
+   expostos no `config_example.yml` de referência. **`partition_backend`**
    permanece definido conceitualmente e nas decisões do documento, ainda não
    exposto como chave YAML.
 
