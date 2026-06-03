@@ -16,6 +16,29 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #110 (S8-7): auditoria de fidelidade dos achados ✅ (A2–A9, B3, B4, B8).**
+  Auditoria leve (não-edição, salvo regressão) confirmando que os achados marcados
+  ✅ em `achados_divergencias.md` continuam coerentes com código/docs após as
+  edições das Fases 1 e 2. **Veredito: 11/11 fiéis — nenhuma regressão.** Evidência
+  reverificada item a item: **A2** `fsm_max_size: int = 4` default
+  (`he2009.py:103/243/461`; "Executado" histórico já anotado com a atualização
+  B5/#104); **A3** D-07 (`decision_log.md`) + §3.1/§4.1; **A4** D-08, teste
+  `test_local_structures_connected_d_gt_1` (`test_he2009_partition.py`), §6; **A5**
+  `validation.py:101` declara "does not import anything from he2009.py" — auditor
+  independente; **A6** D-06, `incomplete_group` reportado como violador
+  (`validation.py:165/206`); **A7** desempate lexicográfico ativo
+  (`he2009.py:668/798` `key=lambda v: (-ls.degree(v), v)`), D-03, §3.3; **A8**
+  `TestReconnectKTimesKMinusOne` (`test_he2009_anonymize.py`), §3.2.2, docstring;
+  **A9** §2.2 marca complexidades "Interpretativa" (linhas 230–233); **B3** sem
+  ataque por entropia em `src/attacks/` (só `degree`/`subgraph`); **B4** Nettleton
+  não implementado (sem arquivo em `src/`; scope §3/§4); **B8** DL-01 +
+  `satisfied_fraction`/`deficit_fully_structural` em `validation.py`. **Observação
+  (não-regressão):** a evidência de B4 cita "`src/anonymization/` (placeholder)",
+  mas não há arquivo placeholder concreto — a própria ausência confirma o
+  "não implementado"; wording pré-existente, não introduzido pelas Fases 1/2.
+  Somente docs (`progress.md`); sem alteração em `src/`/testes. Branch
+  `docs/audit-checkmarks-110` (`Closes #110`).
+
 - **Issue #109 (S8-6 / B2+B7): reafirmação de dataset único + nota de timeouts
   retroativos.** Tornados explícitos no texto público dois pontos de validade
   antes dispersos. **B2:** `results_baseline.md` ganhou a seção "Validade externa
@@ -166,13 +189,13 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #119 (`docs/reaffirm-dataset-timeouts-109`)
-  → fechar #109. Com #109 entregue, B2 e B7 (detalhado) migrados ⚠️→✅; a
-  tabela-resumo de `achados_divergencias.md` fica com B2 (linha 78) e B7
-  (linha 83) prontas para a migração formal em S8-8/#111.
+- Revisão humana e merge do PR `docs/audit-checkmarks-110` → fechar #110. Com a
+  auditoria S8-7 concluída sem regressões, o relatório de fidelidade dos ✅ está
+  disponível como insumo para S8-8/#111 (a revisão final consome este relatório).
 - **S8-8 (#111):** migração formal dos status na tabela-resumo de
   `achados_divergencias.md` (linhas 77/B1, 78/B2, 83/B7 — todas ⚠️→✅ —
-  além de A1/B5/etc., já desbloqueadas por #107/#108/#109).
+  além de A1/B5/etc., já desbloqueadas por #107/#108/#109). Desbloqueado por
+  S8-7/#110 (auditoria de fidelidade entregue).
 - Revisão humana e merge do PR `docs/config-example-expose-params-106` → fechar
   #106. Em seguida: S8-8 (#111 — migração formal dos status na tabela-resumo de
   `achados_divergencias.md`), que #106 e #107 desbloqueiam.
@@ -183,8 +206,8 @@
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
-- PR #119 (`docs/reaffirm-dataset-timeouts-109`) aguarda revisão humana.
-  (Dependências S8-4/#107 e S8-5/#108 já mergeadas em `main`.)
+- PR `docs/audit-checkmarks-110` (S8-7) aguarda revisão humana.
+  (Dependência S8-0 e Fases 1/2 já mergeadas; PR #119/#109 mergeado em `main`.)
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -210,6 +233,30 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #110 (S8-7): auditoria de fidelidade dos achados ✅ (A2–A9, B3, B4, B8)
+
+- **Concluído:** Auditoria leve (não-edição salvo regressão) verificando que os 11
+  achados marcados ✅ em `achados_divergencias.md` seguem coerentes com código/docs
+  após as Fases 1 e 2. **Veredito: 11/11 fiéis — nenhuma regressão.** Reverificação
+  item a item: **A2** `fsm_max_size: int = 4` default (`he2009.py:103/243/461`;
+  texto histórico anotado com B5/#104); **A3** D-07 + §3.1/§4.1; **A4** D-08, teste
+  `test_local_structures_connected_d_gt_1`, §6; **A5** `validation.py:101` "does not
+  import anything from he2009.py" (auditor independente); **A6** D-06,
+  `incomplete_group` como violador (`validation.py:165/206`); **A7** desempate
+  lexicográfico ativo (`he2009.py:668/798`), D-03, §3.3; **A8**
+  `TestReconnectKTimesKMinusOne`, §3.2.2, docstring; **A9** §2.2 "Interpretativa"
+  (linhas 230–233); **B3** sem ataque por entropia em `src/attacks/`; **B4**
+  Nettleton não implementado (sem arquivo em `src/`; scope §3/§4); **B8** DL-01 +
+  `satisfied_fraction`/`deficit_fully_structural`. **Observação (não-regressão):** a
+  evidência de B4 cita "`src/anonymization/` (placeholder)" mas não há arquivo
+  placeholder — a ausência confirma o "não implementado"; wording pré-existente, não
+  introduzido pelas Fases 1/2. Somente docs (`progress.md`); sem alteração em `src/`.
+  Branch `docs/audit-checkmarks-110`.
+- **Próximo:** Merge do PR → fechar #110; depois S8-8 (#111, migração formal dos
+  status na tabela-resumo), que consome este relatório de fidelidade.
+- **Bloqueios:** PR `docs/audit-checkmarks-110` aguarda revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #109 (S8-6 / B2+B7): reafirmar dataset único + timeouts retroativos
 
