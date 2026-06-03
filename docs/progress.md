@@ -16,6 +16,22 @@
 **Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #126 (S9-4): config YAML do experimento secundário Enron —
+  `he2009_enron_secondary.yml`, subgrafo restrito a hop=1. ✅ (só config).**
+  Espelha `he2009_facebook_baseline.yml` com valores específicos do Enron.
+  `dataset.name: enron`, `data_path: data/raw/enron/`, `component: lcc`,
+  `min_nodes: 200` (= 10 × k_max); o ramo `enron` de `load_dataset` (#125) usa
+  apenas `data_path` + `component`/`min_nodes` genéricos. Sementes
+  `[42, 1337, 2718]` lidas do YAML (≥3). `anonymization`: `k: [2,5,10,20]`,
+  `d: 1`, `sigma: 0.5`, `s_max: 4`, `isomorphism_mode: add_or_delete` (chaves
+  auditadas no S8, lidas em `run.py:588/592`). `attacks.degree.enabled: true`;
+  `attacks.subgraph` com `enabled: true`, `hop: 1` explícito e `timeout: 120`s
+  por nó (margem VF2 na escala maior do Enron; DoD #29/#126 — **não** habilitar
+  hop>1). Cabeçalho documenta o enquadramento secundário [D], a projeção OR
+  (D-11) e cita #29. YAML validado por `yaml.safe_load` (UTF-8, como o runner);
+  `ruff check .` limpo. Sem alteração em `src/`/testes. Branch
+  `loader/enron-config`, PR #134 (`Closes #126`).
+
 - **Issue #125 (S9-3): integração no runner — ramo `enron` em `load_dataset()`.
   ✅ (código + teste).** Único ponto de contato do loader Enron com o núcleo do
   pipeline. **(1)** `experiments/run.py`: `load_dataset()` ganha o ramo
@@ -276,17 +292,17 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #133 `loader/enron-runner` (S9-3/#125) → fechar #125.
-- Próxima sub-issue do S9 (issue-mãe #29): **config YAML do Enron**
-  (`he2009_enron_*.yml`) reaproveitando o runner já integrado (≥3 sementes,
-  `k ∈ {2,5,10,20}`), seguida da execução do experimento secundário.
+- Revisão humana e merge do PR #134 `loader/enron-config` (S9-4/#126) → fechar #126.
+- Próxima etapa do S9 (issue-mãe #29): **execução do experimento secundário**
+  Enron com a config recém-criada (≥3 sementes, `k ∈ {2,5,10,20}`), seguida de
+  geração de gráficos/tabelas e da validação obrigatória de k-anonimato no Enron.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 - (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR #133 (`loader/enron-runner`, S9-3/#125) aguarda CI + revisão humana;
-  dependência S9-2/#124 já em `main` (PR #132 mergeado, `2026-06-03T17:27:17Z`).
+- PR #134 (`loader/enron-config`, S9-4/#126) aguarda CI + revisão humana;
+  dependência S9-3/#125 já em `main` (PR #133 mergeado, `2026-06-03T17:45:09Z`).
   Milestone S8 concluído (PR #121 em `main`); 17/17 ✅.
 
 **Decisões pendentes de validação humana:**
@@ -313,6 +329,29 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #126 (S9-4): config YAML he2009_enron_secondary — subgrafo hop=1
+
+- **Concluído:** Config do experimento **secundário** Email-Enron (tier
+  desejável, issue-mãe #29 / S9-4) — `experiments/configs/he2009_enron_secondary.yml`,
+  espelhando `he2009_facebook_baseline.yml` com valores específicos do Enron.
+  `dataset.name: enron`, `data_path: data/raw/enron/`, `component: lcc`,
+  `min_nodes: 200` (= 10 × k_max); o ramo `enron` de `load_dataset` (#125) lê só
+  `data_path` + `component`/`min_nodes` genéricos. Sementes `[42, 1337, 2718]`
+  lidas do YAML (≥3). `anonymization`: `k: [2,5,10,20]`, `d: 1`, `sigma: 0.5`,
+  `s_max: 4`, `isomorphism_mode: add_or_delete` (chaves do S8, lidas em
+  `run.py:588/592`). `attacks.degree.enabled: true`; `attacks.subgraph` com
+  `enabled: true`, `hop: 1` explícito e `timeout: 120`s por nó (margem VF2 na
+  escala maior do Enron; DoD #29/#126 — **não** habilitar hop>1). Cabeçalho
+  documenta o enquadramento secundário [D], a projeção OR (D-11) e cita #29. YAML
+  validado por `yaml.safe_load` (UTF-8); `ruff check .` limpo. Sem alteração em
+  `src/`/testes. Branch `loader/enron-config`, PR #134 (`Closes #126`).
+- **Próximo:** Merge do PR #134 → fechar #126. Depois: executar o experimento
+  secundário Enron com esta config (≥3 sementes), gráficos/tabelas e validação de
+  k-anonimato no Enron.
+- **Bloqueios:** PR #134 aguarda CI + revisão humana (S9-3/#125 já em `main`,
+  PR #133 mergeado `2026-06-03T17:45:09Z`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #125 (S9-3): integração runner — ramo enron em load_dataset()
 
