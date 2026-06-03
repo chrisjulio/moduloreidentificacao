@@ -267,10 +267,13 @@ ameaças abaixo.
 
 - **Única ego-rede (3437).** Todos os resultados vêm de um só grafo
   (LCC n=532, m=4812). Tendências em `(k, d)`, combos degenerados e magnitudes de
-  reidentificação são **específicos desta topologia**; não há base para
-  extrapolar para outras ego-redes, outros datasets (ex.: Email-Enron, tier
-  desejável) ou outras densidades. Generalização exige replicar a varredura em
-  ≥ 1 grafo adicional.
+  reidentificação são **específicos desta topologia**. Nem o dataset secundário
+  **contingente** previsto (Email-Enron, tier desejável) nem a varredura de
+  **múltiplas** ego-redes (`preprocessing_mode = multiple_egonets`, chave
+  `egonet_ids` em `config_example.yml:46`) chegaram a rodar (achado B2): não há
+  base para extrapolar para outras ego-redes, outros datasets ou outras
+  densidades. Generalização exige replicar a varredura em ≥ 1 grafo adicional.
+  Ver `scope.md` §3 e `limitations.md` §1.1.
 
 Referência cruzada das ameaças metodológicas transversais:
 [`docs/limitations.md`](limitations.md) (§1.3 atualizada para *parcialmente

@@ -281,9 +281,15 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   (`egonet_ids` previsto, não usado).
 - **Impacto.** Ameaça à validade externa: resultados (incl. a resolução parcial
   de `d>1`) restritos a uma rede. Generalização aberta.
-- **Status.** ⚠️ Documentado como limitação de escopo (§1.1, ameaça à validade
-  externa). Convém reafirmar que nem o secundário contingente (Enron) nem
-  `multiple_egonets` chegaram a rodar.
+- **Status.** ✅ **Resolvido (#109):** a ressalva de validade externa deixou de
+  ficar implícita no texto público. `results_baseline.md` ganhou a seção
+  "Validade externa — dataset único (achado B2)" e `results_dsweep.md` §5.7
+  (validade externa) passou a **nomear explicitamente** que nem o secundário
+  contingente (Email-Enron) nem `multiple_egonets` chegaram a rodar — ambas
+  remetendo a `scope.md` §3, `limitations.md` §1.1 e `config_example.yml:46`.
+  No baseline, a ressalva é declarada ortogonal às de B1 (`d`) e A1 (motor).
+  Migração formal do status ⚠️→✅ na tabela-resumo (linha 78) deixada para
+  S8-8/#111.
 
 ### B3 — Ataque por entropia não implementado
 
@@ -399,7 +405,14 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 - **Impacto.** Para o log atual, a ambiguidade foi resolvida por inspeção
   (conclusiva), não por reexecução. Os zeros do d-sweep são confiáveis, mas a
   rastreabilidade só fica completa em execuções futuras (instrumentadas).
-- **Status.** ⚠️ Documentado (DL-02, results_dsweep §5.5/§5.7).
+- **Status.** ✅ **Reafirmado (#109):** `results_dsweep.md` §5.5/§5.7 já declara
+  que os zeros do d-sweep são **genuínos** (H3 — timeout mascarado — descartada
+  por **inspeção** do log, não por reexecução) e que os campos
+  `subgraph_timeout_count`/`subgraph_candidate_counts` são **retroativos**
+  (DL-02; rastreabilidade direta só em execuções futuras instrumentadas). A nota
+  de comparabilidade pré/pós DL-02 em §5.7 cobre a inversão semântica do
+  sentinela de timeout. Migração formal do status ⚠️→✅ na tabela-resumo
+  (linha 83) deixada para S8-8/#111.
 
 ### B8 — Critério do marco refinado (binário → fração + causa)
 
