@@ -5,11 +5,12 @@
 > CLAUDE.md responde *como desenvolver*, este documento responde **o que este módulo é,
 > o que ele deliberadamente não é, e por que essa distinção importa**.
 >
-> Estado: atualizado em 28/05/2026. S4 (visualizações) e S5 (testes e documentação
+> Estado: atualizado em 03/06/2026. S4 (visualizações) e S5 (testes e documentação
 > complementar) estão encerrados. Escopo mínimo (`[M]`) integralmente implementado.
 > Varredura de `d > 1` (d-sweep) promovida para tier `[D]` (desejável) conforme D-08
-> (issue #73, issue-mãe #72). Alterações de escopo devem ser registradas aqui antes de
-> serem implementadas.
+> (issue #73, issue-mãe #72). Email-Enron declarado dataset secundário do tier `[D]`,
+> com simetrização OR (D-11, issue-mãe #29, âncora #122). Alterações de escopo devem
+> ser registradas aqui antes de serem implementadas.
 
 ---
 
@@ -66,7 +67,13 @@ existe eixo de privacidade a ser medido.
 Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
 
 - `[M]` Carrega grafos de **datasets públicos de pesquisa** — Facebook Ego-Nets (SNAP)
-  como principal, Email-Enron (SNAP, versão estática) como secundário contingente.
+  como dataset **principal** do baseline.
+- `[D]` Carrega o **Email-Enron** (SNAP, versão estática) como dataset **secundário**
+  do tier desejável, reaproveitando a infraestrutura existente (runner, ataques,
+  métricas, visualização) sem alterar o núcleo. Por ser um grafo direcionado por
+  natureza (`A → B` = "A enviou e-mail para B"), é projetado para não-direcionado
+  por **simetrização OR** (aresta `A — B` se houver e-mail em qualquer direção) —
+  decisão **D-11** em `docs/decision_log.md` (issue-mãe #29, âncora #122).
 - `[M]` Aplica o algoritmo de anonimização **[He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108)** sobre esses grafos,
   com suporte a k∈{2, 5, 10, 20} e **d=1** (âncora do baseline, escopo mínimo).
 - `[D]` Executa **varredura de d** (d-sweep) sobre [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) com d∈{1, 2, 5, 10},
@@ -230,8 +237,9 @@ defensáveis da resistência de anonimizações conhecidas.
 
 ---
 
-*Documento de escopo. Atualizado em 28/05/2026 (issue #73). S1–S5 encerrados;
-d-sweep tier `[D]` ativo (issues #72–#78). Desvios fundamentados são esperados;
+*Documento de escopo. Atualizado em 03/06/2026 (issue #122). S1–S5 encerrados;
+d-sweep tier `[D]` concluído (issues #72–#78); Email-Enron (tier `[D]`) em
+enquadramento (S9, issue-mãe #29). Desvios fundamentados são esperados;
 desvios não documentados, não. Toda alteração de escopo é registrada aqui antes de ser
 implementada.*
 

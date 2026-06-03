@@ -31,6 +31,7 @@
 | [D-08](#d-08) | 2026-05-28 | Implementação | Política de conectividade de LSs — documentar como aproximação |
 | [D-09](#d-09) | 2026-05-28 | Implementação | Pré-filtro VF2: documentar como limitação do protótipo |
 | [D-10](#d-10) | 2026-05-28 | Implementação | Combo degenerado d=10, k=20: executar e anotar como degenerado no YAML |
+| [D-11](#d-11) | 2026-06-03 | Implementação | Email-Enron direcionado → não-direcionado: simetrização por OR |
 
 ---
 
@@ -905,3 +906,74 @@ Seguindo o precedente de D-08 (documentar como aproximação em vez de excluir):
 - Issue #76 (checkbox 3 — verificação e decisão)
 - Issue #77 (d-sweep — config YAML e logging)
 - `tests/anonymization/test_he2009_d_validator.py::TestDegenerateComboD10K20`
+
+---
+
+## D-11 — Email-Enron direcionado → não-direcionado: simetrização por OR
+
+**Data:** 2026-06-03
+**Issues relacionadas:** #29 (issue-mãe — dataset secundário Email-Enron), #122 (S9-0 — âncora/enquadramento)
+**Módulo afetado:** `src/loaders/` (loader Email-Enron, a implementar em issue posterior do S9)
+
+### Contexto
+
+O escopo `[D]` (desejável) prevê o **Email-Enron** (SNAP, versão estática) como
+dataset secundário, reaproveitando a infraestrutura existente (runner, ataques,
+métricas, visualização) sem alterar o núcleo de anonimização. O Email-Enron é,
+porém, um grafo **direcionado por natureza**: a aresta `A → B` significa "A
+enviou e-mail para B". Todo o pipeline foi calibrado e validado em grafos
+**não-direcionados** — o Facebook Ego-Nets representa amizade, relação já
+simétrica. É necessário, portanto, fixar uma regra de "achatamento" da direção
+antes de alimentar o pipeline, e registrá-la como decisão antes de qualquer
+código (esta issue trata apenas de decisão e enquadramento — ver "Não-escopo").
+
+### Decisão adotada — simetrização simples (OR)
+
+Cria-se a aresta não-direcionada `A — B` se houver e-mail em **qualquer**
+direção: `A → B` **ou** `B → A`. Formalmente, o grafo não-direcionado `G_u`
+é a projeção `E(G_u) = { {u, v} : (u → v) ∈ E(G_d) ∨ (v → u) ∈ E(G_d) }`.
+Self-loops e multi-arestas resultantes são colapsados.
+
+**Justificativa:**
+
+1. **Comparabilidade** — é a convenção padrão do SNAP e da maioria dos
+   trabalhos que usam o Email-Enron, o que torna os números defensáveis na
+   qualificação e comparáveis à literatura.
+2. **Retenção de estrutura** — o OR preserva o máximo de arestas, em paralelo
+   metodológico com a retenção do LCC adotada no Facebook (Seção 3.2 dos docs
+   de resultados).
+3. **Cenário de risco conservador** — um grafo mais conexo gera mais alvos
+   potenciais para os ataques estruturais (grau, subgrafo), ou seja, mede a
+   vulnerabilidade agregada no pior caso razoável para a defesa.
+
+### Impacto estrutural
+
+A simetrização por OR **aumenta a densidade e a conectividade** em relação à
+alternativa recíproca: toda comunicação unidirecional vira aresta. Isso
+desloca a distribuição de grau para cima e tende a inflar o tamanho da maior
+componente conexa. Como o pipeline opera sobre grafos não-direcionados, nenhuma
+mudança no núcleo de anonimização, nos ataques ou nas métricas é necessária — a
+projeção é responsabilidade exclusiva do loader.
+
+### Alternativa considerada e rejeitada — reciprocidade (AND)
+
+Manter `A — B` apenas quando há e-mail mútuo (`A → B` **e** `B → A`) modela um
+laço social mais forte (comunicação confirmada nos dois sentidos), porém
+descarta a maioria das arestas (e-mail corporativo é majoritariamente
+unidirecional), produz um grafo muito mais esparso e foge da convenção do SNAP.
+**Rejeitada** para o baseline do dataset secundário; **registrada como candidata
+a análise de sensibilidade futura** (comparar OR vs. AND sob os mesmos `k`).
+
+### Terminologia obrigatória
+
+Ao reportar resultados sobre o Email-Enron, manter o enquadramento de aferição
+(Seção 5 de `docs/scope.md`): "avaliar risco de reidentificação", "simular
+associação controlada", "mensurar vulnerabilidade agregada" — nunca
+"desanonimizar" ou "identificar" indivíduos.
+
+### Referências cruzadas
+
+- Issue #29 (issue-mãe — Email-Enron como dataset secundário do tier `[D]`)
+- Issue #122 (S9-0 — âncora: decisão e enquadramento, sem código de loader)
+- `docs/scope.md` §3 (Enron declarado tier `[D]`) e §7 (condições éticas — dataset público desidentificado)
+- `src/loaders/` (loader a implementar em issue posterior do S9)
