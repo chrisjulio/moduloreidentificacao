@@ -16,6 +16,23 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #109 (S8-6 / B2+B7): reafirmação de dataset único + nota de timeouts
+  retroativos.** Tornados explícitos no texto público dois pontos de validade
+  antes dispersos. **B2:** `results_baseline.md` ganhou a seção "Validade externa
+  — dataset único (achado B2)" (única ego-rede 3437; nem Enron contingente nem
+  `multiple_egonets` rodaram; generalização aberta; declarada ortogonal às
+  ressalvas de B1/`d` e A1/motor); `results_dsweep.md` §5.7 passou a **nomear
+  explicitamente** Enron e `multiple_egonets` como planejados-mas-não-executados.
+  **B7:** o esclarecimento já estava completo em `results_dsweep.md` §5.5/§5.7
+  (zeros genuínos — H3 descartada por inspeção, não reexecução; campos
+  `subgraph_timeout_count`/`subgraph_candidate_counts` retroativos, DL-02) — texto
+  existente satisfaz o critério; nada a acrescentar. Em `achados_divergencias.md`,
+  status detalhado de B2 e B7 migrado ⚠️→✅; migração formal na tabela-resumo
+  (linhas 78/83) deixada para S8-8/#111. Evidência citada verificada (`scope.md`
+  §3; `limitations.md` §1.1; `config_example.yml:46`; DL-02/D-08). Somente docs —
+  sem alteração em `src/` ou testes; `ruff check .` limpo. Branch
+  `docs/reaffirm-dataset-timeouts-109`, PR #119 (`Closes #109`).
+
 - **Issue #108 (S8-5 / B1): frase-síntese `d=1` = k-anonimato de grau; d-sweep =
   estrutural — inserida no README e em `results_baseline.md`.** Fechado o achado
   de maior consequência interpretativa (B1). A síntese — "no regime `d=1` os
@@ -149,12 +166,13 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #118 (`docs/synthesis-d1-degree-vs-structural-108`)
-  → fechar #108. Com S8-4 (#107) já mergeado e S8-5 (#108) entregue, a próxima
-  edição de `results_baseline.md` está livre de seriação pendente.
+- Revisão humana e merge do PR #119 (`docs/reaffirm-dataset-timeouts-109`)
+  → fechar #109. Com #109 entregue, B2 e B7 (detalhado) migrados ⚠️→✅; a
+  tabela-resumo de `achados_divergencias.md` fica com B2 (linha 78) e B7
+  (linha 83) prontas para a migração formal em S8-8/#111.
 - **S8-8 (#111):** migração formal dos status na tabela-resumo de
-  `achados_divergencias.md` (inclui a linha 77 de B1, ⚠️→✅, agora desbloqueada
-  por #108, além de A1/B5/etc.).
+  `achados_divergencias.md` (linhas 77/B1, 78/B2, 83/B7 — todas ⚠️→✅ —
+  além de A1/B5/etc., já desbloqueadas por #107/#108/#109).
 - Revisão humana e merge do PR `docs/config-example-expose-params-106` → fechar
   #106. Em seguida: S8-8 (#111 — migração formal dos status na tabela-resumo de
   `achados_divergencias.md`), que #106 e #107 desbloqueiam.
@@ -165,8 +183,8 @@
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
-- PR de `test/config-propagation-112` (a abrir) aguardará revisão humana.
-  (Dependências #104 e #105 já mergeadas em `main`.)
+- PR #119 (`docs/reaffirm-dataset-timeouts-109`) aguarda revisão humana.
+  (Dependências S8-4/#107 e S8-5/#108 já mergeadas em `main`.)
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -192,6 +210,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #109 (S8-6 / B2+B7): reafirmar dataset único + timeouts retroativos
+
+- **Concluído:** Tornados explícitos no texto público dois pontos de validade
+  antes dispersos. **B2:** `results_baseline.md` ganhou a seção "Validade externa
+  — dataset único (achado B2)" (única ego-rede 3437; Enron contingente e
+  `multiple_egonets` não rodaram; generalização aberta; ortogonal às ressalvas de
+  B1/`d` e A1/motor); `results_dsweep.md` §5.7 passou a nomear explicitamente
+  Enron e `multiple_egonets` como planejados-mas-não-executados. **B7:** o
+  esclarecimento já estava completo em `results_dsweep.md` §5.5/§5.7 (zeros
+  genuínos — H3 descartada por inspeção, não reexecução; campos
+  `subgraph_timeout_count`/`subgraph_candidate_counts` retroativos, DL-02) — texto
+  existente satisfaz o critério. Em `achados_divergencias.md`, status detalhado de
+  B2 e B7 migrado ⚠️→✅; tabela-resumo (linhas 78/83) deixada para S8-8/#111.
+  Evidência verificada (`scope.md` §3; `limitations.md` §1.1;
+  `config_example.yml:46`; DL-02/D-08). Somente docs; `ruff check .` limpo.
+  Branch `docs/reaffirm-dataset-timeouts-109`, PR #119.
+- **Próximo:** Merge do PR #119 → fechar #109; depois S8-8 (#111, migração formal
+  dos status na tabela-resumo, incl. B2 linha 78 e B7 linha 83).
+- **Bloqueios:** PR #119 aguarda revisão humana (S8-4/#107 e S8-5/#108 já em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #108 (S8-5 / B1): frase-síntese d=1 = k-anon de grau, d-sweep = estrutural
 
