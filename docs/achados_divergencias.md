@@ -100,8 +100,8 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   ausente local e na CI → **o baseline `d=1` rodou em KL**. O d-sweep posterior
   (#88) rodou **pymetis em 48/48** (gravado em `partition_backend` no JSONL).
 - **Evidência.** `_partition_neighborhoods(... backend="auto")`
-  (`src/anonymization/he2009.py:294`, `run.py:255`); flag
-  `anonymization.allow_kl_fallback` (`config_example.yml:77`); D-04 em
+  (`src/anonymization/he2009.py:338`, `run.py:271`); flag
+  `anonymization.allow_kl_fallback` (`config_example.yml:109`); D-04 em
   `docs/decision_log.md`.
 - **Impacto.** O KL não garante balanceamento de tamanho p/ `ck>2`, divergindo
   da premissa do artigo. **Para `d=1` o impacto é nulo** (partições triviais de
@@ -109,9 +109,12 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   texto deve declarar que o número-título ("k-anonimato atingido") foi produzido
   pelo motor *não fiel*, e que a fidelidade ao artigo (pymetis) só foi exercida
   no d-sweep.
-- **Status.** ⚠️ Documentado (D-04, limitations §2.2), mas a frase "qual backend
-  rodou em qual experimento" está implícita. Sugestão p/ etapa 2: tornar
-  explícito no `results_baseline.md` que o baseline d=1 rodou em KL.
+- **Status.** ✅ **Resolvido (#107):** a frase "qual backend rodou em qual
+  experimento" deixou de ser implícita — `results_baseline.md` ganhou a seção
+  "Motor de particionamento — baseline d=1 rodou em KL", que declara
+  explicitamente o motor não fiel (KL fallback) no baseline `d=1`, a inocuidade
+  para `d=1` (partições triviais) e o contraste com o d-sweep (pymetis em 48/48).
+  Migração formal do status ⚠️→✅ na tabela-resumo deixada para S8-8/#111.
 
 ### A2 — FSM simplificado com `s_max=4` fixo
 
@@ -420,8 +423,11 @@ Pontos onde a documentação existente ainda descreve o *proposto* como se fosse
    `anonymize()` recebe `isomorphism_mode` como parâmetro real e a docstring
    descreve a chave YAML como a via de configuração efetiva (não mais
    constante de código).
-3. **`results_baseline.md` (A1).** Tornar explícito que o baseline `d=1` rodou no
-   **fallback KL** (não pymetis), e que isso é inócuo para `d=1`.
+3. ~~**`results_baseline.md` (A1).** Tornar explícito que o baseline `d=1` rodou no
+   **fallback KL** (não pymetis), e que isso é inócuo para `d=1`.~~ **Resolvido
+   (#107):** `results_baseline.md` ganhou a seção "Motor de particionamento —
+   baseline d=1 rodou em KL", declarando o motor não fiel (KL), a inocuidade
+   para `d=1` e o contraste com o d-sweep (pymetis em 48/48).
 4. ~~**`config_example.yml` (B5).** Decidir se vale expor `d`/`sigma` no exemplo
    de referência (hoje só nos YAMLs experimentais) para alinhar exemplo e
    prática — ou documentar por que o exemplo permanece mínimo.~~ **Resolvido
