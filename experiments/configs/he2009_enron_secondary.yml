@@ -88,7 +88,9 @@ attacks:
     # a varredura completa de candidatos de um nó-alvo; nó que estoura é contado em
     # subgraph_timeout_count e tratado como não-reidentificado (DL-02). Validade da
     # execução exige subgraph_timeout_count == 0 (D-13) — ver docs/decision_log.md.
-    timeout: 120        # segundos por nó alvo; valor fixo, independente da máquina (D-12)
+    timeout: 120        # segundos por nó alvo; valor fixo, independente da máquina (D-12).
+                        # Alinhado ao he2009_facebook_dsweep.yml (que já usa 120s p/ G' denso);
+                        # baseline Facebook usa 60s (ego-rede esparsa).
 
 # ------------------------------------------------------------
 # Execução
