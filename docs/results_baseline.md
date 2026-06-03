@@ -78,6 +78,29 @@ caso a seleção automática recaia no fallback KL.
 
 ---
 
+## Validade externa — dataset único (achado B2)
+
+> **Ressalva de generalização (achado B2).** Todos os números deste baseline vêm
+> de uma **única** ego-rede do Facebook (a 3437; LCC n=532, m=4812). Nem o
+> dataset secundário **contingente** previsto (Email-Enron, tier desejável) nem a
+> varredura de **múltiplas** ego-redes
+> (`preprocessing_mode = multiple_egonets`, chave `egonet_ids` em
+> `config_example.yml:46`) chegaram a ser executados.
+
+Os resultados — `coverage_fraction`, vereditos e métricas de utilidade (KS-D,
+Δclust) — são válidos **para esta topologia específica**; não há base empírica
+para extrapolá-los a outras ego-redes, ao Enron ou a outras densidades de rede.
+A generalização permanece em aberto e exige replicar o pipeline em ≥ 1 grafo
+adicional. Esta ressalva é ortogonal às duas anteriores: trata da *amostra de
+redes* (uma só), não do *parâmetro* `d` (B1) nem do *motor* de particionamento
+(A1).
+
+**Referências:** `scope.md` §3 (tiers de dataset [M]/[D]/[A]); `limitations.md`
+§1.1 (dataset restrito); `config_example.yml:46` (`egonet_ids` previsto, não
+usado).
+
+---
+
 ## Tabela bruta por (k, semente)
 
 | k | seed | Veredito | coverage_fraction | rr_degree | rr_subgraph | EG_mean | EG_median | KS_D | KS_p | clust_var |
