@@ -316,9 +316,13 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   valor efetivo no JSONL. `algorithm_notes.md` §5.1/§5.2 atualizadas. Restam,
   sob B5: expor `d`/`sigma`/`s_max` no `config_example.yml` (S8-3 / #106) e
   `isomorphism_mode` (B6 / S8-2 / #105).
+- **Atualização (#112, S8-2b).** A propagação de `s_max`/`fsm_max_size`
+  (config→runner→`_group_isomorphic`, e `anonymize()`→`_group_isomorphic`)
+  ganhou cobertura de teste dedicada — ver detalhamento sob B6.
 - **Status.** 🔧 Defasagem em correção: parte `s_max` resolvida na raiz por
-  #104 (chave YAML lida, não mais "fixo no código"); restam `config_example.yml`
-  (#106) e `isomorphism_mode` (#105).
+  #104 (chave YAML lida, não mais "fixo no código") e coberta por testes em
+  #112; restam `config_example.yml` (#106) e `isomorphism_mode` (#105, já
+  resolvido — ver B6).
 
 ### B6 — Variante de isomorfização: implementada, mas hardcoded e não exposta
 
@@ -346,12 +350,20 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   e grava o valor efetivo em cada entrada JSONL e no `summary.json`. Default
   `add_or_delete` preserva o comportamento histórico. Docstring de `anonymize()`,
   `algorithm_notes.md` §3.2.1/§3.4/§5.1/§5.2/§5.3 atualizadas. Resta, sob B5:
-  expor a chave no `config_example.yml` (S8-3 / #106); testes de propagação em
-  S8-2b (#112).
+  expor a chave no `config_example.yml` (S8-3 / #106).
+- **Atualização (#112, S8-2b).** A propagação de `isomorphism_mode` (e de
+  `s_max`/`fsm_max_size`, ver B5) ganhou cobertura de teste dedicada:
+  `tests/anonymization/test_he2009_modify.py` verifica o caminho
+  `anonymize() → _modify_structure(add_only=...)` (via spy), o default
+  `add_or_delete`, o efeito "nenhuma aresta removida" sob `add_only` e o erro
+  para valor inválido; `tests/experiments/test_run_config_propagation.py`
+  verifica o caminho config→runner (chave YAML gravada no JSONL/`summary.json`,
+  default na ausência da chave, valor efetivo chegando a `_modify_structure`, e
+  regressão do baseline `d=1`).
 - **Status.** 🔧→✅ Defasagem resolvida na raiz por #105 (chave YAML lida e
-  propagada, não mais constante de código). Pendência residual: estabilizar a
-  chave no `config_example.yml` (#106). Migração formal do status na
-  tabela-resumo deixada para S8-8 (#111).
+  propagada, não mais constante de código) e coberta por testes em #112.
+  Pendência residual: estabilizar a chave no `config_example.yml` (#106).
+  Migração formal do status na tabela-resumo deixada para S8-8 (#111).
 
 ### B7 — Log do d-sweep sem contagem de timeouts (campos retroativos)
 

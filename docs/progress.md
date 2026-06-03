@@ -16,6 +16,28 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #112 (S8-2b): testes de propagação das novas chaves
+  (config→anonymize→`_modify_structure`/`_group_isomorphic`) + regressão.**
+  Cobertura de teste dedicada à mudança de comportamento de #104 (`s_max`/
+  `fsm_max_size`) e #105 (`isomorphism_mode`), que passaram a ser lidas do YAML.
+  **`tests/anonymization/test_he2009_modify.py`** estendido com 3 classes
+  (+18 testes) cobrindo o caminho via `anonymize()`: `isomorphism_mode="add_only"`
+  → `_modify_structure(add_only=True)` (via spy `wraps`) e efeito "nenhuma
+  aresta removida"; default `add_or_delete` (add_only=False); valor inválido
+  levanta `ValueError`; `fsm_max_size` → `_group_isomorphic` (spy) e default 4;
+  grouping idêntico para `s_max∈{4,5}` em `cycle_graph(20)`/d=5 (G2/D-01);
+  regressão default==explicit e determinismo do baseline d=1. **Novo
+  `tests/experiments/test_run_config_propagation.py`** (12 testes) cobre o
+  caminho config→runner: `isomorphism_mode`/`s_max` gravados no JSONL e no
+  `summary.json`; ausência da chave usa o default (`add_or_delete`/4); alias
+  `fsm_max_size` aceito; `isomorphism_mode` inválido aborta `main()` antes do
+  laço; valores efetivos chegam a `_modify_structure`/`_group_isomorphic` (spy
+  helper `_SpyWrapper` que registra chamadas e delega à função real); regressão
+  do baseline d=1 (duas execuções idênticas). Sem alteração em `src/`. Addenda
+  B5/B6 em `achados_divergencias.md` atualizados (propagação coberta por #112).
+  Suíte **549 passed**, ruff + format limpos. Branch
+  `test/config-propagation-112`.
+
 - **Issue #105 (S8-2 / B6): exposição de `isomorphism_mode` como chave lida
   do YAML.** A variante de isomorfização da Fase 2 deixou de ser
   `add_only=False` hardcoded: `anonymize()` ganhou o parâmetro
@@ -71,18 +93,17 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR de `anonymization/expose-isomorphism-mode-105`
-  → fechar #105. Em seguida: S8-2b (#112, testes de propagação de
-  `fsm_max_size`/`isomorphism_mode` pelo runner) e S8-3 (#106,
-  `config_example.yml` — expor `d`/`sigma`/`s_max`/`isomorphism_mode`).
+- Revisão humana e merge do PR de `test/config-propagation-112` → fechar #112.
+  Em seguida: S8-3 (#106, `config_example.yml` — expor
+  `d`/`sigma`/`s_max`/`isomorphism_mode`).
 - Revisão humana e merge do PR `anonymization/dsweep-complementar-80` → fechar a
   issue #80. Com #80 fechada, **toda a engenharia da issue-mãe #72 (d-sweep) está
   concluída** → fechar #72 (umbrella) com comentário de encerramento.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 
 **Bloqueios ativos:**
-- PR de `anonymization/expose-isomorphism-mode-105` (a abrir) aguardará revisão
-  humana. (PR #113 / #104 já mergeado.)
+- PR de `test/config-propagation-112` (a abrir) aguardará revisão humana.
+  (Dependências #104 e #105 já mergeadas em `main`.)
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -108,6 +129,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-02 — Issue #112 (S8-2b): testes de propagação das chaves + regressão
+
+- **Concluído:** Cobertura de teste da mudança de comportamento de #104
+  (`s_max`/`fsm_max_size`) e #105 (`isomorphism_mode`), agora lidas do YAML.
+  `tests/anonymization/test_he2009_modify.py` +18 testes (3 classes) no caminho
+  `anonymize()`: `isomorphism_mode` → `_modify_structure(add_only=...)` via spy
+  `wraps` + efeito "nenhuma aresta removida" sob `add_only`; default
+  `add_or_delete`; valor inválido → `ValueError`; `fsm_max_size` →
+  `_group_isomorphic` (spy) e default 4; grouping idêntico `s_max∈{4,5}` em
+  `cycle_graph(20)`/d=5 (G2/D-01); regressão default==explicit e determinismo
+  d=1. Novo `tests/experiments/test_run_config_propagation.py` (12 testes) no
+  caminho config→runner: chaves gravadas no JSONL e `summary.json`; default na
+  ausência; alias `fsm_max_size`; `isomorphism_mode` inválido aborta `main()`;
+  valores efetivos chegando a `_modify_structure`/`_group_isomorphic` (helper
+  `_SpyWrapper`); regressão baseline d=1. Sem alteração em `src/`. Addenda B5/B6
+  de `achados_divergencias.md` atualizados. Suíte **549 passed**, ruff + format
+  limpos. Branch `test/config-propagation-112`.
+- **Próximo:** Merge do PR → fechar #112; depois S8-3 (#106, `config_example.yml`).
+- **Bloqueios:** PR a abrir aguardará revisão humana (#104/#105 já mergeadas).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — Issue #105 (S8-2 / B6): expor isomorphism_mode lido do YAML
 
