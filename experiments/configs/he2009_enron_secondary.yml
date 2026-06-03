@@ -1,0 +1,94 @@
+# ============================================================
+# Experimento SECUNDÁRIO: He et al. (2009) + Email-Enron (SNAP)
+# Issue #126 (S9-4) — config do dataset secundário, parte da issue-mãe #29
+# Tier DESEJÁVEL: dataset secundário para validade externa (≠ Mínimo)
+# ============================================================
+#
+# Uso:
+#   python -m experiments.run --config experiments/configs/he2009_enron_secondary.yml
+#
+# Saída:
+#   experiments/logs/he2009_enron_secondary/he2009_enron_secondary.jsonl
+#   experiments/logs/he2009_enron_secondary/summary.json
+#
+# Enquadramento (escopo — docs/scope.md §3):
+#   O Facebook Ego-Net 3437 é o dataset PRINCIPAL [M] do escopo Mínimo.
+#   O Email-Enron é o dataset SECUNDÁRIO [D] do tier Desejável; serve à
+#   validade externa (achado B2 — generalização para além de uma única
+#   ego-rede). Projeção direcionado→não-direcionado por simetrização OR
+#   (decisão D-11): aresta A — B existe se houver e-mail em qualquer direção
+#   (responsabilidade do loader src/loaders/enron.py).
+#
+# Diferenças em relação a he2009_facebook_baseline.yml:
+#   - dataset.name: enron (despachado por load_dataset → load_enron, #125)
+#   - Sem egonet_id/preprocessing_mode — o Enron não é uma ego-rede.
+#   - Ataque por subgrafo restrito a hop=1 com timeout ampliado: o Enron é
+#     maior/mais denso que a ego-rede 3437, e a DoD de #29 ressalva que o
+#     subgrafo "pode ser proibitivo em escala maior; restringir a hop=1".
+
+experiment:
+  name: he2009_enron_secondary
+  description: >
+    Experimento secundário (tier Desejável): anonimização He et al. (2009) +
+    ataque por grau + ataque por subgrafo (restrito a hop=1) + métricas
+    (reidentification_rate, equivalence_group_size, ks_test_degree,
+    clustering_variation), sobre o grafo Email-Enron (SNAP), simetrizado por
+    OR (D-11) e reduzido ao maior componente conexo, para k ∈ {2, 5, 10, 20}
+    e 3 sementes. Complementa o baseline Facebook para validade externa (#29).
+
+# ------------------------------------------------------------
+# Sementes — mínimo 3 por .claude/rules/seeds.md
+# Nunca hardcoded no código de produção; sempre lidas deste YAML.
+# ------------------------------------------------------------
+seeds: [42, 1337, 2718]
+
+# ------------------------------------------------------------
+# Dataset
+# Email-Enron (SNAP): 36 692 nós / 183 831 arestas no arquivo bruto;
+# LCC ≈ 33 696 nós (figuras publicadas pela SNAP; n/m efetivos após
+# simetrização OR + LCC são logados em runtime por load_dataset).
+# O ramo `enron` de load_dataset lê apenas data_path; o pós-processamento
+# component/min_nodes é genérico e roda após o loader (#125).
+# ------------------------------------------------------------
+dataset:
+  name: enron
+  source: snap
+  data_path: data/raw/enron/   # lê email-Enron.txt (baixado por download_enron.py)
+  component: lcc               # reter maior componente conexo (decisão Seção 3.2)
+  min_nodes: 200               # 10 * k_max = 10 * 20 = 200 (trivial para o Enron)
+
+# ------------------------------------------------------------
+# Anonimização
+# k: lista de inteiros — o runner itera sobre todos os valores.
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k: [2, 5, 10, 20]    # escopo Mínimo completo, espelhado no secundário
+  d: 1                 # baseline de grau (d=1 → k-anonimato de grau; achado B1)
+  sigma: 0.5           # suporte mínimo do FSM simplificado (D-01)
+  s_max: 4             # tamanho máx. de subgrafo do FSM simplificado (D-01/A2; #104)
+  isomorphism_mode: add_or_delete  # variante da Fase 2 (B6/#105); add_or_delete | add_only
+
+# ------------------------------------------------------------
+# Ataques
+# Ambos habilitados. Subgrafo restrito a hop=1 (DoD #29/#126): não habilitar
+# hop>1 — o Enron é maior que a ego-rede 3437 e o custo VF2 cresce rápido.
+# timeout por nó ampliado vs. baseline (60s) como margem de segurança VF2 na
+# escala maior; um nó que estourar é contado em subgraph_timeout_count e
+# tratado como não-reidentificado (DL-02 / #93).
+# ------------------------------------------------------------
+attacks:
+  degree:
+    enabled: true
+    tolerance: 0        # correspondência exata de grau (baseline)
+  subgraph:
+    enabled: true
+    hop: 1              # vizinhança 1-hop apenas — NÃO aumentar (DoD #126)
+    timeout: 120        # segundos por nó alvo; safety margin VF2 na escala do Enron
+
+# ------------------------------------------------------------
+# Execução
+# ------------------------------------------------------------
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/
