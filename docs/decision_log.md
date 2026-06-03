@@ -995,9 +995,11 @@ associação controlada", "mensurar vulnerabilidade agregada" — nunca
 
 A DoD da #126 pedia um `timeout` por nó no ataque por subgrafo "com margem de
 segurança VF2", sem fixar um valor. O config secundário do Enron adotou
-`attacks.subgraph.timeout: 120` (segundos), o dobro do baseline implícito de
-60 s usado no Facebook. Esta decisão registra **o que o número significa** e
-**por que 120 s** — ponto levantado na revisão de implementação do S9.
+`attacks.subgraph.timeout: 120` (segundos) — o mesmo valor já usado no
+`he2009_facebook_dsweep.yml` (cenário `d > 1`, mais denso), e maior que os 60 s
+do baseline Facebook (ego-rede esparsa). Esta decisão registra **o que o número
+significa** e **por que 120 s** — ponto levantado na revisão de implementação do
+S9.
 
 ### Semântica real do parâmetro (confirmada no código)
 
@@ -1024,8 +1026,15 @@ combinatorialmente. **Não** é um orçamento de hardware: o valor 120 s é fixo
 independente da máquina, porque seu papel é limitar o pior caso combinatório,
 não calibrar desempenho.
 
-**Valor adotado:** `120 s` por nó-alvo no Enron (2× o baseline de 60 s do
-Facebook), refletindo a escala maior do grafo secundário.
+**Valor adotado:** `120 s` por nó-alvo no Enron, **alinhado ao
+`he2009_facebook_dsweep.yml`** — que já elevou o timeout para 120 s no cenário
+`d > 1` (G' mais denso). Não é, portanto, um valor inédito: o baseline do
+Facebook (`he2009_facebook_baseline.yml`) usa 60 s por ser uma ego-rede esparsa
+(~532 nós), enquanto os experimentos mais pesados (d-sweep e o secundário Enron)
+adotam 120 s pela escala/densidade maior. Para referência, os timeouts em uso no
+repositório são: baseline Facebook = 60 s; d-sweep Facebook (e diagnóstico k20) =
+120 s; Enron secundário = 120 s; `he2009_facebook_full` = 30 s (subgrafo
+desabilitado).
 
 ### Ressalva de reprodutibilidade
 
