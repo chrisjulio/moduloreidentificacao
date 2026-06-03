@@ -7,7 +7,52 @@
 **Dataset:** Facebook Ego-Net 3437 (n=532, m=4812)
 **Sementes:** 42, 1337, 2718
 **Algoritmo:** He et al. (2009), d=1, sigma=0.5
+**Motor de particionamento:** Kernighan-Lin (fallback NetworkX) — **não** pymetis.
+Ver ressalva "[Motor de particionamento](#motor-de-particionamento--baseline-d1-rodou-em-kl)".
 **Ataques:** grau (tolerance=0) + subgrafo (hop=1, timeout=60s)
+
+---
+
+## Motor de particionamento — baseline d=1 rodou em KL
+
+> **Ressalva metodológica (achado A1).** O número-título deste baseline
+> ("k-anonimato atingido em `d=1`") foi produzido pelo motor de particionamento
+> **não fiel ao artigo** — o fallback Kernighan-Lin (`networkx-kl`), e **não** o
+> motor primário pymetis (multilevel k-way, Karypis & Kumar) citado por
+> He et al. (2009).
+
+**Por que o fallback KL.** À época da execução deste baseline (issue #23,
+2026-05-23) o pymetis estava **ausente** no ambiente local e na CI — fato só
+confirmado formalmente pela auditoria de prontidão #74 (2026-05-30). Como o
+pipeline usa `backend="auto"`
+(`_partition_neighborhoods(g, d, seed=seed, backend="auto")` em
+`src/anonymization/he2009.py:338`, propagado pelo runner em
+`experiments/run.py:271`), a seleção automática resolveu para o fallback KL na
+ausência de pymetis. O log JSONL deste baseline é anterior à instrumentação que
+passou a gravar `partition_backend` por execução (issue #84), de modo que o
+backend efetivo não está registrado no próprio log — mas, dado o ambiente da
+época, foi necessariamente o KL.
+
+**Por que isso é inócuo para d=1.** Com `d=1` a estrutura local de cada nó é o
+seu próprio grau, e o particionamento das vizinhanças degenera em **partições
+triviais de 1 nó**. O balanceamento de tamanho de partição — exatamente a
+propriedade que o KL **não** garante para `ck > 2` (ver D-04) — torna-se
+irrelevante quando cada partição tem um único nó. Logo, a divergência de motor
+não afeta o resultado de `d=1`, e a **validação formal de k-anonimato do marco
+29/05 permanece válida**.
+
+**Contraste com o d-sweep (pymetis).** A fidelidade ao artigo (pymetis) só foi
+efetivamente exercida no experimento **d-sweep** (issue #88), executado após a
+disponibilização do pymetis via conda-forge: lá o campo `partition_backend`
+gravado no JSONL registra **pymetis em 48/48 execuções**. O baseline `d=1`
+documentado aqui e o d-sweep `d>1` usam, portanto, motores distintos — uma
+distinção sem impacto em `d=1`, mas material em `d>1`, onde o desbalanceamento
+do KL se manifesta.
+
+**Referências:** D-04 (motor de particionamento) em `docs/decision_log.md`;
+`docs/limitations.md` §2.2; flag opt-in `anonymization.allow_kl_fallback`
+(default `true`) em `config_example.yml:109`, que permite **abortar** a execução
+caso a seleção automática recaia no fallback KL.
 
 ---
 
