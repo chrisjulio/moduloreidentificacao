@@ -16,6 +16,29 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #111 (S8-8): fechamento do milestone S8 — revisão cruzada + migração
+  formal dos status em `achados_divergencias.md` (§4 executada). ✅** Última issue
+  do milestone. **(1) Revisão cruzada de consistência** das mudanças S8 verificada
+  no código: `experiments/run.py` lê `anonymization.s_max` (alias `fsm_max_size`,
+  `run.py:577`) e `anonymization.isomorphism_mode` (`run.py:581`, validado contra
+  `_ISOMORPHISM_MODES`), propaga ambos a `anonymize()`/`_modify_structure`/
+  `_group_isomorphic` e grava no JSONL+`summary.json`; `anonymize()` expõe os
+  params (`he2009.py:243-244`); `config_example.yml` expõe `k`/`d`/`sigma`/`s_max`/
+  `isomorphism_mode` (linhas 69–94). **Nenhuma afirmação de configurabilidade sem
+  respaldo no código** e nenhuma contradição KL/pymetis ou `d=1`/d-sweep —
+  os "hardcoded" remanescentes nos docs são descrições históricas de "Executado"
+  com a respectiva "Atualização" de fechamento. **(2) `achados_divergencias.md`:**
+  matriz da §1 migrada — **A1 ⚠️→✅** (#107), **B1 ⚠️→✅** (#108), **B2 ⚠️→✅**
+  e **B7 ⚠️→✅** (#109), **B6 🔧→✅** (#105, corrigido no código); B5 já ✅ (#106).
+  Agora **17/17 achados ✅**. Notas de "deixada para S8-8/#111" nas seções
+  detalhadas (A1/B1/B2/B6/B7) atualizadas para "concluída em S8-8/#111". §4
+  ("Pendências de revisão documental") marcada **✅ EXECUTADA** com nota de que
+  B5/B6 foram resolvidos por **correção de código** (chaves efetivamente lidas),
+  além da intenção original (apenas anotar). Header e §5 (DL-03) atualizados.
+  **(3) Encerramento de S8** registrado em `decision_log.md` ("Nota de milestone —
+  Encerramento do S8") e neste `progress.md`. Somente docs; sem alteração em `src/`
+  ou testes. Branch `docs/s8-closure-cross-review-111` (`Closes #111`).
+
 - **Issue #110 (S8-7): auditoria de fidelidade dos achados ✅ (A2–A9, B3, B4, B8).**
   Auditoria leve (não-edição, salvo regressão) confirmando que os achados marcados
   ✅ em `achados_divergencias.md` continuam coerentes com código/docs após as
@@ -189,25 +212,18 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `docs/audit-checkmarks-110` → fechar #110. Com a
-  auditoria S8-7 concluída sem regressões, o relatório de fidelidade dos ✅ está
-  disponível como insumo para S8-8/#111 (a revisão final consome este relatório).
-- **S8-8 (#111):** migração formal dos status na tabela-resumo de
-  `achados_divergencias.md` (linhas 77/B1, 78/B2, 83/B7 — todas ⚠️→✅ —
-  além de A1/B5/etc., já desbloqueadas por #107/#108/#109). Desbloqueado por
-  S8-7/#110 (auditoria de fidelidade entregue).
-- Revisão humana e merge do PR `docs/config-example-expose-params-106` → fechar
-  #106. Em seguida: S8-8 (#111 — migração formal dos status na tabela-resumo de
-  `achados_divergencias.md`), que #106 e #107 desbloqueiam.
-- Revisão humana e merge do PR de `test/config-propagation-112` → fechar #112.
-- Revisão humana e merge do PR `anonymization/dsweep-complementar-80` → fechar a
-  issue #80. Com #80 fechada, **toda a engenharia da issue-mãe #72 (d-sweep) está
-  concluída** → fechar #72 (umbrella) com comentário de encerramento.
+- Revisão humana e merge do PR `docs/s8-closure-cross-review-111` → fechar #111.
+  Com #111 mergeada, **todo o milestone S8 está concluído** (defasagens 🔧
+  corrigidas no código; pontos ⚠️ explícitos; auditoria incorporada; §4 executada;
+  17/17 achados ✅).
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
+- (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
+  encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR `docs/audit-checkmarks-110` (S8-7) aguarda revisão humana.
-  (Dependência S8-0 e Fases 1/2 já mergeadas; PR #119/#109 mergeado em `main`.)
+- PR `docs/s8-closure-cross-review-111` (S8-8/#111) aguarda revisão humana.
+  (Todas as dependências serial — #104/#105/#112/#106/#107/#108/#109/#110 —
+  já fechadas/mergeadas em `main`.)
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -233,6 +249,32 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #111 (S8-8): fechamento do milestone S8 — revisão cruzada + §4 executada
+
+- **Concluído:** Última issue do milestone S8. **(1) Revisão cruzada de
+  consistência** das mudanças S8 verificada no código: `run.py` lê
+  `anonymization.s_max` (alias `fsm_max_size`, `run.py:577`) e
+  `anonymization.isomorphism_mode` (`run.py:581`, validado contra
+  `_ISOMORPHISM_MODES`), propaga ambos e grava no JSONL+`summary.json`;
+  `anonymize()` expõe os params (`he2009.py:243-244`); `config_example.yml` expõe
+  `k`/`d`/`sigma`/`s_max`/`isomorphism_mode` (69–94). Nenhuma afirmação de
+  configurabilidade sem respaldo no código; sem contradição KL/pymetis ou
+  `d=1`/d-sweep (os "hardcoded" restantes nos docs são "Executado" histórico com
+  "Atualização" de fechamento). **(2) `achados_divergencias.md`:** matriz da §1
+  migrada — A1⚠️→✅ (#107), B1⚠️→✅ (#108), B2/B7⚠️→✅ (#109), B6🔧→✅ (#105,
+  no código); B5 já ✅ (#106) → **17/17 achados ✅**. Notas "deixada para
+  S8-8/#111" (A1/B1/B2/B6/B7) → "concluída em S8-8/#111". §4 marcada
+  **✅ EXECUTADA** com nota de que B5/B6 foram resolvidos por **correção de
+  código**, além da intenção original. Header e §5 (DL-03) atualizados.
+  **(3) Encerramento de S8** registrado em `decision_log.md` (nota de milestone) e
+  no `progress.md`. Somente docs; sem alteração em `src/`/testes; `ruff check .`
+  limpo. Branch `docs/s8-closure-cross-review-111`.
+- **Próximo:** Merge do PR → fechar #111 e **concluir o milestone S8**. Depois:
+  fechamento manual da #74; se ainda aberta, fechar a umbrella #72.
+- **Bloqueios:** PR `docs/s8-closure-cross-review-111` aguarda revisão humana
+  (todas as dependências serial #104–#110 já em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #110 (S8-7): auditoria de fidelidade dos achados ✅ (A2–A9, B3, B4, B8)
 
