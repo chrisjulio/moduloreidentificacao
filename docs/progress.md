@@ -16,6 +16,25 @@
 **Semana corrente:** Pós S5 — refatoração e funcionalidades desejáveis (D-tier)
 
 **Último passo concluído:**
+- **Issue #106 (S8-3 / B5): `config_example.yml` passa a expor
+  `d`/`sigma`/`s_max`/`isomorphism_mode` (chaves agora lidas).** Com S8-1 (#104)
+  e S8-2 (#105) tornando `s_max`/`fsm_max_size` e `isomorphism_mode` chaves YAML
+  efetivamente lidas pelo runner, o exemplo de referência foi alinhado à
+  interface real. O bloco `anonymization` do `config_example.yml` ganhou `d`
+  (default de referência `1`; nota B1 d=1 grau vs d>1 estrutural; default
+  conceitual 10 = D-02), `sigma` (`0.5`, D-01), `s_max` (`4`, D-01/A2; alias
+  `fsm_max_size`) e `isomorphism_mode` (`add_or_delete` | `add_only`, B6), todos
+  com comentários e defaults corretos. **Correção adicional:** `k_values` → `k`
+  — o runner lê `anonymization.k`, não `k_values` (configurabilidade fantasma,
+  mesma classe de erro que originou B5/B6); alinhado aos YAMLs experimentais.
+  Cada chave exposta foi **verificada** como lida em `experiments/run.py::main`.
+  Decisão registrada como **DL-03** em `decision_log.md`; `algorithm_notes.md`
+  §5.1–5.3 atualizadas (mapeamento, divergência fechada, parâmetros
+  confirmados); achado **B5** em `achados_divergencias.md` migrado 🔧→✅ (resíduo
+  único: `partition_backend` ainda não exposto como chave YAML). Sem alteração em
+  `src/`; YAML validado (parse + chaves). `tests/experiments` **65 passed**.
+  Branch `docs/config-example-expose-params-106`.
+
 - **Issue #112 (S8-2b): testes de propagação das novas chaves
   (config→anonymize→`_modify_structure`/`_group_isomorphic`) + regressão.**
   Cobertura de teste dedicada à mudança de comportamento de #104 (`s_max`/
@@ -93,9 +112,10 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
+- Revisão humana e merge do PR `docs/config-example-expose-params-106` → fechar
+  #106. Em seguida: S8-8 (#111 — migração formal dos status na tabela-resumo de
+  `achados_divergencias.md`), que a #106 desbloqueia.
 - Revisão humana e merge do PR de `test/config-propagation-112` → fechar #112.
-  Em seguida: S8-3 (#106, `config_example.yml` — expor
-  `d`/`sigma`/`s_max`/`isomorphism_mode`).
 - Revisão humana e merge do PR `anonymization/dsweep-complementar-80` → fechar a
   issue #80. Com #80 fechada, **toda a engenharia da issue-mãe #72 (d-sweep) está
   concluída** → fechar #72 (umbrella) com comentário de encerramento.
@@ -129,6 +149,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-03 — Issue #106 (S8-3 / B5): config_example.yml expõe d/sigma/s_max/isomorphism_mode
+
+- **Concluído:** Alinhado o `config_example.yml` de referência à interface real
+  do runner, fechando a parte `config_example` do achado B5. O bloco
+  `anonymization` passou a expor `d` (default `1`; nota B1 d=1 grau vs d>1
+  estrutural; conceitual 10 = D-02), `sigma` (`0.5`, D-01), `s_max` (`4`,
+  D-01/A2; alias `fsm_max_size`, B5/#104) e `isomorphism_mode`
+  (`add_or_delete` | `add_only`, B6/#105) — todos com comentários e defaults
+  corretos. `k_values` corrigido para `k` (chave realmente lida pelo runner;
+  evita configurabilidade fantasma). Cada chave verificada como lida em
+  `experiments/run.py::main`. Decisão DL-03 em `decision_log.md`;
+  `algorithm_notes.md` §5.1–5.3 atualizadas; B5 em `achados_divergencias.md`
+  migrado 🔧→✅ (resíduo: `partition_backend`). Sem alteração em `src/`; YAML
+  validado; `tests/experiments` 65 passed. Branch
+  `docs/config-example-expose-params-106`.
+- **Próximo:** Merge do PR → fechar #106; depois S8-8 (#111, migração formal dos
+  status na tabela-resumo). Merge de `test/config-propagation-112` → fechar #112.
+- **Bloqueios:** PR a abrir aguardará revisão humana (#104/#105 já em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-02 — Issue #112 (S8-2b): testes de propagação das chaves + regressão
 

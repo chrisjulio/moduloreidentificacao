@@ -20,6 +20,7 @@
 |---|---|---|---|
 | [DL-01](#dl-01) | 2026-05-21 | Desvio de planejamento | Refinamento do critério de passagem do marco #16 |
 | [DL-02](#dl-02) | 2026-06-02 | Extensão de schema | Campos de diagnóstico do ataque por subgrafo (timeouts + candidatos) |
+| [DL-03](#dl-03) | 2026-06-02 | Interface pública | `config_example.yml` expõe `d`/`sigma`/`s_max`/`isomorphism_mode` (chaves lidas) + correção `k_values`→`k` |
 | [D-01](#d-01) | 2026-05-17 *(nota G2: 2026-05-28)* | Implementação | FSM simplificado com `s_max` configurável; nota: comportamento quando d > s_max |
 | [D-02](#d-02) | 2026-05-17 | Implementação | `d = 10` como default; variável de configuração YAML |
 | [D-03](#d-03) | 2026-05-17 | Implementação | Matching Fase 1: grau primário + desempate lexicográfico |
@@ -184,6 +185,70 @@ seletiva (Passo 3) torna-se opcional.
 - `src/attacks/subgraph.py` — `subgraph_candidate_count`
 - `experiments/configs/he2009_facebook_dsweep_k20_diag.yml` — reexecução opcional
 - `docs/results_dsweep.md` §5.5 (ressalva atualizada para resolvida)
+
+---
+
+## DL-03 — `config_example.yml` expõe `d`/`sigma`/`s_max`/`isomorphism_mode`
+
+**Data:** 2026-06-02
+**Issue relacionada:** #106 (S8-3 / B5 — expor as chaves agora lidas)
+**Módulo afetado:** `config_example.yml`, `docs/algorithm_notes.md` §5.1–5.3
+
+### Contexto
+
+O achado B5 (`docs/achados_divergencias.md`) registrou que a documentação
+conceitual (`algorithm_notes.md` §5.1) mapeava `d`, `σ`, `s_max` e
+`isomorphism_mode` como chaves de configuração, mas o `config_example.yml` de
+referência **não as expunha** — expunha apenas `k_values`,
+`validate_k_anonymity` e `allow_kl_fallback`. Após S8-1 (#104) e S8-2 (#105),
+`s_max`/`fsm_max_size` e `isomorphism_mode` passaram a ser **chaves YAML
+efetivamente lidas** pelo runner; `d` e `sigma` já eram lidos (presentes nos
+YAMLs experimentais). O exemplo de referência ficou, então, atrás da interface
+real.
+
+### Decisão adotada — alinhar o exemplo à interface real
+
+1. **Expor no bloco `anonymization` do `config_example.yml`**, com comentários
+   e os defaults atuais:
+   - `d` (default de referência `1`; nota sobre `d=1` = k-anon de grau vs.
+     `d>1` = structure-aware — cross-ref B1; default conceitual do artigo `10`,
+     D-02);
+   - `sigma` (default `0.5`, D-01);
+   - `s_max` (default `4`, D-01/A2; alias `fsm_max_size`, B5/#104);
+   - `isomorphism_mode` (`add_or_delete` default | `add_only`, B6/#105).
+2. **Corrigir `k_values` → `k`.** O runner lê `anonymization.k`
+   (`experiments/run.py`), não `k_values`; o exemplo versionado expunha uma
+   chave que o código nunca lê. Como o objetivo da issue é o exemplo refletir a
+   **interface real** e **não documentar configurabilidade fantasma** (a mesma
+   classe de erro que originou B5/B6), a chave foi renomeada para `k` —
+   consistente com os YAMLs experimentais (ex.: `he2009_facebook_dsweep.yml`).
+
+### Verificação de que cada chave exposta é lida
+
+Confirmado em `experiments/run.py::main` (sem documentar configurabilidade
+fantasma):
+
+- `k` → `anon_cfg["k"]`; `d` → `anon_cfg["d"]` (ambas obrigatórias);
+- `sigma` → `anon_cfg.get("sigma", 0.5)`;
+- `s_max` → `anon_cfg.get("s_max", anon_cfg.get("fsm_max_size", 4))`;
+- `isomorphism_mode` → `anon_cfg.get("isomorphism_mode", "add_or_delete")`
+  (validada contra `_ISOMORPHISM_MODES` antes do laço).
+
+### O que não muda (resíduos conhecidos, fora do escopo de #106)
+
+- **`partition_backend`** permanece **não** exposto como chave YAML (apenas
+  `allow_kl_fallback` controla a política de fallback, D-04).
+- **`validate_k_anonymity`** segue exposta como documentação de política,
+  embora a auditoria do runner atual rode sempre — chave reservada para tornar
+  a auditoria opcional no futuro. Comentário no YAML registra essa ressalva.
+
+### Referências cruzadas
+
+- Achado B5 (e B6) em `docs/achados_divergencias.md`
+- D-01 (`s_max`/σ), D-02 (`d`), B6/#105 (`isomorphism_mode`), B5/#104 (`s_max`)
+- `docs/algorithm_notes.md` §5.1–5.3 (mapeamento atualizado)
+- `experiments/run.py::main` (leitura efetiva das chaves)
+- `experiments/configs/he2009_facebook_dsweep.yml` (uso real de `k`/`d`/`sigma`)
 
 ---
 

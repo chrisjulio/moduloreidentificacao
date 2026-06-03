@@ -62,10 +62,42 @@ dataset:
 # ------------------------------------------------------------
 anonymization:
   algorithm: he_2009
-  k_values: [2, 5, 10, 20]
+
+  # Nível de privacidade k. Aceita inteiro único ou lista — o runner varre o
+  # produto cartesiano k × d × seed (uma entrada JSONL por combinação).
+  # NB: a chave lida pelo runner é `k` (não `k_values`); ver experiments/run.py.
+  k: [2, 5, 10, 20]
+
+  # Tamanho pretendido de cada Local Structure / partição (granularidade da
+  # Etapa 1). Aceita inteiro único ou lista (d-sweep).
+  #   - d=1  → cada LS é um nó isolado; o isomorfismo de subgrafo degenera em
+  #            igualdade de grau → k-anonimato de GRAU (escopo Mínimo; achado B1).
+  #   - d>1  → propriedade structure-aware de He et al. exercida de fato
+  #            (tier desejável; d ∈ {5, 10} primários — ver d-sweep e D-08).
+  # Default conceitual do artigo é d=10 (D-02); o baseline de validação usou d=1.
+  d: 1
+
+  # Suporte mínimo (fração) do FSM simplificado que orienta o agrupamento de
+  # LSs isomórficas (D-01). Lido pelo runner; default 0.5.
+  sigma: 0.5
+
+  # Tamanho máximo de subgrafo (nós) enumerado pelo FSM simplificado (D-01, A2).
+  # Lido do YAML pelo runner desde #104 (B5); alias aceito: `fsm_max_size`.
+  # Para d>s_max o FSM vê apenas sub-padrões de até s_max nós — aproximação
+  # documentada, não bug (a corretude do isomorfismo vem de _modify_structure).
+  s_max: 4  # default
+
+  # Variante de isomorfização da Fase 2 (B6). Lida do YAML pelo runner desde
+  # #105; default `add_or_delete` (Edge Adding/Deleting — menor perturbação).
+  #   - add_or_delete: pode adicionar e remover arestas para igualar as LSs.
+  #   - add_only:      apenas adiciona arestas (Edge Adding); nenhuma removida.
+  isomorphism_mode: add_or_delete  # add_or_delete | add_only
+
   # Validação obrigatória pré-experimento (cf. Seção 7 do plano operacional):
   # confirmar empiricamente que o k-anonimato pretendido é atingido.
   # Se falhar para algum k, os resultados associados são inválidos.
+  # (Nota: no runner atual a auditoria roda sempre; esta chave documenta a
+  # política e fica reservada para tornar a auditoria opcional no futuro.)
   validate_k_anonymity: true
 
   # Política do backend de particionamento (D-04).
