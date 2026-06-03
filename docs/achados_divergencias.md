@@ -6,8 +6,11 @@
 > propõe e o que o protótipo efetivamente implementa; e (B) o que o
 > planejamento/escopo previu e o que foi de fato executado.
 >
-> **Data:** 2026-06-02. **Estado:** rascunho para revisão conjunta (achados
-> primeiro; a revisão das defasagens nos demais documentos é etapa subsequente).
+> **Data:** 2026-06-02 (original) · **revisão de fechamento:** 2026-06-03
+> (milestone S8 / issue #111). **Estado:** consolidado — a trilha S8
+> (#104→#105→#112→#106 no código; #107→#108→#109 na documentação; #110 auditoria)
+> foi executada e a §4 ("Pendências de revisão documental") está **acionada**
+> (ver nota ao fim da §4). Todos os achados estão ✅ na matriz da §1.
 >
 > **Natureza.** Este é um documento de *síntese*, não a fonte primária. Cada
 > achado aponta para onde a decisão já está registrada
@@ -56,11 +59,19 @@ resultados e que merecem destaque no texto:
 Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso/parcial ·
 🔧 defasagem a corrigir nos docs (etapa 2).
 
+> **Fechamento S8 (2026-06-03, #111).** Após a trilha S8, **todos os 17 achados
+> estão ✅**. As migrações desta sessão: A1 ⚠️→✅ (#107), B1 ⚠️→✅ (#108),
+> B2 ⚠️→✅ (#109), B7 ⚠️→✅ (#109), B6 🔧→✅ (#105, corrigido **no código**) —
+> B5 já havia migrado em #106. Importante: B5 e B6 não foram resolvidos por
+> reescrita documental, mas por **correção de código** (as chaves YAML
+> `s_max`/`fsm_max_size` e `isomorphism_mode` passaram a ser **efetivamente
+> lidas** pelo runner) — um desfecho que vai além da intenção original da §4.
+
 ### Grupo A — Artigo (He et al. 2009) × implementação
 
 | ID | Ponto | Proposto | Executado | Status |
 |----|-------|----------|-----------|--------|
-| A1 | Motor de partição | multilevel k-way (Karypis & Kumar / METIS) | pymetis primário, mas baseline `d=1` rodou no **fallback KL** (sem balanceamento p/ ck>2); d-sweep rodou pymetis | ⚠️ |
+| A1 | Motor de partição | multilevel k-way (Karypis & Kumar / METIS) | pymetis primário, mas baseline `d=1` rodou no **fallback KL** (sem balanceamento p/ ck>2); d-sweep rodou pymetis; declarado em `results_baseline.md` (#107) | ✅ |
 | A2 | FSM | mineração de subgrafos frequentes (Wörlein 2005 / gSpan) | FSM simplificado, `s_max=4` **hardcoded** + hash Weisfeiler-Lehman | ✅ |
 | A3 | Premissa \|Vᵢ\|=d estrita | LSs de um grupo têm o mesmo nº de nós | KL não garante → Opção A restringe grupos por tamanho (↑ grupos incompletos) | ✅ |
 | A4 | LS = subgrafo conexo | conectividade implícita (Def. 1) | partições **não forçadas conexas** (~56% desconexas em d=5) | ✅ |
@@ -74,13 +85,13 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 
 | ID | Ponto | Planejado | Executado | Status |
 |----|-------|-----------|-----------|--------|
-| B1 | `d=1` no baseline | Def. 2 sobre subgrafo de tamanho `d` | baseline mínimo = **d=1** → isomorfismo ≡ igualdade de grau | ⚠️ |
-| B2 | Datasets | Facebook (principal) + Email-Enron (secundário) | **só ego-rede 3437**; Enron não executado | ⚠️ |
+| B1 | `d=1` no baseline | Def. 2 sobre subgrafo de tamanho `d` | baseline mínimo = **d=1** → isomorfismo ≡ igualdade de grau; frase-síntese no README §5 e `results_baseline.md` (#108) | ✅ |
+| B2 | Datasets | Facebook (principal) + Email-Enron (secundário) | **só ego-rede 3437**; Enron e `multiple_egonets` não executados; validade externa declarada (#109) | ✅ |
 | B3 | Ataque por entropia | tier aspiracional | **não implementado** | ✅ |
 | B4 | Nettleton & Salas (2016) | tier aspiracional | **placeholder apenas** | ✅ |
 | B5 | YAML público | expor d, σ, s_max, partition_backend, isomorphism_mode | `config_example.yml` agora expõe d, σ, s_max, isomorphism_mode (#106); só `partition_backend` resta | ✅ |
-| B6 | Variante de isomorfização | add_only vs add_or_delete como parâmetro | ambas implementadas+testadas, mas `add_or_delete` **hardcoded**; chave YAML nunca lida | 🔧 |
-| B7 | Diagnóstico de `reid_sub=0` | — | log do d-sweep gerado **sem** contagem de timeouts; campos adicionados depois | ⚠️ |
+| B6 | Variante de isomorfização | add_only vs add_or_delete como parâmetro | `isomorphism_mode` agora **lido do YAML** e propagado (#105), coberto por testes (#112); default `add_or_delete` | ✅ |
+| B7 | Diagnóstico de `reid_sub=0` | — | log do d-sweep gerado **sem** contagem de timeouts; zeros genuínos (H3 descartada por inspeção); campos retroativos (#93/#109) | ✅ |
 | B8 | Critério do marco | verificação binária | rebaixado p/ `satisfied_fraction≥0.9` + `deficit_fully_structural` | ✅ |
 
 ---
@@ -114,7 +125,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   "Motor de particionamento — baseline d=1 rodou em KL", que declara
   explicitamente o motor não fiel (KL fallback) no baseline `d=1`, a inocuidade
   para `d=1` (partições triviais) e o contraste com o d-sweep (pymetis em 48/48).
-  Migração formal do status ⚠️→✅ na tabela-resumo deixada para S8-8/#111.
+  Migração formal do status ⚠️→✅ na tabela-resumo **concluída em S8-8/#111**.
 
 ### A2 — FSM simplificado com `s_max=4` fixo
 
@@ -269,7 +280,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   e remetem a D-02/§5.3/§6.5/§9.1/§1.3. Linguagem alinhada à ressalva do motor de
   particionamento (S8-4/A1): em `results_baseline.md` as duas notas são declaradas
   **ortogonais** (parâmetro `d` vs. motor KL/pymetis), sem contradição. Migração
-  formal do status na tabela-resumo (linha 77, ⚠️→✅) deixada para **S8-8/#111**.
+  formal do status na tabela-resumo (⚠️→✅) **concluída em S8-8/#111**.
 
 ### B2 — Um único dataset (ego-rede 3437); Enron não executado
 
@@ -288,8 +299,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   contingente (Email-Enron) nem `multiple_egonets` chegaram a rodar — ambas
   remetendo a `scope.md` §3, `limitations.md` §1.1 e `config_example.yml:46`.
   No baseline, a ressalva é declarada ortogonal às de B1 (`d`) e A1 (motor).
-  Migração formal do status ⚠️→✅ na tabela-resumo (linha 78) deixada para
-  S8-8/#111.
+  Migração formal do status ⚠️→✅ na tabela-resumo **concluída em S8-8/#111**.
 
 ### B3 — Ataque por entropia não implementado
 
@@ -385,8 +395,8 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   regressão do baseline `d=1`).
 - **Status.** 🔧→✅ Defasagem resolvida na raiz por #105 (chave YAML lida e
   propagada, não mais constante de código) e coberta por testes em #112.
-  Pendência residual: estabilizar a chave no `config_example.yml` (#106).
-  Migração formal do status na tabela-resumo deixada para S8-8 (#111).
+  Chave estabilizada no `config_example.yml` por #106. Migração formal do status
+  na tabela-resumo **concluída em S8-8/#111**.
 
 ### B7 — Log do d-sweep sem contagem de timeouts (campos retroativos)
 
@@ -412,7 +422,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   (DL-02; rastreabilidade direta só em execuções futuras instrumentadas). A nota
   de comparabilidade pré/pós DL-02 em §5.7 cobre a inversão semântica do
   sentinela de timeout. Migração formal do status ⚠️→✅ na tabela-resumo
-  (linha 83) deixada para S8-8/#111.
+  **concluída em S8-8/#111**.
 
 ### B8 — Critério do marco refinado (binário → fração + causa)
 
@@ -429,10 +439,22 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 
 ---
 
-## 4. Pendências de revisão documental (insumo para a etapa 2)
+## 4. Pendências de revisão documental — ✅ EXECUTADA (milestone S8, 2026-06-03)
 
-Pontos onde a documentação existente ainda descreve o *proposto* como se fosse o
-*executado* e deveriam ser ajustados depois de revisarmos estes achados:
+> **Status da seção.** Esta seção nasceu como insumo para uma "etapa 2" de
+> revisão documental. Os cinco pontos abaixo foram **todos resolvidos** ao longo
+> do milestone S8 (#104–#112) e estão riscados com a referência ao PR que os
+> fechou. A seção é preservada como histórico — não há mais pendências em aberto.
+>
+> **Desfecho que excedeu a intenção original.** Os pontos 1 e 2 (B5/B6) previam
+> apenas *marcar na documentação* que `s_max`/`fsm_max_size` e `isomorphism_mode`
+> eram constantes hardcoded. Em vez disso, optou-se por **corrigir o código**:
+> as chaves passaram a ser **efetivamente lidas do YAML** pelo runner (#104,
+> #105), com testes de propagação (#112) e exposição no `config_example.yml`
+> (#106 / DL-03). A defasagem foi eliminada na raiz, não só descrita.
+
+Pontos onde a documentação existente ainda descrevia o *proposto* como se fosse o
+*executado* — todos já ajustados:
 
 1. ~~**`algorithm_notes.md` §5.1 (B5/B6).** Marcar `s_max`/`fsm_max_size` e
    `isomorphism_mode` como fixos no código.~~ **Resolvido de forma oposta:**
@@ -463,14 +485,16 @@ Pontos onde a documentação existente ainda descreve o *proposto* como se fosse
    baseline), ambas contrastando `d=1` (grau) vs. `d∈{5,10}` (estrutural) e
    declaradas ortogonais à ressalva do motor (A1/#107).
 
-> Esta seção é deliberadamente **não-acionada** neste documento: corrigir os
-> docs acima é a etapa seguinte, após revisão conjunta destes achados.
+> **Encerramento (S8-8 / #111, 2026-06-03).** A "etapa seguinte" prevista acima
+> foi executada e concluída: os cinco pontos estão resolvidos (#104–#112) e a
+> matriz da §1 traz todos os achados em ✅. Esta seção fica como registro
+> histórico do roteiro de revisão e seu desfecho.
 
 ---
 
 ## 5. Referências cruzadas
 
-- `docs/decision_log.md` — D-01 a D-10, DL-01, DL-02 (fonte primária das decisões).
+- `docs/decision_log.md` — D-01 a D-10, DL-01, DL-02, DL-03 (fonte primária das decisões).
 - `docs/limitations.md` — classificação formal (escopo × técnica) e ameaças à validade.
 - `docs/algorithm_notes.md` — §2 (algoritmo), §3 (modificações), §4 (verificador),
   §5 (parâmetros), §6 (casos especiais), §9 (resultados k-sweep e d-sweep).

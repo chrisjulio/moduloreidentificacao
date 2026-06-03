@@ -252,6 +252,34 @@ fantasma):
 
 ---
 
+## Nota de milestone — Encerramento do S8 (#111, 2026-06-03)
+
+> Marcador de milestone (não é uma decisão nova). Registra o fechamento da
+> trilha S8, encerrada pela issue #111 (S8-8).
+
+O milestone **S8** percorreu, em série, a correção das defasagens registradas em
+`docs/achados_divergencias.md` e a revisão documental correspondente:
+
+- **Trilha de código** (eliminou as defasagens 🔧 na raiz): #104 (`s_max`/
+  `fsm_max_size` lido do YAML, B5), #105 (`isomorphism_mode` lido do YAML, B6),
+  #112 (testes de propagação config→runner), #106 (`config_example.yml` expõe as
+  chaves lidas — DL-03).
+- **Trilha documental** (tornou explícitos os pontos ⚠️): #107 (A1 — baseline
+  `d=1` rodou em KL), #108 (B1 — `d=1` afere k-anon de grau; d-sweep = estrutural),
+  #109 (B2 dataset único + B7 timeouts retroativos).
+- **Auditoria** #110 (S8-7): 11/11 achados ✅ reverificados, sem regressão.
+- **Fechamento** #111 (S8-8): revisão cruzada de consistência (sem afirmação de
+  configurabilidade sem respaldo no código; sem contradição KL/pymetis ou
+  `d=1`/d-sweep) e migração formal de **todos** os status para ✅ na matriz da §1
+  de `achados_divergencias.md`; §4 marcada como executada.
+
+**Desfecho que excede o roteiro original:** B5/B6 (§4, itens 1–2) previam apenas
+*anotar* `s_max`/`isomorphism_mode` como constantes hardcoded; foram resolvidos
+por **correção de código** (chaves efetivamente lidas), não por reescrita
+documental. Ver DL-03 e os achados B5/B6.
+
+---
+
 ## D-01 — FSM simplificado com `s_max` configurável
 
 **Data:** 2026-05-17  
