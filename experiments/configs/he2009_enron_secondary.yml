@@ -71,23 +71,37 @@ anonymization:
 
 # ------------------------------------------------------------
 # Ataques
-# Ambos habilitados. Subgrafo restrito a hop=1 (DoD #29/#126): não habilitar
-# hop>1 — o Enron é maior que a ego-rede 3437 e o custo VF2 cresce rápido.
-# timeout por nó ampliado vs. baseline (60s) como margem de segurança VF2 na
-# escala maior; um nó que estourar é contado em subgraph_timeout_count e
-# tratado como não-reidentificado (DL-02 / #93).
 # ------------------------------------------------------------
+# ATAQUE POR GRAU: habilitado — viável na escala do Enron (≈404 s/run; O(n²)
+# de comparações baratas, sem VF2). É a métrica de reidentificação reportada
+# pela execução secundária #127.
+#
+# ATAQUE POR SUBGRAFO (full): DESABILITADO por inviabilidade empírica (D-15).
+# Probe de custo sobre o Enron LCC (n=33.696, m=180.811): cada nó-alvo gasta
+# ~15 s para varrer TODOS os 33.696 candidatos (custo dominado pela re-extração
+# das vizinhanças 1-hop — O(n²)), praticamente constante com o grau do alvo.
+# Logo: ~5,85 dias/run × 12 runs ≈ 70 dias — proibitivo. O timeout de 120 s
+# (D-12) NÃO limita o custo aqui: nenhum nó isolado é patológico (15 s < 120 s),
+# então subgraph_timeout_count seria 0 (válido por D-13) e ainda assim levaria
+# 70 dias — o custo é agregado, não por nó. A DoD #29/#127 antecipa essa
+# restrição em escala maior; aqui ela é registrada, não silenciada (lição #93).
+#
+# Caminho cientificamente válido (issue de continuação): amostrar nós-ALVO
+# (sorteio uniforme via semente do YAML; candidatos permanecem a população
+# inteira → estimador não-enviesado da taxa com IC), o que exige suporte no
+# runner (target_sample) + resume intra-nó. ~532 alvos ≈ 1,1 dia para as 12 runs.
 attacks:
   degree:
     enabled: true
     tolerance: 0        # correspondência exata de grau (baseline)
   subgraph:
-    enabled: true
+    enabled: false      # D-15: subgrafo full é proibitivo (~70 dias) no Enron LCC.
     hop: 1              # vizinhança 1-hop apenas — NÃO aumentar (DoD #126)
     # timeout = cláusula de escape de laço, NÃO orçamento de hardware (D-12): cerca
     # a varredura completa de candidatos de um nó-alvo; nó que estoura é contado em
     # subgraph_timeout_count e tratado como não-reidentificado (DL-02). Validade da
-    # execução exige subgraph_timeout_count == 0 (D-13) — ver docs/decision_log.md.
+    # execução exigiria subgraph_timeout_count == 0 (D-13) — ver docs/decision_log.md.
+    # Mantido aqui (com enabled: false) como referência para a variante amostrada.
     timeout: 120        # segundos por nó alvo; valor fixo, independente da máquina (D-12).
                         # Alinhado ao he2009_facebook_dsweep.yml (que já usa 120s p/ G' denso);
                         # baseline Facebook usa 60s (ego-rede esparsa).

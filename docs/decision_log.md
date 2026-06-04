@@ -35,6 +35,7 @@
 | [D-12](#d-12) | 2026-06-03 | Implementação | `timeout` do ataque por subgrafo: cláusula de escape de laço (120 s no Enron) |
 | [D-13](#d-13) | 2026-06-03 | Implementação | Critério de validade da execução secundária Enron: `subgraph_timeout_count == 0` |
 | [D-14](#d-14) | 2026-06-03 | Implementação | Convenção `min_nodes = 10 × k_max` para o piso de tamanho do grafo |
+| [D-15](#d-15) | 2026-06-04 | Experimento | Ataque por subgrafo full no Enron é proibitivo (~70 dias); execução #127 é só-grau |
 
 ---
 
@@ -1142,3 +1143,85 @@ operacional).
 - `experiments/configs/he2009_enron_secondary.yml` (`dataset.min_nodes: 200`)
 - `experiments/run.py` (`preprocess_graph`, validação `min_nodes`)
 - Issue #126 (DoD: `min_nodes` coerente com `k_max`)
+
+---
+
+## D-15 — Ataque por subgrafo full no Enron é proibitivo (~70 dias); execução #127 é só-grau
+
+**Data:** 2026-06-04
+**Issues relacionadas:** #127 (S9-5 — execução secundária), #29 (issue-mãe), #128/#129 (comparativo/fechamento), D-12/D-13 (semântica e validade do timeout)
+**Módulo afetado:** `experiments/configs/he2009_enron_secondary.yml` (`attacks.subgraph.enabled`); protocolo de execução do dataset secundário
+
+### Contexto
+
+A DoD da #127 pedia a execução dos **dois** ataques (grau + subgrafo hop=1) sobre
+o Enron, já ressalvando que o subgrafo "pode ser proibitivo em escala maior". Um
+*probe* de custo empírico sobre o grafo de produção quantificou essa ressalva
+antes de comprometer dias de computação.
+
+### Evidência empírica (probe sobre Enron LCC, máquina do projeto)
+
+Grafo após simetrização OR (D-11) + LCC: **n = 33.696, m = 180.811**, grau médio
+10,7, grau máximo 1.383. Tempos medidos (k=2, seed=42, backend pymetis):
+
+- anonimização (partição + grupo + modify + reconnect): **~6,8 s/run** — trivial;
+- **ataque por grau**: **~404 s/run** (≈6,7 min); O(n²) de comparações baratas,
+  sem VF2 → ~1,4 h para as 12 runs (4 k × 3 seeds). **Viável.**
+- **ataque por subgrafo (hop=1)**: **~15 s por nó-alvo**, praticamente constante
+  com o grau do alvo, porque o custo é dominado pela **re-extração das vizinhanças
+  1-hop de todos os n candidatos** a cada alvo (`subgraph_candidate_count`,
+  `src/attacks/subgraph.py`) — efetivamente **O(n²)**. Logo: 33.696 alvos × ~15 s
+  ≈ **5,85 dias/run** → **~70 dias** para as 12 runs. **Proibitivo.**
+
+### Por que o timeout (D-12) não resolve
+
+O `timeout` de 120 s cerca o sweep completo de **um** alvo (D-12). Como cada alvo
+leva ~15 s < 120 s, **nenhum** alvo estoura: `subgraph_timeout_count` seria **0**,
+a execução seria formalmente **válida por D-13** — e ainda assim levaria ~70 dias.
+O custo é **agregado** (muitos alvos baratos), não concentrado num nó patológico,
+que é exatamente o caso para o qual o escape do timeout foi desenhado. Baixar o
+timeout abaixo de ~15 s faria **todos** os alvos estourarem
+(`subgraph_timeout_count = n`), violando D-13 e esvaziando a métrica. O mecanismo
+de escape, portanto, **não tem alavanca** sobre este custo.
+
+### Decisão adotada
+
+1. A execução secundária do Enron (#127) roda **somente o ataque por grau**.
+   `attacks.subgraph.enabled: false` na config canônica, com a justificativa
+   inline. O grau fornece a taxa de reidentificação do dataset secundário para a
+   validade externa (achado B2), que é o objetivo central da #29.
+2. A inviabilidade do subgrafo full é **registrada, não silenciada** (lição #93):
+   esta decisão + comentário na config + nota nos resultados.
+3. O subgrafo sobre o Enron é **adiado** para uma issue de continuação, na forma
+   **cientificamente válida de amostragem de nós-ALVO** (ver abaixo).
+
+### Caminho de continuação — amostragem de alvos (cientificamente defensável)
+
+A taxa de reidentificação é uma proporção populacional. Atacar uma **amostra
+aleatória uniforme de nós-alvo** (semente lida do YAML), mantendo a busca de
+candidatos sobre a **população inteira** (a unicidade é definida contra todo o
+grafo anonimizado), produz um **estimador não-enviesado** da taxa, com intervalo
+de confiança. Amostra-se o *alvo*, nunca o *candidato*. Custo: ~532 alvos
+(paralelo ao censo do baseline Facebook, ~532 nós) ≈ 1,1 dia para as 12 runs;
+2.000 alvos ≈ 4,2 dias (IC 95% ≈ ±2,2 % no pior caso p=0,5). Requer suporte no
+runner (`attacks.subgraph.target_sample` + sorteio com semente) e justifica a
+resiliência intra-nó (checkpoint por alvo) por se tornar uma execução multi-dia.
+A comparação Facebook (censo) vs. Enron (amostra) estima a mesma grandeza e é
+honesta desde que reportada com n da amostra e IC.
+
+### Alternativa considerada
+
+Otimizar `subgraph_candidate_count` (extrair as n vizinhanças candidatas **uma
+vez** e/ou indexá-las por WL-hash, trocando O(n²) por O(n) extrações) reduziria
+~70 dias para horas. **Não adotada nesta issue**: contraria o "Não fazer" da #127
+("não otimizar prematuramente o VF2") e altera o núcleo do ataque; registrada
+como refatoração candidata para a issue de continuação, ortogonal à amostragem.
+
+### Referências cruzadas
+
+- `experiments/configs/he2009_enron_secondary.yml` (`attacks.subgraph.enabled: false`)
+- `src/attacks/subgraph.py` (`subgraph_candidate_count`, custo O(n²))
+- `experiments/run.py` (`run_one`, laço `for node in nodes`)
+- D-12 (semântica do timeout) e D-13 (critério de validade) — explicam por que o
+  timeout não limita este custo
+- Issues #127 (execução), #128 (comparativo), #129 (fechamento / DoD #29)
