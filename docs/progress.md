@@ -11,11 +11,33 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-03
+**Data da última atualização:** 2026-06-04
 
 **Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #127 (S9-5): execução secundária Enron — SÓ-GRAU (subgrafo full
+  inviável, D-15). ✅ (execução + config + decisão).** Probe de custo empírico
+  sobre o Enron LCC (n=33.696, m=180.811, pymetis) mediu o ataque por subgrafo
+  full em **~15 s/nó-alvo × 33.696 ≈ 5,85 dias/run → ~70 dias** nas 12 runs —
+  proibitivo; o timeout de 120 s (D-12) **não** limita (nenhum nó é patológico;
+  custo agregado, O(n²) de re-extração de vizinhanças). Decisão **D-15**: a #127
+  roda **só o ataque por grau** (viável, ~404 s/run); subgrafo `enabled: false`
+  na config canônica com justificativa inline; subgrafo adiado para issue de
+  continuação (**S10**, amostragem de nós-alvo — descritivo preparado). **(1)**
+  `experiments/configs/he2009_enron_secondary.yml`: `attacks.subgraph.enabled:
+  false` + bloco de comentário com o achado e o caminho de amostragem. **(2)**
+  `docs/decision_log.md`: índice + entrada **D-15** (evidência, por que o timeout
+  não resolve, decisão só-grau, continuação por amostragem, alternativa
+  VF2-cache rejeitada nesta issue). **(3) Execução:** 12 runs (k∈{2,5,10,20} ×
+  3 sementes), **todas SUCCESS_PARTIAL** (coverage 0,996–0,9999, déficit
+  estrutural D-06), **0 erros**, backend pymetis; `reidentification_rate_degree`
+  ∈ [0,0018; 0,0034] (cai levemente com k); logs em
+  `experiments/logs/he2009_enron_secondary/` (`.jsonl` 12 linhas + `summary.json`,
+  `any_failure: false`) — gitignored por `.claude/rules/experiments.md`. D-13
+  (`subgraph_timeout_count == 0`) não se aplica (subgrafo desabilitado); ataque
+  por grau não usa VF2/timeout. Branch `loader/enron-run` (`Closes #127`).
+
 - **Issue #126 (S9-4): config YAML do experimento secundário Enron —
   `he2009_enron_secondary.yml`, subgrafo restrito a hop=1. ✅ (só config).**
   Espelha `he2009_facebook_baseline.yml` com valores específicos do Enron.
@@ -292,18 +314,21 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR #134 `loader/enron-config` (S9-4/#126) → fechar #126.
-- Próxima etapa do S9 (issue-mãe #29): **execução do experimento secundário**
-  Enron com a config recém-criada (≥3 sementes, `k ∈ {2,5,10,20}`), seguida de
-  geração de gráficos/tabelas e da validação obrigatória de k-anonimato no Enron.
+- Revisão humana e merge do PR `loader/enron-run` (S9-5/#127) → fechar #127.
+- **S9-6/#128:** comparativo Facebook×Enron + `results_enron.md` a partir dos
+  logs só-grau do Enron (gráficos/tabelas via `src/visualization/`); declarar a
+  ausência de subgrafo (D-15) honestamente. **S9-7/#129:** fechamento do S9.
+- **Criar a issue de continuação S10** (subgrafo amostrado por nós-alvo +
+  resiliência) — descritivo já preparado nesta sessão; humano cria fora do
+  milestone S9 para não bloquear #129.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 - (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR #134 (`loader/enron-config`, S9-4/#126) aguarda CI + revisão humana;
-  dependência S9-3/#125 já em `main` (PR #133 mergeado, `2026-06-03T17:45:09Z`).
-  Milestone S8 concluído (PR #121 em `main`); 17/17 ✅.
+- PR `loader/enron-run` (S9-5/#127) aguarda CI + revisão humana; dependências
+  S9-0..S9-4 (#122–#126) já em `main`. Milestone S8 concluído (PR #121 em
+  `main`); 17/17 ✅.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -329,6 +354,35 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-04 — Issue #127 (S9-5): execução secundária Enron — só-grau (subgrafo inviável, D-15)
+
+- **Concluído:** Antes de atacar o cerne, fiz **análise prévia de custo empírica**
+  (probe real sobre o Enron LCC: n=33.696, m=180.811, pymetis) e **proposta de
+  continuidade**. Achado: o ataque por **subgrafo full** é **O(n²)** (~15 s/nó-alvo
+  × 33.696 ≈ 5,85 dias/run → **~70 dias** nas 12 runs); o timeout de 120 s (D-12)
+  **não** limita — nenhum nó é patológico (15 s < 120 s), `subgraph_timeout_count`
+  seria 0 (válido por D-13) e ainda assim 70 dias; custo agregado, não por nó.
+  Reduzir o timeout abaixo de 15 s estouraria todos → inválido por D-13. Decisão
+  **D-15** registrada (índice + entrada no `decision_log.md`): #127 roda **só o
+  ataque por grau** (~404 s/run, viável); `attacks.subgraph.enabled: false` na
+  config canônica com justificativa inline; subgrafo adiado para **S10**
+  (amostragem de nós-ALVO — estimador não-enviesado da taxa com IC, candidatos =
+  população inteira; ~532 alvos ≈ 1,1 dia; descritivo de issue preparado para o
+  humano criar fora do milestone S9). **Execução:** `python -m experiments.run
+  --config experiments/configs/he2009_enron_secondary.yml` → **12 runs**
+  (k∈{2,5,10,20} × sementes [42,1337,2718]), **todas SUCCESS_PARTIAL** (coverage
+  0,996–0,9999, déficit estrutural D-06), **0 erros**, pymetis;
+  `reidentification_rate_degree` ∈ [0,0018; 0,0034]; logs em
+  `experiments/logs/he2009_enron_secondary/` (12 linhas + `summary.json`,
+  `any_failure: false`; gitignored). Continuidade: para a run só-grau (~1,2 h) o
+  resume não foi necessário; ele entra junto da S10 (multi-dia). Branch
+  `loader/enron-run` (`Closes #127`).
+- **Próximo:** Merge do PR → fechar #127. Depois #128 (comparativo/`results_enron.md`
+  a partir dos logs só-grau) e #129 (fechamento S9). Criar a issue S10 (descritivo
+  pronto).
+- **Bloqueios:** PR `loader/enron-run` aguarda CI + revisão humana (#122–#126 em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-03 — Issue #126 (S9-4): config YAML he2009_enron_secondary — subgrafo hop=1
 
