@@ -16,6 +16,34 @@
 **Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #128 (S9-6): comparativo Facebook × Enron + `docs/results_enron.md`
+  (tier desejável, issue-mãe #29). ✅ (gerador + docs).** Consome os 12 runs do
+  Enron já com a curva **grau × subgrafo** (D-16). **(1) Gerador**
+  `experiments/make_enron_table.py` (espelha `make_baseline_table.py`): lê o JSONL
+  do Enron e produz `docs/results_enron.md` por completo — header, síntese
+  metodológica, comparativo Facebook×Enron, tabela bruta (k,semente), agregação
+  por k e interpretação. Carrega o log do Facebook baseline quando presente para
+  a tabela comparativa (fallback embutido a partir de `results_baseline.md` se
+  ausente). **(2) `docs/results_enron.md`**: agregados por k — `rr_subgrafo` cai
+  monotonicamente 0,124→0,102→0,079→0,057; `rr_grau` ∈ [0,0019; 0,0033] (~40×
+  menor); KS-D 0,038→0,130; clust 0,017→0,093; cobertura ≥0,9960, todas
+  `SUCCESS_PARTIAL` (déficit estrutural D-06). **(3) Comparativo**: as magnitudes
+  **não** são diretamente comparáveis (escala n=532 vs 33.696; densidade; origem
+  OR/D-11; motor KL vs pymetis) — DoD satisfeito justificando que **sobrepor as
+  duas redes num só gráfico é enganoso** (faixas 0–79% vs 0–12%); gráficos gerados
+  **por dataset** (`results/plots/privacy_utility_enron.*`, gerador existente sem
+  alteração). Tendências robustas em ambas: subgrafo≫grau, monotonicidade em k,
+  utilidade melhor preservada em escala. **(4) `docs/data_dictionary.md`**: nova
+  §1.1 "Datasets" com Facebook [M] e Enron [D] (origem SNAP, regra OR/D-11, LCC
+  n=33.696/m=180.811, nota de comparabilidade). **(5)** Tabelas/plots gerados em
+  `results/{tables,plots}/` (gitignored) via tooling existente; ao gerá-los
+  descobri que o `rglob` recursivo capturava o backup só-grau da #127 (24 vs 12
+  runs, `rr_subgrafo` contaminado p/ 0,062) — backup gitignored realocado de
+  `he2009_enron_secondary/_pre139_degree_only_backup/` para
+  `experiments/logs/_pre139_degree_only_backup/`. Suíte **581 passed**, ruff limpo
+  (file-level `noqa: RUF001` no gerador — emite tipografia pt-BR ×/–). Branch
+  `loader/enron-results` (`Closes #128`).
+
 - **Issue #139 (S9-8): ataque por subgrafo via bucketing de WL-hash — viabiliza
   o subgrafo FULL no Enron (resolve D-15). ✅ (código + testes + execução +
   decisão D-16).** A inviabilidade de ~70 dias registrada em D-15 foi **superada
@@ -349,11 +377,9 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `attack/subgraph-wl-bucketing` (S9-8/#139) → fechar #139.
-- **S9-6/#128:** comparativo Facebook×Enron + `results_enron.md` — **agora com a
-  curva grau × subgrafo** do Enron (dados de #139 disponíveis no JSONL); a
-  ressalva de ausência de subgrafo (D-15) deixa de valer (D-16). **S9-7/#129:**
-  fechamento do S9.
+- Revisão humana e merge do PR `loader/enron-results` (S9-6/#128) → fechar #128.
+  **A pedido do humano (2026-06-05): não fechar a issue antes da análise do PR.**
+- **S9-7/#129:** fechamento do S9 (última issue do milestone).
 - **Issue S10 de amostragem de nós-alvo + resiliência ficou OBSOLETA** (D-16: o
   full roda em minutos); não criar.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
@@ -361,9 +387,9 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR `attack/subgraph-wl-bucketing` (S9-8/#139) aguarda CI + revisão humana;
-  #127 (S9-5) já em `main` (PR #138, commit `fa4d1f3`); dependências S9-0..S9-4
-  (#122–#126) já em `main`. Milestone S8 concluído (PR #121 em `main`); 17/17 ✅.
+- PR `loader/enron-results` (S9-6/#128) aguarda CI + revisão humana. #139 (S9-8)
+  já em `main` (PR #142, commit `f5aef79`); #127 (S9-5) em `main` (PR #138);
+  dependências S9-0..S9-4 (#122–#126) em `main`. Milestone S8 concluído; 17/17 ✅.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -389,6 +415,35 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-05 — Issue #128 (S9-6): comparativo Facebook × Enron + results_enron.md
+
+- **Concluído:** Comparativo Facebook×Enron e documentação dos resultados
+  secundários (tier desejável, issue-mãe #29), agora com a curva **grau ×
+  subgrafo** do Enron (D-16). Verifiquei os bloqueios via `gh` antes de começar:
+  #142/#139, #138/#127 e #122–#126 todos `MERGED`/em `main`. **(1)** Novo gerador
+  `experiments/make_enron_table.py` (espelha `make_baseline_table.py`) produz
+  `docs/results_enron.md` completo a partir do JSONL do Enron — header, síntese
+  metodológica, comparativo, tabela bruta (k,semente), agregação por k,
+  interpretação e bloco de reprodutibilidade; carrega o log Facebook baseline
+  quando presente (fallback embutido de `results_baseline.md`). **(2)**
+  `docs/results_enron.md`: `rr_subgrafo` 0,124→0,057 (monótono), `rr_grau`
+  ~0,002–0,003 (~40× menor), KS-D 0,038→0,130, clust 0,017→0,093, cobertura
+  ≥0,9960, 12/12 `SUCCESS_PARTIAL`. **(3)** Comparativo justifica que as
+  magnitudes não são diretamente comparáveis (escala 532 vs 33.696; densidade;
+  OR/D-11; KL vs pymetis) → sobrepor num só gráfico é enganoso; gráficos por
+  dataset via tooling existente (`privacy_utility_enron.*`). Tendências robustas:
+  subgrafo≫grau, monotonicidade, utilidade melhor preservada em escala. **(4)**
+  `docs/data_dictionary.md` §1.1 "Datasets" (Facebook [M] / Enron [D]: SNAP, OR,
+  LCC n/m). **(5)** Ao gerar tabelas/plots, corrigi contaminação do `rglob`
+  recursivo pelo backup só-grau da #127 (24→12 runs) realocando o backup
+  gitignored p/ fora do dir varrido. Suíte **581 passed**, ruff limpo. Branch
+  `loader/enron-results`.
+- **Próximo:** Revisão humana do PR → fechar #128 (**não antes da análise do PR,
+  a pedido do humano**). Depois #129 (fechamento S9).
+- **Bloqueios:** PR `loader/enron-results` aguarda CI + revisão humana (todas as
+  dependências S9 já em `main`).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-05 — Issue #139 (S9-8): subgrafo via bucketing de WL-hash — full viável no Enron (D-16)
 
