@@ -36,6 +36,7 @@
 | [D-13](#d-13) | 2026-06-03 | Implementação | Critério de validade da execução secundária Enron: `subgraph_timeout_count == 0` |
 | [D-14](#d-14) | 2026-06-03 | Implementação | Convenção `min_nodes = 10 × k_max` para o piso de tamanho do grafo |
 | [D-15](#d-15) | 2026-06-04 | Experimento | Ataque por subgrafo full no Enron é proibitivo (~70 dias); execução #127 é só-grau |
+| [D-16](#d-16) | 2026-06-05 | Implementação | Caminho rápido por bucketing de WL-hash torna o subgrafo full viável no Enron (resolve D-15) |
 
 ---
 
@@ -1217,11 +1218,118 @@ vez** e/ou indexá-las por WL-hash, trocando O(n²) por O(n) extrações) reduzi
 ("não otimizar prematuramente o VF2") e altera o núcleo do ataque; registrada
 como refatoração candidata para a issue de continuação, ortogonal à amostragem.
 
+### Atualização (2026-06-05, #139 / D-16) — resolvido por otimização, não adiamento
+
+A "alternativa considerada" acima (indexar as vizinhanças por WL-hash, trocando
+O(n²) por O(n)) foi **adotada** na issue #139 ([D-16](#d-16)), tornando o ataque
+por subgrafo **full** viável no Enron (~32 s/run; 12 runs ≈ 6,5 min). A
+inviabilidade registrada em D-15 fica assim **superada por engenharia**, não por
+adiamento: a configuração canônica reabilita `attacks.subgraph.enabled: true`
+(hop=1) e o **caminho de continuação por amostragem de nós-alvo + resiliência
+descrito acima fica OBSOLETO** (o full roda em minutos, sem amostragem). A
+restrição da #127 ao só-grau permanece historicamente válida para aquela issue
+(entregue via PR #138 com D-15); D-16 é a extensão (S9-8) que a remove.
+
 ### Referências cruzadas
 
-- `experiments/configs/he2009_enron_secondary.yml` (`attacks.subgraph.enabled: false`)
-- `src/attacks/subgraph.py` (`subgraph_candidate_count`, custo O(n²))
+- `experiments/configs/he2009_enron_secondary.yml` (`attacks.subgraph.enabled: true` — atualizado por D-16)
+- `src/attacks/subgraph.py` (`subgraph_candidate_count`, custo O(n²); `subgraph_candidate_counts`, caminho rápido O(n) — D-16)
 - `experiments/run.py` (`run_one`, laço `for node in nodes`)
 - D-12 (semântica do timeout) e D-13 (critério de validade) — explicam por que o
   timeout não limita este custo
+- [D-16](#d-16) — resolução por bucketing de WL-hash (issue #139)
 - Issues #127 (execução), #128 (comparativo), #129 (fechamento / DoD #29)
+
+---
+
+## D-16 — Caminho rápido por bucketing de WL-hash torna o subgrafo full viável no Enron
+
+**Data:** 2026-06-05
+**Issues relacionadas:** #139 (S9-8 — esta), #127 (estende; fechada via PR #138), #128 (consome os dados), #29 (issue-mãe), D-15 (resolvida)
+**Módulo afetado:** `src/attacks/subgraph.py` (`subgraph_candidate_counts`), `experiments/run.py` (laço do subgrafo), `experiments/configs/he2009_enron_secondary.yml`
+
+### Contexto
+
+D-15 mediu o ataque por subgrafo **full** no Enron LCC em ~70 dias (12 runs) e
+restringiu a execução #127 ao só-grau, registrando como **alternativa
+considerada, não adotada**, a indexação das vizinhanças por WL-hash (trocar
+O(n²) por O(n)). A issue #139 (S9-8) adota essa alternativa — o "Não fazer" da
+#127 ("não otimizar prematuramente o VF2") era escopado àquela issue; #139 é a
+issue própria para a otimização.
+
+### Causa do custo O(n²)
+
+`subgraph_candidate_count` (`src/attacks/subgraph.py`) re-extrai a vizinhança
+1-hop de **todos** os n candidatos do `g_anon` para **cada** alvo — trabalho
+repetido n vezes, já que `g_anon` é fixo durante a run.
+
+### Método adotado — bucketing de WL-hash
+
+`subgraph_candidate_counts(g_orig, g_anon, targets, hop=1)` pré-computa o
+**Weisfeiler-Lehman graph hash** das n vizinhanças 1-hop do `g_anon` **uma vez**,
+indexando-as em baldes por hash; cada alvo é resolvido por **lookup** do hash da
+sua vizinhança em `g_orig`. Custo: **O(n) precompute + O(n) lookups**.
+
+### Argumento de correção
+
+O WL-hash é um **invariante necessário**: grafos isomorfos têm sempre o mesmo
+hash. Logo, **nenhum isomorfo verdadeiro é jamais perdido** — o balde de um alvo
+contém todos os candidatos isomorfos (a contagem nunca *subestima* por omissão).
+O único modo de erro teórico é **sobrecontagem** por colisão (um não-isomorfo
+cair no mesmo balde), pois o WL não é *suficiente* em geral. A salvaguarda de
+exatidão segue o critério objetivo da #139:
+
+1. **Testes de equivalência exata em grafos pequenos** (estrelas, caminhos,
+   ciclos, completo, Petersen, árvore, barbell, aleatório G(n,p)): o WL **puro**
+   reproduziu a contagem **e** o veredito `count==1` do VF2 brute-force em
+   **100%** dos nós (`tests/attacks/test_subgraph.py`). Critério satisfeito →
+   adota-se **WL puro** (opção (b) da #139).
+2. **Verificação ampla no Enron**: numa amostra estratificada por grau de 70 nós
+   do LCC anonimizado (k=2, seed=42), a contagem por WL bateu exatamente com o
+   VF2 brute-force — **0 divergências** (ALL MATCH), reproduzindo o probe (graus
+   1–138). Aproximação documentada com viés conservador (uma eventual colisão só
+   poderia *reduzir* a unicidade, subestimando a reidentificação).
+3. **Refinamento híbrido disponível** (`refine_max_size`): se alguma divergência
+   surgisse, baldes de vizinhança pequena (≤ limite) seriam confirmados por VF2
+   (exato); **hubs nunca são refinados** — refinar a estrela de um hub com VF2 é
+   exatamente a explosão de automorfismos que travou 79 min no probe. Sob WL puro
+   (decisão atual) o VF2 não é invocado.
+
+O valor do WL-hash depende da versão do networkx (UserWarning sobre o bugfix de
+v3.5 para grafos sem atributos), mas os hashes são **transitórios** — usados só
+para bucketing dentro de uma run, nunca persistidos — então a dependência de
+versão não afeta os resultados.
+
+### Evidência empírica (Enron LCC, n=33.696, m=180.811)
+
+Run k=2/seed=42: `subgraph_candidate_counts` (precompute + counting dos 33.696
+alvos) em **35,9 s** — vs. ~5,85 dias do brute-force (D-15), ~15.000× mais
+rápido. `reidentification_rate_subgraph` (k=2) = **0,1229** — duas ordens de
+grandeza acima do grau (~0,003) e coerente com B1 (em `d=1` anonimiza-se grau,
+não a estrutura 1-hop). Verificação ampla: 70 nós estratificados por grau,
+**0 divergências** (ALL MATCH) contra o VF2 brute-force.
+
+### Tratamento do gate D-13 (`subgraph_timeout_count == 0`)
+
+O caminho rápido **não tem timeout por nó** (não há sweep por alvo a cercar).
+`subgraph_timeout_count` é gravado como **0** e o gate de validade D-13 fica
+**trivialmente satisfeito** (nenhum nó pode estourar). O campo é mantido por
+compatibilidade de schema (DL-02); a chave `timeout` na config torna-se vestigial.
+
+### Consequências
+
+- O subgrafo full passa a rodar em minutos; a config canônica reabilita
+  `attacks.subgraph.enabled: true` (hop=1).
+- O **caminho de amostragem de nós-alvo + resiliência** de D-15 fica **obsoleto**.
+- Os dados (JSONL/`summary.json` com `reidentification_rate_subgraph`) ficam
+  disponíveis para a #128 (curva grau × subgrafo Facebook × Enron).
+- D-15 permanece como registro histórico da inviabilidade do brute-force e da
+  restrição da #127; D-16 é a extensão que a supera.
+
+### Referências cruzadas
+
+- D-15 (inviabilidade do brute-force; alternativa WL agora adotada)
+- DL-02 (`subgraph_timeout_count`), D-12/D-13 (timeout e gate de validade)
+- B1 (`d=1` afere k-anonimato de grau, não estrutura 1-hop)
+- `src/attacks/subgraph.py`, `experiments/run.py`, `tests/attacks/test_subgraph.py`
+- Issues #139 (esta), #127 (estende), #128 (consome), #129 (fechamento / DoD #29)

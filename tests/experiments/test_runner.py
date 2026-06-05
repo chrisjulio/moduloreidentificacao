@@ -414,8 +414,13 @@ class TestRunOneSubgraphDiagnostics:
         assert isinstance(tc, int)
         assert tc >= 0
 
-    def test_no_timeout_on_small_graph(self) -> None:
-        """A 20-node graph with a 60 s budget never times out → count 0."""
+    def test_timeout_count_is_zero_with_wl_fast_path(self) -> None:
+        """The WL-bucketing fast path has no per-node timeout → count always 0.
+
+        ``subgraph_timeout_count`` is retained for schema/DL-02 compatibility
+        and the D-13 validity gate, but the bucketed path (issue #139, D-16)
+        cannot time out a node, so the gate is trivially satisfied.
+        """
         g = _small_graph()
         result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
         assert result["subgraph_timeout_count"] == 0
@@ -445,23 +450,35 @@ class TestRunOneSubgraphDiagnostics:
         roundtripped = json.loads(json.dumps(result, default=str))
         assert "subgraph_candidate_counts" in roundtripped
 
-    def test_timeout_counted_not_raised(self) -> None:
-        """A per-node TimeoutError is counted, not propagated to verdict=ERROR.
+    def test_rr_subgraph_matches_brute_force(self) -> None:
+        """The runner's WL-bucketing rate equals the VF2 brute force (D-16).
 
-        Patches subgraph_candidate_count to always time out; the run must still
-        complete with error=None, rr_subgraph=0, and timeout_count == |V|.
+        Captures the exact ``g_anon`` the runner builds (by wrapping
+        ``_reconnect_inter_edges``), then recomputes the subgraph
+        re-identification rate node-by-node with the brute-force
+        ``subgraph_candidate_count`` on that same graph; the two must agree,
+        confirming the fast path preserved attack semantics end-to-end.
         """
+        import experiments.run as run_mod
+        from src.attacks.subgraph import subgraph_candidate_count
+        from src.metrics import reidentification_rate
+
         g = _small_graph()
-        n = g.number_of_nodes()
-        with patch(
-            "experiments.run.subgraph_candidate_count",
-            side_effect=TimeoutError("simulated"),
-        ):
+        captured: dict = {}
+        real_reconnect = run_mod._reconnect_inter_edges
+
+        def _capture(g_orig, modified_groups):  # type: ignore[no-untyped-def]
+            g_anon = real_reconnect(g_orig, modified_groups)
+            captured["g_anon"] = g_anon
+            return g_anon
+
+        with patch.object(run_mod, "_reconnect_inter_edges", side_effect=_capture):
             result = run_one(g, k=2, d=2, sigma=0.5, seed=0, attacks_cfg=_SUBGRAPH_ATTACKS)
         assert result["error"] is None
-        assert result["subgraph_timeout_count"] == n
-        assert result["reidentification_rate_subgraph"] == 0.0
-        assert result["subgraph_candidate_counts"]["max"] == 0
+
+        g_anon = captured["g_anon"]
+        brute = [subgraph_candidate_count(g, g_anon, node, hop=1) == 1 for node in g.nodes()]
+        assert result["reidentification_rate_subgraph"] == reidentification_rate(brute)
 
 
 class TestRunOneErrorHandling:

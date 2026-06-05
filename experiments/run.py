@@ -84,7 +84,7 @@ from src.anonymization.he2009 import (
     _reconnect_inter_edges,
 )
 from src.anonymization.validation import validate_k_anonymity
-from src.attacks import degree_attack, subgraph_candidate_count
+from src.attacks import degree_attack, subgraph_candidate_counts
 from src.loaders.enron import load_enron
 from src.loaders.facebook_ego import load_facebook_egonet
 from src.metrics import (
@@ -359,48 +359,42 @@ def run_one(
                 rr_degree,
             )
 
-        # Subgraph attack (optional; disabled by default — O(n²·VF2) per run)
+        # Subgraph attack (optional; disabled by default).
         subgraph_cfg = attacks_cfg.get("subgraph", {})
         if subgraph_cfg.get("enabled", False):
             hop = int(subgraph_cfg.get("hop", 1))
-            timeout = subgraph_cfg.get("timeout", None)
-            # Per-node loop with explicit TimeoutError handling (issue #93).
-            # A timed-out node is counted (subgraph_timeout_count) and treated
-            # as *not re-identified* — matching the documented config intent
-            # ("Timeouts NÃO são crash; o nó conta como não reidentificado").
-            # Previously a single TimeoutError propagated to the run-level
-            # except block, producing verdict=ERROR for the whole run; the
-            # absence of ERROR across the 48 d-sweep runs is what discards the
-            # "masked timeout" hypothesis (H3). We also record the distribution
-            # of candidate counts so a zero rate is distinguishable as "no
-            # candidates" (H1/H2) vs "many candidates" — see decision DL-02.
-            timeout_count = 0
-            candidate_counts: list[int] = []
-            for node in nodes:
-                try:
-                    n_cand = subgraph_candidate_count(
-                        g_orig, g_anon, node, hop=hop, timeout=timeout
-                    )
-                except TimeoutError:
-                    timeout_count += 1
-                    n_cand = 0  # node counts as non-reidentified
-                candidate_counts.append(n_cand)
+            # WL-hash bucketing fast path (issue #139, decision D-16): the
+            # k-hop neighbourhoods of g_anon are hashed *once* into buckets and
+            # each target resolved by a hash lookup, turning the former
+            # O(n²·VF2) per-node re-scan (~70 days on the Enron LCC, D-15) into
+            # an O(n) precompute + O(n) lookups (seconds). The count and the
+            # count==1 verdict are identical to the VF2 brute force whenever the
+            # WL hash is collision-free — exhaustively verified against VF2 on
+            # small graphs and on a large Enron node sample (issue #139). We
+            # keep pure WL (refine_max_size=None): the small-graph equivalence
+            # battery matched 100%, so VF2 refinement is unnecessary; hubs are
+            # never sent to VF2 (the automorphism blow-up the fast path avoids).
+            candidate_map = subgraph_candidate_counts(g_orig, g_anon, nodes, hop=hop)
+            candidate_counts = [candidate_map[node] for node in nodes]
             subgraph_results = [c == 1 for c in candidate_counts]
             rr_subgraph = reidentification_rate(subgraph_results)
             result["reidentification_rate_subgraph"] = rr_subgraph
-            result["subgraph_timeout_count"] = timeout_count
+            # subgraph_timeout_count is retained for schema/DL-02 compatibility
+            # and the D-13 validity gate (subgraph_timeout_count == 0). The fast
+            # path has no per-node timeout, so it is trivially 0: the gate is
+            # preserved and trivially satisfied (no node can time out).
+            result["subgraph_timeout_count"] = 0
             result["subgraph_candidate_counts"] = {
                 "mean": fmean(candidate_counts) if candidate_counts else 0.0,
                 "std": pstdev(candidate_counts) if len(candidate_counts) > 1 else 0.0,
                 "max": max(candidate_counts) if candidate_counts else 0,
             }
             logger.info(
-                "  [k=%d, seed=%d] Subgraph attack: reidentification_rate=%.4f "
-                "(timeouts=%d, candidates mean=%.2f max=%d)",
+                "  [k=%d, seed=%d] Subgraph attack (WL-bucketing): "
+                "reidentification_rate=%.4f (candidates mean=%.2f max=%d)",
                 k,
                 seed,
                 rr_subgraph,
-                timeout_count,
                 result["subgraph_candidate_counts"]["mean"],
                 result["subgraph_candidate_counts"]["max"],
             )

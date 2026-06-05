@@ -25,9 +25,16 @@ Reference: He, X. et al. (2009), Section 3 (neighbourhood background knowledge).
 from __future__ import annotations
 
 import concurrent.futures
+from collections.abc import Iterable
 
 import networkx as nx
 from networkx.algorithms.isomorphism import GraphMatcher
+
+# Default number of Weisfeiler-Lehman refinement iterations used by the
+# bucketing fast path (:func:`subgraph_candidate_counts`).  Three iterations
+# are the networkx default and are more than enough to discriminate hop-1
+# neighbourhoods (a star centre plus the edges among its neighbours).
+_WL_ITERATIONS = 3
 
 
 def _k_hop_induced_subgraph(g: nx.Graph, node: int, hop: int) -> nx.Graph:
@@ -119,6 +126,128 @@ def subgraph_candidate_count(
                 ) from exc
 
     return len(candidates)
+
+
+def _neighbourhood_wl_hash(
+    g: nx.Graph, node: int, hop: int, iterations: int = _WL_ITERATIONS
+) -> str:
+    """Weisfeiler-Lehman graph hash of ``node``'s k-hop induced neighbourhood.
+
+    The hash is a graph *invariant*: isomorphic neighbourhoods always share the
+    same hash (necessary condition).  It is not, in general, *injective* — two
+    non-isomorphic graphs may collide — which is why the bucketing fast path
+    offers an optional VF2 refinement (see :func:`subgraph_candidate_counts`).
+    Node labels are ignored (structure only), matching the VF2 brute force.
+    """
+    sub = _k_hop_induced_subgraph(g, node, hop)
+    return nx.weisfeiler_lehman_graph_hash(sub, iterations=iterations)
+
+
+class _AnonNeighbourhoodIndex:
+    """WL-hash bucket index over the k-hop neighbourhoods of ``g_anon``.
+
+    Built once per anonymised graph (O(n) neighbourhood extractions), it lets
+    each target be resolved by a single hash lookup instead of re-scanning all
+    ``n`` candidate neighbourhoods — the O(n²) cost that made the full subgraph
+    attack prohibitive on the Enron LCC (decision D-15; issue #139).
+
+    Buckets store node IDs (not subgraphs) to keep memory light; the few small
+    neighbourhoods needed by VF2 refinement are re-extracted lazily.
+    """
+
+    def __init__(self, g_anon: nx.Graph, hop: int, iterations: int = _WL_ITERATIONS) -> None:
+        self._g_anon = g_anon
+        self._hop = hop
+        self._iterations = iterations
+        self._buckets: dict[str, list[int]] = {}
+        for v in g_anon.nodes():
+            h = _neighbourhood_wl_hash(g_anon, v, hop, iterations)
+            self._buckets.setdefault(h, []).append(v)
+
+    def candidate_count(self, s_target: nx.Graph, refine_max_size: int | None = None) -> int:
+        """Count ``g_anon`` nodes whose neighbourhood matches ``s_target``.
+
+        With ``refine_max_size=None`` (pure WL) the count is the size of the
+        hash bucket — exact whenever the WL hash is collision-free for the
+        graphs at hand (verified empirically; see issue #139).  With
+        ``refine_max_size`` set, buckets whose target neighbourhood has at most
+        that many nodes are confirmed with VF2 (exact); larger neighbourhoods
+        (hubs) stay on pure WL — refining a hub with VF2 triggers the
+        automorphism blow-up that the fast path exists to avoid.
+        """
+        h = nx.weisfeiler_lehman_graph_hash(s_target, iterations=self._iterations)
+        bucket = self._buckets.get(h, [])
+        if refine_max_size is None or s_target.number_of_nodes() > refine_max_size:
+            return len(bucket)
+        count = 0
+        for v in bucket:
+            s_v = _k_hop_induced_subgraph(self._g_anon, v, self._hop)
+            if GraphMatcher(s_target, s_v).is_isomorphic():
+                count += 1
+        return count
+
+
+def subgraph_candidate_counts(
+    g_orig: nx.Graph,
+    g_anon: nx.Graph,
+    targets: Iterable[int],
+    hop: int = 1,
+    refine_max_size: int | None = None,
+    wl_iterations: int = _WL_ITERATIONS,
+) -> dict[int, int]:
+    """Candidate counts for many targets at once via WL-hash bucketing.
+
+    Batched, O(n) equivalent of calling :func:`subgraph_candidate_count` once
+    per target: the k-hop neighbourhoods of ``g_anon`` are hashed a single time
+    into buckets, then each target is resolved by a hash lookup.  This replaces
+    the per-target O(n) re-scan (overall O(n²)) that made the full subgraph
+    attack on the Enron LCC cost ~70 days (decision D-15); the bucketed path
+    runs in seconds (issue #139).
+
+    The returned count is identical to :func:`subgraph_candidate_count` whenever
+    the WL hash is collision-free for the input graphs — the established case
+    for the hop-1 neighbourhoods used here (exhaustively checked against VF2 on
+    small graphs and verified on a large Enron node sample).  ``refine_max_size``
+    optionally confirms small buckets with VF2 for an exact-by-construction
+    result; hubs are never refined (the blow-up the fast path avoids).
+
+    Parameters
+    ----------
+    g_orig, g_anon:
+        Original and anonymised graphs (same node namespace as the brute force).
+    targets:
+        Iterable of target node IDs in ``g_orig`` to score.
+    hop:
+        Neighbourhood radius (positive integer).  Default 1.
+    refine_max_size:
+        If set, buckets whose target neighbourhood has at most this many nodes
+        are confirmed with VF2 (exact); ``None`` (default) uses pure WL.
+    wl_iterations:
+        Weisfeiler-Lehman refinement iterations (default :data:`_WL_ITERATIONS`).
+
+    Returns
+    -------
+    dict[int, int]
+        Mapping ``target -> #isomorphic candidates in g_anon``.  A target is
+        uniquely re-identified iff its count is exactly ``1``.
+
+    Raises
+    ------
+    ValueError
+        If ``hop`` is not a positive integer, or a target is absent from
+        ``g_orig``.
+    """
+    if not isinstance(hop, int) or hop < 1:
+        raise ValueError(f"hop must be a positive integer; got {hop!r}.")
+
+    index = _AnonNeighbourhoodIndex(g_anon, hop, iterations=wl_iterations)
+    counts: dict[int, int] = {}
+    for target in targets:
+        if target not in g_orig:
+            raise ValueError(f"Target node {target!r} not found in G_orig.")
+        s_target = _k_hop_induced_subgraph(g_orig, target, hop)
+        counts[target] = index.candidate_count(s_target, refine_max_size=refine_max_size)
+    return counts
 
 
 def subgraph_attack(
