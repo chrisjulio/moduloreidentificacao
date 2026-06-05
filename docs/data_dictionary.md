@@ -29,6 +29,20 @@
 | `min_nodes` | YAML `dataset.min_nodes` | Número mínimo de nós exigido após pré-processamento. Calculado como `10 × k_max = 10 × 20 = 200`. Funciona como validação de sanidade do dataset antes da execução. |
 | `allow_kl_fallback` | YAML `anonymization.allow_kl_fallback` | Booleano. `true` = o backend de particionamento pode recuar para Kernighan-Lin (NetworkX) se `pymetis` não estiver disponível (decisão D-04). `false` = exige `pymetis` obrigatoriamente (usado no d-sweep para garantir comparabilidade entre runs). Backends diferentes produzem partições — e portanto métricas — diferentes; controlar este campo é essencial para reprodutibilidade cruzada. |
 
+### 1.1 Datasets
+
+| Dataset | YAML `dataset.name` | Origem | Pré-processamento | Tamanho (LCC) | Tier |
+|---|---|---|---|---|---|
+| Facebook Ego-Nets | `facebook_ego_nets` | SNAP (ego-rede `3437`, `dataset.egonet_id`). Grafo de amizade, **já não-direcionado**. | Maior componente conexa (`component: lcc`); ego excluído (`include_ego: false`, §3.1 de `preprocessing_decision.md`). | n=532, m=4812 (grau médio ≈ 18) | **[M]** Mínimo (principal) |
+| Email-Enron | `enron` | SNAP (`email-Enron.txt`, `dataset.data_path`). Rede de e-mail corporativo, **direcionada por natureza** (`A → B` = "A enviou e-mail a B"). | Projeção direcionado→não-direcionado por **simetrização OR** (decisão **D-11**): aresta `{u, v}` existe se `u → v` **ou** `v → u`; depois maior componente conexa (`component: lcc`, `min_nodes: 200`). A projeção OR é responsabilidade do **loader** (`src/loaders/enron.py`), não do núcleo do pipeline. | n=33.696, m=180.811 (grau médio ≈ 10,7) | **[D]** Desejável (secundário) |
+
+> **Comparabilidade.** As duas redes diferem em escala (~63×), densidade e origem
+> (direcionada vs. já-simétrica), de modo que as **magnitudes** de risco/utilidade
+> não são diretamente comparáveis — apenas as **tendências** (ver
+> [`docs/results_enron.md`](results_enron.md), seção "Comparativo Facebook × Enron").
+> O Enron usa o motor pymetis (fiel ao artigo) em 12/12 runs; o baseline Facebook
+> `d=1` rodou em Kernighan-Lin (achado A1, `results_baseline.md`).
+
 ---
 
 ## 2. Métricas de privacidade
