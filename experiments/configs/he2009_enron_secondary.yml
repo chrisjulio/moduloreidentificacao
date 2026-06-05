@@ -76,35 +76,32 @@ anonymization:
 # de comparações baratas, sem VF2). É a métrica de reidentificação reportada
 # pela execução secundária #127.
 #
-# ATAQUE POR SUBGRAFO (full): DESABILITADO por inviabilidade empírica (D-15).
-# Probe de custo sobre o Enron LCC (n=33.696, m=180.811): cada nó-alvo gasta
-# ~15 s para varrer TODOS os 33.696 candidatos (custo dominado pela re-extração
-# das vizinhanças 1-hop — O(n²)), praticamente constante com o grau do alvo.
-# Logo: ~5,85 dias/run × 12 runs ≈ 70 dias — proibitivo. O timeout de 120 s
-# (D-12) NÃO limita o custo aqui: nenhum nó isolado é patológico (15 s < 120 s),
-# então subgraph_timeout_count seria 0 (válido por D-13) e ainda assim levaria
-# 70 dias — o custo é agregado, não por nó. A DoD #29/#127 antecipa essa
-# restrição em escala maior; aqui ela é registrada, não silenciada (lição #93).
+# ATAQUE POR SUBGRAFO (full): HABILITADO — D-15 (inviabilidade ~70 dias) foi
+# RESOLVIDO por otimização (D-16, issue #139), não por adiamento. O custo O(n²)
+# vinha de re-extrair as n vizinhanças 1-hop de g_anon para CADA alvo. O caminho
+# rápido por bucketing de WL-hash (src/attacks/subgraph.py::subgraph_candidate_counts)
+# pré-computa essas n vizinhanças UMA vez, indexa-as por hash WL e resolve cada
+# alvo por lookup — O(n) precompute + O(n) lookups. Probe sobre o Enron LCC
+# (n=33.696, m=180.811): ~32 s/run → 12 runs ≈ 6,5 min (~15.600× vs brute-force).
+# A contagem e o veredito count==1 são idênticos ao VF2 brute-force sempre que o
+# WL-hash não colide — verificado exaustivamente contra VF2 em grafos pequenos
+# (100% match) e numa amostra grande de nós do Enron (issue #139). WL é invariante
+# NECESSÁRIO (isomorfos ⇒ mesmo hash); a verificação ampla cobre a suficiência.
 #
-# Caminho cientificamente válido (issue de continuação): amostrar nós-ALVO
-# (sorteio uniforme via semente do YAML; candidatos permanecem a população
-# inteira → estimador não-enviesado da taxa com IC), o que exige suporte no
-# runner (target_sample) + resume intra-nó. ~532 alvos ≈ 1,1 dia para as 12 runs.
+# A abordagem anterior de amostragem de nós-ALVO + resiliência (registrada em D-15
+# como continuação) ficou OBSOLETA: o full roda em minutos, sem amostragem.
 attacks:
   degree:
     enabled: true
     tolerance: 0        # correspondência exata de grau (baseline)
   subgraph:
-    enabled: false      # D-15: subgrafo full é proibitivo (~70 dias) no Enron LCC.
+    enabled: true       # D-16/#139: caminho rápido WL-bucketing torna o full viável (~32 s/run).
     hop: 1              # vizinhança 1-hop apenas — NÃO aumentar (DoD #126)
-    # timeout = cláusula de escape de laço, NÃO orçamento de hardware (D-12): cerca
-    # a varredura completa de candidatos de um nó-alvo; nó que estoura é contado em
-    # subgraph_timeout_count e tratado como não-reidentificado (DL-02). Validade da
-    # execução exigiria subgraph_timeout_count == 0 (D-13) — ver docs/decision_log.md.
-    # Mantido aqui (com enabled: false) como referência para a variante amostrada.
-    timeout: 120        # segundos por nó alvo; valor fixo, independente da máquina (D-12).
-                        # Alinhado ao he2009_facebook_dsweep.yml (que já usa 120s p/ G' denso);
-                        # baseline Facebook usa 60s (ego-rede esparsa).
+    # timeout: vestigial sob o caminho rápido WL-bucketing — este NÃO tem timeout
+    # por nó (não há sweep por alvo a cercar; D-16). subgraph_timeout_count é gravado
+    # como 0 e o gate de validade D-13 (subgraph_timeout_count == 0) é trivialmente
+    # satisfeito. Mantido aqui apenas para compatibilidade de schema/config.
+    timeout: 120        # ignorado pelo caminho rápido (D-16); mantido por compatibilidade.
 
 # ------------------------------------------------------------
 # Execução

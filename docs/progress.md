@@ -11,11 +11,46 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-04
+**Data da última atualização:** 2026-06-05
 
 **Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #139 (S9-8): ataque por subgrafo via bucketing de WL-hash — viabiliza
+  o subgrafo FULL no Enron (resolve D-15). ✅ (código + testes + execução +
+  decisão D-16).** A inviabilidade de ~70 dias registrada em D-15 foi **superada
+  por engenharia**, não por adiamento. **(1) Caminho rápido**
+  (`src/attacks/subgraph.py::subgraph_candidate_counts` + `_AnonNeighbourhoodIndex`):
+  pré-computa o WL-hash das n vizinhanças 1-hop do `g_anon` **uma vez**,
+  indexa-as em baldes por hash e resolve cada alvo por **lookup** — O(n)
+  precompute + O(n) lookups, substituindo o O(n²) de re-extração. **(2)
+  Salvaguarda de exatidão** pelo critério objetivo da #139: o WL **puro** bateu
+  **100%** com o VF2 brute-force (contagens E vereditos `count==1`) na bateria de
+  grafos pequenos (`tests/attacks/test_subgraph.py`) → adota-se WL puro (opção
+  (b)); refinamento híbrido VF2 disponível (`refine_max_size`), **hubs nunca
+  refinados** (explosão de automorfismos). Argumento de correção: WL é invariante
+  **necessário** (isomorfos ⇒ mesmo hash) → nenhum isomorfo é perdido; único erro
+  teórico é sobrecontagem por colisão, descartada empiricamente. **(3)
+  Verificação ampla** no Enron LCC (k=2/seed=42): amostra estratificada por grau
+  de **70 nós, 0 divergências** (ALL MATCH) vs. VF2 brute-force; `subgraph_candidate_counts`
+  dos 33.696 alvos em **35,9 s** (~15.000× vs. brute). **(4) Runner**
+  (`experiments/run.py`): laço do subgrafo passa a usar o caminho rápido;
+  `subgraph_timeout_count` gravado como **0** (sem timeout por nó) → gate D-13
+  trivialmente satisfeito. **(5) Config**: `attacks.subgraph.enabled: true`
+  (hop=1) reabilitado, comentário atualizado (D-15 resolvido por D-16). **(6)
+  Execução FULL**: 12 runs (k∈{2,5,10,20} × 3 sementes), **todas SUCCESS_PARTIAL,
+  0 falhas, 0 timeouts**, pymetis; `reidentification_rate_subgraph` **cai
+  monotonicamente com k** — k=2 ≈ 0,124; k=5 ≈ 0,102; k=10 ≈ 0,079; k=20 ≈ 0,057
+  — ~40× a taxa de grau (~0,002–0,003), coerente com B1 (em `d=1` anonimiza-se
+  grau, não a estrutura 1-hop). Logs limpos em
+  `experiments/logs/he2009_enron_secondary/` (12 linhas + `summary.json`;
+  gitignored; logs só-grau da #127 movidos para `_pre139_degree_only_backup/`).
+  **(7) Docs**: `decision_log.md` — índice + entrada **D-16** (método, correção,
+  evidência, gate D-13) + **extensão de D-15** (resolvido por otimização;
+  caminho de amostragem agora OBSOLETO). `results_enron.md` **não** editado
+  (responsabilidade da #128). Suíte **581 passed** (+16 no subgrafo), ruff limpo.
+  Branch `attack/subgraph-wl-bucketing` (`Closes #139`).
+
 - **Issue #127 (S9-5): execução secundária Enron — SÓ-GRAU (subgrafo full
   inviável, D-15). ✅ (execução + config + decisão).** Probe de custo empírico
   sobre o Enron LCC (n=33.696, m=180.811, pymetis) mediu o ataque por subgrafo
@@ -314,21 +349,21 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `loader/enron-run` (S9-5/#127) → fechar #127.
-- **S9-6/#128:** comparativo Facebook×Enron + `results_enron.md` a partir dos
-  logs só-grau do Enron (gráficos/tabelas via `src/visualization/`); declarar a
-  ausência de subgrafo (D-15) honestamente. **S9-7/#129:** fechamento do S9.
-- **Criar a issue de continuação S10** (subgrafo amostrado por nós-alvo +
-  resiliência) — descritivo já preparado nesta sessão; humano cria fora do
-  milestone S9 para não bloquear #129.
+- Revisão humana e merge do PR `attack/subgraph-wl-bucketing` (S9-8/#139) → fechar #139.
+- **S9-6/#128:** comparativo Facebook×Enron + `results_enron.md` — **agora com a
+  curva grau × subgrafo** do Enron (dados de #139 disponíveis no JSONL); a
+  ressalva de ausência de subgrafo (D-15) deixa de valer (D-16). **S9-7/#129:**
+  fechamento do S9.
+- **Issue S10 de amostragem de nós-alvo + resiliência ficou OBSOLETA** (D-16: o
+  full roda em minutos); não criar.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 - (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR `loader/enron-run` (S9-5/#127) aguarda CI + revisão humana; dependências
-  S9-0..S9-4 (#122–#126) já em `main`. Milestone S8 concluído (PR #121 em
-  `main`); 17/17 ✅.
+- PR `attack/subgraph-wl-bucketing` (S9-8/#139) aguarda CI + revisão humana;
+  #127 (S9-5) já em `main` (PR #138, commit `fa4d1f3`); dependências S9-0..S9-4
+  (#122–#126) já em `main`. Milestone S8 concluído (PR #121 em `main`); 17/17 ✅.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -354,6 +389,33 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-05 — Issue #139 (S9-8): subgrafo via bucketing de WL-hash — full viável no Enron (D-16)
+
+- **Concluído:** Resolvida por engenharia a inviabilidade de D-15 (~70 dias). **(1)**
+  Caminho rápido `subgraph_candidate_counts` + `_AnonNeighbourhoodIndex` em
+  `src/attacks/subgraph.py`: WL-hash das n vizinhanças 1-hop do `g_anon`
+  pré-computado **uma vez** em baldes; cada alvo resolvido por lookup — O(n)+O(n)
+  no lugar de O(n²). **(2)** Salvaguarda de exatidão pelo critério objetivo: WL
+  puro = VF2 brute-force **100%** (contagens E vereditos) na bateria de grafos
+  pequenos → adota-se WL puro; refinamento híbrido VF2 disponível p/ baldes
+  pequenos, **hubs nunca refinados** (blow-up). WL é invariante necessário ⇒
+  nenhum isomorfo perdido; só sobrecontagem por colisão, descartada. **(3)**
+  Verificação ampla no Enron LCC k=2/seed=42: 70 nós estratificados, **0
+  divergências** (ALL MATCH); 33.696 alvos em 35,9 s (~15.000× vs. brute). **(4)**
+  Runner usa o caminho rápido; `subgraph_timeout_count=0` → gate D-13 trivial.
+  **(5)** Config `attacks.subgraph.enabled: true` (hop=1) reabilitada. **(6)**
+  Execução FULL: **12 runs, todas SUCCESS_PARTIAL, 0 falhas/timeouts**, pymetis;
+  `reidentification_rate_subgraph` cai com k (k=2≈0,124 → k=20≈0,057), ~40× o
+  grau (B1). Logs limpos (12 linhas + summary); só-grau da #127 em
+  `_pre139_degree_only_backup/`. **(7)** `decision_log.md`: D-16 + extensão de
+  D-15 (amostragem agora OBSOLETA). `results_enron.md` não tocado (#128). Suíte
+  **581 passed**, ruff limpo. Branch `attack/subgraph-wl-bucketing`.
+- **Próximo:** Merge do PR → fechar #139. Depois #128 (results_enron.md AGORA com
+  curva grau × subgrafo) e #129 (fechamento S9).
+- **Bloqueios:** PR `attack/subgraph-wl-bucketing` aguarda CI + revisão humana
+  (#127 já em `main` via PR #138).
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-04 — Issue #127 (S9-5): execução secundária Enron — só-grau (subgrafo inviável, D-15)
 
