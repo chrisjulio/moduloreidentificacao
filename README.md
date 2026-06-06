@@ -236,8 +236,20 @@ encerrada. Decisões D-11 a D-16 e DL-04 em
 [`docs/decision_log.md`](docs/decision_log.md); relatório consolidado e comparativo
 Facebook × Enron em [`docs/results_enron.md`](docs/results_enron.md).
 
-Único item do Desejável ainda aberto: ataque por entropia
-([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)).
+**Entropia — métrica/ataque por entropia (tier Desejável): CONCLUÍDO em 06/06/2026.**
+Métrica de privacidade por entropia implementada e classificada formalmente como
+*métrica* (residência primária em `src/metrics/entropy.py`), com o nome "ataque por
+entropia" preservado como sua leitura adversarial em `src/attacks/entropy.py`
+(ponteiro de referência cruzada). Fundamentação na literatura de entropia-como-anonimato
+([Serjantov & Danezis, 2002](https://doi.org/10.1007/3-540-36467-6_4);
+[Díaz et al., 2002](https://doi.org/10.1007/3-540-36467-6_5)); decisão **D-17** em
+[`docs/decision_log.md`](docs/decision_log.md). Modelo uniforme `H = log₂(n_r)`;
+ciclo encerrado pelas PRs #149, #150 e #151. Issue
+[#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) **fechada**.
+
+Com isso, o escopo **Desejável** está integralmente concluído. O escopo Aspiracional
+([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) não é
+perseguido — ver [Seção 6 — Entregáveis](#6-entregáveis).
 
 ### Componentes implementados
 
@@ -504,12 +516,14 @@ consolidado em [`docs/entregaveis.md`](docs/entregaveis.md).
   subgrafos; quatro métricas; mínimo de 3 sementes por configuração; gráfico
   privacidade-vs-utilidade com barras de erro; repositório versionado com README
   operacional e configuração reproduzível.
-- **Desejável (parcialmente concluído).** Execução adicional sobre Email-Enron
-  ✅ concluída no S9 (dataset secundário, simetrização OR/D-11, comparativo
-  Facebook × Enron); ataque por entropia não iniciado
-  ([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)).
+- **Desejável (✅ concluído).** Execução adicional sobre Email-Enron ✅ concluída no
+  S9 (dataset secundário, simetrização OR/D-11, comparativo Facebook × Enron); e
+  métrica/ataque por entropia ✅ concluída (D-17, classificada como métrica de
+  privacidade; [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)
+  fechada).
 
-O Mínimo é entregável defensável em si; o Desejável é entregável discutível.
+O Mínimo é entregável defensável em si; o Desejável agrega validade externa e uma
+métrica de privacidade adicional.
 
 ---
 
