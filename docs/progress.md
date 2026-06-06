@@ -13,9 +13,17 @@
 
 **Data da última atualização:** 2026-06-06
 
-**Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29) — **fechamento (S9-7/#129)**
+**Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29) — **MILESTONE FECHADO** ✅
 
 **Último passo concluído:**
+- **Fechamento administrativo do milestone S9. ✅** Conferência final dos DoDs de
+  todas as 9 sub-issues (#122–#129, #139) contra o `main` — todos atendidos, CI
+  verde nos 3 check-runs. **Opção A aplicada** à #29: comentário de conferência
+  postado marcando os 4 itens da DoD com `[x]` e rastreabilidade
+  (loader OR/D-11/#124, config/#126, execução grau+subgrafo hop=1/D-16/#127/#139,
+  gráficos comparativos/#128). **Issue-mãe #29 fechada** (`state_reason:
+  completed`) e **milestone S9 `closed`** (9/9 fechadas). A pendência cosmética da
+  marcação da DoD da #29 (antes bloqueada pelo classifier) está resolvida.
 - **Issue #129 (S9-7): fechamento do ciclo S9 — revisão cruzada + Definição de
   Pronto da #29. ✅ (docs).** Última issue do milestone S9. Verifiquei os
   bloqueios via `gh` antes de começar: **todos os PRs do ciclo S9 estão `MERGED`**
@@ -425,13 +433,8 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `loader/enron-close` (S9-7/#129) → fechar #129
-  (última issue do milestone S9).
-- **Ação humana pendente:** marcar os 4 checkboxes da Definição de Pronto da #29
-  (todos cumpridos — veredito registrado acima/no PR; edição do corpo bloqueada
-  pelo classifier) e **avaliar encerramento da #29** (issue-mãe do Enron) — toda
-  a DoD do tier `[D]`-Enron concluída no S9. *Decisão de fechar fica com o humano
-  (workflow: issue fechada via PR/humano, não pelo agente).*
+- **Milestone S9 encerrado** — definir o escopo do próximo ciclo (S10) e criar a
+  issue âncora correspondente.
 - **Issue S10 de amostragem de nós-alvo + resiliência ficou OBSOLETA** (D-16: o
   full roda em minutos); não criar.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
@@ -439,10 +442,10 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum bloqueio de dependência: **todos os PRs do ciclo S9 estão em `main`**
-  (S9-0..S9-4 #122–#126; S9-5 #127/PR#138; S9-6 #128/PR#143 + follow-up PR#144;
-  S9-8 #139/PR#142). PR `loader/enron-close` (S9-7/#129) aguarda CI + revisão
-  humana. Milestone S8 concluído; 17/17 ✅.
+- Nenhum. **Ciclo S9 totalmente encerrado:** todos os PRs em `main` (S9-0..S9-4
+  #122–#126; S9-5 #127/PR#138; S9-6 #128/PR#143 + follow-up PR#144; S9-8
+  #139/PR#142; S9-7 #129/PR#145), CI verde, **issue-mãe #29 fechada** e
+  **milestone S9 `closed`** (9/9). Milestones S8 e S9 concluídos.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -468,6 +471,24 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-06 — Fechamento administrativo do milestone S9 (DoD #29 via opção A)
+
+- **Concluído:** Auditoria final dos DoDs de todas as 9 sub-issues do S9
+  (#122–#129, #139) contra o `main` — todos os itens substantivos atendidos e
+  verificáveis; CI verde nos 3 check-runs (`Lint+Test 3.11/3.12`, `pymetis`).
+  Único resíduo identificado: a DoD da issue-mãe **#29** continuava com os 4
+  checkboxes desmarcados (a edição do corpo havia sido bloqueada pelo classifier
+  no #129). **Opção A aplicada:** comentário de conferência postado na #29
+  marcando os 4 itens com `[x]` e rastreabilidade (loader OR/D-11/#124,
+  config/#126, execução grau+subgrafo hop=1/D-16/#127/#139, gráficos
+  comparativos/#128) + resíduo não-bloqueante (`multiple_egonets`). Em seguida:
+  **#29 fechada** (`state_reason: completed`) e **milestone S9 marcado `closed`**
+  (9/9 issues fechadas). Sub-issues #122–#129 e #139 confirmadas fechadas.
+- **Próximo:** Definir escopo do ciclo S10 + issue âncora. Itens herdados de
+  housekeeping: fechar #74 e (se aberta) #72.
+- **Bloqueios:** Nenhum — milestone S9 totalmente encerrado.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-06 — Issue #129 (S9-7): fechamento do ciclo S9 — cross-review + DoD da #29
 
