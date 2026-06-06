@@ -123,8 +123,11 @@ attacks:
     # Atenção: custo computacional cresce rapidamente com hop_distance
     isomorphism_backend: vf2  # via NetworkX
 
-  # Aspiracional: derivado dos grupos de equivalência já calculados
-  # - type: entropy
+  # NB: o "ataque por entropia" (#30) foi reclassificado como MÉTRICA de
+  # privacidade (D-17), não um ataque estrutural autônomo — ele não usa
+  # conhecimento sobre G. Ver o bloco `metrics.entropy_tau` abaixo e
+  # docs/metrics_definitions.md (§ entropy). src/attacks/entropy.py é apenas
+  # um apontador para src/metrics/entropy.py (leitura adversarial da métrica).
 
 # ------------------------------------------------------------
 # Métricas
@@ -133,9 +136,17 @@ metrics:
   privacy:
     - reidentification_rate           # N_correto / N_total, por ataque
     - equivalence_group_size          # tamanho médio e mediano dos grupos
+    - entropy                         # entropia / grau de anonimato (#30, D-17)
   utility:
     - ks_test_degree_distribution     # estatística D como métrica primária
     - clustering_coefficient_variation  # |C_anon - C_orig| / C_orig
+
+  # Limiar τ (bits) da métrica de entropia (#30, D-17 / D-E3). Um nó conta como
+  # reidentificado quando H(v) = log2(n_r) ≤ τ. Default 0.0 recupera o critério
+  # "grupo unitário" (n_r ≤ 1), comparável a count==1 dos ataques estruturais.
+  # Sob k-anonimato pleno (n_r ≥ k ≥ 2) tem-se H ≥ 1 bit, logo τ=0 só dispara em
+  # grupos degenerados/incompletos (resíduo de déficit, D-06). Sempre calculada.
+  entropy_tau: 0.0
 
 # ------------------------------------------------------------
 # Execução

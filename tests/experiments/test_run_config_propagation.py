@@ -51,11 +51,13 @@ def _write_config(
     name: str,
     anonymization: dict,
     seeds: tuple[int, ...] = (0, 1),
+    metrics: dict | None = None,
 ) -> Path:
     """Write an experiment YAML and monkeypatch load_dataset to a small graph.
 
-    Only the ``anonymization`` block varies between tests; everything else is
-    held constant so a single helper covers every case.
+    Only the ``anonymization`` block (and optionally ``metrics``) varies
+    between tests; everything else is held constant so a single helper covers
+    every case.
     """
     monkeypatch.setattr("experiments.run.load_dataset", lambda _cfg: _small_graph())
     config = {
@@ -70,6 +72,8 @@ def _write_config(
         "attacks": {"degree": {"enabled": True, "tolerance": 0}},
         "runtime": {"log_level": "WARNING", "log_dir": str(tmp_path).replace("\\", "/")},
     }
+    if metrics is not None:
+        config["metrics"] = metrics
     cfg_file = tmp_path / f"{name}.yml"
     cfg_file.write_text(yaml.safe_dump(config), encoding="utf-8")
     return cfg_file
@@ -232,6 +236,52 @@ class TestSMaxPropagation:
             main(cfg)
         assert spy.calls, "_group_isomorphic was never called"
         assert spy.calls[-1].kwargs["fsm_max_size"] == 5
+
+
+# ---------------------------------------------------------------------------
+# entropy metric / entropy_tau (issue #30, D-17)
+# ---------------------------------------------------------------------------
+
+
+class TestEntropyMetricPropagation:
+    """The entropy metric is computed from the equivalence groups and written
+    to every JSONL entry; ``metrics.entropy_tau`` flows from YAML to its tau."""
+
+    def test_entropy_block_recorded_in_jsonl(self, tmp_path: Path, monkeypatch) -> None:
+        name = "entropy_block"
+        cfg = _write_config(tmp_path, monkeypatch, name, {"k": 2, "d": 2, "sigma": 0.5})
+        main(cfg)
+        entries = _read_jsonl(tmp_path, name)
+        assert entries
+        for e in entries:
+            assert set(e["entropy"]) == {
+                "entropy_mean",
+                "degree_of_anonymity",
+                "reidentification_rate_entropy",
+                "tau",
+            }
+
+    def test_absent_metrics_defaults_tau_zero(self, tmp_path: Path, monkeypatch) -> None:
+        name = "entropy_default_tau"
+        cfg = _write_config(tmp_path, monkeypatch, name, {"k": 2, "d": 2, "sigma": 0.5})
+        main(cfg)
+        entries = _read_jsonl(tmp_path, name)
+        assert entries
+        assert all(e["entropy"]["tau"] == 0.0 for e in entries)
+
+    def test_entropy_tau_flows_from_yaml(self, tmp_path: Path, monkeypatch) -> None:
+        name = "entropy_tau_yaml"
+        cfg = _write_config(
+            tmp_path,
+            monkeypatch,
+            name,
+            {"k": 2, "d": 2, "sigma": 0.5},
+            metrics={"entropy_tau": 1.0},
+        )
+        main(cfg)
+        entries = _read_jsonl(tmp_path, name)
+        assert entries
+        assert all(e["entropy"]["tau"] == 1.0 for e in entries)
 
 
 # ---------------------------------------------------------------------------

@@ -5,7 +5,12 @@ CSV file per ``(dataset, attack)`` combination to ``results/tables/``.
 
 Each CSV row represents one ``(k, d, seed)`` run and contains:
 
-    k, d, seed, reid_rate, eq_group_mean, ks_D, ks_p, clustering_var
+    k, d, seed, reid_rate, eq_group_mean, ks_D, ks_p, clustering_var,
+    degree_of_anonymity, reid_rate_entropy
+
+The last two columns carry the entropy privacy metric (issue #30 / D-17),
+derived from the equivalence groups and therefore identical across the
+per-attack tables of the same run; ``None`` for logs predating the metric.
 
 Usage::
 
@@ -42,6 +47,10 @@ CSV_COLUMNS: tuple[str, ...] = (
     "ks_D",
     "ks_p",
     "clustering_var",
+    # Entropy privacy metric (issue #30 / D-17); appended to preserve the
+    # historical column prefix. Group-derived → equal across per-attack tables.
+    "degree_of_anonymity",
+    "reid_rate_entropy",
 )
 
 #: Attack types recognised by the loader.  Each type produces one CSV file.
@@ -148,6 +157,14 @@ def record_to_row(record: dict[str, Any], attack: str) -> dict[str, Any] | None:
     if isinstance(eq, dict):
         eq_mean = _safe_float(eq.get("mean"))
 
+    # Entropy metric (issue #30 / D-17); absent in logs predating the metric.
+    ent = record.get("entropy", {})
+    doa: float | None = None
+    rr_entropy: float | None = None
+    if isinstance(ent, dict):
+        doa = _safe_float(ent.get("degree_of_anonymity"))
+        rr_entropy = _safe_float(ent.get("reidentification_rate_entropy"))
+
     return {
         "k": int(record["k"]),
         # Fallback d=1 protects logs predating the DL-01 schema (issue #22);
@@ -159,6 +176,8 @@ def record_to_row(record: dict[str, Any], attack: str) -> dict[str, Any] | None:
         "ks_D": ks_d,
         "ks_p": ks_p,
         "clustering_var": _safe_float(record.get("clustering_variation")),
+        "degree_of_anonymity": doa,
+        "reid_rate_entropy": rr_entropy,
     }
 
 
