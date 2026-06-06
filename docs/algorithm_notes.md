@@ -642,6 +642,33 @@ acima de `1/k`, isso indica que o modelo adversarial usado tem conhecimento
 que escapa do que a Def. 2 considera — e o resultado deve ser reportado
 como tal, não como falha do algoritmo.
 
+#### Entropia de reidentificação (#30, decisão D-17)
+
+A métrica "por entropia" da tabela acima é definida com amparo na literatura de
+**entropia-como-anonimato**, não apenas na cota `1/k` de He et al. (2009):
+
+- **Serjantov & Danezis (2002)** medem anonimato pela entropia de Shannon
+  `H = −Σ_i p_i · log₂ p_i` da distribuição que o adversário atribui sobre o
+  conjunto de candidatos. O caso **uniforme** (`p_i = 1/N`) dá `H = log₂(N)` — a
+  **entropia máxima** (cota superior do anonimato) para um conjunto de tamanho `N`.
+- **Díaz, Seys, Claessens & Preneel (2002)** acrescentam o **grau de anonimato
+  normalizado** `d = H / H_max ∈ [0,1]`, com `H_max = log₂(N)`.
+
+Aplicada à partição de equivalência produzida por He et al., para um grupo `G_r`
+com `n_r` nós a entropia uniforme é `H(G_r) = log₂(n_r)` e o risco por nó é
+`1/n_r` — exatamente o caso uniforme acima, alinhado à cota `≤ 1/k`.
+
+> **Redundância do baseline uniforme (D-17).** Como `log₂` é monótona,
+> `H = log₂(n_r)` por grupo **não acrescenta informação de ordenação** sobre
+> `equivalence_group_size` (§ Métricas) — é o `log₂` da contagem de nós já
+> reportada. O valor não-redundante vem (a) do **grau de anonimato normalizado**
+> de Díaz et al. e (b) do caminho de **probabilidades não uniformes** (a única
+> formulação em que a entropia deixa de ser `log₂` do tamanho de grupo),
+> declarado a contribuição empiricamente validável. Por isso a entropia é
+> classificada como **métrica de privacidade** (lar em `src/metrics/`), com o
+> nome "ataque por entropia" preservado como sua **leitura adversarial**. Ver
+> `docs/decision_log.md` D-17 e `docs/metrics_definitions.md`.
+
 ---
 
 ## 5. Parâmetros e configuração

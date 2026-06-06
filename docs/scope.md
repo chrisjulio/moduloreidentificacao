@@ -5,12 +5,13 @@
 > CLAUDE.md responde *como desenvolver*, este documento responde **o que este módulo é,
 > o que ele deliberadamente não é, e por que essa distinção importa**.
 >
-> Estado: atualizado em 03/06/2026. S4 (visualizações) e S5 (testes e documentação
+> Estado: atualizado em 06/06/2026. S4 (visualizações) e S5 (testes e documentação
 > complementar) estão encerrados. Escopo mínimo (`[M]`) integralmente implementado.
 > Varredura de `d > 1` (d-sweep) promovida para tier `[D]` (desejável) conforme D-08
 > (issue #73, issue-mãe #72). Email-Enron declarado dataset secundário do tier `[D]`,
-> com simetrização OR (D-11, issue-mãe #29, âncora #122). Alterações de escopo devem
-> ser registradas aqui antes de serem implementadas.
+> com simetrização OR (D-11, issue-mãe #29, âncora #122). Entropia de reidentificação
+> reconciliada de `[A]` para `[D]` e classificada como métrica (D-17, issue #30).
+> Alterações de escopo devem ser registradas aqui antes de serem implementadas.
 
 ---
 
@@ -85,8 +86,14 @@ Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
 - `[M]` Executa ataque de reidentificação **por grau** contra a saída do pipeline.
 - `[M]` Executa ataque de reidentificação **por subgrafos** (isomorfismo de vizinhança
   k-hop via VF2) contra a saída do pipeline.
-- `[A]` Executa ataque de reidentificação **por entropia** como terceiro nível de
-  complexidade adversarial.
+- `[D]` Calcula a **entropia de reidentificação / grau de anonimato** a partir dos
+  grupos de equivalência (issue #30, milestone S6). Reconciliada de `[A]` para `[D]`
+  (coerente com o rótulo `desejavel` e o milestone da #30). **Classificada como
+  métrica de privacidade** (não ataque estrutural — não usa conhecimento sobre `G`),
+  com o nome "ataque por entropia" como leitura adversarial. Ancorada em
+  [Serjantov & Danezis (2002)](https://doi.org/10.1007/3-540-36467-6_4) e
+  [Díaz et al. (2002)](https://doi.org/10.1007/3-540-36467-6_5). Decisão **D-17** em
+  `docs/decision_log.md`. Código ainda não iniciado.
 - `[M]` Calcula quatro métricas: taxa de reidentificação, tamanho médio dos grupos de
   equivalência, estatística D do teste KS sobre distribuição de grau, variação do
   coeficiente de clustering médio.

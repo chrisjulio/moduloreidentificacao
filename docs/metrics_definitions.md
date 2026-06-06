@@ -63,6 +63,49 @@ Desvios indicam a presença de grupo incompleto ou desbalanceamento de LSs (D-07
 
 Ver `config_example.yml` chave `metrics.privacy.equivalence_group_size`.
 
+### Entropia de reidentificação / grau de anonimato (`entropy`)
+
+> **Issue:** #30 (tier Desejável). **Decisão:** D-17 em `docs/decision_log.md`.
+> **Classificação:** **métrica de privacidade** (lar primário). O nome "ataque
+> por entropia" do plano operacional é a **leitura adversarial** desta métrica —
+> apontador cruzado em `src/attacks/`, não um ataque estrutural autônomo (não
+> usa conhecimento sobre `G`, ao contrário de `degree`/`subgraph`).
+
+Mede a **incerteza residual** do adversário que reduziu o alvo ao seu grupo de
+equivalência, em bits de entropia de Shannon. Reutiliza a partição de grupos já
+calculada (não refaz experimentos). Para um grupo `G_r` com `n_r` nós, no modelo
+**equiprovável** (candidatos uniformes, `p_i = 1/n_r`):
+
+```
+H(G_r) = log2(n_r)          # incerteza, em bits
+risk(v) = 1 / n_r           # confiança de reidentificação, v ∈ G_r
+```
+
+**Amparo na literatura.** A entropia de Shannon como métrica de anonimato foi
+estabelecida por **Serjantov & Danezis (2002)** — `H = −Σ_i p_i·log2 p_i` sobre
+o conjunto de candidatos; o caso uniforme dá `H = log2(N)`, a **entropia máxima**
+para um conjunto de tamanho `N` — e por **Díaz, Seys, Claessens & Preneel (2002)**,
+que definem o **grau de anonimato normalizado** `d = H / H_max ∈ [0,1]`,
+`H_max = log2(N)`. O caso uniforme alinha-se à cota `≤ 1/k` de He et al. (Def. 2–3).
+
+**Métricas reportadas:**
+- `entropy_mean` — média de `H(v) = log2(n_r)` sobre os nós cobertos pelos grupos.
+- `degree_of_anonymity` — média do grau de anonimato normalizado `H(v)/H_max`
+  (Díaz et al.), em `[0,1]`; saída **não-redundante** comparável entre `k`/datasets.
+- `reidentification_rate_entropy` — fração de nós com `H(v) ≤ τ`. Default `τ = 0`
+  recupera o critério "grupo unitário" (`n_r ≤ 1`), comparável a `count == 1` dos
+  ataques estruturais.
+
+**Nota metodológica (D-17).** No modelo uniforme, `H = log2(n_r)` é uma
+transformação **monótona** de `equivalence_group_size`; por grupo não acrescenta
+ordenação nova. Sob k-anonimato pleno (`n_r ≥ k ≥ 2`) tem-se `H ≥ 1` bit, logo
+`τ = 0` dispara apenas em grupos degenerados/incompletos — o mesmo resíduo de
+déficit já capturado por `coverage_fraction`/`deficit_fully_structural` (D-06).
+O valor genuinamente distinto vem do `degree_of_anonymity` (Díaz) e do caminho de
+**probabilidades não uniformes** (ponderação intra-grupo, p. ex. por similaridade
+de grau ao alvo) — declarado contribuição **exploratória, dependente de validação
+empírica**. Ver `docs/algorithm_notes.md` §4.4 e `docs/decision_log.md` D-17.
+
 ---
 
 ## Métricas de Utilidade

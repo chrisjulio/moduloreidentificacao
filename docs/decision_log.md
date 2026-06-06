@@ -38,6 +38,7 @@
 | [D-14](#d-14) | 2026-06-03 | Implementação | Convenção `min_nodes = 10 × k_max` para o piso de tamanho do grafo |
 | [D-15](#d-15) | 2026-06-04 | Experimento | Ataque por subgrafo full no Enron é proibitivo (~70 dias); execução #127 é só-grau |
 | [D-16](#d-16) | 2026-06-05 | Implementação | Caminho rápido por bucketing de WL-hash torna o subgrafo full viável no Enron (resolve D-15) |
+| [D-17](#d-17) | 2026-06-06 | Implementação / escopo | Ataque por entropia (#30): formulação ancorada na literatura de entropia-como-anonimato; classificado como **métrica** (com leitura de ataque); D-E2/D-E3 resolvidas |
 
 ---
 
@@ -1407,3 +1408,113 @@ compatibilidade de schema (DL-02); a chave `timeout` na config torna-se vestigia
 - B1 (`d=1` afere k-anonimato de grau, não estrutura 1-hop)
 - `src/attacks/subgraph.py`, `experiments/run.py`, `tests/attacks/test_subgraph.py`
 - Issues #139 (esta), #127 (estende), #128 (consome), #129 (fechamento / DoD #29)
+
+---
+
+## D-17 — Ataque por entropia (#30): ancoragem na literatura, classificação como métrica e resolução de D-E2/D-E3
+
+**Data:** 2026-06-06
+**Issue relacionada:** #30 (tier Desejável, milestone S6)
+**Decisão sobre:** formulação metodológica do "ataque por entropia" antes do início da implementação — fundamentação bibliográfica, classificação (ataque × métrica) e parâmetros do baseline (D-E2/D-E3 da proposta na #30).
+
+### Contexto
+
+A proposta registrada como comentário na #30 derivava a entropia exclusivamente
+da cota `≤ 1/k` de He et al. (2009) e da analogia interna com
+`equivalence_group_size`, classificando-se como *interpretativa, dependente de
+validação empírica*. Duas questões ficaram abertas: **(1)** se o baseline
+equiprovável entrega algo dentro do escopo (i.e., distinto do que
+`equivalence_group_size` já mede) e **(2)** se o artefato é melhor classificado
+como ataque ou como métrica. Esta decisão fecha ambas com amparo na literatura.
+
+### Fundamentação na literatura (entropia-como-anonimato)
+
+A entropia de Shannon como métrica de anonimato foi estabelecida em dois artigos
+de PET 2002:
+
+- **Serjantov & Danezis (2002)** — anonimato medido pela entropia
+  `H = −Σ_i p_i · log₂ p_i` da distribuição que o adversário atribui sobre o
+  conjunto de candidatos. O caso **uniforme** (`p_i = 1/N`) dá `H = log₂(N)`, que
+  é a **entropia máxima** (cota superior do anonimato) para um conjunto de tamanho `N`.
+- **Díaz, Seys, Claessens & Preneel (2002)** — introduzem o **grau de anonimato
+  normalizado** `d = H / H_max ∈ [0,1]`, com `H_max = log₂(N)`, permitindo
+  comparação entre sistemas/configurações.
+
+A motivação central de **ambos** os artigos é que o **tamanho** do conjunto de
+candidatos é insuficiente precisamente porque as probabilidades são **não
+uniformes**; a entropia generaliza o tamanho do conjunto para esse caso.
+
+### Veredito de escopo (D-E1/D-E2 — questão 1)
+
+Sob o modelo **equiprovável** (D-E2(a)) com `τ = 0`, a entropia por grupo
+`H(G_r) = log₂(n_r)` é exatamente o caso uniforme de Serjantov–Danezis — a
+**cota superior** de anonimato. Como `log₂` é estritamente monótona, por grupo
+ela **não acrescenta informação de ordenação** sobre `equivalence_group_size`
+(é o `log₂` da contagem de nós já reportada); e `reid_rate(τ=0)` (`n_r ≤ 1`)
+só dispara em grupos degenerados/incompletos, já capturados por
+`coverage_fraction` / `deficit_fully_structural` (D-06). **Conclusão:** o
+baseline equiprovável puro é *in-scope porém redundante*.
+
+Para entregar algo genuinamente distinto e amparado pelos artigos, o baseline
+adota **duas saídas além de `log₂(n_r)`**:
+
+1. **Grau de anonimato normalizado** (Díaz et al.) `d(v) = H(v) / H_max`,
+   `H_max = log₂(max_r n_r)` — escalar em `[0,1]` comparável entre `k`/datasets,
+   não-redundante com o tamanho bruto de grupo.
+2. **Caminho de probabilidades não uniformes** (D-E2(b)) declarado a **contribuição
+   empiricamente validável** (a única em que a entropia deixa de ser `log₂` do
+   tamanho de grupo) — p. ex. ponderar candidatos dentro do grupo pela
+   similaridade de grau ao alvo. Permanece *exploratória, dependente de validação
+   empírica* (a classificação original da proposta), agora com lastro bibliográfico.
+
+### Parâmetros do baseline (D-E2/D-E3 — resolução)
+
+- **D-E1 = (a)** — unidade de contagem do grupo é o nº de **nós** `n_r`
+  (coerência com `equivalence_group_size`).
+- **D-E2 = (a) como baseline reportado**, explicitamente enquadrado como a
+  **entropia máxima uniforme** de Serjantov–Danezis, **acrescido** do grau de
+  anonimato normalizado de Díaz et al.; **(b) não uniforme** fica como extensão
+  exploratória validável.
+- **D-E3 = (b) com default `τ = 0`** — limiar configurável via YAML; `τ = 0`
+  recupera o critério "grupo unitário" (`count == 1`), com **nota explícita** de
+  que, sob k-anonimato pleno (`n_r ≥ k ≥ 2`), o regime informativo exige `τ`
+  atado a `k` — `τ = 0` mede apenas o resíduo de déficit (D-06).
+- **D-E4** (nós fora de grupo) e **D-E6** (classificação da hipótese) seguem a
+  recomendação da proposta: excluir do denominador registrando a cobertura;
+  hipótese *interpretativa* (baseline uniforme) / *exploratória* (não uniforme).
+
+### Classificação: métrica (com leitura de ataque) — questão 2
+
+Serjantov–Danezis e Díaz et al. enquadram a entropia como **métrica de anonimato**
+(nível de privacidade do sistema), não como procedimento de ataque: ela **não usa
+conhecimento adversarial sobre `G_orig`** como `degree`/`subgraph` — é derivada da
+partição de equivalência. Adota-se o padrão **"registrar no grupo mais aderente e
+referenciar no outro"**:
+
+- **Lar primário:** `src/metrics/` (métrica de privacidade — entropia /
+  grau de anonimato), definida em `docs/metrics_definitions.md`.
+- **Referência cruzada:** o nome "ataque por entropia" do plano operacional e
+  `src/attacks/` passam a ser a **leitura adversarial** da métrica — um apontador
+  para a definição, preservando a rastreabilidade pela proximidade conceitual.
+
+### Consequências
+
+- A propagação **agora** registra apenas a fundamentação e a classificação
+  (literatura + métrica). A virada de status de escopo `[A]/[D] → implementado`,
+  os testes e os ganchos de `tables.py`/`config_example.yml` ocorrem **na
+  implementação** (`metric/entropy` ou `attack/entropy`).
+- `docs/scope.md`: a entropia, antes `[A]`, é reconciliada para `[D]` (coerente
+  com o rótulo `desejavel` e o milestone S6 da #30).
+- Referências [Díaz et al. 2002] e [Serjantov & Danezis 2002] adicionadas ao
+  `README.md` §13 e citadas em `docs/algorithm_notes.md` §4.4 e
+  `docs/metrics_definitions.md`.
+
+### Referências cruzadas
+
+- He et al. (2009) Def. 2–3 (cota `≤ 1/k`); `docs/algorithm_notes.md` §4.4
+- `src/metrics/equivalence_group_size.py` (redundância do baseline uniforme)
+- D-06 (`deficit_fully_structural`; regime de `τ = 0`)
+- Comentário-proposta da #30 (D-E1…D-E6); Issue #30
+- Serjantov, A.; Danezis, G. *Towards an Information Theoretic Metric for Anonymity.* PET 2002, LNCS 2482, p. 41–53. DOI 10.1007/3-540-36467-6_4.
+- Díaz, C.; Seys, S.; Claessens, J.; Preneel, B. *Towards Measuring Anonymity.* PET 2002, LNCS 2482, p. 54–68. DOI 10.1007/3-540-36467-6_5.
+

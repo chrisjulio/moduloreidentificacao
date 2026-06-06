@@ -669,6 +669,20 @@ O dataset secundário Email-Enron
 |---|---|---|
 | [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | Ataque por entropia reutilizando grupos de equivalência | Depende de `src/attacks/` existente |
 
+> **Fundamentação metodológica registrada (D-17, 2026-06-06).** A formulação da
+> entropia foi ancorada na literatura de entropia-como-anonimato
+> ([Serjantov & Danezis, 2002]; [Díaz et al., 2002] — refs. §13) e **classificada
+> como métrica de privacidade** (lar em `src/metrics/`), com o nome "ataque por
+> entropia" preservado como sua leitura adversarial. No modelo uniforme
+> `H = log₂(n_r)` é o `log₂` do tamanho de grupo já medido; o valor não-redundante
+> vem do grau de anonimato normalizado e do caminho de probabilidades não uniformes
+> (extensão validável). Detalhes em `docs/metrics_definitions.md`,
+> `docs/algorithm_notes.md` §4.4 e `docs/decision_log.md` D-17. Código ainda
+> **não iniciado**.
+
+[Serjantov & Danezis, 2002]: https://doi.org/10.1007/3-540-36467-6_4
+[Díaz et al., 2002]: https://doi.org/10.1007/3-540-36467-6_5
+
 ### Escopo Aspiracional
 
 | Issue | Título | Dependência |
@@ -691,23 +705,27 @@ documentados. Pontos de ancoragem:
 ## 13. Referências
 [1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
 
-[2] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+[2] [DÍAZ, C.; SEYS, S.; CLAESSENS, J.; PRENEEL, B.](https://doi.org/10.1007/3-540-36467-6_5) Towards measuring anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 54–68. (Lecture Notes in Computer Science, v. 2482).
 
-[3] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
+[3] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
 
-[4] [LESKOVEC, J.; MCAULEY, J. J.](https://dl.acm.org/doi/10.5555/2999134.2999195) Learning to discover social circles in ego networks. In: *Advances in Neural Information Processing Systems (NIPS 2012)*. [S. l.]: Curran Associates, 2012. p. 539–547.
+[4] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
 
-[5] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
+[5] [LESKOVEC, J.; MCAULEY, J. J.](https://dl.acm.org/doi/10.5555/2999134.2999195) Learning to discover social circles in ego networks. In: *Advances in Neural Information Processing Systems (NIPS 2012)*. [S. l.]: Curran Associates, 2012. p. 539–547.
 
-[6] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
+[6] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
 
-[7] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
+[7] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
 
-[8] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+[8] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
 
-[9] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+[9] [SERJANTOV, A.; DANEZIS, G.](https://doi.org/10.1007/3-540-36467-6_4) Towards an information theoretic metric for anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 41–53. (Lecture Notes in Computer Science, v. 2482).
 
-[10] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
+[10] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+
+[11] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+
+[12] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
 
 ---
 
