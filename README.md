@@ -50,7 +50,6 @@ mecanismo de privacidade do framework integrado da tese. A unidade de progresso
 | Dataset principal | Facebook Ego-Nets (SNAP) | Ego-redes de [Leskovec & McAuley (2012)](https://dl.acm.org/doi/10.5555/2999134.2999195); validação alinhada com a literatura contemporânea de privacidade. |
 | Dataset secundário | Email-Enron (SNAP) ✅ | Implementado e executado no S9 (tier Desejável); projeção direcionado→não-dir. por simetrização OR (D-11). Amplia a validade externa para fora da topologia de ego-rede. |
 | Anonimização primária | [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) | Algoritmo mais simples e mais bem documentado; ponto de entrada limpo. |
-| Anonimização aspiracional | [Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004) | Inclui atributos e t-closeness; fora do escopo do baseline. |
 | Ataques | Grau → Subgrafos → Entropia | Ordem de complexidade crescente; os dois primeiros são o compromisso mínimo. |
 
 <details>
@@ -236,9 +235,7 @@ encerrada. Decisões D-11 a D-16 e DL-04 em
 Facebook × Enron em [`docs/results_enron.md`](docs/results_enron.md).
 
 Único item do Desejável ainda aberto: ataque por entropia
-([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)). O Aspiracional
-([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) permanece
-como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos).
+([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)).
 
 ### Componentes implementados
 
@@ -483,8 +480,8 @@ Análise completa, tabela bruta por semente, comparativo e painel normalizado em
 
 ## 6. Entregáveis
 
-Três níveis, com linha firme entre **Mínimo** e **Desejável**. Status consolidado
-em [`docs/entregaveis.md`](docs/entregaveis.md).
+Dois níveis perseguidos, com linha firme entre **Mínimo** e **Desejável**. Status
+consolidado em [`docs/entregaveis.md`](docs/entregaveis.md).
 
 - **Mínimo defensável (✅ concluído).** Pipeline funcional sobre Facebook Ego-Nets
   aplicando [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) com `k ∈ {2, 5, 10, 20}`; ataques por grau e por
@@ -495,11 +492,8 @@ em [`docs/entregaveis.md`](docs/entregaveis.md).
   ✅ concluída no S9 (dataset secundário, simetrização OR/D-11, comparativo
   Facebook × Enron); ataque por entropia não iniciado
   ([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)).
-- **Aspiracional (não perseguido).** Implementação inicial de Nettleton & Salas
-  (2016); comparação preliminar das duas anonimizações no mesmo gráfico.
 
-O Mínimo é entregável defensável em si; o Desejável é entregável discutível; o
-Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
+O Mínimo é entregável defensável em si; o Desejável é entregável discutível.
 
 ---
 
@@ -635,81 +629,7 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 
 ---
 
-## 12. Próximos passos
-
-O escopo mínimo (S1–S5) e o ciclo D-08 (d-sweep) estão concluídos. As issues
-abaixo definem as fronteiras abertas do módulo, organizadas por prioridade e
-tier. A decisão sobre sequenciamento está em discussão na
-[issue #99](https://github.com/chrisjulio/moduloreidentificacao/issues/99).
-
-### Encaminhamentos imediatos (pós-D-08)
-
-| Issue | Título | Natureza |
-|---|---|---|
-| [#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99) | Encaminhamentos pós-D-08 — próximos passos do módulo | Planejamento |
-
-<details>
-<summary>Legenda das colunas (válida para as três subtabelas abaixo)</summary>
-
-| Coluna | Significado |
-|---|---|
-| `Issue` | Link para a issue correspondente no GitHub com seu número identificador. |
-| `Título` | Descrição curta da tarefa ou atividade planejada. |
-| `Natureza` *(encaminhamentos imediatos)* | Categoria da issue: `Planejamento`, `Técnica`, etc. |
-| `Dependência` *(S6 e Aspiracional)* | Pré-requisito técnico que precisa preceder esta issue; `Nenhuma` indica que pode ser iniciada de forma independente. |
-
-</details>
-
-Pendências específicas identificadas no ciclo D-08:
-- Fechar o milestone S7 após conferir que todas as issues estão encerradas.
-- Verificar resultado dos testes G3 (issue #80) e atualizar o status da nota
-  `algorithm_notes.md §3.2.2` (fórmula k(k−1) — marcada como interpretativa e
-  dependente de validação empírica; em avaliação).
-
-### Escopo Desejável
-
-O dataset secundário Email-Enron
-([#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29)) foi
-**concluído no S9** (ver Seção 4). Resta um item aberto:
-
-| Issue | Título | Dependência |
-|---|---|---|
-| [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | Ataque por entropia reutilizando grupos de equivalência | Depende de `src/attacks/` existente |
-
-> **Fundamentação metodológica registrada (D-17, 2026-06-06).** A formulação da
-> entropia foi ancorada na literatura de entropia-como-anonimato
-> ([Serjantov & Danezis, 2002]; [Díaz et al., 2002] — refs. §13) e **classificada
-> como métrica de privacidade** (lar em `src/metrics/`), com o nome "ataque por
-> entropia" preservado como sua leitura adversarial. No modelo uniforme
-> `H = log₂(n_r)` é o `log₂` do tamanho de grupo já medido; o valor não-redundante
-> vem do grau de anonimato normalizado e do caminho de probabilidades não uniformes
-> (extensão validável). Detalhes em `docs/metrics_definitions.md`,
-> `docs/algorithm_notes.md` §4.4 e `docs/decision_log.md` D-17. Código ainda
-> **não iniciado**.
-
-[Serjantov & Danezis, 2002]: https://doi.org/10.1007/3-540-36467-6_4
-[Díaz et al., 2002]: https://doi.org/10.1007/3-540-36467-6_5
-
-### Escopo Aspiracional
-
-| Issue | Título | Dependência |
-|---|---|---|
-| [#31](https://github.com/chrisjulio/moduloreidentificacao/issues/31) | Implementação inicial de [Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004) | Alto esforço; comparação entre duas anonimizações |
-
-### Horizonte — integração com o EpiCNet
-
-Com o módulo de avaliação de risco consolidado, a integração futura com o
-framework central da tese deve ocorrer apenas por interfaces explícitas e schemas
-documentados. Pontos de ancoragem:
-- `docs/results_dsweep.md` como evidência metodológica para a qualificação.
-- Interface de entrada: grafo anonimizado/sintético + metadados de parâmetros.
-- Interface de saída: relatório de risco agregado (privacidade-vs-utilidade).
-- O módulo permanece arquiteturalmente independente do EpiCNet — ver
-  [`docs/scope.md`](docs/scope.md).
-
----
-
-## 13. Referências
+## 12. Referências
 [1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
 
 [2] [CORDELLA, L. P.; FOGGIA, P.; SANSONE, C.; VENTO, M.](https://doi.org/10.1109/TPAMI.2004.75) A (sub)graph isomorphism algorithm for matching large graphs. *IEEE Transactions on Pattern Analysis and Machine Intelligence*, v. 26, n. 10, p. 1367–1372, 2004.
