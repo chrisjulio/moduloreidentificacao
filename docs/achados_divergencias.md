@@ -86,7 +86,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 | ID | Ponto | Planejado | Executado | Status |
 |----|-------|-----------|-----------|--------|
 | B1 | `d=1` no baseline | Def. 2 sobre subgrafo de tamanho `d` | baseline mínimo = **d=1** → isomorfismo ≡ igualdade de grau; frase-síntese no README §5 e `results_baseline.md` (#108) | ✅ |
-| B2 | Datasets | Facebook (principal) + Email-Enron (secundário) | **só ego-rede 3437**; Enron e `multiple_egonets` não executados; validade externa declarada (#109) | ✅ |
+| B2 | Datasets | Facebook (principal) + Email-Enron (secundário) | Email-Enron **executado no S9** (#29: loader OR/#124, 12 runs/#127/#139, comparativo/#128); resíduo: `multiple_egonets` não executado; validade externa declarada (#109) e reforçada (#129) | ✅ |
 | B3 | Ataque por entropia | tier aspiracional | **não implementado** | ✅ |
 | B4 | Nettleton & Salas (2016) | tier aspiracional | **placeholder apenas** | ✅ |
 | B5 | YAML público | expor d, σ, s_max, partition_backend, isomorphism_mode | `config_example.yml` agora expõe d, σ, s_max, isomorphism_mode (#106); só `partition_backend` resta | ✅ |
@@ -300,6 +300,18 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   remetendo a `scope.md` §3, `limitations.md` §1.1 e `config_example.yml:46`.
   No baseline, a ressalva é declarada ortogonal às de B1 (`d`) e A1 (motor).
   Migração formal do status ⚠️→✅ na tabela-resumo **concluída em S8-8/#111**.
+- **Atualização (S9-7/#129) — gap de validade externa parcialmente fechado.** O
+  registro acima ("Enron não executado") era verdadeiro em S8; o ciclo **S9**
+  (issue-mãe #29) **executou** o secundário Email-Enron: loader OR (#124), config
+  (#126), 12 runs grau + subgrafo full (#127/#139) e comparativo (#128). O
+  resultado documentado em `docs/results_enron.md` mostra que as **tendências**
+  do He et al. (2009) se mantêm fora da topologia de ego-rede (subgrafo ≫ grau;
+  `rr_subgrafo` monótono em k), o que **fortalece** a validade externa antes
+  apenas declarada. **Resíduo aberto:** `multiple_egonets` do Facebook continua
+  **não executado** — a generalização *dentro* da família de ego-redes do
+  Facebook permanece aberta; o segundo dataset é de origem distinta (e-mail
+  corporativo), não uma segunda ego-rede. Status permanece ✅ (a ressalva está
+  documentada), agora com a evidência empírica do Enron acrescentada.
 
 ### B3 — Ataque por entropia não implementado
 
