@@ -92,7 +92,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 |----|-------|-----------|-----------|--------|
 | B1 | `d=1` no baseline | Def. 2 sobre subgrafo de tamanho `d` | baseline mínimo = **d=1** → isomorfismo ≡ igualdade de grau; frase-síntese no README §5 e `results_baseline.md` (#108) | ✅ |
 | B2 | Datasets | Facebook (principal) + Email-Enron (secundário) | Email-Enron **executado no S9** (#29: loader OR/#124, 12 runs/#127/#139, comparativo/#128); resíduo: `multiple_egonets` não executado; validade externa declarada (#109) e reforçada (#129) | ✅ |
-| B3 | Ataque por entropia | tier desejável (#30) | **implementado** (#30/D-17, baseline uniforme; métrica `entropy` em `src/metrics/` + apontador em `src/attacks/`); não uniforme → #148; branch `attack/entropy` aguardando merge | ✅ |
+| B3 | Ataque por entropia | tier desejável (#30) | **implementado** (#30/D-17, baseline uniforme; métrica `entropy` em `src/metrics/` + apontador em `src/attacks/`); não uniforme → #148; em `main` via PR #149 | ✅ |
 | B4 | Nettleton & Salas (2016) | tier aspiracional | **placeholder apenas** | ✅ |
 | B5 | YAML público | expor d, σ, s_max, partition_backend, isomorphism_mode | `config_example.yml` agora expõe d, σ, s_max, isomorphism_mode (#106); só `partition_backend` resta | ✅ |
 | B6 | Variante de isomorfização | add_only vs add_or_delete como parâmetro | `isomorphism_mode` agora **lido do YAML** e propagado (#105), coberto por testes (#112); default `add_or_delete` | ✅ |
@@ -337,8 +337,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   probabilidades **não uniformes** fica para a issue **#148** (sem milestone).
 - **Evidência.** `src/metrics/entropy.py`, `src/attacks/entropy.py`;
   `docs/decision_log.md` D-17; `docs/metrics_definitions.md`;
-  `docs/algorithm_notes.md` §4.4. **Branch `attack/entropy` aguardando merge** —
-  ainda não em `main` na data desta atualização.
+  `docs/algorithm_notes.md` §4.4. Em `main` via **PR #149** (mergeado).
 - **Impacto.** Acrescenta uma leitura de incerteza residual (bits / grau de
   anonimato) sobre os grupos de equivalência, reusando a partição já calculada;
   não substitui os ataques estruturais (grau/subgrafo).
