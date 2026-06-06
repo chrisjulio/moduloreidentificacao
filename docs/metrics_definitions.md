@@ -397,7 +397,7 @@ Leitura: `coverage_fraction=0.9962 >= 0.9` e `deficit_fully_structural=true`
 #### 7.1 Custo computacional do VF2 para `d > 20`
 
 Graph Isomorphism (GI) não é sabidamente polinomial nem NP-completo.
-`networkx.is_isomorphic` (VF2) é eficiente para LSs pequenas (`d ≤ 20`), mas
+`networkx.is_isomorphic` (VF2, [Cordella et al., 2004](https://doi.org/10.1109/TPAMI.2004.75)) é eficiente para LSs pequenas (`d ≤ 20`), mas
 pode degradar significativamente para `d` maiores:
 
 - Para `d ≤ 20`: custo por par de LSs é negligenciável na prática.

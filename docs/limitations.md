@@ -268,7 +268,8 @@ adicional a VF2.
 ### 2.5 Custo computacional do VF2 para d > 20
 
 **Descrição:** A verificação de isomorfismo usa `networkx.is_isomorphic`
-(algoritmo VF2). Graph Isomorphism (GI) não é sabidamente polinomial nem
+(algoritmo VF2, [Cordella et al., 2004](https://doi.org/10.1109/TPAMI.2004.75)).
+Graph Isomorphism (GI) não é sabidamente polinomial nem
 NP-completo; o custo empírico do VF2 pode crescer exponencialmente para
 LSs grandes. O custo total do verificador é `O(c_k · k² · f(d))`, onde
 `f(d)` é o custo de uma chamada VF2 sobre LSs de tamanho `d`.
@@ -282,7 +283,7 @@ Para `d > 20`, pré-filtros por invariantes baratos (distribuição de graus,
 espectro do Laplaciano) devem ser aplicados antes de invocar VF2.
 
 **Candidato a superação:** Sim — implementação de pré-filtros e avaliação
-de alternativas ao VF2 (ex.: Weisfeiler-Leman para heurística rápida).
+de alternativas ao VF2 (ex.: Weisfeiler-Leman, [Shervashidze et al., 2011](https://www.jmlr.org/papers/v12/shervashidze11a.html), para heurística rápida).
 
 **Referência:** `docs/algorithm_notes.md` §4.3.1;
 `docs/metrics_definitions.md` §7.1.
@@ -353,12 +354,16 @@ para o relatório de qualificação:
 
 ## 5. Referências
 
-[1] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+[1] [CORDELLA, L. P.; FOGGIA, P.; SANSONE, C.; VENTO, M.](https://doi.org/10.1109/TPAMI.2004.75) A (sub)graph isomorphism algorithm for matching large graphs. *IEEE Transactions on Pattern Analysis and Machine Intelligence*, v. 26, n. 10, p. 1367–1372, 2004.
 
-[2] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
+[2] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
 
-[3] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
+[3] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
 
-[4] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+[4] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
 
-[5] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
+[5] [SHERVASHIDZE, N.; SCHWEITZER, P.; VAN LEEUWEN, E. J.; MEHLHORN, K.; BORGWARDT, K. M.](https://www.jmlr.org/papers/v12/shervashidze11a.html) Weisfeiler-Lehman graph kernels. *Journal of Machine Learning Research*, v. 12, p. 2539–2561, 2011.
+
+[6] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+
+[7] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
