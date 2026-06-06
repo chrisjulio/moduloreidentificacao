@@ -1038,6 +1038,25 @@ associação controlada", "mensurar vulnerabilidade agregada" — nunca
 - `docs/scope.md` §3 (Enron declarado tier `[D]`) e §7 (condições éticas — dataset público desidentificado)
 - `src/loaders/` (loader a implementar em issue posterior do S9)
 
+### Status final (S9-7 / #129) — **Implementado e em produção**
+
+A regra OR deixou de ser intenção e passou a código efetivo. Cadeia de
+implementação do ciclo S9, toda em `main`:
+
+- **Loader** — `src/loaders/enron.py::load_enron` lê o edgelist SNAP em
+  `nx.DiGraph` e aplica `.to_undirected()` (projeção OR: `{u, v}` se `u→v` **ou**
+  `v→u`); pares recíprocos e de mão única colapsam para 1 aresta (#124, PR #132).
+- **Cobertura** — `tests/loaders/test_enron.py` valida OR para par recíproco e
+  par de mão única (entre 6 testes); runner cobre o dispatch
+  `name: enron → load_enron` com simetrização OR (`tests/experiments/test_run_enron_dataset.py`, #125).
+- **Execução** — projeção aplicada nas 12 runs do experimento secundário
+  (LCC após OR: **n=33.696, m=180.811**, grau médio ≈ 10,7), documentadas em
+  `docs/results_enron.md` e `summary.json` (`any_failure: false`).
+
+A **alternativa AND** (reciprocidade) permanece **rejeitada para o baseline** e
+**registrada como candidata a análise de sensibilidade futura** — não executada
+no S9 (fora de escopo do tier `[D]`). **Decisão encerrada.**
+
 
 
 ---

@@ -13,9 +13,36 @@
 
 **Data da última atualização:** 2026-06-06
 
-**Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
+**Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29) — **fechamento (S9-7/#129)**
 
 **Último passo concluído:**
+- **Issue #129 (S9-7): fechamento do ciclo S9 — revisão cruzada + Definição de
+  Pronto da #29. ✅ (docs).** Última issue do milestone S9. Verifiquei os
+  bloqueios via `gh` antes de começar: **todos os PRs do ciclo S9 estão `MERGED`**
+  — #143 (S9-6, `2026-06-05`) e #144 (#128 follow-up, `2026-06-06T11:16:36Z`)
+  inclusive (o `progress.md` os listava como pendentes; estado corrigido). **(1)
+  Cross-review de fidelidade** código↔config↔logs↔`results_enron.md`: config
+  `he2009_enron_secondary.yml` (d=1, σ=0,5, s_max=4, add_or_delete, sementes
+  [42,1337,2718], k∈{2,5,10,20}) bate com `summary.json` (12 runs, `any_failure:
+  false`, pymetis 12/12) e com o JSONL — spot-check k=2/seed=42 →
+  `rr_subgrafo=0,122893`, `rr_grau=0,003235`, `clust_var=0,015644`, `tmo=0`,
+  idênticos à tabela bruta de `results_enron.md`; `subgraph_timeout_count=0` nas
+  12 runs (gate D-13 trivial). **Nenhuma divergência silenciosa** entre os
+  artefatos do S9. **(2) Definição de Pronto da #29** conferida — 4/4 itens
+  cumpridos: loader OR (#124), config YAML (#126), execução grau+subgrafo hop=1
+  (#127/#139, 12 runs SUCCESS_PARTIAL), gráficos comparativos FB×Enron (#128).
+  *Edição do corpo da #29 (marcar checkboxes) bloqueada pelo classifier de
+  permissão — pendente de ação humana; veredito registrado aqui e no PR.* **(3)
+  D-11 (regra OR)** ganhou seção **"Status final (S9-7/#129) — Implementado e em
+  produção"** no `decision_log.md`: cadeia loader→testes→execução em `main`,
+  projeção aplicada às 12 runs (LCC n=33.696/m=180.811); alternativa AND
+  rejeitada e não executada; decisão encerrada. **(4) Achado B2** atualizado em
+  `achados_divergencias.md` (gap de validade externa **parcialmente fechado**: o
+  Enron foi executado no S9, reforçando a validade externa antes só declarada;
+  resíduo aberto = `multiple_egonets` ainda não executado) — linha-resumo e seção
+  detalhada. Somente docs; sem alteração em `src/` ou testes. Branch
+  `loader/enron-close` (`Closes #129`).
+
 - **Issue #128 — follow-up (revisão pós-merge do PR #143). ✅ (docs + nova
   visualização + testes).** Responde aos pontos da revisão de completude/acuidade
   feita na #128. **(1) D1/DL-04 — painel comparativo normalizado:** novo módulo
@@ -398,9 +425,13 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- Revisão humana e merge do PR `loader/enron-results` (S9-6/#128) → fechar #128.
-  **A pedido do humano (2026-06-05): não fechar a issue antes da análise do PR.**
-- **S9-7/#129:** fechamento do S9 (última issue do milestone).
+- Revisão humana e merge do PR `loader/enron-close` (S9-7/#129) → fechar #129
+  (última issue do milestone S9).
+- **Ação humana pendente:** marcar os 4 checkboxes da Definição de Pronto da #29
+  (todos cumpridos — veredito registrado acima/no PR; edição do corpo bloqueada
+  pelo classifier) e **avaliar encerramento da #29** (issue-mãe do Enron) — toda
+  a DoD do tier `[D]`-Enron concluída no S9. *Decisão de fechar fica com o humano
+  (workflow: issue fechada via PR/humano, não pelo agente).*
 - **Issue S10 de amostragem de nós-alvo + resiliência ficou OBSOLETA** (D-16: o
   full roda em minutos); não criar.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
@@ -408,9 +439,10 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR `loader/enron-results` (S9-6/#128) aguarda CI + revisão humana. #139 (S9-8)
-  já em `main` (PR #142, commit `f5aef79`); #127 (S9-5) em `main` (PR #138);
-  dependências S9-0..S9-4 (#122–#126) em `main`. Milestone S8 concluído; 17/17 ✅.
+- Nenhum bloqueio de dependência: **todos os PRs do ciclo S9 estão em `main`**
+  (S9-0..S9-4 #122–#126; S9-5 #127/PR#138; S9-6 #128/PR#143 + follow-up PR#144;
+  S9-8 #139/PR#142). PR `loader/enron-close` (S9-7/#129) aguarda CI + revisão
+  humana. Milestone S8 concluído; 17/17 ✅.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -436,6 +468,30 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-06 — Issue #129 (S9-7): fechamento do ciclo S9 — cross-review + DoD da #29
+
+- **Concluído:** Fechamento do milestone **S9** (Loader Email-Enron). Verifiquei
+  via `gh` que **todos os PRs do ciclo S9 estão `MERGED`** (incl. #143 e o
+  follow-up #144, `2026-06-06T11:16:36Z`) — `progress.md` os listava como
+  pendentes; corrigido. **(1) Cross-review de fidelidade**
+  código↔config↔logs↔`results_enron.md`: `he2009_enron_secondary.yml` bate com
+  `summary.json` (12 runs, `any_failure: false`, pymetis 12/12) e o JSONL
+  (spot-check k=2/seed=42 → rr_subgrafo=0,122893, rr_grau=0,003235,
+  clust_var=0,015644; `subgraph_timeout_count=0` nas 12 runs). **Sem divergências
+  silenciosas.** **(2) DoD da #29** conferida 4/4 (loader OR/#124, config/#126,
+  execução grau+subgrafo hop=1/#127/#139, gráficos comparativos/#128); edição dos
+  checkboxes no corpo da #29 **bloqueada pelo classifier** → veredito aqui e no
+  PR, marcação fica para o humano. **(3) D-11** com seção "Status final" no
+  `decision_log.md` (implementado e em produção; AND rejeitada/não executada;
+  encerrada). **(4) B2** atualizado em `achados_divergencias.md` (validade externa
+  parcialmente fechada pelo Enron; resíduo = `multiple_egonets`). Somente docs.
+  Branch `loader/enron-close` (`Closes #129`).
+- **Próximo:** Revisão humana + merge do PR → fechar #129. Ação humana: marcar
+  DoD da #29 e avaliar encerramento da issue-mãe #29; fechar #74 e (se aberta) #72.
+- **Bloqueios:** Nenhum — todo o ciclo S9 em `main`; PR `loader/enron-close`
+  aguarda CI + revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-06 — Issue #128 follow-up: painel normalizado + notas de revisão (C1/C2/B), DL-04
 
