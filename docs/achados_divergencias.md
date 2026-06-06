@@ -67,6 +67,11 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 > `s_max`/`fsm_max_size` e `isomorphism_mode` passaram a ser **efetivamente
 > lidas** pelo runner) — um desfecho que vai além da intenção original da §4.
 
+> **Auditoria de sanitização (2026-06-06, #30).** Acrescentado o **Grupo C**
+> (amparo bibliográfico): **C1** (VF2 e hash Weisfeiler-Lehman nomeados sem
+> referência) e **C2** (consistência bibliografia↔uso no README) — ambos ✅ após
+> esta sessão. Total: **19 achados ✅**.
+
 ### Grupo A — Artigo (He et al. 2009) × implementação
 
 | ID | Ponto | Proposto | Executado | Status |
@@ -87,12 +92,19 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 |----|-------|-----------|-----------|--------|
 | B1 | `d=1` no baseline | Def. 2 sobre subgrafo de tamanho `d` | baseline mínimo = **d=1** → isomorfismo ≡ igualdade de grau; frase-síntese no README §5 e `results_baseline.md` (#108) | ✅ |
 | B2 | Datasets | Facebook (principal) + Email-Enron (secundário) | Email-Enron **executado no S9** (#29: loader OR/#124, 12 runs/#127/#139, comparativo/#128); resíduo: `multiple_egonets` não executado; validade externa declarada (#109) e reforçada (#129) | ✅ |
-| B3 | Ataque por entropia | tier aspiracional | **não implementado** | ✅ |
+| B3 | Ataque por entropia | tier desejável (#30) | **implementado** (#30/D-17, baseline uniforme; métrica `entropy` em `src/metrics/` + apontador em `src/attacks/`); não uniforme → #148; branch `attack/entropy` aguardando merge | ✅ |
 | B4 | Nettleton & Salas (2016) | tier aspiracional | **placeholder apenas** | ✅ |
 | B5 | YAML público | expor d, σ, s_max, partition_backend, isomorphism_mode | `config_example.yml` agora expõe d, σ, s_max, isomorphism_mode (#106); só `partition_backend` resta | ✅ |
 | B6 | Variante de isomorfização | add_only vs add_or_delete como parâmetro | `isomorphism_mode` agora **lido do YAML** e propagado (#105), coberto por testes (#112); default `add_or_delete` | ✅ |
 | B7 | Diagnóstico de `reid_sub=0` | — | log do d-sweep gerado **sem** contagem de timeouts; zeros genuínos (H3 descartada por inspeção); campos retroativos (#93/#109) | ✅ |
 | B8 | Critério do marco | verificação binária | rebaixado p/ `satisfied_fraction≥0.9` + `deficit_fully_structural` | ✅ |
+
+### Grupo C — Amparo bibliográfico das técnicas (auditoria de sanitização, #30, 2026-06-06)
+
+| ID | Ponto | Achado | Resolução | Status |
+|----|-------|--------|-----------|--------|
+| C1 | Técnicas sem referência | **VF2** (ataque por subgrafo + verificador) e **hash Weisfeiler-Lehman** (D-16; forma canônica do FSM) eram nomeados em todo o repo **sem nenhuma referência bibliográfica** | [Cordella et al. (2004)](https://doi.org/10.1109/TPAMI.2004.75) (VF2) e [Shervashidze et al. (2011)](https://www.jmlr.org/papers/v12/shervashidze11a.html) (WL) adicionados ao README §13 e às menções/listas de `algorithm_notes`, `limitations`, `achados_divergencias`, `decision_log`, `scope`, `metrics_definitions` | ✅ |
+| C2 | Bibliografia × uso (README) | README §13 listava 12 refs; só 4 (He, Nettleton, Serjantov, Díaz) eram citadas no corpo do README — 8 só apareciam em listas de docs locais (ex.: Leskovec & McAuley, fonte do dataset, nunca citada inline) | Citações inline acrescentadas ao corpo do README (Leskovec, Karypis, Wörlein, Sweeney, Liu, Zhou, Backstrom, Narayanan); Díaz/Serjantov acrescentados à lista local de `algorithm_notes` §10 | ✅ |
 
 ---
 
@@ -132,7 +144,8 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
 - **Proposto.** FSM genérico (Wörlein et al. 2005, família gSpan), sem
   implementação especificada.
 - **Executado.** FSM simplificado por enumeração de subgrafos conexos induzidos
-  até `s_max`, com forma canônica via hash Weisfeiler-Lehman (evita
+  até `s_max`, com forma canônica via hash Weisfeiler-Lehman
+  ([Shervashidze et al., 2011](https://www.jmlr.org/papers/v12/shervashidze11a.html); evita
   `is_isomorphic` par a par na fase de FSM). `s_max=4` é **hardcoded**: nem
   `anonymize()` nem o runner passam `fsm_max_size` → default 4. Para `d>4`, o
   FSM nunca enxerga o padrão completo da LS, só subgrafos de até 4 nós.
@@ -313,14 +326,23 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   corporativo), não uma segunda ego-rede. Status permanece ✅ (a ressalva está
   documentada), agora com a evidência empírica do Enron acrescentada.
 
-### B3 — Ataque por entropia não implementado
+### B3 — Ataque por entropia (#30): implementado como métrica (baseline uniforme)
 
-- **Planejado.** Tier aspiracional/desejável (escopo §3 `[A]`).
-- **Executado.** Não implementado. Apenas grau e subgrafo.
-- **Evidência.** `scope.md` §3; limitations §1.4; ausência em `src/attacks/`.
-- **Impacto.** A taxa de reidentificação medida é cota inferior da
-  vulnerabilidade real (adversários mais ricos poderiam superá-la).
-- **Status.** ✅ Documentado.
+- **Planejado.** Tier aspiracional/desejável (escopo §3 `[A]→[D]`).
+- **Executado.** **Implementado** na #30 (D-17): `src/metrics/entropy.py`
+  (`entropy_metrics` → `entropy_mean`, `degree_of_anonymity`,
+  `reidentification_rate_entropy`) com `src/attacks/entropy.py` como apontador de
+  leitura adversarial. Classificado como **métrica de privacidade**, não ataque
+  autônomo (D-17). Apenas o **baseline uniforme** (`H = log₂(n_r)`); o caminho de
+  probabilidades **não uniformes** fica para a issue **#148** (sem milestone).
+- **Evidência.** `src/metrics/entropy.py`, `src/attacks/entropy.py`;
+  `docs/decision_log.md` D-17; `docs/metrics_definitions.md`;
+  `docs/algorithm_notes.md` §4.4. **Branch `attack/entropy` aguardando merge** —
+  ainda não em `main` na data desta atualização.
+- **Impacto.** Acrescenta uma leitura de incerteza residual (bits / grau de
+  anonimato) sobre os grupos de equivalência, reusando a partição já calculada;
+  não substitui os ataques estruturais (grau/subgrafo).
+- **Status.** ✅ Implementado (baseline uniforme); caminho não uniforme aberto (#148).
 
 ### B4 — Nettleton & Salas (2016): apenas placeholder
 
@@ -504,6 +526,57 @@ Pontos onde a documentação existente ainda descrevia o *proposto* como se foss
 
 ---
 
+## 4.1 Grupo C — Amparo bibliográfico das técnicas (auditoria de sanitização da #30)
+
+> **Data:** 2026-06-06. **Origem:** passo de sanitização de fim de issue (#30) —
+> verificar que toda técnica/metodologia/processo formalmente nomeada está amparada
+> na literatura apresentada, e que a bibliografia é consistente com o uso. Diferente
+> dos Grupos A/B (artigo×implementação e plano×execução), o Grupo C audita o
+> **amparo bibliográfico** do repositório.
+
+### C1 — Técnicas algorítmicas nomeadas sem referência (VF2, Weisfeiler-Lehman)
+
+- **Achado.** Duas técnicas algorítmicas centrais eram nomeadas em README e docs
+  sem qualquer referência bibliográfica em todo o repositório:
+  - **VF2** — motor de isomorfismo de (sub)grafo usado tanto no ataque por subgrafo
+    (`src/attacks/subgraph.py`) quanto no verificador de k-anonimato
+    (`validation.py`, via `nx.is_isomorphic`).
+  - **Weisfeiler-Lehman graph hash** — base do bucketing que viabilizou o ataque por
+    subgrafo *full* no Enron (D-16) e da forma canônica do FSM simplificado (A2).
+- **Por que importa.** A corretude dos resultados depende de propriedades dessas
+  técnicas (ex.: "WL é invariante necessário ⇒ nenhum isomorfo é perdido", D-16;
+  custo do VF2, D-05/D-09) que a banca só pode auditar a partir da fonte primária.
+- **Resolução.** Adicionadas as referências canônicas — [Cordella et al. (2004)](https://doi.org/10.1109/TPAMI.2004.75)
+  para o VF2 e [Shervashidze et al. (2011)](https://www.jmlr.org/papers/v12/shervashidze11a.html)
+  para o WL — ao README §13 (bibliografia canônica) e citadas no ponto de uso em
+  `algorithm_notes` §2.3, `limitations` §2.5, `achados_divergencias` A2,
+  `decision_log` D-09/D-16, `scope.md` e `metrics_definitions` §7.1.
+- **Não citados deliberadamente.** Kernighan-Lin (fallback de partição, D-04) e o
+  teste de Kolmogorov-Smirnov (métrica de utilidade) permanecem **sem referência
+  primária**: o primeiro é função de biblioteca (`networkx`) em papel secundário; o
+  segundo é teste estatístico de manual, já operacionalizado em
+  `metrics_definitions`. Critério: citar o que sustenta uma alegação metodológica
+  auditável; tratar método de manual/biblioteca como conhecimento comum.
+
+### C2 — Consistência bibliografia ↔ uso no README
+
+- **Achado.** O README §13 ("Referências") listava 12 obras, mas o corpo do README
+  citava por nome-autor apenas **4** (He et al., Nettleton & Salas, Serjantov &
+  Danezis, Díaz et al.). As outras 8 (Backstrom; Karypis & Kumar; Leskovec & McAuley;
+  Liu & Terzi; Narayanan & Shmatikov; Sweeney; Wörlein et al.; Zhou & Pei) só
+  apareciam citadas em docs locais (`scope.md`, `algorithm_notes.md`,
+  `limitations.md`), não no corpo do README — em particular **Leskovec & McAuley
+  (2012)**, fonte do próprio dataset Facebook, nunca era citada inline.
+- **Resolução.** Citações inline adicionadas ao corpo do README nos pontos naturais
+  (dataset→Leskovec; pymetis→Karypis; FSM→Wörlein; grupos de equivalência→Sweeney;
+  rr_grau→Liu & Terzi; rr_subgrafo→Zhou & Pei; validade de construção→Backstrom,
+  Narayanan). Com VF2/WL (C1) também citados, **todas as 14 entradas da §13 passam a
+  ser citadas no corpo** — a §13 torna-se uma lista de *referências citadas* honesta.
+  Resíduo menor corrigido em paralelo: Díaz e Serjantov, citados em `algorithm_notes`
+  §4.4, faltavam na lista §10 daquele doc — acrescentados.
+
+---
+
 ## 5. Referências cruzadas
 
 - `docs/decision_log.md` — D-01 a D-10, DL-01, DL-02, DL-03 (fonte primária das decisões).
@@ -518,14 +591,18 @@ Pontos onde a documentação existente ainda descrevia o *proposto* como se foss
 
 ## 6. Referências bibliográficas
 
-[1] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *WI-IAT 2009*. IEEE, 2009. p. 647–654.
+[1] [CORDELLA, L. P.; FOGGIA, P.; SANSONE, C.; VENTO, M.](https://doi.org/10.1109/TPAMI.2004.75) A (sub)graph isomorphism algorithm for matching large graphs. *IEEE Trans. Pattern Anal. Mach. Intell.*, v. 26, n. 10, p. 1367–1372, 2004.
 
-[2] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM J. Sci. Comput.*, v. 20, n. 1, p. 359–392, 1998.
+[2] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *WI-IAT 2009*. IEEE, 2009. p. 647–654.
 
-[3] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *SIGMOD 2008*. ACM, 2008. p. 93–106.
+[3] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM J. Sci. Comput.*, v. 20, n. 1, p. 359–392, 1998.
 
-[4] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
+[4] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *SIGMOD 2008*. ACM, 2008. p. 93–106.
 
-[5] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *PKDD 2005*. Springer, 2005. p. 392–403.
+[5] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
 
-[6] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *ICDE 2008*. IEEE, 2008. p. 506–515.
+[6] [SHERVASHIDZE, N.; SCHWEITZER, P.; VAN LEEUWEN, E. J.; MEHLHORN, K.; BORGWARDT, K. M.](https://www.jmlr.org/papers/v12/shervashidze11a.html) Weisfeiler-Lehman graph kernels. *Journal of Machine Learning Research*, v. 12, p. 2539–2561, 2011.
+
+[7] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *PKDD 2005*. Springer, 2005. p. 392–403.
+
+[8] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *ICDE 2008*. IEEE, 2008. p. 506–515.

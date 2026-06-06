@@ -47,7 +47,7 @@ mecanismo de privacidade do framework integrado da tese. A unidade de progresso
 | Eixo | Decisão | Justificativa breve |
 |---|---|---|
 | Temporal | Estático | Replicação direta de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108); extensão temporal é Fase 2 da tese. |
-| Dataset principal | Facebook Ego-Nets (SNAP) | Validação alinhada com a literatura contemporânea de privacidade. |
+| Dataset principal | Facebook Ego-Nets (SNAP) | Ego-redes de [Leskovec & McAuley (2012)](https://dl.acm.org/doi/10.5555/2999134.2999195); validação alinhada com a literatura contemporânea de privacidade. |
 | Dataset secundário | Email-Enron (SNAP) ✅ | Implementado e executado no S9 (tier Desejável); projeção direcionado→não-dir. por simetrização OR (D-11). Amplia a validade externa para fora da topologia de ego-rede. |
 | Anonimização primária | [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) | Algoritmo mais simples e mais bem documentado; ponto de entrada limpo. |
 | Anonimização aspiracional | [Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004) | Inclui atributos e t-closeness; fora do escopo do baseline. |
@@ -74,7 +74,8 @@ Definições completas dos parâmetros em [`docs/data_dictionary.md`](docs/data_
 **Privacidade**
 - Taxa de reidentificação por ataque (proporção de nós-alvo corretamente
   associados a seu rótulo interno).
-- Tamanho médio e mediano dos grupos de equivalência produzidos pela anonimização.
+- Tamanho médio e mediano dos grupos de equivalência produzidos pela anonimização
+  (vocabulário de k-anonimato tabular, [Sweeney, 2002](https://doi.org/10.1142/S0218488502001648)).
 
 **Utilidade**
 - KS-test (estatística D) sobre a distribuição de grau (original vs. anonimizado).
@@ -109,7 +110,8 @@ O resumo operacional está abaixo.
 Definições completas dos parâmetros de configuração em [`docs/data_dictionary.md`](docs/data_dictionary.md) §1.
 </details>
 
-O backend de particionamento `pymetis` é **opcional**. Quando ausente, o algoritmo
+O backend de particionamento `pymetis` (multilevel *k*-way de
+[Karypis & Kumar, 1998](https://doi.org/10.1137/S1064827595287997)) é **opcional**. Quando ausente, o algoritmo
 recai automaticamente para o backend Kernighan-Lin (decisão **D-04** — ver
 [`docs/decision_log.md`](docs/decision_log.md)). Essa escolha **afeta a
 reprodução**: backends diferentes produzem partições diferentes. Em Windows,
@@ -242,7 +244,8 @@ como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos
 
 **S1–S2 — anonimização e validação**
 - `src/anonymization/he2009.py` — pipeline completo: `partition_graph`,
-  `_group_local_structures` (FSM+MF), `_modify_structure`, `_reconnect_inter_edges`,
+  `_group_local_structures` (FSM+MF — FSM na linha de [Wörlein et al., 2005](https://doi.org/10.1007/11564126_32)),
+  `_modify_structure`, `_reconnect_inter_edges`,
   `anonymize(g, k, d, seed)`. Backend de particionamento em
   `src/anonymization/_partition_backend.py`.
 - `src/anonymization/validation.py` — auditor independente
@@ -262,6 +265,7 @@ como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos
 - `src/attacks/degree.py` — ataque por grau
   (`degree_attack(g_orig, g_anon, target, tolerance=0) → bool`).
 - `src/attacks/subgraph.py` — ataque por subgrafos via VF2
+  ([Cordella et al., 2004](https://doi.org/10.1109/TPAMI.2004.75))
   (`subgraph_attack(g_orig, g_anon, target, hop=1, timeout=None) → bool`).
 - `src/metrics/` — 4 métricas: `reidentification_rate`, `equivalence_group_size`,
   `ks_test_degree`, `clustering_variation`.
@@ -320,7 +324,8 @@ como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos
 - `experiments/run.py` — `load_dataset` estendido com o branch `enron`.
 - `experiments/configs/he2009_enron_secondary.yml` — config do experimento
   secundário (d=1, sigma=0.5, s_max=4, k ∈ {2,5,10,20}, 3 sementes, pymetis).
-- `src/attacks/subgraph.py` — caminho rápido por bucketing de WL-hash (D-16),
+- `src/attacks/subgraph.py` — caminho rápido por bucketing de WL-hash
+  ([Shervashidze et al., 2011](https://www.jmlr.org/papers/v12/shervashidze11a.html); D-16),
   que torna o ataque por subgrafo *full* viável em grafos grandes (resolve D-15).
 - `experiments/make_enron_table.py` — gerador de `docs/results_enron.md` a partir
   do log JSONL do Enron.
@@ -367,8 +372,8 @@ como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos
 | `k` | Parâmetro de k-anonimato configurado na anonimização He et al. (2009). Define o tamanho mínimo dos grupos de equivalência estrutural. Valores testados: `{2, 5, 10, 20}` — do mais fraco ao mais forte. |
 | `Veredito` | Resultado da auditoria do verificador independente (`validation.py`). `SUCCESS_FULL` = cobertura total (todos os nós em grupos ≥ k). `SUCCESS_PARTIAL` = cobertura ≥ 0.9 com nós residuais atribuíveis ao grupo incompleto estrutural (D-06). |
 | `coverage_fraction` | Fração dos nós do grafo anonimizado `G'` em grupos de equivalência com tamanho ≥ k. `1.0` = cobertura total; valores < `1.0` indicam nós residuais do grupo incompleto final (D-06 — aceitável). |
-| `rr_grau` | Taxa de reidentificação por grau: `N_correto / N_total` usando apenas a assinatura de grau do nó (`tolerance=0`). Modelo adversarial mais fraco — linha de base. |
-| `rr_subgrafo` | Taxa de reidentificação por subgrafo: `N_correto / N_total` por isomorfismo de vizinhança 1-hop (VF2, `timeout=60 s`). Modelo mais próximo do adversarial de He et al. Cota teórica: `≤ 1/k` sob k-anonimato pleno. |
+| `rr_grau` | Taxa de reidentificação por grau: `N_correto / N_total` usando apenas a assinatura de grau do nó (`tolerance=0`). Modelo adversarial mais fraco — linha de base; análogo ao k-degree anonymity de [Liu & Terzi (2008)](https://doi.org/10.1145/1376616.1376629). |
+| `rr_subgrafo` | Taxa de reidentificação por subgrafo: `N_correto / N_total` por isomorfismo de vizinhança 1-hop (ataque de vizinhança na linha de [Zhou & Pei, 2008](https://doi.org/10.1109/ICDE.2008.4497459); VF2, `timeout=60 s`). Modelo mais próximo do adversarial de He et al. Cota teórica: `≤ 1/k` sob k-anonimato pleno. |
 | `KS-D` | Estatística D do KS-test entre distribuições de grau de `G` e `G'`. `0.0` = idênticas (utilidade máxima); `1.0` = completamente distintas. |
 | `clustering_var` | Variação relativa do clustering médio: `|CC(G') − CC(G)| / CC(G)`. `0.0` = clustering totalmente preservado. |
 
@@ -577,8 +582,10 @@ Em resumo:
   comparativo cruza motores de partição não-pareados (KL × pymetis, baixa
   magnitude — C2). Sem redes temporais e sem dados sintéticos nesta fase.
 - **Validade de construção.** A "reidentificação" medida é acerto contra rótulos
-  internos de nós, não identificação de pessoas; similaridade estrutural não é
-  identidade.
+  internos de nós, não identificação de pessoas — ao contrário da de-anonimização
+  real de datasets ([Backstrom et al., 2007](https://doi.org/10.1145/1242572.1242598);
+  [Narayanan & Shmatikov, 2008](https://doi.org/10.1109/SP.2008.33)); similaridade
+  estrutural não é identidade.
 - **Validade ética.** O módulo opera apenas com datasets públicos desidentificados,
   em ciclo experimental fechado, sem cruzamento com bases pessoais externas e com
   saídas agregadas.
@@ -705,27 +712,31 @@ documentados. Pontos de ancoragem:
 ## 13. Referências
 [1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
 
-[2] [DÍAZ, C.; SEYS, S.; CLAESSENS, J.; PRENEEL, B.](https://doi.org/10.1007/3-540-36467-6_5) Towards measuring anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 54–68. (Lecture Notes in Computer Science, v. 2482).
+[2] [CORDELLA, L. P.; FOGGIA, P.; SANSONE, C.; VENTO, M.](https://doi.org/10.1109/TPAMI.2004.75) A (sub)graph isomorphism algorithm for matching large graphs. *IEEE Transactions on Pattern Analysis and Machine Intelligence*, v. 26, n. 10, p. 1367–1372, 2004.
 
-[3] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+[3] [DÍAZ, C.; SEYS, S.; CLAESSENS, J.; PRENEEL, B.](https://doi.org/10.1007/3-540-36467-6_5) Towards measuring anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 54–68. (Lecture Notes in Computer Science, v. 2482).
 
-[4] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
+[4] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
 
-[5] [LESKOVEC, J.; MCAULEY, J. J.](https://dl.acm.org/doi/10.5555/2999134.2999195) Learning to discover social circles in ego networks. In: *Advances in Neural Information Processing Systems (NIPS 2012)*. [S. l.]: Curran Associates, 2012. p. 539–547.
+[5] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
 
-[6] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
+[6] [LESKOVEC, J.; MCAULEY, J. J.](https://dl.acm.org/doi/10.5555/2999134.2999195) Learning to discover social circles in ego networks. In: *Advances in Neural Information Processing Systems (NIPS 2012)*. [S. l.]: Curran Associates, 2012. p. 539–547.
 
-[7] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
+[7] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
 
-[8] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
+[8] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
 
-[9] [SERJANTOV, A.; DANEZIS, G.](https://doi.org/10.1007/3-540-36467-6_4) Towards an information theoretic metric for anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 41–53. (Lecture Notes in Computer Science, v. 2482).
+[9] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
 
-[10] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+[10] [SERJANTOV, A.; DANEZIS, G.](https://doi.org/10.1007/3-540-36467-6_4) Towards an information theoretic metric for anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 41–53. (Lecture Notes in Computer Science, v. 2482).
 
-[11] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+[11] [SHERVASHIDZE, N.; SCHWEITZER, P.; VAN LEEUWEN, E. J.; MEHLHORN, K.; BORGWARDT, K. M.](https://www.jmlr.org/papers/v12/shervashidze11a.html) Weisfeiler-Lehman graph kernels. *Journal of Machine Learning Research*, v. 12, p. 2539–2561, 2011.
 
-[12] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
+[12] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+
+[13] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+
+[14] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
 
 ---
 

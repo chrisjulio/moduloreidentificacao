@@ -16,6 +16,24 @@
 **Semana corrente:** S6 — Ataque/métrica por entropia (tier desejável, issue #30).
 
 **Último passo concluído:**
+- **Sanitização de fim de issue (#30): auditoria de amparo bibliográfico. ✅
+  (docs).** Verificação de que toda técnica/metodologia/processo formalmente
+  nomeada está amparada na literatura apresentada (item 1) + consistência
+  bibliografia↔uso (item 3). **Dois achados** (novo **Grupo C** em
+  `achados_divergencias.md`): **C1** — **VF2** (Cordella et al. 2004) e **hash
+  Weisfeiler-Lehman** (Shervashidze et al. 2011) eram nomeados em todo o repo
+  **sem referência**; adicionados ao README §13 e citados no ponto de uso em
+  `algorithm_notes` §2.3, `limitations` §2.5, `achados` A2, `decision_log`
+  D-09/D-16, `scope` e `metrics_definitions` §7.1. **C2** — o corpo do README
+  citava só **4 das 12** refs da §13; citações inline acrescentadas (Leskovec,
+  Karypis, Wörlein, Sweeney, Liu, Zhou, Backstrom, Narayanan) → as **14** entradas
+  da §13 (12 + VF2 + WL) passam a ser citadas no corpo, tornando-a lista de
+  *referências citadas* honesta. **KL e KS** deixados **sem** referência primária
+  por decisão (função de biblioteca / teste de manual). Resíduo menor:
+  Díaz/Serjantov acrescentados à lista §10 de `algorithm_notes` (citados em §4.4,
+  faltavam na lista). Também migrado **B3** (ataque por entropia) para
+  *implementado* (#30/D-17, baseline uniforme; branch `attack/entropy` aguardando
+  merge). Só docs; sem alteração em `src/` ou testes.
 - **Issue #30 (S6 / D-17): métrica de entropia — baseline uniforme. ✅ (código +
   testes).** Implementada a parte decidida por D-17 (caminho uniforme). **(1)**
   `src/metrics/entropy.py` (**lar primário**): `entropy_metrics(groups, tau=0.0)`
@@ -488,6 +506,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-06 — Sanitização de fim de issue (#30): auditoria de amparo bibliográfico
+
+- **Concluído:** Auditoria de literatura (itens 1 e 3): toda técnica formalmente
+  nomeada × amparo, e bibliografia × uso. Achados no novo **Grupo C** de
+  `achados_divergencias.md` — **C1** (VF2/WL sem referência → [Cordella et al. 2004]
+  + [Shervashidze et al. 2011] adicionados ao README §13 e citados no ponto de uso
+  em 6 docs) e **C2** (corpo do README citava 4/12 refs → citações inline para as 8
+  restantes; §13 com 14 entradas, todas citadas). KL/KS mantidos sem referência
+  primária (biblioteca/manual). README atualizado (§13 + citações inline em
+  §2/§3/§4/§5/§8). Resíduo menor: Díaz/Serjantov acrescentados à lista §10 de
+  `algorithm_notes`. Migrado também **B3** (ataque por entropia) para
+  *implementado* (#30/D-17, baseline uniforme; branch `attack/entropy` aguardando
+  merge). Só docs; sem alteração em `src/` ou testes.
+- **Próximo:** Revisão humana dos docs; merge do PR de entropia (#30) — Claude Code
+  não faz merge. Não iniciar #148 sem decisão D-xx. Housekeeping: fechar #74 e (se
+  aberta) #72.
+- **Bloqueios:** Nenhum novo (auditoria é só-docs). PR `attack/entropy` (#30) segue
+  aguardando CI + revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-06 — Issue #30 (S6 / D-17): métrica de entropia — baseline uniforme
 

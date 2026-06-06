@@ -913,6 +913,7 @@ A implementação do pré-filtro é candidata a extensão de tier aspiracional.
 - Issue #76 (checkbox 4 — avaliação e decisão sobre pré-filtro)
 - `src/anonymization/validation.py` — `validate_k_anonymity` (condição 3)
 - `tests/anonymization/test_he2009_d_validator.py` — G5(a) testes
+- Cordella, L. P. et al. *A (sub)graph isomorphism algorithm for matching large graphs.* IEEE TPAMI, v. 26, n. 10, p. 1367–1372, 2004 (algoritmo VF2). DOI 10.1109/TPAMI.2004.75.
 
 ---
 
@@ -1408,6 +1409,8 @@ compatibilidade de schema (DL-02); a chave `timeout` na config torna-se vestigia
 - B1 (`d=1` afere k-anonimato de grau, não estrutura 1-hop)
 - `src/attacks/subgraph.py`, `experiments/run.py`, `tests/attacks/test_subgraph.py`
 - Issues #139 (esta), #127 (estende), #128 (consome), #129 (fechamento / DoD #29)
+- Shervashidze, N. et al. *Weisfeiler-Lehman Graph Kernels.* JMLR, v. 12, p. 2539–2561, 2011 (base do WL graph hash). URL: https://www.jmlr.org/papers/v12/shervashidze11a.html.
+- Cordella, L. P. et al. *A (sub)graph isomorphism algorithm for matching large graphs.* IEEE TPAMI, v. 26, n. 10, p. 1367–1372, 2004 (VF2 brute-force, baseline de exatidão). DOI 10.1109/TPAMI.2004.75.
 
 ---
 

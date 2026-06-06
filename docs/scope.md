@@ -85,7 +85,7 @@ Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
   ponto de comparação na curva privacidade-vs-utilidade.
 - `[M]` Executa ataque de reidentificação **por grau** contra a saída do pipeline.
 - `[M]` Executa ataque de reidentificação **por subgrafos** (isomorfismo de vizinhança
-  k-hop via VF2) contra a saída do pipeline.
+  k-hop via VF2, [Cordella et al., 2004](https://doi.org/10.1109/TPAMI.2004.75)) contra a saída do pipeline.
 - `[D]` Calcula a **entropia de reidentificação / grau de anonimato** a partir dos
   grupos de equivalência (issue #30, milestone S6). Reconciliada de `[A]` para `[D]`
   (coerente com o rótulo `desejavel` e o milestone da #30). **Classificada como
