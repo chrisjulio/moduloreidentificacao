@@ -11,11 +11,32 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-05
+**Data da última atualização:** 2026-06-06
 
 **Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29)
 
 **Último passo concluído:**
+- **Issue #128 — follow-up (revisão pós-merge do PR #143). ✅ (docs + nova
+  visualização + testes).** Responde aos pontos da revisão de completude/acuidade
+  feita na #128. **(1) D1/DL-04 — painel comparativo normalizado:** novo módulo
+  `src/visualization/comparison.py` (+14 testes em `tests/visualization/`) gera um
+  painel de 2 eixos **normalizados** — (A) `rr_subgrafo·k` = fração da cota `1/k`
+  (linha em 1,0; mostra os cruzamentos: FB acima da cota em k∈{2,5,10}, Enron
+  cruzando em k=20; curvas se cruzam ~k≈14) e (B) decaimento relativo
+  `rr(k)/rr(k_min)` (forma da curva, magnitude removida). Snapshot **versionado**
+  em `docs/assets/comparison_fb_enron.{png,csv}` (exceção documentada à regra de
+  gitignore — artefato auditável da banca, regenerável). Embed + explicação +
+  cruzamentos em `results_enron.md`; decisão registrada como **DL-04**
+  (`decision_log.md`). **(2) C1 — cota `1/k`:** nota explícita de que `rr_subgrafo
+  ≤ 1/k` pressupõe k-anon da estrutura inspecionada (`d≥2`) e **não vale em `d=1`**
+  (B1) → violação esperada em k=20 (0,057>0,050), não bug; em `results_enron.md`
+  e `data_dictionary.md`. **(3) C2 — motor não-pareado:** ameaça à validade interna
+  (KL×pymetis, baixa magnitude) em `results_enron.md` e `limitations.md` §3/§4.
+  **(4) B/D4 — arredondamento:** tabela bruta de `make_enron_table.py` agora em 6
+  casas + nota de que o agregado usa precisão plena (`média(arredondados) ≠
+  arredondamento(média)`). Suíte **595 passed** (+14), ruff limpo. Branch
+  `docs/results-enron-followup`.
+
 - **Issue #128 (S9-6): comparativo Facebook × Enron + `docs/results_enron.md`
   (tier desejável, issue-mãe #29). ✅ (gerador + docs).** Consome os 12 runs do
   Enron já com a curva **grau × subgrafo** (D-16). **(1) Gerador**
@@ -415,6 +436,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-06 — Issue #128 follow-up: painel normalizado + notas de revisão (C1/C2/B), DL-04
+
+- **Concluído:** Resolvi os pontos da revisão pós-merge da #128 (PR #143 já em
+  `main`). **D1/DL-04:** novo `src/visualization/comparison.py` (+14 testes) gera o
+  painel comparativo **normalizado** FB×Enron — (A) `rr_subgrafo·k` (fração da cota
+  1/k, com cruzamentos: FB acima da cota em k∈{2,5,10}, Enron cruza em k=20, curvas
+  se cruzam ~k≈14) e (B) decaimento relativo (forma da curva). Snapshot versionado
+  em `docs/assets/comparison_fb_enron.{png,csv}` (exceção documentada ao gitignore,
+  regenerável). Embed/explicação em `results_enron.md`; **DL-04** no `decision_log.md`.
+  **C1:** nota de que `rr_subgrafo ≤ 1/k` só vale sob k-anon da estrutura atacada
+  (`d≥2`), não em `d=1` (B1) → violação esperada em k=20, não bug
+  (`results_enron.md` + `data_dictionary.md`). **C2:** ameaça à validade interna
+  KL×pymetis (baixa) em `results_enron.md` + `limitations.md` §3/§4. **B/D4:** tabela
+  bruta em 6 casas + nota de precisão plena no agregado. Suíte **595 passed**, ruff
+  limpo. Branch `docs/results-enron-followup`.
+- **Próximo:** Revisão humana do PR de follow-up → merge. **#128 segue aberta** até
+  o merge (condição do humano). Depois #129 (fechamento S9).
+- **Bloqueios:** PR `docs/results-enron-followup` aguarda CI + revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-05 — Issue #128 (S9-6): comparativo Facebook × Enron + results_enron.md
 
