@@ -49,24 +49,39 @@ A comparação direta dos valores absolutos é **confundida** por três diferen�
 - **Grau já residual.** O `rr_grau` é baixíssimo no Enron (≤0,003) — uma ordem de grandeza abaixo do Facebook — coerente com a escala: assinaturas de grau isoladas quase nunca são únicas numa rede grande.
 - **Utilidade melhor preservada em escala.** O KS-D do Enron permanece baixo (0,04–0,13) onde o Facebook chega a 0,65: perturbar uma rede grande desloca a distribuição global de grau proporcionalmente menos. A anonimização é **menos custosa em utilidade** numa rede grande.
 
+### Painel comparativo normalizado (gráfico complementar)
+
+Como sobrepor as magnitudes brutas é enganoso (acima), o painel abaixo torna as duas redes legíveis nos **mesmos eixos** por **normalização** — é um complemento ao comparativo, não um substituto dos gráficos por dataset. Gerado por `python -m src.visualization.comparison` (dados em `docs/assets/comparison_fb_enron.csv`).
+
+![Comparativo normalizado Facebook × Enron — ataque por subgrafo](assets/comparison_fb_enron.png)
+
+- **Painel (A) — fração da cota `1/k`** (`rr_subgrafo · k`, linha pontilhada em `1,0`). Acima de `1,0` a cota teórica `rr ≤ 1/k` é **violada** — esperado no regime `d=1`, em que o ataque inspeciona a vizinhança 1-hop **não** anonimizada (B1). **Cruzamentos pertinentes:** o Facebook fica **acima** da cota em k∈{2,5,10} (pico ~2,03 em k=5) e despenca a 0 em k=20; o Enron sobe gradualmente e **cruza** a cota só em k=20 (~1,14). As duas curvas se cruzam por volta de k≈14: abaixo disso o Facebook é proporcionalmente mais vulnerável, acima disso o Enron passa a sê-lo — efeito de **escala**, não de mecanismo.
+- **Painel (B) — decaimento relativo** (`rr_subgrafo(k)/rr_subgrafo(k mínimo)`), que remove o degrau de magnitude (~6× em k=2) e isola a **forma** da curva. O Facebook decai abruptamente (1,0 → 0,18 → 0,0), o Enron suavemente (1,0 → 0,63 → 0,46): k-anonimato extingue a estrutura distinguível de uma ego-rede pequena, mas só a atenua numa rede grande — a **tendência** (decaimento monótono) é comum às duas; a **taxa** de decaimento é o que difere.
+
+### Ameaça à validade — motor de particionamento não-pareado (C2)
+
+> O comparativo cruza **motores diferentes**: o baseline Facebook `d=1` rodou em Kernighan-Lin (achado A1), o Enron em pymetis (12/12). O argumento de inocuidade em `d=1` (partições triviais de 1 nó → o desbalanceamento do KL para `ck>2`, D-04, não se manifesta) é **defensável, mas interpretativo** — esta issue **não** isola experimentalmente o efeito do motor. Registra-se como ameaça à validade interna de **baixa magnitude**; um pareamento estrito (Facebook em pymetis) fica como trabalho futuro. Ver `docs/limitations.md`.
+
 ---
 
 ## Tabela bruta por (k, semente)
 
+> Valores em **6 casas decimais**. A tabela agregada abaixo é a média dos valores de **precisão plena** do log (não destes valores já arredondados) seguida de arredondamento para 4 casas; por isso `média(arredondados) ≠ arredondamento(média)` pode diferir na última casa (ex.: k=10 → 0,0787; k=20 → 0,0569).
+
 | k | seed | Veredito | coverage_fraction | rr_grau | rr_subgrafo | EG_mean | EG_median | KS_D | KS_p | clust_var |
 |---|------|----------|-------------------|---------|-------------|--------|-----------|------|------|-----------|
-| 2 | 42 | SUCCESS_PARTIAL | 0.999881 | 0.0032 | 0.1229 | 2.00 | 0 | 0.0386 | 0.0000 | 0.0156 |
-| 2 | 1337 | SUCCESS_PARTIAL | 0.999881 | 0.0034 | 0.1241 | 2.00 | 0 | 0.0395 | 0.0000 | 0.0191 |
-| 2 | 2718 | SUCCESS_PARTIAL | 0.999881 | 0.0034 | 0.1253 | 2.00 | 0 | 0.0367 | 0.0000 | 0.0162 |
-| 5 | 42 | SUCCESS_PARTIAL | 0.999377 | 0.0019 | 0.1020 | 5.00 | 0 | 0.0260 | 0.0000 | 0.0507 |
-| 5 | 1337 | SUCCESS_PARTIAL | 0.999377 | 0.0025 | 0.1041 | 5.00 | 0 | 0.0275 | 0.0000 | 0.0490 |
-| 5 | 2718 | SUCCESS_PARTIAL | 0.999377 | 0.0024 | 0.1011 | 5.00 | 0 | 0.0283 | 0.0000 | 0.0545 |
-| 10 | 42 | SUCCESS_PARTIAL | 0.998338 | 0.0030 | 0.0796 | 9.99 | 0 | 0.0337 | 0.0000 | 0.0552 |
-| 10 | 1337 | SUCCESS_PARTIAL | 0.998338 | 0.0023 | 0.0783 | 9.99 | 0 | 0.0419 | 0.0000 | 0.0638 |
-| 10 | 2718 | SUCCESS_PARTIAL | 0.998338 | 0.0028 | 0.0784 | 9.99 | 0 | 0.0404 | 0.0000 | 0.0635 |
-| 20 | 42 | SUCCESS_PARTIAL | 0.995964 | 0.0021 | 0.0564 | 19.96 | 0 | 0.1292 | 0.0000 | 0.0938 |
-| 20 | 1337 | SUCCESS_PARTIAL | 0.995964 | 0.0019 | 0.0570 | 19.96 | 0 | 0.1309 | 0.0000 | 0.0898 |
-| 20 | 2718 | SUCCESS_PARTIAL | 0.995964 | 0.0018 | 0.0575 | 19.96 | 0 | 0.1307 | 0.0000 | 0.0950 |
+| 2 | 42 | SUCCESS_PARTIAL | 0.999881 | 0.003235 | 0.122893 | 2.00 | 0 | 0.038610 | 0.0000 | 0.015644 |
+| 2 | 1337 | SUCCESS_PARTIAL | 0.999881 | 0.003413 | 0.124110 | 2.00 | 0 | 0.039471 | 0.0000 | 0.019141 |
+| 2 | 2718 | SUCCESS_PARTIAL | 0.999881 | 0.003354 | 0.125326 | 2.00 | 0 | 0.036651 | 0.0000 | 0.016224 |
+| 5 | 42 | SUCCESS_PARTIAL | 0.999377 | 0.001929 | 0.101971 | 5.00 | 0 | 0.026027 | 0.0000 | 0.050745 |
+| 5 | 1337 | SUCCESS_PARTIAL | 0.999377 | 0.002493 | 0.104078 | 5.00 | 0 | 0.027451 | 0.0000 | 0.049000 |
+| 5 | 2718 | SUCCESS_PARTIAL | 0.999377 | 0.002434 | 0.101110 | 5.00 | 0 | 0.028342 | 0.0000 | 0.054476 |
+| 10 | 42 | SUCCESS_PARTIAL | 0.998338 | 0.003027 | 0.079594 | 9.99 | 0 | 0.033654 | 0.0000 | 0.055225 |
+| 10 | 1337 | SUCCESS_PARTIAL | 0.998338 | 0.002255 | 0.078259 | 9.99 | 0 | 0.041934 | 0.0000 | 0.063838 |
+| 10 | 2718 | SUCCESS_PARTIAL | 0.998338 | 0.002760 | 0.078377 | 9.99 | 0 | 0.040391 | 0.0000 | 0.063505 |
+| 20 | 42 | SUCCESS_PARTIAL | 0.995964 | 0.002077 | 0.056357 | 19.96 | 0 | 0.129184 | 0.0000 | 0.093835 |
+| 20 | 1337 | SUCCESS_PARTIAL | 0.995964 | 0.001870 | 0.056980 | 19.96 | 0 | 0.130906 | 0.0000 | 0.089811 |
+| 20 | 2718 | SUCCESS_PARTIAL | 0.995964 | 0.001840 | 0.057485 | 19.96 | 0 | 0.130668 | 0.0000 | 0.095031 |
 
 ---
 
@@ -86,6 +101,8 @@ A comparação direta dos valores absolutos é **confundida** por três diferen�
 - **Ataque por grau** — `rr_grau ∈ [0,0018; 0,0034]`, uma ordem de grandeza abaixo do Facebook. Numa rede de 33,7 k nós, assinaturas de grau isoladas raramente são únicas; o ataque mais fraco é quase inócuo já em k=2.
 
 - **Ataque por subgrafo** (isomorfismo 1-hop, caminho rápido por WL-hash, D-16) — `rr_subgrafo` cai monotonicamente de **0,124** (k=2) para **0,057** (k=20), ~40× a taxa de grau. Em `d=1` anonimiza-se o grau, **não** a estrutura 1-hop (B1); o resíduo de ~6 % em k=20 é a vulnerabilidade estrutural que `d=1` não cobre — coerente com o baseline Facebook, onde o subgrafo também domina o grau.
+
+- **Cota `rr_subgrafo ≤ 1/k` — não vale em `d=1`.** A cota teórica esperada (`data_dictionary.md`) pressupõe k-anonimato **da estrutura que o ataque inspeciona**, i.e. `d ≥ 2`. Em `d=1` só o grau é anonimizado (B1), então a cota **pode ser violada**: ela vale em k∈{2,5,10} (0,124≤0,5; 0,102≤0,2; 0,079≤0,1) mas **é violada em k=20** (0,057 > 0,050 = 1/20). Isso é **esperado, não um bug** — é a assinatura empírica de que `d=1` afere k-anonimato de grau, não estrutural. Sob `d ≥ 2` (d-sweep) a cota volta a valer. Ver o painel (A) acima.
 
 - **coverage_fraction ≥ 0,9960** em todas as 12 runs, com `deficit_fully_structural=True` (vereditos `SUCCESS_PARTIAL`): a incompletude residual é exclusivamente de **grupos incompletos** (D-06), aceitável pelo critério DL-01 — nenhuma violação de isomorfismo/disjunção.
 
@@ -114,6 +131,12 @@ python -m src.visualization.privacy_utility \
     --logs experiments/logs/he2009_enron_secondary \
     --out results/plots --stem privacy_utility_enron \
     --title "Privacy vs. Utility — Email-Enron (He et al. 2009)"
+
+# 5. Painel comparativo normalizado Facebook × Enron (snapshot em docs/assets/)
+python -m src.visualization.comparison \
+    --fb-logs experiments/logs/he2009_facebook_baseline \
+    --enron-logs experiments/logs/he2009_enron_secondary \
+    --out docs/assets --stem comparison_fb_enron
 ```
 
-> Logs, tabelas CSV e plots são **gitignored** (`.claude/rules/experiments.md`); versiona-se apenas o YAML de config e os scripts que os regeneram. As referências cruzadas: D-11 (projeção OR), D-15/D-16 (viabilidade do subgrafo), achados A1/B1; ver `docs/decision_log.md` e `docs/results_baseline.md`.
+> Logs, tabelas CSV e plots em `results/` são **gitignored** (`.claude/rules/experiments.md`); versiona-se o YAML de config e os scripts que os regeneram. **Exceção documentada:** o snapshot de qualificação em `docs/assets/` (`comparison_fb_enron.png` + `.csv`) é versionado por ser artefato auditável da banca, e permanece regenerável pelo comando 5. As referências cruzadas: D-11 (projeção OR), D-15/D-16 (viabilidade do subgrafo), achados A1/B1; ver `docs/decision_log.md` e `docs/results_baseline.md`.

@@ -21,6 +21,7 @@
 | [DL-01](#dl-01) | 2026-05-21 | Desvio de planejamento | Refinamento do critério de passagem do marco #16 |
 | [DL-02](#dl-02) | 2026-06-02 | Extensão de schema | Campos de diagnóstico do ataque por subgrafo (timeouts + candidatos) |
 | [DL-03](#dl-03) | 2026-06-02 | Interface pública | `config_example.yml` expõe `d`/`sigma`/`s_max`/`isomorphism_mode` (chaves lidas) + correção `k_values`→`k` |
+| [DL-04](#dl-04) | 2026-06-06 | Apresentação de resultados | Comparativo Facebook × Enron: gráficos por dataset + painel normalizado complementar (não matriz sobreposta única) |
 | [D-01](#d-01) | 2026-05-17 *(nota G2: 2026-05-28)* | Implementação | FSM simplificado com `s_max` configurável; nota: comportamento quando d > s_max |
 | [D-02](#d-02) | 2026-05-17 | Implementação | `d = 10` como default; variável de configuração YAML |
 | [D-03](#d-03) | 2026-05-17 | Implementação | Matching Fase 1: grau primário + desempate lexicográfico |
@@ -254,6 +255,60 @@ fantasma):
 - D-01 (`s_max`/σ), D-02 (`d`), B6/#105 (`isomorphism_mode`), B5/#104 (`s_max`)
 - `docs/algorithm_notes.md` §5.1–5.3 (mapeamento atualizado)
 - `experiments/run.py::main` (leitura efetiva das chaves)
+
+---
+
+## DL-04 — Comparativo Facebook × Enron: gráficos por dataset + painel normalizado complementar
+
+**Data:** 2026-06-06
+**Issue relacionada:** #128 (S9-6 — comparativo + `results_enron.md`); revisão pós-merge do PR #143
+**Módulo afetado:** `docs/results_enron.md`, `src/visualization/comparison.py`, `docs/assets/`
+
+### Contexto
+
+A DoD da #128 pedia "gráficos comparativos **Facebook × Enron** (matriz
+privacidade-utilidade)". As magnitudes brutas das duas redes, porém, diferem por
+uma ordem de grandeza — reidentificação por subgrafo varre **0–79 %** no Facebook
+(ego-rede pequena e densa, n=532) contra **0–12 %** no Enron (LCC, n=33.696) — de
+modo que **sobrepor as duas redes nos mesmos eixos comprime a curva do Enron a uma
+quase-reta**, perdendo informação. As diferenças de escala, densidade, origem
+(OR/D-11) e motor de partição (KL × pymetis, A1) tornam a comparação de **níveis**
+absolutos cientificamente frágil.
+
+### Decisão adotada — substituição justificada + painel normalizado complementar
+
+1. **Gráficos privacidade-utilidade gerados por dataset separadamente** (mesmo
+   gerador, `src/visualization/privacy_utility.py`), em vez de uma única matriz
+   sobreposta. A comparação de níveis vai por **tabela** (médias por k) em
+   `results_enron.md`.
+2. **Painel comparativo normalizado complementar** (`src/visualization/comparison.py`,
+   snapshot em `docs/assets/comparison_fb_enron.{png,csv}`), com dois eixos
+   **normalizados** que tornam as redes legíveis no mesmo gráfico sem distorção:
+   - **(A) fração da cota `1/k`** = `rr_subgrafo · k`, com linha em `1,0`; expõe
+     a violação da cota em `d=1` (B1) e os cruzamentos entre as redes (Facebook
+     acima da cota em k∈{2,5,10}, Enron cruzando em k=20; curvas se cruzam ~k≈14);
+   - **(B) decaimento relativo** = `rr_subgrafo(k)/rr_subgrafo(k mínimo)`; remove
+     o degrau de magnitude e isola a **forma** da curva (tendência comum,
+     taxa de decaimento distinta).
+
+A leitura conjunta foca **tendências**, não magnitudes — registrado em
+`results_enron.md` e reforçado pela ressalva de motor não-pareado (C2) em
+`limitations.md` §3.
+
+### Alternativa considerada
+
+Painel único com eixo `y` em **escala log** das taxas brutas — legível, mas falha
+em `rr=0` (Facebook k=20) e ainda mistura grandezas não-pareadas. A normalização
+por `1/k` e por `k` mínimo é preferível por ser interpretável (relação à cota
+teórica e forma da curva).
+
+### Referências cruzadas
+
+- Issue #128 (DoD — gráficos comparativos) e PR #143 (revisão pós-merge)
+- Achados A1 (motor KL no baseline) e B1 (`d=1` = k-anon de grau) em `docs/achados_divergencias.md`
+- D-11 (projeção OR), D-16 (subgrafo full viável)
+- `docs/results_enron.md` (painel + leitura) e `docs/limitations.md` §3 (ameaça C2)
+- `src/visualization/comparison.py` (gerador) e `docs/assets/` (snapshot versionado)
 - `experiments/configs/he2009_facebook_dsweep.yml` (uso real de `k`/`d`/`sigma`)
 
 ---
