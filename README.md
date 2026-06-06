@@ -186,7 +186,8 @@ Ver [`docs/reproducibility.md`](docs/reproducibility.md) §8.
 
 ## 4. Status do projeto
 
-**Atualizado em 26/05/2026.** Escopo mínimo (S1–S5) concluído — 35 issues fechadas.
+**Atualizado em 06/06/2026.** Escopo Mínimo (S1–S5) concluído e escopo Desejável
+integralmente concluído (dataset secundário Email-Enron + métrica/ataque por entropia).
 
 | Fase | Período planejado | Status |
 |---|---|---|
@@ -222,7 +223,8 @@ DL-02 registradas em [`docs/decision_log.md`](docs/decision_log.md). Relatório
 consolidado com matriz d×k, análise e ameaças à validade em
 [`docs/results_dsweep.md`](docs/results_dsweep.md). Limitação §1.3 de
 [`docs/limitations.md`](docs/limitations.md) marcada como **parcialmente resolvida**.
-Issue de encaminhamentos pós-D-08: [#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99).
+Encaminhamentos pós-D-08 consolidados na issue
+[#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99) (fechada).
 
 **S9 — Email-Enron (dataset secundário, tier Desejável): CONCLUÍDO em 06/06/2026.**
 Loader do Email-Enron (SNAP) com projeção direcionado→não-direcionado por
@@ -235,10 +237,20 @@ encerrada. Decisões D-11 a D-16 e DL-04 em
 [`docs/decision_log.md`](docs/decision_log.md); relatório consolidado e comparativo
 Facebook × Enron em [`docs/results_enron.md`](docs/results_enron.md).
 
-Único item do Desejável ainda aberto: ataque por entropia
-([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)). O Aspiracional
-([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) permanece
-como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos).
+**Entropia — métrica/ataque por entropia (tier Desejável): CONCLUÍDO em 06/06/2026.**
+Métrica de privacidade por entropia implementada e classificada formalmente como
+*métrica* (residência primária em `src/metrics/entropy.py`), com o nome "ataque por
+entropia" preservado como sua leitura adversarial em `src/attacks/entropy.py`
+(ponteiro de referência cruzada). Fundamentação na literatura de entropia-como-anonimato
+([Serjantov & Danezis, 2002](https://doi.org/10.1007/3-540-36467-6_4);
+[Díaz et al., 2002](https://doi.org/10.1007/3-540-36467-6_5)); decisão **D-17** em
+[`docs/decision_log.md`](docs/decision_log.md). Modelo uniforme `H = log₂(n_r)`;
+ciclo encerrado pelas PRs #149, #150 e #151. Issue
+[#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) **fechada**.
+
+Com isso, o escopo **Desejável** está integralmente concluído. O escopo Aspiracional
+([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) não é
+perseguido — ver [Seção 6 — Entregáveis](#6-entregáveis).
 
 ### Componentes implementados
 
@@ -267,8 +279,8 @@ como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos
 - `src/attacks/subgraph.py` — ataque por subgrafos via VF2
   ([Cordella et al., 2004](https://doi.org/10.1109/TPAMI.2004.75))
   (`subgraph_attack(g_orig, g_anon, target, hop=1, timeout=None) → bool`).
-- `src/metrics/` — 4 métricas: `reidentification_rate`, `equivalence_group_size`,
-  `ks_test_degree`, `clustering_variation`.
+- `src/metrics/` — 5 métricas: `reidentification_rate`, `equivalence_group_size`,
+  `ks_test_degree`, `clustering_variation` e `entropy_metrics` (ver bloco Entropia).
 - `experiments/run.py` — runner orquestrador CLI
   (`python -m experiments.run --config <yaml>`).
 - `experiments/configs/he2009_facebook_baseline.yml` — config do experimento baseline.
@@ -333,6 +345,20 @@ como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos
   Enron (DL-04); snapshot versionado em `docs/assets/comparison_fb_enron.{png,csv}`.
 - `docs/results_enron.md` — relatório consolidado do experimento secundário:
   tabelas por k, comparativo Facebook × Enron e leitura por tendências.
+
+**Entropia — métrica/ataque por entropia (D-17, issue #30; PRs #149, #150, #151)**
+- `src/metrics/entropy.py` — métrica de privacidade por entropia (`entropy_metrics`):
+  incerteza residual em bits (`H = log₂(n_r)`, modelo uniforme) reutilizando a
+  partição de grupos de equivalência do pipeline He et al., além de grau de anonimato
+  normalizado. Não reexecuta experimentos nem usa conhecimento de fundo sobre `G_orig`.
+- `src/attacks/entropy.py` — ponteiro de referência cruzada que reexporta
+  `entropy_metrics` como leitura adversarial da métrica (D-17), por analogia de
+  interface com os demais ataques em `src/attacks/`.
+- Fundamentação na literatura de entropia-como-anonimato
+  ([Serjantov & Danezis, 2002](https://doi.org/10.1007/3-540-36467-6_4);
+  [Díaz et al., 2002](https://doi.org/10.1007/3-540-36467-6_5)); detalhes em
+  `docs/metrics_definitions.md`, `docs/algorithm_notes.md` §4.4 e
+  [`docs/decision_log.md`](docs/decision_log.md) (D-17).
 
 ---
 
@@ -491,15 +517,17 @@ em [`docs/entregaveis.md`](docs/entregaveis.md).
   subgrafos; quatro métricas; mínimo de 3 sementes por configuração; gráfico
   privacidade-vs-utilidade com barras de erro; repositório versionado com README
   operacional e configuração reproduzível.
-- **Desejável (parcialmente concluído).** Execução adicional sobre Email-Enron
-  ✅ concluída no S9 (dataset secundário, simetrização OR/D-11, comparativo
-  Facebook × Enron); ataque por entropia não iniciado
-  ([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)).
+- **Desejável (✅ concluído).** Execução adicional sobre Email-Enron ✅ concluída no
+  S9 (dataset secundário, simetrização OR/D-11, comparativo Facebook × Enron); e
+  métrica/ataque por entropia ✅ concluída (D-17, classificada como métrica de
+  privacidade; [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)
+  fechada).
 - **Aspiracional (não perseguido).** Implementação inicial de Nettleton & Salas
   (2016); comparação preliminar das duas anonimizações no mesmo gráfico.
 
-O Mínimo é entregável defensável em si; o Desejável é entregável discutível; o
-Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
+O Mínimo é entregável defensável em si; o Desejável agrega validade externa e uma
+métrica de privacidade adicional; o Aspiracional é bônus que não deve ser perseguido
+em detrimento do Mínimo.
 
 ---
 
@@ -510,30 +538,32 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
   /raw/                      # datasets originais (não versionados; baixados por script)
   /processed/                # datasets após pré-processamento
 /src/
-  /anonymization/            # [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) [implementado]; placeholder Nettleton & Salas
-  /attacks/                  # ataques por grau e subgrafos
-  /metrics/                  # cálculo das quatro métricas
+  /anonymization/            # He et al. (2009) [implementado]; backend de partição (pymetis/KL)
+  /attacks/                  # ataques por grau, subgrafos e entropia (ponteiro D-17)
+  /metrics/                  # cálculo das cinco métricas (inclui entropia)
   /loaders/                  # carregadores Facebook Ego-Nets e Email-Enron + scripts de download
   /visualization/            # gráfico privacy-vs-utility, tabelas CSV e comparativo FB × Enron
 /experiments/
-  /configs/                  # arquivos de configuração (YAML); inclui baseline, d-sweep, diagnóstico k=20 e Enron secundário
+  /configs/                  # arquivos de configuração (YAML); inclui baseline, full, d-sweep, diagnóstico k=20, k-sweep, validação e Enron secundário
   /logs/                     # logs estruturados JSONL das execuções (não versionados)
   run.py                     # runner orquestrador CLI
   run_k_sweep.py             # k-sweep k ∈ {2,5,10,20} (issue #17)
   run_validacao_k_anonimato.py  # validação k-anonimato marco 21/05 (issue #16)
+  make_baseline_table.py     # gera docs/results_baseline.md a partir do log do baseline
   make_enron_table.py        # gera docs/results_enron.md a partir do log do Enron
 /results/
   /tables/                   # tabelas em CSV (não versionadas; regeneráveis)
   /plots/                    # gráficos em PDF/PNG (não versionados; regeneráveis)
 /tests/                      # suíte de testes (espelha a estrutura de src/)
-/scripts/                    # setup de ambiente e verificação de reprodução
+/scripts/                    # setup de ambiente (Conda/Windows, VS Code) e medição de ego-nets
 /bugs/                       # registro acumulativo de bugs (execução + explicação + decisão)
 /docs/
   scope.md                   # escopo, não-escopo e condições de contorno ética
   algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep e d>1)
   metrics_definitions.md     # definições operacionais das métricas
   data_dictionary.md         # dicionário de parâmetros, datasets (§1.1) e métricas
-  decision_log.md            # registro formal de decisões técnicas (DL-01 a DL-04, D-04 a D-16)
+  decision_log.md            # registro formal de decisões técnicas (DL-01 a DL-04, D-04 a D-17)
+  achados_divergencias.md    # síntese de divergências proposto × executado (insumo para qualificação)
   progress.md                # log de progresso sessão a sessão
   validacao_k_anonimato.md   # resultados consolidados da validação empírica de k-anonimato
   results_baseline.md        # tabela bruta + agregações do experimento baseline (d=1)
@@ -547,6 +577,7 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
   preprocessing_decision.md  # decisões de pré-processamento dos datasets
   entregaveis.md             # entregáveis consolidados por nível
   assets/                    # snapshots versionados (ex.: comparison_fb_enron.{png,csv})
+  img/                       # figuras versionadas (fluxogramas de reprodutibilidade)
 README.md                    # este arquivo — visão operacional canônica
 CLAUDE.md                    # instruções de desenvolvimento para sessões de agente
 WORKFLOW.md                  # protocolo de orquestração entre interfaces de trabalho
