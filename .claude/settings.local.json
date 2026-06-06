@@ -41,7 +41,17 @@
       "Bash(python -m pytest tests/anonymization/test_he2009_modify.py -q)",
       "Bash(python -m pytest tests/anonymization/test_he2009_partition.py -q -rP)",
       "Bash(python -m pytest tests/anonymization/test_he2009_partition.py::TestLocalStructureConnectivityDGt1 -q -s)",
-      "Bash(python -m pytest -q)"
+      "Bash(python -m pytest -q)",
+      "Bash(python -m src.loaders.download_enron)",
+      "Bash(python _probe_enron_stage1.py)",
+      "Bash(python _probe_enron_stage2.py)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(python -m experiments.make_enron_table)",
+      "Bash(python -m src.visualization.tables --logs experiments/logs/he2009_enron_secondary --out results/tables --dataset enron)",
+      "Bash(python -m src.visualization.privacy_utility --logs experiments/logs/he2009_enron_secondary --out results/plots --stem privacy_utility_enron --title \"Privacy vs. Utility — Email-Enron \\(He et al. 2009\\)\")",
+      "Read(//c/c/Users/christiano.brito/vs code/moduloreidentificacao/experiments/logs/**)",
+      "Read(//c/c/Users/christiano.brito/vs code/moduloreidentificacao/experiments/logs/he2009_enron_secondary/**)"
     ]
   }
 }
