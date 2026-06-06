@@ -1502,7 +1502,7 @@ referenciar no outro"**:
 
 ### Status final (implementação) — baseline uniforme entregue; não uniforme derivado para #148
 
-O baseline uniforme foi **implementado** na branch `attack/entropy`: métrica em
+O baseline uniforme foi **implementado** (PR #149, em `main`): métrica em
 `src/metrics/entropy.py` (`entropy_metrics(groups, tau)` → `entropy_mean`,
 `degree_of_anonymity`, `reidentification_rate_entropy`), apontador de leitura
 adversarial em `src/attacks/entropy.py` (reexporta a métrica — D-17), gancho no

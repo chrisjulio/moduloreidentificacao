@@ -32,8 +32,8 @@
   por decisão (função de biblioteca / teste de manual). Resíduo menor:
   Díaz/Serjantov acrescentados à lista §10 de `algorithm_notes` (citados em §4.4,
   faltavam na lista). Também migrado **B3** (ataque por entropia) para
-  *implementado* (#30/D-17, baseline uniforme; branch `attack/entropy` aguardando
-  merge). Só docs; sem alteração em `src/` ou testes.
+  *implementado* (#30/D-17, baseline uniforme; em `main` via PR #149). Só docs;
+  sem alteração em `src/` ou testes.
 - **Issue #30 (S6 / D-17): métrica de entropia — baseline uniforme. ✅ (código +
   testes).** Implementada a parte decidida por D-17 (caminho uniforme). **(1)**
   `src/metrics/entropy.py` (**lar primário**): `entropy_metrics(groups, tau=0.0)`
@@ -468,8 +468,8 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Issue #30 (entropia):** revisão humana do PR da branch `attack/entropy` → merge
-  → fechar #30 (e seu milestone S6, se for o caso). Claude Code **não** faz merge.
+- **Issue #30 (entropia):** ✅ mergeada (PR #149) e fechada (`COMPLETED`); auditoria
+  bibliográfica de fechamento ✅ mergeada (PR #150). A continuação é a #148 (abaixo).
 - **Issue #148 (entropia não uniforme, sem milestone):** continuação aberta; exige
   decisão D-xx (esquema de pesos) antes de implementar — não iniciar sem o humano.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
@@ -477,8 +477,8 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- PR da branch `attack/entropy` (#30) aguarda CI + revisão humana. Dependências de
-  infraestrutura (runner, métricas, grupos de equivalência) já em `main`.
+- Nenhum — #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
+  #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
   S9 `closed`). Milestones S8 e S9 concluídos.
 
@@ -506,6 +506,19 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-06 — Limpeza cosmética pós-merge da #30
+
+- **Concluído:** Após o merge de **PR #149** (entropia, *Closes #30*) e **PR #150**
+  (auditoria bibliográfica), removidas as pontas soltas "branch `attack/entropy`
+  aguardando merge" dos docs vivos: B3 (`achados_divergencias.md` matriz + detalhe)
+  e D-17 (`decision_log.md`) passam a citar "em `main` via PR #149"; "Próximo passo"
+  e "Bloqueios ativos" do Estado atual atualizados (#30 mergeada e fechada
+  `COMPLETED`; sem bloqueios). Entradas de Histórico preservadas (snapshots). Só docs.
+- **Próximo:** Continuação #148 (não iniciar sem D-xx). Housekeeping: #74 e (se
+  aberta) #72.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-06 — Sanitização de fim de issue (#30): auditoria de amparo bibliográfico
 
