@@ -13,9 +13,26 @@
 
 **Data da última atualização:** 2026-06-06
 
-**Semana corrente:** S9 — Loader Email-Enron (tier desejável, issue-mãe #29) — **MILESTONE FECHADO** ✅
+**Semana corrente:** S6 — Ataque/métrica por entropia (tier desejável, issue #30).
 
 **Último passo concluído:**
+- **Issue #30 (S6 / D-17): métrica de entropia — baseline uniforme. ✅ (código +
+  testes).** Implementada a parte decidida por D-17 (caminho uniforme). **(1)**
+  `src/metrics/entropy.py` (**lar primário**): `entropy_metrics(groups, tau=0.0)`
+  reusa os grupos de equivalência (não refaz experimentos) e retorna `entropy_mean`
+  (média node-weighted de `H=log2(n_r)`), `degree_of_anonymity` (Díaz et al.,
+  `H/H_max ∈ [0,1]`), `reidentification_rate_entropy` (fração com `H≤τ`) e `tau`.
+  **(2)** `src/attacks/entropy.py`: **apontador** de leitura adversarial que
+  reexporta a métrica (satisfaz o checkbox `src/attacks/entropy.py` da #30 sem
+  duplicar lógica — D-17, métrica ≠ ataque autônomo). **(3)** Runner: bloco
+  `entropy` no JSONL; `τ` lido de `metrics.entropy_tau` (D-E3). **(4)**
+  `config_example.yml` (métrica + `entropy_tau`; comentário do ataque reclassificado)
+  e `tables.py` (colunas `degree_of_anonymity`/`reid_rate_entropy` anexadas). **(5)**
+  Testes: 15 (métrica) + 2 (apontador) + 3 (propagação config→runner) + ajustes nos
+  testes de schema (`test_tables`, stub `_always_error`). **Suíte 615 passed, ruff
+  limpo.** **(6)** Caminho **não uniforme** (D-E2(b)) — decisão do humano: **deixado
+  para depois**, formalizado como **issue #148 (sem milestone)**; D-17 ganhou seção
+  "Status final" + cross-ref a #148. Branch `attack/entropy` (`Closes #30`).
 - **Fechamento administrativo do milestone S9. ✅** Conferência final dos DoDs de
   todas as 9 sub-issues (#122–#129, #139) contra o `main` — todos atendidos, CI
   verde nos 3 check-runs. **Opção A aplicada** à #29: comentário de conferência
@@ -433,19 +450,19 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Milestone S9 encerrado** — definir o escopo do próximo ciclo (S10) e criar a
-  issue âncora correspondente.
-- **Issue S10 de amostragem de nós-alvo + resiliência ficou OBSOLETA** (D-16: o
-  full roda em minutos); não criar.
+- **Issue #30 (entropia):** revisão humana do PR da branch `attack/entropy` → merge
+  → fechar #30 (e seu milestone S6, se for o caso). Claude Code **não** faz merge.
+- **Issue #148 (entropia não uniforme, sem milestone):** continuação aberta; exige
+  decisão D-xx (esquema de pesos) antes de implementar — não iniciar sem o humano.
 - Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
 - (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum. **Ciclo S9 totalmente encerrado:** todos os PRs em `main` (S9-0..S9-4
-  #122–#126; S9-5 #127/PR#138; S9-6 #128/PR#143 + follow-up PR#144; S9-8
-  #139/PR#142; S9-7 #129/PR#145), CI verde, **issue-mãe #29 fechada** e
-  **milestone S9 `closed`** (9/9). Milestones S8 e S9 concluídos.
+- PR da branch `attack/entropy` (#30) aguarda CI + revisão humana. Dependências de
+  infraestrutura (runner, métricas, grupos de equivalência) já em `main`.
+- Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
+  S9 `closed`). Milestones S8 e S9 concluídos.
 
 **Decisões pendentes de validação humana:**
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
@@ -471,6 +488,26 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-06 — Issue #30 (S6 / D-17): métrica de entropia — baseline uniforme
+
+- **Concluído:** Implementada a codificação da issue #30 (os pontos documental,
+  processual e metodológico já estavam tratados em D-17). **Baseline uniforme:**
+  `src/metrics/entropy.py` (lar primário — `entropy_metrics(groups, tau)` →
+  `entropy_mean`, `degree_of_anonymity` de Díaz et al., `reidentification_rate_entropy`,
+  `tau`; reusa os grupos de equivalência, não refaz experimentos); `src/attacks/entropy.py`
+  como apontador de leitura adversarial (reexporta a métrica — D-17 classifica como
+  métrica, não ataque autônomo); gancho no runner (bloco `entropy` no JSONL, `τ` de
+  `metrics.entropy_tau`); `config_example.yml` + `tables.py` (colunas novas). Testes:
+  20 novos (15 métrica + 2 apontador + 3 propagação) + ajustes de schema; **suíte 615
+  passed, ruff limpo**. **Decisão do humano:** caminho **não uniforme** (D-E2(b))
+  deixado para depois e formalizado como **issue #148 (sem milestone)**, com DoD que
+  exige decisão D-xx (esquema de pesos) antes de implementar. D-17 ganhou seção
+  "Status final" + cross-ref #148. Branch `attack/entropy` (`Closes #30`).
+- **Próximo:** Revisão humana do PR → merge → fechar #30. Não iniciar #148 sem a
+  decisão D-xx. Housekeeping herdado: fechar #74 e (se aberta) #72.
+- **Bloqueios:** PR `attack/entropy` aguarda CI + revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-06 — Fechamento administrativo do milestone S9 (DoD #29 via opção A)
 

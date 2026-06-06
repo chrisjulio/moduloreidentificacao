@@ -53,6 +53,12 @@ Each JSONL entry contains:
           "mean": <float>, "std": <float>, "max": <int>
       },
       "equivalence_group_size": {"mean": <float>, "median": <int>},
+      # Entropy / degree-of-anonymity privacy metric (issue #30 / D-17) —
+      # derived from the equivalence groups; tau from metrics.entropy_tau:
+      "entropy": {
+          "entropy_mean": <float>, "degree_of_anonymity": <float>,
+          "reidentification_rate_entropy": <float>, "tau": <float>
+      },
       "ks_test_degree": {"D": <float>, "p": <float>},
       "clustering_variation": <float | null>,
       "verdict": "SUCCESS_FULL" | "SUCCESS_PARTIAL" | "FAILURE_FATAL"
@@ -89,6 +95,7 @@ from src.loaders.enron import load_enron
 from src.loaders.facebook_ego import load_facebook_egonet
 from src.metrics import (
     clustering_variation,
+    entropy_metrics,
     equivalence_group_size,
     ks_test_degree,
     reidentification_rate,
@@ -217,6 +224,7 @@ def run_one(
     attacks_cfg: dict,
     fsm_max_size: int = 4,
     isomorphism_mode: str = "add_or_delete",
+    entropy_tau: float = 0.0,
 ) -> dict:
     """Execute the full pipeline for a single (k, seed) combination.
 
@@ -255,6 +263,11 @@ def run_one(
     attacks_cfg:
         The ``attacks:`` block from the experiment YAML, controlling which
         attacks are enabled and their hyper-parameters.
+    entropy_tau:
+        Threshold (bits) for ``reidentification_rate_entropy`` of the entropy
+        privacy metric (issue #30 / D-17). Read from ``metrics.entropy_tau``
+        in the experiment YAML; default ``0.0`` (singleton-group criterion).
+        Recorded in the JSONL for traceability.
 
     Returns
     -------
@@ -410,6 +423,21 @@ def run_one(
         # ------------------------------------------------------------------
         eg_mean, eg_median = equivalence_group_size(modified_groups)
         result["equivalence_group_size"] = {"mean": eg_mean, "median": eg_median}
+
+        # Entropy / degree-of-anonymity privacy metric (issue #30 / D-17).
+        # Reuses the equivalence groups already computed — no re-run; not an
+        # autonomous attack (uses no knowledge of G_orig). See src/metrics/entropy.py.
+        result["entropy"] = entropy_metrics(modified_groups, tau=entropy_tau)
+        logger.info(
+            "  [k=%d, seed=%d] Entropy: mean=%.4f bits, degree_of_anonymity=%.4f, "
+            "reid_rate_entropy=%.4f (tau=%.2f)",
+            k,
+            seed,
+            result["entropy"]["entropy_mean"],
+            result["entropy"]["degree_of_anonymity"],
+            result["entropy"]["reidentification_rate_entropy"],
+            entropy_tau,
+        )
 
         ks_d, ks_p = ks_test_degree(g_orig, g_anon)
         result["ks_test_degree"] = {"D": ks_d, "p": ks_p}
@@ -603,6 +631,10 @@ def main(config_path: Path) -> int:
     # --- Attacks ---
     attacks_cfg: dict = config.get("attacks", {"degree": {"enabled": True, "tolerance": 0}})
 
+    # --- Metrics: entropy threshold (issue #30 / D-17, D-E3) ---
+    metrics_cfg: dict = config.get("metrics", {}) or {}
+    entropy_tau = float(metrics_cfg.get("entropy_tau", 0.0))
+
     # --- Seeds ---
     seeds: list[int] = [int(s) for s in config["seeds"]]
 
@@ -640,6 +672,7 @@ def main(config_path: Path) -> int:
                     attacks_cfg=attacks_cfg,
                     fsm_max_size=fsm_max_size,
                     isomorphism_mode=isomorphism_mode,
+                    entropy_tau=entropy_tau,
                 )
                 result["experiment"] = exp_name
                 v = verdict_from_result(result)

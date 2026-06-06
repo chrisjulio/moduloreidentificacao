@@ -629,7 +629,16 @@ class TestMainJsonlOutput:
         import experiments.run as runner_mod
 
         def _always_error(
-            g, *, k, d, sigma, seed, attacks_cfg, fsm_max_size=4, isomorphism_mode="add_or_delete"
+            g,
+            *,
+            k,
+            d,
+            sigma,
+            seed,
+            attacks_cfg,
+            fsm_max_size=4,
+            isomorphism_mode="add_or_delete",
+            entropy_tau=0.0,
         ):
             return {
                 "k": k,

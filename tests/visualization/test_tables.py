@@ -141,6 +141,9 @@ class TestCsvColumnsSpec:
             "ks_D",
             "ks_p",
             "clustering_var",
+            # Entropy privacy metric (issue #30 / D-17), appended to the spec.
+            "degree_of_anonymity",
+            "reid_rate_entropy",
         )
 
 

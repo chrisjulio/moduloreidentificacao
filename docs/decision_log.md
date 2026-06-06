@@ -1497,12 +1497,26 @@ referenciar no outro"**:
   `src/attacks/` passam a ser a **leitura adversarial** da métrica — um apontador
   para a definição, preservando a rastreabilidade pela proximidade conceitual.
 
+### Status final (implementação) — baseline uniforme entregue; não uniforme derivado para #148
+
+O baseline uniforme foi **implementado** na branch `attack/entropy`: métrica em
+`src/metrics/entropy.py` (`entropy_metrics(groups, tau)` → `entropy_mean`,
+`degree_of_anonymity`, `reidentification_rate_entropy`), apontador de leitura
+adversarial em `src/attacks/entropy.py` (reexporta a métrica — D-17), gancho no
+runner (bloco `entropy` no JSONL; `τ` lido de `metrics.entropy_tau`),
+`config_example.yml` e `tables.py` (colunas `degree_of_anonymity`/`reid_rate_entropy`).
+Testes unitários + propagação config→runner; suíte verde.
+
+O **caminho de probabilidades não uniformes (D-E2(b))** — a única saída
+genuinamente não-redundante e declarada *exploratória* — **não** foi
+implementado nesta entrega (decisão de escopo): foi formalizado como a issue de
+continuação **#148** (sem milestone), que exige antes uma decisão D-xx fixando o
+esquema de pesos, a normalização e a eventual reclassificação métrica × ataque.
+
 ### Consequências
 
-- A propagação **agora** registra apenas a fundamentação e a classificação
-  (literatura + métrica). A virada de status de escopo `[A]/[D] → implementado`,
-  os testes e os ganchos de `tables.py`/`config_example.yml` ocorrem **na
-  implementação** (`metric/entropy` ou `attack/entropy`).
+- A virada de status de escopo `[A]/[D] → implementado` e os ganchos de
+  `tables.py`/`config_example.yml` ocorreram **na implementação** (acima).
 - `docs/scope.md`: a entropia, antes `[A]`, é reconciliada para `[D]` (coerente
   com o rótulo `desejavel` e o milestone S6 da #30).
 - Referências [Díaz et al. 2002] e [Serjantov & Danezis 2002] adicionadas ao
@@ -1514,7 +1528,7 @@ referenciar no outro"**:
 - He et al. (2009) Def. 2–3 (cota `≤ 1/k`); `docs/algorithm_notes.md` §4.4
 - `src/metrics/equivalence_group_size.py` (redundância do baseline uniforme)
 - D-06 (`deficit_fully_structural`; regime de `τ = 0`)
-- Comentário-proposta da #30 (D-E1…D-E6); Issue #30
+- Comentário-proposta da #30 (D-E1…D-E6); Issue #30; Issue #148 (não uniforme, D-E2(b))
 - Serjantov, A.; Danezis, G. *Towards an Information Theoretic Metric for Anonymity.* PET 2002, LNCS 2482, p. 41–53. DOI 10.1007/3-540-36467-6_4.
 - Díaz, C.; Seys, S.; Claessens, J.; Preneel, B. *Towards Measuring Anonymity.* PET 2002, LNCS 2482, p. 54–68. DOI 10.1007/3-540-36467-6_5.
 
