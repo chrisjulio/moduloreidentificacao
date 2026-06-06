@@ -80,18 +80,17 @@ Condição: perseguir se houver folga após consolidação do Mínimo.
 | Loader Email-Enron (direcionado→não-dir., OR) | `src/loaders/enron.py` (issue #124, S9-2) | ✅ Implementado |
 | Integração runner (`enron` em `load_dataset`) | `experiments/run.py` (issue #125, S9-3) | ✅ Implementado |
 | Config YAML para Enron | `experiments/configs/he2009_enron_secondary.yml` (issue #126, S9-4) | ✅ Implementado |
-| Execução secundária Email-Enron (grau + subgrafo hop=1) | — (issue #127, S9-5) | ⏳ Não iniciado |
-| Comparativo Facebook vs. Enron + `results_enron.md` | `docs/results_enron.md` (issue #128, S9-6) | ⏳ Não iniciado |
+| Execução secundária Email-Enron (grau + subgrafo hop=1 full) | `experiments/logs/he2009_enron_secondary/` (issues #127/#139, S9-5) | ✅ Concluída |
+| Comparativo Facebook vs. Enron + `results_enron.md` | `docs/results_enron.md` (issue #128, S9-6) | ✅ Implementado |
 | Ataque por entropia | `src/attacks/entropy.py` (issue #30) | ⏳ Não iniciado |
 
-> Atualização (S9, 03/06/2026): o tier Desejável foi parcialmente perseguido. A
-> infraestrutura do dataset secundário Email-Enron (download, loader, integração
-> ao runner e config YAML) está implementada e testada (issues #122–#126,
-> decisão central D-11; semântica de timeout D-12, critério de validade D-13,
-> convenção `min_nodes` D-14). Resta a execução (#127) e o comparativo (#128),
-> sob o gate D-13 (`subgraph_timeout_count == 0`). O ataque por entropia (#30)
-> permanece não iniciado. Itens pendentes são resultados científicos válidos
-> para discussão futura.
+> Atualização (S9, 06/06/2026): o tier Desejável teve o **dataset secundário
+> Email-Enron integralmente concluído** — download, loader (simetrização OR/D-11),
+> integração ao runner, config YAML, execução das 12 runs (grau + subgrafo hop=1
+> *full* via bucketing de WL-hash/D-16, `subgraph_timeout_count=0`) e comparativo
+> Facebook × Enron em `results_enron.md`. Milestone S9 fechado (9/9 issues
+> #122–#129, #139); issue-mãe #29 encerrada. Decisões D-11 a D-16 e DL-04. O ataque
+> por entropia (#30) permanece não iniciado — único item aberto do tier Desejável.
 
 ---
 

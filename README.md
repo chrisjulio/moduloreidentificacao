@@ -5,8 +5,9 @@
 > de reidentificação. Componente preparatório da tese de doutorado em geração de
 > redes sociais sintéticas — PPGInf/UFPR.
 >
-> **Estado:** escopo mínimo (S1–S5) + D-08 (d-sweep k×d) concluídos. Repositório em
-> condições de entrega acadêmica. Última revisão: 02/06/2026.
+> **Estado:** escopo mínimo (S1–S5) + D-08 (d-sweep k×d) + S9 (dataset secundário
+> Email-Enron) concluídos. Repositório em condições de entrega acadêmica.
+> Última revisão: 06/06/2026.
 
 ![CI](https://github.com/chrisjulio/moduloreidentificacao/actions/workflows/ci.yml/badge.svg)
 
@@ -47,7 +48,7 @@ mecanismo de privacidade do framework integrado da tese. A unidade de progresso
 |---|---|---|
 | Temporal | Estático | Replicação direta de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108); extensão temporal é Fase 2 da tese. |
 | Dataset principal | Facebook Ego-Nets (SNAP) | Validação alinhada com a literatura contemporânea de privacidade. |
-| Dataset secundário | Email-Enron (SNAP), contingente | Amplia a base de comparação se houver folga; não perseguido no baseline. |
+| Dataset secundário | Email-Enron (SNAP) ✅ | Implementado e executado no S9 (tier Desejável); projeção direcionado→não-dir. por simetrização OR (D-11). Amplia a validade externa para fora da topologia de ego-rede. |
 | Anonimização primária | [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) | Algoritmo mais simples e mais bem documentado; ponto de entrada limpo. |
 | Anonimização aspiracional | [Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004) | Inclui atributos e t-closeness; fora do escopo do baseline. |
 | Ataques | Grau → Subgrafos → Entropia | Ordem de complexidade crescente; os dois primeiros são o compromisso mínimo. |
@@ -221,9 +222,21 @@ consolidado com matriz d×k, análise e ameaças à validade em
 [`docs/limitations.md`](docs/limitations.md) marcada como **parcialmente resolvida**.
 Issue de encaminhamentos pós-D-08: [#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99).
 
-Escopo Desejável (Email-Enron, ataque por entropia) e Aspiracional
-([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) permanecem abertos como trabalho futuro. Ver
-[Seção 12 — Próximos passos](#12-próximos-passos).
+**S9 — Email-Enron (dataset secundário, tier Desejável): CONCLUÍDO em 06/06/2026.**
+Loader do Email-Enron (SNAP) com projeção direcionado→não-direcionado por
+simetrização OR (D-11) e execução secundária sobre a maior componente conexa
+(n=33.696, m=180.811): 12 runs (k ∈ {2, 5, 10, 20} × 3 sementes), backend pymetis
+em todas, ataque por subgrafo *full* (hop=1) viabilizado por bucketing de WL-hash
+(D-16), `subgraph_timeout_count = 0`. Milestone fechado (9/9 issues #122–#129, #139);
+issue-mãe [#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29)
+encerrada. Decisões D-11 a D-16 e DL-04 em
+[`docs/decision_log.md`](docs/decision_log.md); relatório consolidado e comparativo
+Facebook × Enron em [`docs/results_enron.md`](docs/results_enron.md).
+
+Único item do Desejável ainda aberto: ataque por entropia
+([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)). O Aspiracional
+([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) permanece
+como trabalho futuro. Ver [Seção 12 — Próximos passos](#12-próximos-passos).
 
 ### Componentes implementados
 
@@ -297,6 +310,24 @@ Escopo Desejável (Email-Enron, ataque por entropia) e Aspiracional
 - `docs/dsweep_previa_garantia_dados.md` — snapshot histórico do estado
   intermediário do d-sweep; substituído por `results_dsweep.md` como
   documento canônico.
+
+**S9 — dataset secundário Email-Enron (issues #122–#129, #139)**
+- `src/loaders/download_enron.py` — downloader idempotente do Email-Enron (SNAP),
+  com verificação SHA-256 e descompressão gzip.
+- `src/loaders/enron.py` — loader do Email-Enron com simetrização OR
+  (direcionado → não-direcionado; aresta `{u,v}` se houver e-mail em qualquer
+  direção — D-11) e recorte da maior componente conexa.
+- `experiments/run.py` — `load_dataset` estendido com o branch `enron`.
+- `experiments/configs/he2009_enron_secondary.yml` — config do experimento
+  secundário (d=1, sigma=0.5, s_max=4, k ∈ {2,5,10,20}, 3 sementes, pymetis).
+- `src/attacks/subgraph.py` — caminho rápido por bucketing de WL-hash (D-16),
+  que torna o ataque por subgrafo *full* viável em grafos grandes (resolve D-15).
+- `experiments/make_enron_table.py` — gerador de `docs/results_enron.md` a partir
+  do log JSONL do Enron.
+- `src/visualization/comparison.py` — painel comparativo normalizado Facebook ×
+  Enron (DL-04); snapshot versionado em `docs/assets/comparison_fb_enron.{png,csv}`.
+- `docs/results_enron.md` — relatório consolidado do experimento secundário:
+  tabelas por k, comparativo Facebook × Enron e leitura por tendências.
 
 ---
 
@@ -409,6 +440,40 @@ Matriz completa k × d (todas as métricas, combos degenerados, ameaças à
 validade) em [`docs/results_dsweep.md`](docs/results_dsweep.md). Gráficos
 d-aware em `results/plots/` (não versionados; regeneráveis — ver §3.3).
 
+### 5.3 Email-Enron — dataset secundário (`d=1`)
+
+**Dataset:** Email-Enron (SNAP), projeção não-direcionada por simetrização OR
+(D-11), maior componente conexa (n=33.696, m=180.811). **Parâmetros:** He et al.
+(2009), `d=1`, `sigma=0.5`, `k ∈ {2, 5, 10, 20}`, 3 sementes. **Ataques:** grau e
+subgrafo 1-hop *full* (bucketing de WL-hash, D-16; `subgraph_timeout_count=0`).
+Backend pymetis em 12/12 runs. Valores: médias sobre sementes.
+
+| k | Veredito | coverage_fraction | rr_grau | rr_subgrafo | KS-D | clustering_var |
+|---|---|---|---|---|---|---|
+| 2 | SUCCESS_PARTIAL | 0.9999 | 0.0033 | 0.1241 | 0.0382 | 0.0170 |
+| 5 | SUCCESS_PARTIAL | 0.9994 | 0.0023 | 0.1024 | 0.0273 | 0.0514 |
+| 10 | SUCCESS_PARTIAL | 0.9983 | 0.0027 | 0.0787 | 0.0387 | 0.0609 |
+| 20 | SUCCESS_PARTIAL | 0.9960 | 0.0019 | 0.0569 | 0.1303 | 0.0929 |
+
+<details>
+<summary>Legenda das colunas</summary>
+
+> `rr_grau` e `rr_subgrafo` são taxas de acerto contra rótulos internos de nós no experimento fechado — não identificação de pessoas reais. Colunas idênticas às da tabela baseline (§5.1); definições em [`docs/data_dictionary.md`](docs/data_dictionary.md) §1.1–3.
+
+</details>
+
+**Leitura.** As magnitudes Facebook × Enron **não são diretamente comparáveis**
+(escala ~63×, densidade, origem direcionada/OR e motor de partição não-pareado —
+KL no baseline, pymetis aqui); a leitura conjunta deve focar **tendências**, não
+níveis. Tendências robustas em ambas as redes: o ataque por subgrafo domina o de
+grau (~40× em k=2 no Enron) e o `rr_subgrafo` cai monotonicamente com k. Como
+`d=1` afere k-anonimato **de grau** e não a estrutura 1-hop (achado B1), a cota
+`rr_subgrafo ≤ 1/k` **pode ser violada** em k alto — p.ex. k=20 (0,057 > 0,050),
+o que é esperado, não um bug.
+
+Análise completa, tabela bruta por semente, comparativo e painel normalizado em
+[`docs/results_enron.md`](docs/results_enron.md).
+
 ---
 
 ## 6. Entregáveis
@@ -421,8 +486,10 @@ em [`docs/entregaveis.md`](docs/entregaveis.md).
   subgrafos; quatro métricas; mínimo de 3 sementes por configuração; gráfico
   privacidade-vs-utilidade com barras de erro; repositório versionado com README
   operacional e configuração reproduzível.
-- **Desejável (não perseguido).** Execução adicional sobre Email-Enron; ataque
-  por entropia.
+- **Desejável (parcialmente concluído).** Execução adicional sobre Email-Enron
+  ✅ concluída no S9 (dataset secundário, simetrização OR/D-11, comparativo
+  Facebook × Enron); ataque por entropia não iniciado
+  ([#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)).
 - **Aspiracional (não perseguido).** Implementação inicial de Nettleton & Salas
   (2016); comparação preliminar das duas anonimizações no mesmo gráfico.
 
@@ -441,14 +508,15 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
   /anonymization/            # [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) [implementado]; placeholder Nettleton & Salas
   /attacks/                  # ataques por grau e subgrafos
   /metrics/                  # cálculo das quatro métricas
-  /loaders/                  # carregadores de dataset (Facebook Ego-Nets) e script de download
-  /visualization/            # gráfico privacy-vs-utility e tabelas CSV
+  /loaders/                  # carregadores Facebook Ego-Nets e Email-Enron + scripts de download
+  /visualization/            # gráfico privacy-vs-utility, tabelas CSV e comparativo FB × Enron
 /experiments/
-  /configs/                  # arquivos de configuração (YAML); inclui baseline, d-sweep e diagnóstico k=20
+  /configs/                  # arquivos de configuração (YAML); inclui baseline, d-sweep, diagnóstico k=20 e Enron secundário
   /logs/                     # logs estruturados JSONL das execuções (não versionados)
   run.py                     # runner orquestrador CLI
   run_k_sweep.py             # k-sweep k ∈ {2,5,10,20} (issue #17)
   run_validacao_k_anonimato.py  # validação k-anonimato marco 21/05 (issue #16)
+  make_enron_table.py        # gera docs/results_enron.md a partir do log do Enron
 /results/
   /tables/                   # tabelas em CSV (não versionadas; regeneráveis)
   /plots/                    # gráficos em PDF/PNG (não versionados; regeneráveis)
@@ -459,11 +527,13 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
   scope.md                   # escopo, não-escopo e condições de contorno ética
   algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep e d>1)
   metrics_definitions.md     # definições operacionais das métricas
-  decision_log.md            # registro formal de decisões técnicas (DL-01/DL-02, D-04 a D-10)
+  data_dictionary.md         # dicionário de parâmetros, datasets (§1.1) e métricas
+  decision_log.md            # registro formal de decisões técnicas (DL-01 a DL-04, D-04 a D-16)
   progress.md                # log de progresso sessão a sessão
   validacao_k_anonimato.md   # resultados consolidados da validação empírica de k-anonimato
   results_baseline.md        # tabela bruta + agregações do experimento baseline (d=1)
   results_dsweep.md          # relatório consolidado do d-sweep — matriz k×d, análise, ameaças
+  results_enron.md           # relatório do dataset secundário Email-Enron + comparativo FB × Enron
   dsweep_previa_garantia_dados.md  # snapshot histórico intermediário do d-sweep (não canônico)
   milestones_moduloreidentificacao.md  # acompanhamento de issues por milestone
   pipeline.md                # documentação técnica do pipeline com diagramas Mermaid
@@ -471,6 +541,7 @@ Aspiracional é bônus que não deve ser perseguido em detrimento do Mínimo.
   reproducibility.md         # guia de reprodução end-to-end
   preprocessing_decision.md  # decisões de pré-processamento dos datasets
   entregaveis.md             # entregáveis consolidados por nível
+  assets/                    # snapshots versionados (ex.: comparison_fb_enron.{png,csv})
 README.md                    # este arquivo — visão operacional canônica
 CLAUDE.md                    # instruções de desenvolvimento para sessões de agente
 WORKFLOW.md                  # protocolo de orquestração entre interfaces de trabalho
@@ -501,8 +572,10 @@ Em resumo:
   aceitáveis sob D-06, e custo/timeout do ataque por subgrafo.
 - **Validade externa.** Baseline (`d=1`) restrito a uma ego-rede específica; o
   d-sweep (`d ∈ {1,2,5,10}`) resolve parcialmente a limitação §1.3 mas ainda
-  opera sobre a mesma ego-rede 3437 — generalização exige replicação em outros
-  grafos. Sem Email-Enron, sem redes temporais e sem dados sintéticos nesta fase.
+  opera sobre a mesma ego-rede 3437. O dataset secundário **Email-Enron** (S9)
+  amplia a validade externa para fora da topologia de ego-rede (n=33.696), mas o
+  comparativo cruza motores de partição não-pareados (KL × pymetis, baixa
+  magnitude — C2). Sem redes temporais e sem dados sintéticos nesta fase.
 - **Validade de construção.** A "reidentificação" medida é acerto contra rótulos
   internos de nós, não identificação de pessoas; similaridade estrutural não é
   identidade.
@@ -586,11 +659,14 @@ Pendências específicas identificadas no ciclo D-08:
   `algorithm_notes.md §3.2.2` (fórmula k(k−1) — marcada como interpretativa e
   dependente de validação empírica; em avaliação).
 
-### Escopo Desejável — milestone S6
+### Escopo Desejável
+
+O dataset secundário Email-Enron
+([#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29)) foi
+**concluído no S9** (ver Seção 4). Resta um item aberto:
 
 | Issue | Título | Dependência |
 |---|---|---|
-| [#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29) | Loader Email-Enron como dataset secundário | Nenhuma — ampliar validade externa |
 | [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | Ataque por entropia reutilizando grupos de equivalência | Depende de `src/attacks/` existente |
 
 ### Escopo Aspiracional
