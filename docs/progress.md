@@ -11,11 +11,26 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-06
+**Data da última atualização:** 2026-06-07
 
-**Semana corrente:** S6 — Ataque/métrica por entropia (tier desejável, issue #30).
+**Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
 
 **Último passo concluído:**
+- **Issue #154 (S10 / A01): esqueleto de `docs/artifact_writing_checklist.md`. ✅
+  (docs).** Primeira sub-issue do milestone **S10** (consolidação documental, #140).
+  Criada apenas a **infraestrutura** do checklist de verificação pré-escrita —
+  pontos a resolver/declarar **antes** da redação de cada seção (DoD da S10).
+  **(1) Cabeçalho/propósito**: documento *prospectivo* que **não substitui**
+  `achados_divergencias.md` (retrospectivo), `decision_log.md` (decisões) nem
+  `limitations.md` (limitações) — referencia, não copia. **(2) "Estrutura de cada
+  item"**: campos do item `W-NN` (ID, Origem, Tipo `[verificação técnica | ponto
+  interpretativo | decisão pendente | nota de método]`, Descrição, Critério de
+  fechamento, Destino no texto, Status `[aberto | em verificação | resolvido]`).
+  **(3) Convenção de numeração** `W-NN` sequencial e **não reaproveitada**,
+  documentada no próprio arquivo. **(4)** Seções **"Itens ativos"** e **"Itens
+  resolvidos"** vazias. Itens W-NN **não** populados (fica na #141); **nenhum**
+  conteúdo movido dos docs retrospectivos. Só docs; sem alteração em `src/` ou
+  testes. Branch `docs/writing-checklist`, PR #159 (`Closes #154`).
 - **Sanitização de fim de issue (#30): auditoria de amparo bibliográfico. ✅
   (docs).** Verificação de que toda técnica/metodologia/processo formalmente
   nomeada está amparada na literatura apresentada (item 1) + consistência
@@ -468,6 +483,10 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
+- **Issue #154 (S10 / A01):** ✅ PR #159 aberto (`docs/writing-checklist`), aguarda
+  CI + revisão humana. Claude Code não faz merge.
+- **Issue #141 (S10):** popula os itens `W-01..W-06` no esqueleto criado por #154 —
+  pré-requisito (#154) satisfeito assim que o PR #159 for mergeado.
 - **Issue #30 (entropia):** ✅ mergeada (PR #149) e fechada (`COMPLETED`); auditoria
   bibliográfica de fechamento ✅ mergeada (PR #150). A continuação é a #148 (abaixo).
 - **Issue #148 (entropia não uniforme, sem milestone):** continuação aberta; exige
@@ -477,7 +496,9 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum — #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
+- Nenhum — #154 é só esqueleto e independe de PRs anteriores; PR #159 aguarda CI +
+  revisão humana.
+- #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
   S9 `closed`). Milestones S8 e S9 concluídos.
@@ -506,6 +527,24 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-07 — Issue #154 (S10 / A01): esqueleto de artifact_writing_checklist.md
+
+- **Concluído:** Abertura do milestone **S10** (consolidação documental, #140).
+  Criado `docs/artifact_writing_checklist.md` apenas como **infraestrutura** do
+  checklist de verificação pré-escrita: cabeçalho/propósito (documento
+  *prospectivo*, DoD da S10, não substitui `achados_divergencias.md`/
+  `decision_log.md`/`limitations.md`), seção "Estrutura de cada item" (campos do
+  item `W-NN`: ID, Origem, Tipo, Descrição, Critério de fechamento, Destino no
+  texto, Status), convenção de numeração `W-NN` sequencial e não reaproveitada, e
+  seções "Itens ativos"/"Itens resolvidos" vazias. Itens W-NN **não** populados
+  (fica na #141); nenhum conteúdo movido dos docs retrospectivos. Só docs. Branch
+  `docs/writing-checklist`, PR #159 (`Closes #154`).
+- **Próximo:** Revisão humana + merge do PR #159 → fechar #154. Depois #141
+  (popular W-01..W-06 no esqueleto). Housekeeping herdado: #74 e (se aberta) #72.
+- **Bloqueios:** Nenhum — #154 independe de PRs anteriores; PR #159 aguarda CI +
+  revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-06 — Limpeza cosmética pós-merge da #30
 
