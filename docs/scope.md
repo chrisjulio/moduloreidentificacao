@@ -12,6 +12,10 @@
 > com simetrização OR (D-11, issue-mãe #29, âncora #122). Entropia de reidentificação
 > reconciliada de `[A]` para `[D]` e classificada como métrica (D-17, issue #30).
 > Alterações de escopo devem ser registradas aqui antes de serem implementadas.
+>
+> Fila prospectiva de verificações a confirmar/declarar antes de redigir os
+> artefatos finais (relatório + artigo) em
+> [`docs/artifact_writing_checklist.md`](artifact_writing_checklist.md) (S10).
 
 ---
 

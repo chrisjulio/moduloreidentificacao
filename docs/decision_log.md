@@ -11,6 +11,11 @@
 > que não constavam no planejamento, mas que ficaram distribuídas em
 > `docs/algorithm_notes.md` e nos PRs. Ambos os conjuntos são consolidados
 > aqui para rastreabilidade única.
+>
+> **Registro de decisões já tomadas (não é fila de pendências).** Uma entrada só
+> entra aqui depois que a decisão está consolidada; a fila *prospectiva* de
+> verificações a confirmar/declarar antes de redigir cada seção vive em
+> [`docs/artifact_writing_checklist.md`](artifact_writing_checklist.md) (S10).
 
 ---
 
