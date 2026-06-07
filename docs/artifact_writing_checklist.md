@@ -24,6 +24,30 @@
 
 ---
 
+## Papéis documentais e fronteiras
+
+Três documentos parecem registrar "pontos em aberto", mas cada um tem um papel
+distinto e uma direção no tempo diferente. A regra de fronteira é simples: onde
+houver dúvida sobre **onde registrar algo**, o registro vai no artefato novo
+(este checklist), não diluído nos docs retrospectivos.
+
+- **[`achados_divergencias.md`](achados_divergencias.md)** — *retrospectivo,
+  fechado*: síntese das divergências já observadas entre o que foi **proposto** e
+  o que foi **executado**; não recebe novas pendências de escrita.
+- **[`decision_log.md`](decision_log.md)** — *registro de decisões já tomadas*
+  (`D-01..D-xx` / `DL-xx`), com justificativa e alternativas rejeitadas; **não é
+  fila de pendências** — uma entrada só entra aqui depois que a decisão está
+  consolidada.
+- **`artifact_writing_checklist.md` (este)** — *prospectivo*: fila de
+  verificações a **confirmar ou declarar** no texto antes de redigir cada seção,
+  abertas até virarem uma decisão (que migra para `decision_log.md`) ou texto no
+  artefato final.
+
+Os links acima são apenas ponteiros de localização: este checklist referencia,
+mas **não reescreve** o conteúdo daqueles arquivos.
+
+---
+
 ## Estrutura de cada item
 
 Cada pendência de escrita é registrada como um item `W-NN` com os campos abaixo.
