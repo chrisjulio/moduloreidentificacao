@@ -16,6 +16,19 @@
 **Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
 
 **Último passo concluído:**
+- **Issue #155 (S10 / A02): diferenciação dos 3 papéis documentais no checklist. ✅
+  (docs).** Segunda sub-issue do milestone **S10** (#140), depende de #154
+  (esqueleto, PR #159 **MERGED**). Adicionada a seção **"Papéis documentais e
+  fronteiras"** ao `docs/artifact_writing_checklist.md`, com 1 frase por papel +
+  ponteiros de ida (links relativos): **(1)** `achados_divergencias.md` —
+  retrospectivo, fechado (proposto × executado); **(2)** `decision_log.md` —
+  registro de decisões já tomadas, **não** fila de pendências; **(3)** o próprio
+  checklist — fila **prospectiva** de verificações a confirmar/declarar até virarem
+  decisão (migra p/ `decision_log.md`) ou texto no artefato final. Regra de
+  fronteira explicitada (dúvida sobre "onde registrar" → artefato novo). **Nenhuma
+  reescrita** de conteúdo em `achados_divergencias.md`/`decision_log.md` (apontadores
+  ficam na #156). Só docs; sem alteração em `src/` ou testes. Branch
+  `docs/checklist-doc-roles`, PR #160 (`Closes #155`).
 - **Issue #154 (S10 / A01): esqueleto de `docs/artifact_writing_checklist.md`. ✅
   (docs).** Primeira sub-issue do milestone **S10** (consolidação documental, #140).
   Criada apenas a **infraestrutura** do checklist de verificação pré-escrita —
@@ -483,10 +496,13 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Issue #154 (S10 / A01):** ✅ PR #159 aberto (`docs/writing-checklist`), aguarda
+- **Issue #155 (S10 / A02):** ✅ PR #160 aberto (`docs/checklist-doc-roles`), aguarda
   CI + revisão humana. Claude Code não faz merge.
+- **Issue #154 (S10 / A01):** ✅ PR #159 **MERGED**; #154 fechada.
+- **Issue #156 (S10 / A03):** apontadores de volta nos docs retrospectivos
+  (`achados_divergencias.md`/`decision_log.md` → checklist) — fora do escopo de #155.
 - **Issue #141 (S10):** popula os itens `W-01..W-06` no esqueleto criado por #154 —
-  pré-requisito (#154) satisfeito assim que o PR #159 for mergeado.
+  pré-requisito (#154) satisfeito (PR #159 mergeado).
 - **Issue #30 (entropia):** ✅ mergeada (PR #149) e fechada (`COMPLETED`); auditoria
   bibliográfica de fechamento ✅ mergeada (PR #150). A continuação é a #148 (abaixo).
 - **Issue #148 (entropia não uniforme, sem milestone):** continuação aberta; exige
@@ -496,8 +512,8 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum — #154 é só esqueleto e independe de PRs anteriores; PR #159 aguarda CI +
-  revisão humana.
+- Nenhum — dependência de #155 (esqueleto #154 / PR #159) já em `main`; PR #160
+  aguarda CI + revisão humana.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
@@ -527,6 +543,24 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-07 — Issue #155 (S10 / A02): diferenciação dos 3 papéis documentais
+
+- **Concluído:** Segunda sub-issue do milestone **S10** (#140). Verificado via `gh`
+  que a dependência #154 (PR #159) está **MERGED** e #154 fechada antes de começar.
+  Adicionada a seção **"Papéis documentais e fronteiras"** ao
+  `docs/artifact_writing_checklist.md`: 1 frase por papel + ponteiros de ida (links
+  relativos) — `achados_divergencias.md` (retrospectivo, fechado), `decision_log.md`
+  (decisões tomadas, não fila), e o próprio checklist (fila prospectiva). Regra de
+  fronteira ("onde registrar" → artefato novo) explicitada. **Nenhuma reescrita**
+  nos docs retrospectivos (apontadores ficam na #156). Só docs. Branch
+  `docs/checklist-doc-roles`, PR #160 (`Closes #155`).
+- **Próximo:** Revisão humana + merge do PR #160 → fechar #155. Depois #156
+  (apontadores de volta) e #141 (popular W-01..W-06). Housekeeping: #74 e (se
+  aberta) #72.
+- **Bloqueios:** Nenhum — dependência #154/#159 em `main`; PR #160 aguarda CI +
+  revisão humana.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-07 — Issue #154 (S10 / A01): esqueleto de artifact_writing_checklist.md
 
