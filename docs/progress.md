@@ -16,6 +16,22 @@
 **Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
 
 **Último passo concluído:**
+- **Issue #161 (S10 / A06): mapa estrutural + sanitização documental. ✅ (docs).**
+  Sexta sub-issue de infraestrutura do milestone **S10** (#140). Executada em **duas
+  fases** conforme o comentário de encaminhamento da própria #161 — sanitização
+  **antes** do escopo primário. **(1) Sanitização — correções de registro aplicadas
+  diretamente:** `scope.md` (legenda `[D]`, bullet do d-sweep, bullet da entropia e
+  rodapé descreviam como "em andamento"/"pendentes"/"não iniciado" issues já
+  **fechadas** — #72–#78, #77/#88, #29, #30/D-17/PR #149; todas corrigidas, data do
+  rodapé alinhada ao cabeçalho) e `achados_divergencias.md` §5 (lista de decisões
+  parava em `D-10/DL-03` → atualizada para `D-17/DL-04`; `results_enron.md`
+  acrescentado às refs cruzadas). **(2) Escopo primário (A06):** criado
+  `docs/mapa_estrutural.md` — mapa de rastreabilidade A01–A06 → produto documental,
+  localização, status e uso futuro (orientador; **não** duplica as issues). Achados
+  que **não** são correção de registro (transição de fase / enquadramento instrumental
+  herdado da #99/#140; população de `W-01..W-06`) foram **encaminhados**, não aplicados
+  (boundary). Lista consolidada da sanitização registrada na #161. Só docs; sem
+  alteração em `src/` ou testes. Branch `docs/mapa-estrutural` (`Closes #161`).
 - **Issue #158 (S10 / A05): fechar a DoD da #140 (guarda-chuva) e habilitar a #141.
   ✅ (docs).** Quinta e última sub-issue de infraestrutura do milestone **S10**
   (#140). A premissa literal da #158 ("garantir a branch `docs/writing-checklist`
@@ -599,6 +615,25 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-08 — Issue #161 (S10 / A06): mapa estrutural + sanitização
+
+- **Concluído:** Sexta sub-issue do milestone **S10** (#140), em duas fases.
+  *Sanitização* (correções de registro aplicadas diretamente): `scope.md`
+  (statuses defasados de issues fechadas — d-sweep #77/#88, entropia #30/D-17,
+  legenda `[D]` e rodapé) e `achados_divergencias.md` §5 (`D-10/DL-03` →
+  `D-17/DL-04` + `results_enron.md`). *Escopo primário:* criado
+  `docs/mapa_estrutural.md` (mapa de rastreabilidade A01–A06 → produto documental,
+  localização, status, uso futuro). Itens não-correção (enquadramento instrumental
+  da #99/#140; `W-01..W-06`) **encaminhados**, não aplicados. Lista consolidada da
+  sanitização registrada na #161. Só docs. Branch `docs/mapa-estrutural`
+  (`Closes #161`).
+- **Próximo:** Revisão humana + merge. Depois **#141** (popular `W-01..W-06`,
+  remover/substituir `W-00`). Encaminhar a decisão de enquadramento instrumental
+  (decision_log / #141) com validação humana.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** D-08 (d=2 mantido, anotado degenerate). Enquadramento
+  instrumental (#99/#140) a consolidar em `decision_log.md` com validação humana.
 
 ### 2026-06-08 — Issue #158 (S10 / A05): fechar DoD da #140 e habilitar #141
 
