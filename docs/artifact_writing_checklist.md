@@ -81,7 +81,33 @@ Todos os campos são obrigatórios.
 > Itens com status `aberto` ou `em verificação`. Pendências de escrita a resolver
 > antes de redigir as seções correspondentes.
 
-_(vazio — a popular em #141)_
+> ⚠️ **EXEMPLO removível (dry-run #157).** O item `W-00` abaixo é um **piloto
+> ilustrativo**, não uma pendência real de escrita. Ele existe apenas para validar
+> que o template `W-NN` acomoda um ponto de assimetria Facebook×Enron (issue #157,
+> sub-issue de #140). **Deve ser removido ou substituído** quando a #141 popular os
+> itens reais `W-01..W-06`. A numeração `W-00` é deliberadamente fora da faixa
+> sequencial real (`W-01`+) para sinalizar seu caráter de exemplo.
+
+### W-00 (EXEMPLO — removível)
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | `W-00` (EXEMPLO — não conta na numeração sequencial real). |
+| **Origem** | #128 (comparativo Facebook×Enron) e #139 (ataque por subgrafo via WL-bucketing), **ambas fechadas** — entram só como origem; achado C2 (motor não-pareado KL×pymetis); decisão D-11 (simetrização OR do Enron). |
+| **Tipo** | `ponto interpretativo` |
+| **Descrição** | Ao apresentar o comparativo Facebook×Enron, declarar que as magnitudes de `rr_subgrafo` **não são diretamente comparáveis** entre as redes (escala n≈532 vs n≈33.696; densidade; origem OR/D-11; motor de particionamento KL vs pymetis). Sobrepor as duas curvas num único eixo absoluto é enganoso; o texto deve usar os eixos **normalizados** (`rr·k` vs cota `1/k`; decaimento relativo `rr(k)/rr(k_min)`) e nomear o cruzamento das curvas (~k≈14) sem afirmar que uma rede é "mais privada" que a outra. |
+| **Critério de fechamento** | A subseção comparativa dos Resultados (1) declara explicitamente a não-comparabilidade de magnitude, (2) usa o painel normalizado em vez de sobrepor magnitudes absolutas, e (3) cita o cruzamento sem inferir superioridade de privacidade de uma rede. |
+| **Destino no texto** | Seção de Resultados — subseção comparativa Facebook×Enron (figura do painel normalizado `comparison_fb_enron`). |
+| **Status** | `em verificação` (EXEMPLO) |
+
+> **Resultado do dry-run (#157).** O ponto de assimetria acima foi mapeado nos
+> **sete campos** do template sem ambiguidade nem campo faltante: a *Origem*
+> acomodou múltiplas referências (issues fechadas + achado + decisão); o *Tipo*
+> `ponto interpretativo` classificou bem um ponto de leitura (não técnico, não
+> decisão pendente); *Critério de fechamento* expressou uma condição objetiva e
+> verificável; *Destino no texto* apontou seção e figura concretas. **Conclusão:
+> o template `W-NN` é suficiente — nenhum ajuste de campo necessário** (DoD da
+> #157). A "Estrutura de cada item" acima permanece inalterada.
 
 ---
 
