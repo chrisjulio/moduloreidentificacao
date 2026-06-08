@@ -11,11 +11,27 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-07
+**Data da última atualização:** 2026-06-08
 
 **Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
 
 **Último passo concluído:**
+- **Issue #157 (S10 / A04): dry-run do template `W-NN` contra assimetrias
+  Facebook×Enron. ✅ (docs).** Quarta sub-issue do milestone **S10** (#140); depende
+  de #154 (esqueleto, PR #159 **MERGED** — verificado em `origin/main` antes de
+  começar). Inserido **1 item-piloto `W-00` (EXEMPLO removível)** na seção "Itens
+  ativos" do `docs/artifact_writing_checklist.md`, ilustrando um ponto de
+  assimetria Facebook×Enron: não-comparabilidade de magnitude de `rr_subgrafo`
+  (escala/densidade/origem OR-D-11/motor KL×pymetis) → usar painel **normalizado**
+  em vez de sobrepor magnitudes absolutas. Origem citada só como referência: **#128**
+  e **#139** (ambas fechadas), achado **C2**, decisão **D-11** — nenhuma reaberta ou
+  refatorada. **Veredito do dry-run:** os **7 campos** do template (ID, Origem, Tipo,
+  Descrição, Critério de fechamento, Destino no texto, Status) acomodaram o ponto
+  **sem campo faltante** → template suficiente, **nenhum ajuste em #154 necessário**.
+  Item marcado como EXEMPLO removível (`W-00` fora da faixa real `W-01`+) com nota de
+  remoção/substituição pela #141 — "Itens ativos" pronta para a popular. **Não**
+  populados itens reais W-01..W-06 (isso é da #141). Só docs; sem alteração em `src/`
+  ou testes. Branch `docs/checklist-dryrun` (`Closes #157`).
 - **Issue #156 (S10 / A03): apontadores de localização do checklist nos índices
   vivos e docs retrospectivos. ✅ (docs).** Terceira sub-issue do milestone **S10**
   (#140); depende de #154 (arquivo-alvo, PR #159 **MERGED**) e complementa #155
@@ -510,12 +526,15 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Issue #156 (S10 / A03):** ✅ PR aberto (`docs/checklist-pointers`), aguarda
+- **Issue #157 (S10 / A04):** ✅ PR aberto (`docs/checklist-dryrun`), aguarda
   CI + revisão humana. Claude Code não faz merge.
+- **Issue #156 (S10 / A03):** ✅ PR #162 **MERGED**; #156 fechada.
 - **Issue #155 (S10 / A02):** ✅ PR #160 **MERGED**; #155 fechada.
 - **Issue #154 (S10 / A01):** ✅ PR #159 **MERGED**; #154 fechada.
 - **Issue #141 (S10):** popula os itens `W-01..W-06` no esqueleto criado por #154 —
-  pré-requisito (#154) satisfeito (PR #159 mergeado).
+  pré-requisito (#154) satisfeito (PR #159 mergeado). O dry-run #157 confirmou que o
+  template `W-NN` é suficiente; o item-piloto `W-00` (EXEMPLO) deve ser removido ou
+  substituído ao popular os itens reais.
 - **Issue #30 (entropia):** ✅ mergeada (PR #149) e fechada (`COMPLETED`); auditoria
   bibliográfica de fechamento ✅ mergeada (PR #150). A continuação é a #148 (abaixo).
 - **Issue #148 (entropia não uniforme, sem milestone):** continuação aberta; exige
@@ -525,8 +544,8 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum — dependências de #156 (#154/PR #159 e #155/PR #160) já em `main`; PR
-  de #156 (`docs/checklist-pointers`) aguarda CI + revisão humana.
+- Nenhum — dependência de #157 (#154/PR #159) já em `main`; PR de #157
+  (`docs/checklist-dryrun`) aguarda CI + revisão humana.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
@@ -556,6 +575,25 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-08 — Issue #157 (S10 / A04): dry-run do template W-NN
+
+- **Concluído:** Quarta sub-issue do milestone **S10** (#140). Verificado via `gh`
+  que a dependência #154 (PR #159) está **MERGED** antes de começar. Inserido **1
+  item-piloto `W-00` (EXEMPLO removível)** na seção "Itens ativos" do
+  `docs/artifact_writing_checklist.md`, ilustrando um ponto de assimetria
+  Facebook×Enron (não-comparabilidade de magnitude de `rr_subgrafo` → usar painel
+  normalizado). Origem citada apenas como referência: **#128** e **#139** (fechadas),
+  achado **C2**, decisão **D-11** — nenhuma reaberta. **Veredito:** os 7 campos do
+  template acomodaram o ponto sem campo faltante → template suficiente, **nenhum
+  ajuste em #154**. Item marcado EXEMPLO removível + nota de remoção pela #141.
+  **Não** populados W-01..W-06 (é da #141). Só docs. Branch `docs/checklist-dryrun`
+  (`Closes #157`).
+- **Próximo:** Revisão humana + merge → fechar #157. Depois #141 (popular
+  W-01..W-06, removendo/substituindo o `W-00` EXEMPLO). Housekeeping: #74 e (se
+  aberta) #72.
+- **Bloqueios:** Nenhum — dependência #154/#159 em `main`; PR aguarda CI + revisão.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-07 — Issue #156 (S10 / A03): apontadores de localização do checklist
 
