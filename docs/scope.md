@@ -66,7 +66,7 @@ existe eixo de privacidade a ser medido.
 
 > **Legenda de estado de implementação:**
 > `[M]` = mínimo (implementado — S1 a S5 encerrados em 28/05/2026);
-> `[D]` = desejável (tier ativo — d-sweep em andamento, issues #72–#78);
+> `[D]` = desejável (tier concluído — d-sweep #72–#78 e Email-Enron #29 executados);
 > `[A]` = aspiracional (fora do escopo do baseline, candidato a trabalho futuro).
 
 Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
@@ -84,7 +84,8 @@ Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
 - `[D]` Executa **varredura de d** (d-sweep) sobre [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) com d∈{1, 2, 5, 10},
   avaliando k-anonimato structure-aware pleno. Decisão D-08 registrada em
   `docs/decision_log.md` (issue #73, issue-mãe #72). Branch `experiment/d-sweep`
-  (PR #79) já mergeada; configuração YAML e logging pendentes (issue #77).
+  (PR #79) mergeada; configuração YAML e execução do d-sweep **concluídas**
+  (issues #77 e #88, ambas fechadas); resultados em `docs/results_dsweep.md`.
 - `[A]` Aplica o algoritmo de anonimização **[Nettleton & Salas (2016)](https://doi.org/10.1016/j.eswa.2016.02.004)** como segundo
   ponto de comparação na curva privacidade-vs-utilidade.
 - `[M]` Executa ataque de reidentificação **por grau** contra a saída do pipeline.
@@ -97,7 +98,9 @@ Dentro do recorte do baseline (estático, prazo de 14/06/2026), o módulo:
   com o nome "ataque por entropia" como leitura adversarial. Ancorada em
   [Serjantov & Danezis (2002)](https://doi.org/10.1007/3-540-36467-6_4) e
   [Díaz et al. (2002)](https://doi.org/10.1007/3-540-36467-6_5). Decisão **D-17** em
-  `docs/decision_log.md`. Código ainda não iniciado.
+  `docs/decision_log.md`. **Implementada na #30** (baseline uniforme):
+  `src/metrics/entropy.py` + apontador `src/attacks/entropy.py` (em `main` via
+  PR #149); caminho de probabilidades não uniformes adiado para a issue #148.
 - `[M]` Calcula quatro métricas: taxa de reidentificação, tamanho médio dos grupos de
   equivalência, estatística D do teste KS sobre distribuição de grau, variação do
   coeficiente de clustering médio.
@@ -248,9 +251,10 @@ defensáveis da resistência de anonimizações conhecidas.
 
 ---
 
-*Documento de escopo. Atualizado em 03/06/2026 (issue #122). S1–S5 encerrados;
-d-sweep tier `[D]` concluído (issues #72–#78); Email-Enron (tier `[D]`) em
-enquadramento (S9, issue-mãe #29). Desvios fundamentados são esperados;
+*Documento de escopo. Atualizado em 06/06/2026. S1–S5 encerrados;
+d-sweep tier `[D]` concluído (issues #72–#78); Email-Enron (tier `[D]`)
+executado (S9, issue-mãe #29, fechada); entropia (tier `[D]`) implementada
+(#30 / D-17). Desvios fundamentados são esperados;
 desvios não documentados, não. Toda alteração de escopo é registrada aqui antes de ser
 implementada.*
 

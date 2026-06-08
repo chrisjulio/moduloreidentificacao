@@ -583,12 +583,13 @@ Pontos onde a documentação existente ainda descrevia o *proposto* como se foss
 
 ## 5. Referências cruzadas
 
-- `docs/decision_log.md` — D-01 a D-10, DL-01, DL-02, DL-03 (fonte primária das decisões).
+- `docs/decision_log.md` — D-01 a D-17, DL-01 a DL-04 (fonte primária das decisões).
 - `docs/limitations.md` — classificação formal (escopo × técnica) e ameaças à validade.
 - `docs/algorithm_notes.md` — §2 (algoritmo), §3 (modificações), §4 (verificador),
   §5 (parâmetros), §6 (casos especiais), §9 (resultados k-sweep e d-sweep).
 - `docs/results_baseline.md` — resultados `d=1` (baseline #23).
 - `docs/results_dsweep.md` — resultados `d∈{1,2,5,10}` (d-sweep #88) e ameaças à validade §5.7.
+- `docs/results_enron.md` — execução secundária Email-Enron e comparativo Facebook×Enron (S9, #128/#139).
 - `docs/scope.md` — fronteira de escopo e não-escopo; tiers [M]/[D]/[A].
 
 ---
