@@ -160,6 +160,16 @@ Para cada issue:
 
 ## Convenção de commits
 
+- **Ferramenta correta:** escreva a mensagem e commite pela ferramenta
+  **PowerShell**, nunca pela ferramenta **Bash**. Nesta máquina (Windows) a
+  ferramenta Bash executa o Git Bash, um shell separado; sintaxe PowerShell
+  (here-string `@'...'@`, `Set-Content`, `$env:`) enviada a ela falha com
+  `command not found`/`syntax error`. Um hook `PreToolUse`
+  (`.claude/hooks/guard_bash_powershell.py`) bloqueia esse erro, mas a regra
+  vale por si. Use a ferramenta Bash só para sintaxe POSIX legítima.
+- Ao gravar o arquivo de mensagem, evite o BOM que `Set-Content -Encoding utf8`
+  injeta no assunto do commit: use
+  `[System.IO.File]::WriteAllText($path, $msg, (New-Object System.Text.UTF8Encoding $false))`.
 - Nunca passe a mensagem de commit inline (`git commit -m "..."` ou
   here-string `@'...'@`). O parser de comandos tem limite de ~965 bytes
   e mensagens longas falham com "command too long for parsing".
