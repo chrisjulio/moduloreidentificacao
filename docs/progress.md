@@ -16,6 +16,25 @@
 **Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
 
 **Último passo concluído:**
+- **Issue #158 (S10 / A05): fechar a DoD da #140 (guarda-chuva) e habilitar a #141.
+  ✅ (docs).** Quinta e última sub-issue de infraestrutura do milestone **S10**
+  (#140). A premissa literal da #158 ("garantir a branch `docs/writing-checklist`
+  com o trabalho de #154–#157 e abrir um PR consolidador") **estava obsoleta**: as
+  quatro sub-issues já foram mergeadas em `main` por **PRs separados** — #154
+  (PR #159), #155 (PR #160), #156 (PR #162), #157 (PR #163), todos **MERGED**
+  (verificado via `gh pr list` + `git log origin/main`). Logo, a DoD substantiva da
+  #140 já estava cumprida em `main` antes desta issue. **(1) DoD da #140 verificada
+  item a item** contra o `artifact_writing_checklist.md` em `main`: arquivo/esqueleto
+  criado (#154); seção "Papéis documentais e fronteiras" diferenciando os 3 papéis
+  (#155); apontadores de localização em README/scope/progress/achados/decision_log
+  (#156); template `W-NN` validado pelo piloto removível `W-00` com veredito de
+  suficiência (#157). **(2)** Esta entrada de progresso dá conteúdo ao PR que fecha
+  formalmente **#140** (guarda-chuva) e **#158** (A05). **(3) Comentário de
+  habilitação deixado na #141** sinalizando infraestrutura pronta e pré-requisitos
+  maduros (transição de fase de 06/06 herdada do encerramento da #99: #128 e #139
+  fechadas). **Não** populados itens reais `W-01..W-06` (isso é da #141; o `W-00`
+  EXEMPLO deve ser removido/substituído lá). Só docs; sem alteração em `src/` ou
+  testes. Branch `docs/s10-x1-umbrella-close` (`Closes #140`, `Closes #158`).
 - **Issue #157 (S10 / A04): dry-run do template `W-NN` contra assimetrias
   Facebook×Enron. ✅ (docs).** Quarta sub-issue do milestone **S10** (#140); depende
   de #154 (esqueleto, PR #159 **MERGED** — verificado em `origin/main` antes de
@@ -526,15 +545,20 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Issue #157 (S10 / A04):** ✅ PR aberto (`docs/checklist-dryrun`), aguarda
+- **Issue #158 (S10 / A05):** ✅ PR aberto (`docs/s10-x1-umbrella-close`,
+  `Closes #140`, `Closes #158`); comentário de habilitação deixado na #141. Aguarda
   CI + revisão humana. Claude Code não faz merge.
+- **Issue #157 (S10 / A04):** ✅ PR #163 **MERGED**; #157 fechada.
 - **Issue #156 (S10 / A03):** ✅ PR #162 **MERGED**; #156 fechada.
 - **Issue #155 (S10 / A02):** ✅ PR #160 **MERGED**; #155 fechada.
 - **Issue #154 (S10 / A01):** ✅ PR #159 **MERGED**; #154 fechada.
-- **Issue #141 (S10):** popula os itens `W-01..W-06` no esqueleto criado por #154 —
-  pré-requisito (#154) satisfeito (PR #159 mergeado). O dry-run #157 confirmou que o
-  template `W-NN` é suficiente; o item-piloto `W-00` (EXEMPLO) deve ser removido ou
-  substituído ao popular os itens reais.
+- **Issue #140 (S10, guarda-chuva):** DoD cumprida em `main` (#154/#155/#156/#157);
+  fechamento formal via PR da #158.
+- **Issue #141 (S10):** próximo trabalho substantivo do S10 — popula os itens
+  `W-01..W-06` no esqueleto criado por #154. Infraestrutura agora completa
+  (#154/#155/#156/#157 em `main`; DoD da #140 cumprida via #158). O dry-run #157
+  confirmou que o template `W-NN` é suficiente; o item-piloto `W-00` (EXEMPLO) deve
+  ser removido ou substituído ao popular os itens reais.
 - **Issue #30 (entropia):** ✅ mergeada (PR #149) e fechada (`COMPLETED`); auditoria
   bibliográfica de fechamento ✅ mergeada (PR #150). A continuação é a #148 (abaixo).
 - **Issue #148 (entropia não uniforme, sem milestone):** continuação aberta; exige
@@ -544,8 +568,8 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum — dependência de #157 (#154/PR #159) já em `main`; PR de #157
-  (`docs/checklist-dryrun`) aguarda CI + revisão humana.
+- Nenhum — toda a infraestrutura do checklist (#154–#157) já em `main`; PR da #158
+  (`docs/s10-x1-umbrella-close`) aguarda CI + revisão humana para fechar #140 e #158.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
@@ -575,6 +599,24 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-08 — Issue #158 (S10 / A05): fechar DoD da #140 e habilitar #141
+
+- **Concluído:** Última sub-issue de infraestrutura do milestone **S10**. A premissa
+  literal da #158 (consolidar #154–#157 numa branch e abrir PR consolidador) estava
+  **obsoleta**: as quatro já foram mergeadas em `main` por PRs separados — #154
+  (PR #159), #155 (PR #160), #156 (PR #162), #157 (PR #163), todos **MERGED**
+  (verificado via `gh pr list` + `git log origin/main`). DoD da #140 verificada item
+  a item no `artifact_writing_checklist.md` em `main`: esqueleto (#154), papéis
+  documentais (#155), apontadores (#156), template validado pelo `W-00` (#157). PR
+  desta issue (`docs/s10-x1-umbrella-close`) leva a entrada de progresso como
+  conteúdo e fecha **#140** (guarda-chuva) + **#158** (`Closes`). Comentário de
+  habilitação deixado na **#141**. Só docs; sem alteração em `src/` ou testes.
+- **Próximo:** Revisão humana + merge → fechar #140 e #158. Depois **#141** (popular
+  `W-01..W-06`, removendo/substituindo o `W-00` EXEMPLO). Housekeeping: #74 e (se
+  aberta) #72.
+- **Bloqueios:** Nenhum — infraestrutura #154–#157 em `main`; PR aguarda CI + revisão.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-08 — Issue #157 (S10 / A04): dry-run do template W-NN
 
