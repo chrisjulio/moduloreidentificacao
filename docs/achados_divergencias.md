@@ -20,6 +20,11 @@
 > rastreável e com a moldura metodológica correta ("desvio fundamentado",
 > "aproximação documentada", "escopo deliberado").
 >
+> **Documento retrospectivo (fechado).** Este arquivo sintetiza divergências já
+> observadas e não recebe novas pendências de escrita; a fila *prospectiva* de
+> verificações a confirmar/declarar antes de redigir cada seção vive em
+> [`docs/artifact_writing_checklist.md`](artifact_writing_checklist.md) (S10).
+>
 > **Como ler.** Cada achado tem: o que foi **proposto**, o que foi
 > **executado**, a **evidência**, o **impacto metodológico** e o **status**
 > (onde já está documentado e o que ainda precisa ser corrigido nos docs).

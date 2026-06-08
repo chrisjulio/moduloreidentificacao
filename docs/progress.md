@@ -16,6 +16,20 @@
 **Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
 
 **Último passo concluído:**
+- **Issue #156 (S10 / A03): apontadores de localização do checklist nos índices
+  vivos e docs retrospectivos. ✅ (docs).** Terceira sub-issue do milestone **S10**
+  (#140); depende de #154 (arquivo-alvo, PR #159 **MERGED**) e complementa #155
+  (PR #160 **MERGED**) — ambos verificados em `origin/main` antes de começar.
+  Inseridos **apontadores de 1 linha** (links relativos) para
+  `docs/artifact_writing_checklist.md`, **sem reescrever** conteúdo retrospectivo:
+  **(1)** `README.md` — novo bloco **S10** no índice de docs (§4); **(2)**
+  `docs/scope.md` — linha no blockquote de cabeçalho; **(3)** `docs/progress.md` —
+  esta entrada de S10; **(4)** `docs/achados_divergencias.md` — frase de cabeçalho
+  (retrospectivo/fechado → fila prospectiva no checklist); **(5)**
+  `docs/decision_log.md` — frase de cabeçalho (registro de decisões tomadas, não
+  fila → checklist). Nenhuma alteração de conteúdo retrospectivo além das
+  linhas/frases de apontamento. Só docs; sem alteração em `src/` ou testes. Branch
+  `docs/checklist-pointers` (`Closes #156`).
 - **Issue #155 (S10 / A02): diferenciação dos 3 papéis documentais no checklist. ✅
   (docs).** Segunda sub-issue do milestone **S10** (#140), depende de #154
   (esqueleto, PR #159 **MERGED**). Adicionada a seção **"Papéis documentais e
@@ -496,11 +510,10 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Issue #155 (S10 / A02):** ✅ PR #160 aberto (`docs/checklist-doc-roles`), aguarda
+- **Issue #156 (S10 / A03):** ✅ PR aberto (`docs/checklist-pointers`), aguarda
   CI + revisão humana. Claude Code não faz merge.
+- **Issue #155 (S10 / A02):** ✅ PR #160 **MERGED**; #155 fechada.
 - **Issue #154 (S10 / A01):** ✅ PR #159 **MERGED**; #154 fechada.
-- **Issue #156 (S10 / A03):** apontadores de volta nos docs retrospectivos
-  (`achados_divergencias.md`/`decision_log.md` → checklist) — fora do escopo de #155.
 - **Issue #141 (S10):** popula os itens `W-01..W-06` no esqueleto criado por #154 —
   pré-requisito (#154) satisfeito (PR #159 mergeado).
 - **Issue #30 (entropia):** ✅ mergeada (PR #149) e fechada (`COMPLETED`); auditoria
@@ -512,8 +525,8 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum — dependência de #155 (esqueleto #154 / PR #159) já em `main`; PR #160
-  aguarda CI + revisão humana.
+- Nenhum — dependências de #156 (#154/PR #159 e #155/PR #160) já em `main`; PR
+  de #156 (`docs/checklist-pointers`) aguarda CI + revisão humana.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
@@ -543,6 +556,23 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-07 — Issue #156 (S10 / A03): apontadores de localização do checklist
+
+- **Concluído:** Terceira sub-issue do milestone **S10** (#140). Verificado via
+  `git log origin/main` que as dependências #154 (PR #159) e #155 (PR #160) estão
+  **MERGED** antes de começar. Inseridos **apontadores de 1 linha** (links
+  relativos) para `docs/artifact_writing_checklist.md` em cinco arquivos, **sem
+  reescrever** conteúdo retrospectivo: `README.md` (novo bloco S10 no índice §4),
+  `docs/scope.md` (blockquote de cabeçalho), `docs/progress.md` (esta entrada),
+  `docs/achados_divergencias.md` (frase de cabeçalho: retrospectivo → fila
+  prospectiva) e `docs/decision_log.md` (frase de cabeçalho: registro de decisões,
+  não fila). DoD satisfeita. Só docs. Branch `docs/checklist-pointers`
+  (`Closes #156`).
+- **Próximo:** Revisão humana + merge → fechar #156. Depois #141 (popular
+  W-01..W-06 no checklist). Housekeeping: #74 e (se aberta) #72.
+- **Bloqueios:** Nenhum — dependências #154/#155 em `main`; PR aguarda CI + revisão.
+- **Decisões pendentes:** D-08 — d=2 mantido (anotado degenerate, D-10); confirmar.
 
 ### 2026-06-07 — Issue #155 (S10 / A02): diferenciação dos 3 papéis documentais
 

@@ -359,6 +359,13 @@ perseguido — ver [Seção 6 — Entregáveis](#6-entregáveis).
   `docs/metrics_definitions.md`, `docs/algorithm_notes.md` §4.4 e
   [`docs/decision_log.md`](docs/decision_log.md) (D-17).
 
+**S10 — consolidação documental (issue-mãe #140)**
+- [`docs/artifact_writing_checklist.md`](docs/artifact_writing_checklist.md) —
+  fila *prospectiva* de verificações a confirmar/declarar antes de redigir cada
+  seção dos artefatos finais (relatório + artigo); complementa, sem substituir,
+  os documentos retrospectivos (`achados_divergencias.md`, `decision_log.md`,
+  `limitations.md`).
+
 ---
 
 ## 5. Resultados
