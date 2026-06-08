@@ -16,6 +16,28 @@
 **Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
 
 **Último passo concluído:**
+- **Issue #141 (S10-V1): popular W-01..W-06 + resolver W-01. ✅ (docs, 2 PRs
+  empilhados).** Primeira issue de *verificação* (S10-V) do milestone S10, sobre a
+  infraestrutura criada por #140/#154. Executada em **dois PRs em sequência** (a
+  pedido), com o PR 2 empilhado sobre a branch do PR 1 para não sobrescrever o
+  registro. **(PR 1 — #167, `docs/writing-checklist-facebook-enron`, registro):**
+  removido o item-piloto `W-00` (EXEMPLO do dry-run #157) e populados os **seis**
+  itens reais `W-01..W-06` em `docs/artifact_writing_checklist.md`, cada um com os
+  7 campos do template. Status conforme a DoD: **W-02/W-03** `em verificação` com
+  ponteiro a #139/D-16 (decisão humana: manter fiel à DoD mesmo com #139 já
+  mergeada); **W-04/W-05/W-06** `aberto` (resolução migra para S10-W ou follow-ups
+  de #128/#139). **(PR 2 — #168, `docs/writing-checklist-w01-resolve`, resolução de
+  W-01):** verificação técnica direta — o `he2009_facebook_full.yml` **omite**
+  `s_max`/`isomorphism_mode`, mas o runner aplica defaults `4` (`run.py:610`) e
+  `add_or_delete` (`run.py:614`) **idênticos** aos valores explícitos do
+  `he2009_enron_secondary.yml`; com `k`/`d`/`sigma` já iguais, os 5 parâmetros do
+  anonimizador coincidem e o valor efetivo é auditável no JSONL/`summary.json`. Logo
+  a config **efetiva** é idêntica e **não** há equalização a fazer (opção (a) do
+  W-01). Registrado como **DL-05** em `decision_log.md` (índice + corpo, tabela por
+  parâmetro); W-01 movido para *Itens resolvidos* do checklist. **Nota de
+  numeração:** o `D-16` sugerido no texto da #141 já estava em uso (WL-bucketing),
+  então usou-se DL-05. PR 2 traz `Closes #141`. Só docs; sem alteração em `src/` ou
+  testes.
 - **Issue #161 (S10 / A06): mapa estrutural + sanitização documental. ✅ (docs).**
   Sexta sub-issue de infraestrutura do milestone **S10** (#140). Executada em **duas
   fases** conforme o comentário de encaminhamento da própria #161 — sanitização
@@ -570,11 +592,13 @@
 - **Issue #154 (S10 / A01):** ✅ PR #159 **MERGED**; #154 fechada.
 - **Issue #140 (S10, guarda-chuva):** DoD cumprida em `main` (#154/#155/#156/#157);
   fechamento formal via PR da #158.
-- **Issue #141 (S10):** próximo trabalho substantivo do S10 — popula os itens
-  `W-01..W-06` no esqueleto criado por #154. Infraestrutura agora completa
-  (#154/#155/#156/#157 em `main`; DoD da #140 cumprida via #158). O dry-run #157
-  confirmou que o template `W-NN` é suficiente; o item-piloto `W-00` (EXEMPLO) deve
-  ser removido ou substituído ao popular os itens reais.
+- **Issue #141 (S10-V1):** ✅ **2 PRs abertos e empilhados** — PR **#167**
+  (`docs/writing-checklist-facebook-enron`, base `main`, registro de W-01..W-06) e
+  PR **#168** (`docs/writing-checklist-w01-resolve`, base na branch do #167,
+  resolução de W-01 via DL-05, `Closes #141`). Aguardam CI + revisão humana; ao
+  mergear o #167, o GitHub re-aponta o #168 para `main`. Claude Code não faz merge.
+  Resolução final de **W-04/W-05/W-06** (e recordar o desfecho de W-02/W-03 no
+  texto) migra para issues S10-W de redação.
 - **Issue #30 (entropia):** ✅ mergeada (PR #149) e fechada (`COMPLETED`); auditoria
   bibliográfica de fechamento ✅ mergeada (PR #150). A continuação é a #148 (abaixo).
 - **Issue #148 (entropia não uniforme, sem milestone):** continuação aberta; exige
@@ -584,7 +608,8 @@
   encerramento — toda a engenharia já concluída por #80.
 
 **Bloqueios ativos:**
-- Nenhum — toda a infraestrutura do checklist (#154–#157) já em `main`; PR da #158
+- Nenhum — pré-requisitos da #141 (#128, #139, #140, #158) todos fechados; os 2 PRs
+  da #141 (#167, #168) aguardam apenas CI + revisão humana. PR da #158
   (`docs/s10-x1-umbrella-close`) aguarda CI + revisão humana para fechar #140 e #158.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
@@ -615,6 +640,23 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-08 — Issue #141 (S10-V1): popular W-01..W-06 + resolver W-01
+
+- **Concluído:** Primeira issue de verificação (S10-V) do milestone S10, em **2 PRs
+  empilhados**. **PR #167** (registro): removido o piloto `W-00` e populados os seis
+  itens `W-01..W-06` em `artifact_writing_checklist.md` (7 campos cada); W-02/W-03
+  `em verificação` (ponteiro #139/D-16), W-04/W-05/W-06 `aberto` — fiel à DoD.
+  **PR #168** (empilhado, resolução de W-01): verificado que o Facebook omite
+  `s_max`/`isomorphism_mode` mas o runner aplica defaults (`run.py:610/614`)
+  idênticos aos do Enron → config efetiva idêntica; registrado como **DL-05** no
+  `decision_log.md`; W-01 movido para *Itens resolvidos*; `Closes #141`. Decisões
+  humanas: corte em 2 Prs (registro + resolução de W-01); W-02/W-03 mantidos
+  `em verificação` (fiéis à DoD apesar de #139 já mergeada). Só docs.
+- **Próximo:** Revisão humana + merge de #167 e #168 (o #168 re-aponta para `main`
+  ao mergear o #167). Resolução de W-04/W-05/W-06 migra para issues S10-W.
+- **Bloqueios:** Nenhum.
+- **Decisões pendentes:** Nenhuma nova (DL-05 fecha W-01).
 
 ### 2026-06-08 — Issue #161 (S10 / A06): mapa estrutural + sanitização
 
