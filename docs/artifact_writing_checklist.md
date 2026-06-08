@@ -81,25 +81,15 @@ Todos os campos são obrigatórios.
 > Itens com status `aberto` ou `em verificação`. Pendências de escrita a resolver
 > antes de redigir as seções correspondentes.
 
-> Os seis itens abaixo (`W-01..W-06`) foram levantados pela **análise transversal
-> de comparabilidade Facebook×Enron** (issue #141, S10-V1). A comparabilidade entre
-> os dois datasets é algoritmicamente sólida (mesmo anonimizador, mesmas métricas,
+> Os seis itens `W-01..W-06` foram levantados pela **análise transversal de
+> comparabilidade Facebook×Enron** (issue #141, S10-V1). A comparabilidade entre os
+> dois datasets é algoritmicamente sólida (mesmo anonimizador, mesmas métricas,
 > mesmos ataques pós-#139), mas há pontos de **assimetria de pipeline ou de
 > interpretação** que precisam estar resolvidos ou declarados antes da redação das
 > seções de resultados. O item-piloto `W-00` (EXEMPLO do dry-run #157) foi removido
-> ao popular esta faixa real.
-
-### W-01
-
-| Campo | Conteúdo |
-|---|---|
-| **ID** | `W-01` |
-| **Origem** | Análise transversal sobre #139 e #128. |
-| **Tipo** | `verificação técnica` |
-| **Descrição** | O `he2009_enron_secondary.yml` declara explicitamente `s_max: 4` e `isomorphism_mode: add_or_delete` (B6 / #105). O `he2009_facebook_full.yml` **não** declara essas chaves. Resolver os defaults aplicados pelo anonimizador/runner quando as chaves estão ausentes e confirmar que são idênticos aos valores explícitos do Enron. Se forem, registrar como decisão (anexo a D-01/B6 ou nova entrada `DL-xx` — **não** `D-16`, já usado pelo WL-bucketing). Se não forem, equalizar os configs antes de gerar qualquer tabela comparativa. |
-| **Critério de fechamento** | PR com (a) nota em `decision_log.md` declarando equivalência de defaults, **ou** (b) PR equalizando os configs. |
-| **Destino no texto** | Seção de método (uniformidade de parâmetros entre datasets) do relatório e do artigo. |
-| **Status** | `em verificação` (verificação técnica direta; resolução formal — nota em `decision_log.md` — no PR de resolução desta mesma issue #141). |
+> ao popular esta faixa real. **W-01** já foi resolvido (verificação técnica direta,
+> **DL-05**) e migrou para "Itens resolvidos"; os itens ativos abaixo são
+> **W-02..W-06**.
 
 ### W-02
 
@@ -168,4 +158,16 @@ Todos os campos são obrigatórios.
 > Itens com status `resolvido`, preservando o ID original (`W-NN` nunca
 > reaproveitado). Mantidos como histórico de rastreabilidade.
 
-_(vazio)_
+### W-01
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | `W-01` |
+| **Origem** | Análise transversal sobre #139 e #128. |
+| **Tipo** | `verificação técnica` |
+| **Descrição** | O `he2009_enron_secondary.yml` declara explicitamente `s_max: 4` e `isomorphism_mode: add_or_delete` (B6 / #105). O `he2009_facebook_full.yml` **não** declara essas chaves. Confirmar que os defaults aplicados pelo runner quando as chaves estão ausentes são idênticos aos valores explícitos do Enron. |
+| **Critério de fechamento** | PR com (a) nota em `decision_log.md` declarando equivalência de defaults, **ou** (b) PR equalizando os configs. |
+| **Destino no texto** | Seção de método (uniformidade de parâmetros entre datasets) do relatório e do artigo. |
+| **Status** | `resolvido` — opção (a). A configuração **efetiva** do anonimizador é **idêntica** entre os dois datasets: o runner aplica `s_max = 4` (`run.py:610`) e `isomorphism_mode = add_or_delete` (`run.py:614`) quando as chaves faltam, exatamente os valores explícitos do Enron; com `k∈{2,5,10,20}`, `d=1`, `sigma=0.5` iguais nos dois configs, os cinco parâmetros coincidem e o valor efetivo é auditável no JSONL/`summary.json`. **Nenhuma equalização necessária.** Registrado em **[DL-05](decision_log.md#dl-05)**. |
+
+_(W-02..W-06 permanecem em "Itens ativos".)_
