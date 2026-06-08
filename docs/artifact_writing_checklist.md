@@ -81,33 +81,85 @@ Todos os campos são obrigatórios.
 > Itens com status `aberto` ou `em verificação`. Pendências de escrita a resolver
 > antes de redigir as seções correspondentes.
 
-> ⚠️ **EXEMPLO removível (dry-run #157).** O item `W-00` abaixo é um **piloto
-> ilustrativo**, não uma pendência real de escrita. Ele existe apenas para validar
-> que o template `W-NN` acomoda um ponto de assimetria Facebook×Enron (issue #157,
-> sub-issue de #140). **Deve ser removido ou substituído** quando a #141 popular os
-> itens reais `W-01..W-06`. A numeração `W-00` é deliberadamente fora da faixa
-> sequencial real (`W-01`+) para sinalizar seu caráter de exemplo.
+> Os seis itens abaixo (`W-01..W-06`) foram levantados pela **análise transversal
+> de comparabilidade Facebook×Enron** (issue #141, S10-V1). A comparabilidade entre
+> os dois datasets é algoritmicamente sólida (mesmo anonimizador, mesmas métricas,
+> mesmos ataques pós-#139), mas há pontos de **assimetria de pipeline ou de
+> interpretação** que precisam estar resolvidos ou declarados antes da redação das
+> seções de resultados. O item-piloto `W-00` (EXEMPLO do dry-run #157) foi removido
+> ao popular esta faixa real.
 
-### W-00 (EXEMPLO — removível)
+### W-01
 
 | Campo | Conteúdo |
 |---|---|
-| **ID** | `W-00` (EXEMPLO — não conta na numeração sequencial real). |
-| **Origem** | #128 (comparativo Facebook×Enron) e #139 (ataque por subgrafo via WL-bucketing), **ambas fechadas** — entram só como origem; achado C2 (motor não-pareado KL×pymetis); decisão D-11 (simetrização OR do Enron). |
-| **Tipo** | `ponto interpretativo` |
-| **Descrição** | Ao apresentar o comparativo Facebook×Enron, declarar que as magnitudes de `rr_subgrafo` **não são diretamente comparáveis** entre as redes (escala n≈532 vs n≈33.696; densidade; origem OR/D-11; motor de particionamento KL vs pymetis). Sobrepor as duas curvas num único eixo absoluto é enganoso; o texto deve usar os eixos **normalizados** (`rr·k` vs cota `1/k`; decaimento relativo `rr(k)/rr(k_min)`) e nomear o cruzamento das curvas (~k≈14) sem afirmar que uma rede é "mais privada" que a outra. |
-| **Critério de fechamento** | A subseção comparativa dos Resultados (1) declara explicitamente a não-comparabilidade de magnitude, (2) usa o painel normalizado em vez de sobrepor magnitudes absolutas, e (3) cita o cruzamento sem inferir superioridade de privacidade de uma rede. |
-| **Destino no texto** | Seção de Resultados — subseção comparativa Facebook×Enron (figura do painel normalizado `comparison_fb_enron`). |
-| **Status** | `em verificação` (EXEMPLO) |
+| **ID** | `W-01` |
+| **Origem** | Análise transversal sobre #139 e #128. |
+| **Tipo** | `verificação técnica` |
+| **Descrição** | O `he2009_enron_secondary.yml` declara explicitamente `s_max: 4` e `isomorphism_mode: add_or_delete` (B6 / #105). O `he2009_facebook_full.yml` **não** declara essas chaves. Resolver os defaults aplicados pelo anonimizador/runner quando as chaves estão ausentes e confirmar que são idênticos aos valores explícitos do Enron. Se forem, registrar como decisão (anexo a D-01/B6 ou nova entrada `DL-xx` — **não** `D-16`, já usado pelo WL-bucketing). Se não forem, equalizar os configs antes de gerar qualquer tabela comparativa. |
+| **Critério de fechamento** | PR com (a) nota em `decision_log.md` declarando equivalência de defaults, **ou** (b) PR equalizando os configs. |
+| **Destino no texto** | Seção de método (uniformidade de parâmetros entre datasets) do relatório e do artigo. |
+| **Status** | `em verificação` (verificação técnica direta; resolução formal — nota em `decision_log.md` — no PR de resolução desta mesma issue #141). |
 
-> **Resultado do dry-run (#157).** O ponto de assimetria acima foi mapeado nos
-> **sete campos** do template sem ambiguidade nem campo faltante: a *Origem*
-> acomodou múltiplas referências (issues fechadas + achado + decisão); o *Tipo*
-> `ponto interpretativo` classificou bem um ponto de leitura (não técnico, não
-> decisão pendente); *Critério de fechamento* expressou uma condição objetiva e
-> verificável; *Destino no texto* apontou seção e figura concretas. **Conclusão:
-> o template `W-NN` é suficiente — nenhum ajuste de campo necessário** (DoD da
-> #157). A "Estrutura de cada item" acima permanece inalterada.
+### W-02
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | `W-02` |
+| **Origem** | #139 (DoD, item 2 do escopo). |
+| **Tipo** | `nota de método` |
+| **Descrição** | Confirmar, após merge da #139, qual ramo da cláusula objetiva de exatidão foi adotado — **(b)** WL puro + verificação ampla (100% de equivalência exata em grafos pequenos) ou **(a)** híbrido WL+VF2 em baldes pequenos (qualquer divergência detectada). Registrar o desfecho de forma que o artigo possa citar a equivalência semântica entre `reidentification_rate_subgraph` no Facebook (VF2) e no Enron (caminho rápido) — não como aproximação heurística. Desfecho conhecido após o merge: **opção (b)** (WL puro), registrada em **D-16**. |
+| **Critério de fechamento** | Desfecho registrado no checklist com ponteiro para o PR da #139 e para a entrada **D-16** em `decision_log.md`. |
+| **Destino no texto** | Seção de método (ataque por subgrafo, equivalência VF2 ↔ WL) do relatório; nota correspondente no artigo. |
+| **Status** | `em verificação` (#139 mergeada; desfecho = WL puro / opção (b) / **D-16** — a recordar na redação do método, S10-W). |
+
+### W-03
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | `W-03` |
+| **Origem** | #139 (item 3 do escopo — micro-decisão "preservar redação ou afrouxar com nota"). |
+| **Tipo** | `nota de método` |
+| **Descrição** | No caminho WL-bucketing o custo é agregado, não por nó-alvo, então `subgraph_timeout_count` perde sentido operacional como gate de validade. Documentar a decisão tomada na #139 (preservar redação / afrouxar com nota) e a fundamentação alternativa de validade (prova de equivalência exata WL=VF2, item W-02). Sob D-16 o campo é gravado como `0` e o gate **D-13** (`subgraph_timeout_count == 0`) fica trivialmente satisfeito. |
+| **Critério de fechamento** | Decisão registrada no checklist com ponteiro para `decision_log.md` (extensão de D-15 / entrada **D-16**). |
+| **Destino no texto** | Seção de método (validade da execução Enron) do relatório; eventual nota no artigo. |
+| **Status** | `em verificação` (#139 mergeada; **D-16** grava `subgraph_timeout_count = 0` → D-13 trivialmente satisfeito; redação final em S10-W). |
+
+### W-04
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | `W-04` |
+| **Origem** | Análise transversal; probe de #139 (`reidentification_rate_subgraph` ≈ 0,123 em k=2 vs ~0,003 do grau). |
+| **Tipo** | `ponto interpretativo` |
+| **Descrição** | Confirmar que o gap `reidentification_rate_subgraph >> reidentification_rate_degree` em d=1 aparece em **ambos** Facebook e Enron, sustentando a generalização da frase-síntese de B1 ("d=1 anonimiza grau, não estrutura 1-hop"). Se aparecer só em um dataset, B1 perde generalização e a redação precisa recuar a afirmação. |
+| **Critério de fechamento** | Valores confirmados nos dois datasets a partir dos JSONL/summary das execuções; registro de coerência (ou divergência) com B1. |
+| **Destino no texto** | Seção de resultados / discussão (B1 como achado generalizável) do relatório e do artigo. |
+| **Status** | `aberto` |
+
+### W-05
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | `W-05` |
+| **Origem** | Análise transversal; alinhamento com `docs/scope.md` §3 (Facebook [M] / Enron [D]). |
+| **Tipo** | `ponto interpretativo` |
+| **Descrição** | Fixar, antes da redação, que Facebook é dataset **principal [M]** e Enron é **secundário [D]** para teste de generalização — não tratar como dois pontos simétricos em curva única. Convergir com a frase-síntese pedida pela DoD de #128. |
+| **Critério de fechamento** | Vocabulário definido (uma frase canônica) e referenciado em qualquer S10-W que toque o tema. |
+| **Destino no texto** | Seção de método (desenho experimental) e seção de discussão (validade externa) do relatório; nota equivalente no artigo. |
+| **Status** | `aberto` |
+
+### W-06
+
+| Campo | Conteúdo |
+|---|---|
+| **ID** | `W-06` |
+| **Origem** | Análise transversal; DoD de #128 ("se não comparável diretamente, justificar (escala/densidade distintas)"). |
+| **Tipo** | `decisão pendente` |
+| **Descrição** | Decidir entre matriz privacidade-utilidade unificada (Facebook e Enron no mesmo eixo) vs painéis lado a lado (mesma estrutura, escalas independentes), dada a diferença de escala/densidade. A decisão afeta `src/visualization/` e a forma das figuras do artigo. Contexto relevante: **DL-04** (#128) já materializou gráficos **por dataset** + painel normalizado complementar (`comparison_fb_enron`); confirmar na redação se essa escolha encerra W-06 ou se a forma final do artigo ainda decide. |
+| **Critério de fechamento** | Decisão registrada no checklist com ponteiro para o PR de #128 (**DL-04**) que materializa a escolha em código. |
+| **Destino no texto** | Figuras de resultados do relatório e do artigo. |
+| **Status** | `aberto` |
 
 ---
 
