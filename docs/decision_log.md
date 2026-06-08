@@ -27,6 +27,7 @@
 | [DL-02](#dl-02) | 2026-06-02 | Extensão de schema | Campos de diagnóstico do ataque por subgrafo (timeouts + candidatos) |
 | [DL-03](#dl-03) | 2026-06-02 | Interface pública | `config_example.yml` expõe `d`/`sigma`/`s_max`/`isomorphism_mode` (chaves lidas) + correção `k_values`→`k` |
 | [DL-04](#dl-04) | 2026-06-06 | Apresentação de resultados | Comparativo Facebook × Enron: gráficos por dataset + painel normalizado complementar (não matriz sobreposta única) |
+| [DL-05](#dl-05) | 2026-06-08 | Uniformidade de parâmetros | Configuração efetiva do anonimizador idêntica entre Facebook e Enron: chaves omitidas no Facebook resolvem para os defaults do runner (= valores explícitos do Enron) |
 | [D-01](#d-01) | 2026-05-17 *(nota G2: 2026-05-28)* | Implementação | FSM simplificado com `s_max` configurável; nota: comportamento quando d > s_max |
 | [D-02](#d-02) | 2026-05-17 | Implementação | `d = 10` como default; variável de configuração YAML |
 | [D-03](#d-03) | 2026-05-17 | Implementação | Matching Fase 1: grau primário + desempate lexicográfico |
@@ -316,6 +317,85 @@ teórica e forma da curva).
 - `docs/results_enron.md` (painel + leitura) e `docs/limitations.md` §3 (ameaça C2)
 - `src/visualization/comparison.py` (gerador) e `docs/assets/` (snapshot versionado)
 - `experiments/configs/he2009_facebook_dsweep.yml` (uso real de `k`/`d`/`sigma`)
+
+---
+
+## DL-05 — Configuração efetiva do anonimizador idêntica entre Facebook e Enron
+
+**Data:** 2026-06-08
+**Issue relacionada:** #141 (S10-V1 — item de verificação W-01); análise transversal sobre #139 e #128
+**Módulo afetado:** `experiments/configs/he2009_facebook_full.yml`, `experiments/configs/he2009_enron_secondary.yml`, `experiments/run.py`
+
+### Contexto
+
+O item **W-01** do `docs/artifact_writing_checklist.md` levantou uma assimetria
+**aparente** entre os dois configs experimentais: o `he2009_enron_secondary.yml`
+declara explicitamente `s_max: 4` (B5 / #104) e `isomorphism_mode: add_or_delete`
+(B6 / #105), enquanto o `he2009_facebook_full.yml` **não declara** nenhuma dessas
+duas chaves. Antes de gerar qualquer tabela ou figura comparativa Facebook × Enron,
+a seção de método precisa afirmar que os dois datasets correram sob a **mesma**
+configuração de anonimização — ou equalizar os configs.
+
+### Verificação técnica (W-01)
+
+O runner aplica defaults quando as chaves estão ausentes do YAML, e esses defaults
+**coincidem** com os valores que o Enron declara explicitamente:
+
+| Parâmetro do anonimizador | Facebook (`he2009_facebook_full.yml`) | Enron (`he2009_enron_secondary.yml`) | Default do runner | Valor efetivo idêntico? |
+|---|---|---|---|---|
+| `k` | `[2, 5, 10, 20]` | `[2, 5, 10, 20]` | — (obrigatório) | ✅ |
+| `d` | `1` | `1` | — | ✅ |
+| `sigma` | `0.5` | `0.5` | `0.5` (`run.py:607`) | ✅ |
+| `s_max` (alias `fsm_max_size`) | *(omitido)* | `4` | `4` (`run.py:610`) | ✅ |
+| `isomorphism_mode` | *(omitido)* | `add_or_delete` | `add_or_delete` (`run.py:614`) | ✅ |
+
+`run.py:610` lê `int(anon_cfg.get("s_max", anon_cfg.get("fsm_max_size", 4)))` →
+quando a chave falta, o valor efetivo é **4**, exatamente o do Enron. `run.py:614`
+lê `str(anon_cfg.get("isomorphism_mode", "add_or_delete"))` → quando a chave falta,
+o valor efetivo é **`add_or_delete`**, exatamente o do Enron (e validado contra
+`_ISOMORPHISM_MODES` antes do laço). O valor efetivo é gravado no JSONL e no
+`summary.json` de cada execução (`fsm_max_size`/`isomorphism_mode`), de modo que a
+identidade é **auditável a posteriori** nos logs, não apenas inferida dos configs.
+
+### Decisão adotada — declarar equivalência (opção (a) do W-01), não equalizar
+
+A configuração **efetiva** do anonimizador é idêntica entre os dois datasets nos
+cinco parâmetros acima. **Nenhuma equalização de config é necessária**: a omissão
+das duas chaves no `he2009_facebook_full.yml` é cosmética, não substantiva. Fica
+registrado, para a seção de método (uniformidade de parâmetros entre datasets), que
+Facebook e Enron compartilham o mesmo anonimizador He et al. (2009) com
+`k∈{2,5,10,20}`, `d=1`, `sigma=0.5`, `s_max=4` e `isomorphism_mode=add_or_delete`.
+
+**Escopo desta decisão.** DL-05 cobre apenas a **camada de anonimização**.
+Diferenças na **camada de ataque** (o subgrafo está `enabled: false` no
+`he2009_facebook_full.yml` e `enabled: true` no Enron, sob o caminho WL-bucketing
+de D-16) são por design e são rastreadas separadamente em **W-02/W-03** do checklist
+— não são objeto de DL-05.
+
+### Alternativa considerada
+
+**(b) Equalizar os configs** tornando `s_max`/`isomorphism_mode` explícitos também
+no `he2009_facebook_full.yml`. Rejeitada como desnecessária: os valores efetivos já
+são idênticos e auditáveis nos logs; adicionar as chaves explícitas não muda
+nenhum resultado e tornaria o config divergente do baseline histórico já executado.
+Se uma futura execução do Facebook precisar variar esses parâmetros, as chaves devem
+ser adicionadas explicitamente nesse momento.
+
+### Nota de numeração
+
+O texto da issue #141 sugeriu registrar este desfecho como "D-16 ou anexo a
+D-01/B6". `D-16` **já está em uso** (caminho rápido WL-bucketing, #139), pois o
+texto da issue precede aquele merge. Registrado aqui como **DL-05** (uniformidade
+de parâmetros / interface experimental, mesma família de DL-03), com referências
+cruzadas a D-01 (FSM `s_max` configurável) e ao achado B6 (`isomorphism_mode`).
+
+### Referências cruzadas
+
+- Issue #141 (W-01) e `docs/artifact_writing_checklist.md` (item W-01 → resolvido)
+- D-01 (FSM simplificado com `s_max` configurável) e DL-03 (`config_example.yml` expõe as chaves)
+- Achados B5 (`s_max` lido do YAML, #104) e B6 (`isomorphism_mode` lido do YAML, #105) em `docs/achados_divergencias.md`
+- `experiments/run.py` (`:607` sigma, `:610` s_max, `:614` isomorphism_mode; gravação no JSONL/`summary.json`)
+- D-16 (subgrafo WL-bucketing) — diferença da camada de ataque, fora do escopo desta decisão
 
 ---
 
