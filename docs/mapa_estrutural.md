@@ -182,7 +182,10 @@ abertos devem ser resolvidos pelas issues próprias da S10, não aqui:
     (#99/#140/#141). É **decisão estratégica** → encaminhar para `decision_log.md`
     e/ou como ponto interpretativo de redação no checklist (#141), **com validação
     humana** (decisão estratégica origina-se no projeto Claude.ai, conforme
-    `CLAUDE.md`).
+    `CLAUDE.md`). **Atualização (2026-06-09): lacuna encerrada** — o enquadramento
+    instrumental foi **validado pelo autor** (discussão na #174) e registrado como
+    **[DL-06](decision_log.md#dl-06)** no `decision_log.md`; entra na introdução do
+    relatório (#174) e do artigo (#175).
   - A lista consolidada da sanitização (origem → destino → ação) está registrada na
     **#161** como etapa a encaminhar; se o volume crescer, justifica sub-issue
     própria da S10.

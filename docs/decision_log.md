@@ -28,6 +28,7 @@
 | [DL-03](#dl-03) | 2026-06-02 | Interface pública | `config_example.yml` expõe `d`/`sigma`/`s_max`/`isomorphism_mode` (chaves lidas) + correção `k_values`→`k` |
 | [DL-04](#dl-04) | 2026-06-06 | Apresentação de resultados | Comparativo Facebook × Enron: gráficos por dataset + painel normalizado complementar (não matriz sobreposta única) |
 | [DL-05](#dl-05) | 2026-06-08 | Uniformidade de parâmetros | Configuração efetiva do anonimizador idêntica entre Facebook e Enron: chaves omitidas no Facebook resolvem para os defaults do runner (= valores explícitos do Enron) |
+| [DL-06](#dl-06) | 2026-06-09 | Posicionamento / redação | Enquadramento instrumental validado pelo autor: a premissa fundadora ("anonimizar não é suficiente") entra no relatório (#174) e no artigo (#175) |
 | [D-01](#d-01) | 2026-05-17 *(nota G2: 2026-05-28)* | Implementação | FSM simplificado com `s_max` configurável; nota: comportamento quando d > s_max |
 | [D-02](#d-02) | 2026-05-17 | Implementação | `d = 10` como default; variável de configuração YAML |
 | [D-03](#d-03) | 2026-05-17 | Implementação | Matching Fase 1: grau primário + desempate lexicográfico |
@@ -396,6 +397,66 @@ cruzadas a D-01 (FSM `s_max` configurável) e ao achado B6 (`isomorphism_mode`).
 - Achados B5 (`s_max` lido do YAML, #104) e B6 (`isomorphism_mode` lido do YAML, #105) em `docs/achados_divergencias.md`
 - `experiments/run.py` (`:607` sigma, `:610` s_max, `:614` isomorphism_mode; gravação no JSONL/`summary.json`)
 - D-16 (subgrafo WL-bucketing) — diferença da camada de ataque, fora do escopo desta decisão
+
+---
+
+## DL-06 — Enquadramento instrumental validado: a premissa fundadora ("anonimizar não é suficiente") entra no relatório e no artigo
+
+**Data:** 2026-06-09
+**Issue relacionada:** #174 (S10-W1 — discussão de desdobramento da redação); origem em comentários de #99/#140/#141; encaminhamento registrado em `mapa_estrutural.md` §Lacunas
+**Módulo afetado:** nenhum (decisão de posicionamento/redação; código congelado na fase S10-W)
+
+### Contexto
+
+O **enquadramento instrumental** — a leitura de que os resultados do módulo
+evidenciam que **anonimizar dados reais não é suficiente**, e que essa
+constatação motiva o gerador de dados sintéticos (EpiCNet) da tese — vivia
+apenas em comentários de issue (#99/#140/#141). O `mapa_estrutural.md`
+(§Lacunas e continuidade) o classificou como **decisão estratégica** que não
+poderia entrar em doc versionado nem no texto acadêmico sem **validação
+humana** (decisões estratégicas nascem no projeto Claude.ai, conforme
+`CLAUDE.md`). A issue #174 repetia a trava no seu "Não fazer".
+
+### Decisão adotada — validado pelo autor (2026-06-09): incluir e registrar
+
+O autor validou a incorporação (discussão na #174), com o seguinte
+esclarecimento, que passa a ser citável na redação:
+
+> A existência do projeto como um todo gira em torno dessa premissa:
+> **anonimizar não é o suficiente**. Provar, demonstrar e analisar é fruto
+> dessa constatação que, em primeiro momento, é hipótese — já demonstrada
+> pelo artigo de referência — mas que precisa ser provada por meios próprios,
+> replicando o experimento do artigo.
+
+Consequências para a redação (S10-W):
+
+- A premissa entra na **introdução/posicionamento** do relatório de
+  qualificação (#174) e do artigo (#175), com a cadeia argumentativa:
+  hipótese fundadora (demonstrada na literatura de referência) → replicação
+  por meios próprios (He et al. 2009 sobre Facebook `[M]`; validade externa
+  Enron `[D]`) → evidência empírica própria (achado **B1**: `rr_subgrafo ≫
+  rr_grau` em `d=1` nos dois datasets, item W-04) → motivação do gerador
+  EpiCNet no nível da tese.
+- O enquadramento **não** altera o caráter do módulo como **instrumento de
+  aferição** (`README.md` §10 permanece válido): o módulo não decide o
+  mecanismo de privacidade da tese — ele fornece a evidência empírica que
+  sustenta a decisão tomada no nível da tese.
+
+### Alternativas consideradas
+
+- **Relatório neutro** (módulo apresentado só como instrumento, sem o
+  argumento): rejeitada — omitiria a premissa que dá origem ao projeto.
+- **Adiar a decisão para a redação da introdução (W1b)**: rejeitada — a
+  decisão precisa anteceder a escrita da seção; era o ponto pendente nº 4 da
+  discussão de desdobramento da #174.
+
+### Referências cruzadas
+
+- Issue #174 (discussão de desdobramento, 2026-06-09) e issue #175 (artigo)
+- Comentários de origem: #99 / #140 / #141
+- `docs/mapa_estrutural.md` §Lacunas e continuidade (encaminhamento que exigia validação humana — lacuna encerrada por esta entrada)
+- Achado B1 (`docs/achados_divergencias.md`) e item W-04 do `docs/artifact_writing_checklist.md` (evidência empírica nos dois datasets)
+- `README.md` §10 ("O que este módulo não faz" — caráter de instrumento preservado)
 
 ---
 
