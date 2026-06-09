@@ -706,7 +706,7 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 
 [12] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
 
-[13] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_32) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+[13] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_39) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
 
 [14] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
 
