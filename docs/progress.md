@@ -18,6 +18,24 @@
 análise e documentação.
 
 **Último passo concluído:**
+- **Discussão de desdobramento da #174 — 5 pontos resolvidos pelo autor;
+  enquadramento instrumental validado (DL-06). ✅ (docs, PR empilhado).**
+  Respostas do autor aos pontos abertos no comentário de proposta: **(1)** formato
+  do relatório = **Markdown** (conversão posterior, ex.: pandoc); **(2)** proteção
+  do texto privado = **backup externo do autor**; **(3)** rastreabilidade pública
+  (matriz seção→fontes em `docs/`) = **sim**; **(4)** enquadramento instrumental =
+  **validado** — a premissa fundadora do projeto ("**anonimizar não é o
+  suficiente**": hipótese demonstrada no artigo de referência, a provar por meios
+  próprios pela replicação do experimento) entra na introdução do relatório e do
+  artigo. Registrado como **DL-06** no `decision_log.md` (índice + entrada) e
+  lacuna correspondente **encerrada** no `mapa_estrutural.md` §Lacunas; **(5)**
+  prioridade de privacidade da produção acadêmica — **DoDs das issues #174 e #175
+  emendadas** via `gh issue edit`: o item "arquivo versionado no repositório via
+  PR" foi substituído por "texto consolidado em `academic/` (privado) +
+  rastreabilidade pública versionada em `docs/`". As sub-issues S10-W1a..f serão
+  criadas em **nova sessão** (decisão do autor — não iniciadas aqui). Só docs;
+  código congelado. Branch `docs/dl06-instrumental-framing` (empilhada sobre
+  `docs/academic-dir-174`, `Refs #174`).
 - **Issue #174 (S10-W1) — análise, infraestrutura `academic/` e proposta de
   desdobramento. ✅ (docs/setup, PR aberto).** **(1) Análise da #174** contra o
   estado de `main`: bloqueios zerados (nenhum PR aberto; PRs #167–#170 e #164
@@ -626,12 +644,10 @@ análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Discussão do desdobramento da #174** (comentário postado na issue): humano
-  valida/ajusta a proposta de sub-issues S10-W1a..f e responde aos 3 pontos de
-  decisão (formato do documento; destino público da rastreabilidade;
-  enquadramento instrumental).
-- **Após a validação:** criar as sub-issues aprovadas sob a #174 e iniciar pela
-  primeira (esqueleto do relatório em `academic/` + matriz seção→fontes).
+- **Nova sessão (a abrir pelo autor):** criar as sub-issues S10-W1a..f sob a #174
+  (proposta validada na discussão de 2026-06-09, com os 5 pontos resolvidos) e
+  iniciar pela **W1a** — esqueleto do relatório em `academic/` (Markdown) +
+  matriz pública seção → fontes → `W-NN` → figuras em `docs/`.
 - **Issue #175 (artigo, S10-W2):** bloqueada pela #174 — não iniciar antes do
   relatório consolidado.
 - **Issue #148 (entropia não uniforme, sem milestone):** congelada; exige decisão
@@ -639,10 +655,12 @@ análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **#174:** desdobramento em sub-issues e 3 pontos de decisão aguardam validação
-  humana (comentário na issue). PR da infraestrutura `academic/`
-  (`docs/academic-dir-174`) aguarda CI + revisão humana. Claude Code não faz
-  merge.
+- **PRs empilhados aguardando CI + revisão humana:** #176 (`docs/academic-dir-174`,
+  infraestrutura `academic/`) e o PR do DL-06 (`docs/dl06-instrumental-framing`,
+  base na branch do #176 — ao mergear o #176, o GitHub re-aponta para `main`).
+  Claude Code não faz merge.
+- **Sub-issues S10-W1a..f:** criação reservada para nova sessão, por decisão do
+  autor.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
