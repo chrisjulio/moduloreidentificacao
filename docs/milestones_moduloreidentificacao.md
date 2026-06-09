@@ -1,7 +1,7 @@
 # Milestones — Módulo de Reidentificação
 
 **Repositório:** [chrisjulio/moduloreidentificacao](https://github.com/chrisjulio/moduloreidentificacao)
-**Atualizado em:** 2026-06-02 (18h43)
+**Atualizado em:** 2026-06-08 (22h10)
 
 ---
 
@@ -10,9 +10,9 @@
 | # | Título resumido | Status |
 |---|---|---|
 | [#4](https://github.com/chrisjulio/moduloreidentificacao/issues/4) | Script de download Facebook Ego-Nets (SNAP) | ✅ |
-| [#5](https://github.com/chrisjulio/moduloreidentificacao/issues/5) | Loader `load_facebook_egonet(egonet_id, data_dir)` | ✅ |
-| [#6](https://github.com/chrisjulio/moduloreidentificacao/issues/6) | Teste do loader Facebook Ego-Net | ✅ |
-| [#7](https://github.com/chrisjulio/moduloreidentificacao/issues/7) | Decidir modo de pré-processamento das ego-redes | ✅ |
+| [#5](https://github.com/chrisjulio/moduloreidentificacao/issues/5) | Loader `load_facebook_egonet` | ✅ |
+| [#6](https://github.com/chrisjulio/moduloreidentificacao/issues/6) | Teste do loader | ✅ |
+| [#7](https://github.com/chrisjulio/moduloreidentificacao/issues/7) | Decidir modo de pré-processamento | ✅ |
 | [#8](https://github.com/chrisjulio/moduloreidentificacao/issues/8) | Leitura He et al. (2009) — Seção 1 | ✅ |
 | [#9](https://github.com/chrisjulio/moduloreidentificacao/issues/9) | Leitura He et al. (2009) — Seção 2 | ✅ |
 | [#10](https://github.com/chrisjulio/moduloreidentificacao/issues/10) | Leitura He et al. (2009) — Seções 3–4 | ✅ |
@@ -28,17 +28,17 @@
 | # | Título resumido | Status |
 |---|---|---|
 | [#43](https://github.com/chrisjulio/moduloreidentificacao/issues/43) | D-07: política de normalização de tamanho de LSs | ✅ |
-| [#44](https://github.com/chrisjulio/moduloreidentificacao/issues/44) | Adicionar `pymetis` ao `requirements.txt` e validar CI | ✅ |
-| [#45](https://github.com/chrisjulio/moduloreidentificacao/issues/45) | `src/anonymization/_partition_backend.py` | ✅ |
+| [#44](https://github.com/chrisjulio/moduloreidentificacao/issues/44) | Adicionar `pymetis` ao `requirements.txt` | ✅ |
+| [#45](https://github.com/chrisjulio/moduloreidentificacao/issues/45) | `_partition_backend.py` | ✅ |
 | [#11](https://github.com/chrisjulio/moduloreidentificacao/issues/11) | `_partition_neighborhoods(G, d)` | ✅ |
 | [#12](https://github.com/chrisjulio/moduloreidentificacao/issues/12) | `_group_isomorphic` (FSM + fator MF) | ✅ |
-| [#13](https://github.com/chrisjulio/moduloreidentificacao/issues/13) | `_modify_structure(groups, seed, add_only)` | ✅ |
+| [#13](https://github.com/chrisjulio/moduloreidentificacao/issues/13) | `_modify_structure` | ✅ |
 | [#14](https://github.com/chrisjulio/moduloreidentificacao/issues/14) | `anonymize(G, k, d, seed)` — pipeline completo | ✅ |
-| [#15](https://github.com/chrisjulio/moduloreidentificacao/issues/15) | `validate_k_anonymity` — auditor independente | ✅ |
+| [#15](https://github.com/chrisjulio/moduloreidentificacao/issues/15) | `validate_k_anonymity` | ✅ |
 | [#56](https://github.com/chrisjulio/moduloreidentificacao/issues/56) | Testes `validate_k_anonymity`: campos DL-01 | ✅ |
-| [#16](https://github.com/chrisjulio/moduloreidentificacao/issues/16) | **MARCO 29/05** — Sanidade k=5, d=1 sobre ego-rede Facebook | ✅ |
-| [#17](https://github.com/chrisjulio/moduloreidentificacao/issues/17) | Testes de sanidade adicionais: k=2, k=10, k=20 | ✅ |
-| [#18](https://github.com/chrisjulio/moduloreidentificacao/issues/18) | Documentar resultado do marco 29/05 | ✅ |
+| [#16](https://github.com/chrisjulio/moduloreidentificacao/issues/16) | **MARCO 29/05** — Sanidade k=5, d=1 | ✅ |
+| [#17](https://github.com/chrisjulio/moduloreidentificacao/issues/17) | Sanidade k=2, k=10, k=20 | ✅ |
+| [#18](https://github.com/chrisjulio/moduloreidentificacao/issues/18) | Documentar marco 29/05 | ✅ |
 
 ---
 
@@ -50,7 +50,7 @@
 | [#20](https://github.com/chrisjulio/moduloreidentificacao/issues/20) | `src/attacks/subgraph.py` (VF2) | ✅ |
 | [#21](https://github.com/chrisjulio/moduloreidentificacao/issues/21) | `src/metrics/` (4 métricas) | ✅ |
 | [#22](https://github.com/chrisjulio/moduloreidentificacao/issues/22) | `experiments/run.py` (runner CLI) | ✅ |
-| [#23](https://github.com/chrisjulio/moduloreidentificacao/issues/23) | Execução: experimento baseline Facebook Ego-Nets | ✅ |
+| [#23](https://github.com/chrisjulio/moduloreidentificacao/issues/23) | Execução: experimento baseline Facebook | ✅ |
 
 ---
 
@@ -70,53 +70,64 @@
 
 | # | Título resumido | Status |
 |---|---|---|
-| [#27](https://github.com/chrisjulio/moduloreidentificacao/issues/27) | Reprodutibilidade end-to-end (do zero) | ✅ Fechada (26/05) |
+| [#27](https://github.com/chrisjulio/moduloreidentificacao/issues/27) | Reprodutibilidade end-to-end | ✅ Fechada (26/05) |
 | [#28](https://github.com/chrisjulio/moduloreidentificacao/issues/28) | README final + revisão da documentação | ✅ Fechada (26/05) |
 
 ---
 
 ## 🌟 Escopo Mínimo: COMPLETO ✅
 
-Todas as 35 issues do escopo mínimo (S1 a S5) foram fechadas em 2026-05-26.
+Todas as 35 issues do escopo mínimo (S1–S5) fechadas em 2026-05-26.
 
 ---
 
 ## D-08 — Varredura d>1: k-anonimato structure-aware pleno (ENCERRADO ✅ — 02/06)
 
-Todas as 7 fases concluídas. `docs/results_dsweep.md` publicado com matriz `d×k`. `limitations.md §1.3` marcada como parcialmente resolvida.
+Todas as 9 issues (#72–#78, #80, #88) fechadas. `docs/results_dsweep.md` publicado. `limitations.md §1.3` resolvida.
 
-| # | Fase | Entregável principal | Status |
-|---|---|---|---|
-| [#72](https://github.com/chrisjulio/moduloreidentificacao/issues/72) | Issue-mãe D-08 | Critério de conclusão + índice | ✅ Fechada |
-| [#73](https://github.com/chrisjulio/moduloreidentificacao/issues/73) | Fase 0 — Enquadramento | D-08 em `decision_log.md`, `scope.md`, `progress.md`, branch | ✅ Fechada |
-| [#74](https://github.com/chrisjulio/moduloreidentificacao/issues/74) | Fase 1 — Auditoria | `pytest d>1`, inventário do núcleo | ✅ Fechada |
-| [#75](https://github.com/chrisjulio/moduloreidentificacao/issues/75) | Fase 2 — Núcleo | Integração end-to-end `d∈{2,5}`; decisões FSM/conectividade | ✅ Fechada |
-| [#76](https://github.com/chrisjulio/moduloreidentificacao/issues/76) | Fase 3 — Validador | `deficit_fully_structural` e métricas em `d>1`; pré-filtro VF2 | ✅ Fechada |
-| [#77](https://github.com/chrisjulio/moduloreidentificacao/issues/77) | Fase 4 — Execução | `he2009_facebook_dsweep.yml`; 48 runs | ✅ Fechada |
-| [#78](https://github.com/chrisjulio/moduloreidentificacao/issues/78) | Fase 5 — Análise | `results_dsweep.md`; matriz `d×k`; docs atualizados | ✅ Fechada |
-| [#80](https://github.com/chrisjulio/moduloreidentificacao/issues/80) | Fase 2-complementar | G1 (conectividade CI), G2 (LSs heterogêneas), G3 (fórmula `k(k-1)`), G5(a) (contadores) | ✅ Fechada |
-| [#88](https://github.com/chrisjulio/moduloreidentificacao/issues/88) | Runner d-sweep | Estender runner para `d` como lista; executar varredura completa | ✅ Fechada |
-
----
-
-## 🔍 Encaminhamentos pós-D-08
-
-| # | Título | Status |
+| # | Fase | Status |
 |---|---|---|
-| [#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99) | Encaminhamentos pós-conclusão D-08 — próximos passos do módulo | 🔴 Aberta (02/06) |
-
-> Pendências em discussão: encerramento do milestone S7; `algorithm_notes.md §3.2.2` (fórmula `k(k−1)` como interpretativa ou confirmada); integração futura com EpiCNet.
+| [#72](https://github.com/chrisjulio/moduloreidentificacao/issues/72) | Issue-mãe D-08 | ✅ |
+| [#73](https://github.com/chrisjulio/moduloreidentificacao/issues/73) | Fase 0 — Enquadramento | ✅ |
+| [#74](https://github.com/chrisjulio/moduloreidentificacao/issues/74) | Fase 1 — Auditoria | ✅ |
+| [#75](https://github.com/chrisjulio/moduloreidentificacao/issues/75) | Fase 2 — Núcleo end-to-end | ✅ |
+| [#76](https://github.com/chrisjulio/moduloreidentificacao/issues/76) | Fase 3 — Validador e métricas | ✅ |
+| [#77](https://github.com/chrisjulio/moduloreidentificacao/issues/77) | Fase 4 — Execução experimental | ✅ |
+| [#78](https://github.com/chrisjulio/moduloreidentificacao/issues/78) | Fase 5 — Análise e documentação | ✅ |
+| [#80](https://github.com/chrisjulio/moduloreidentificacao/issues/80) | Fase 2-complementar (G1/G2/G3/G5-a) | ✅ |
+| [#88](https://github.com/chrisjulio/moduloreidentificacao/issues/88) | Runner d-sweep (lista de `d`) | ✅ |
 
 ---
 
-## Escopos Desejável / Aspiracional remanescentes
+## Desejável pós-mínimo: #29 e #30 (ENCERRADOS ✅)
 
-| # | Rótulo | Principal tarefa | Status |
+| # | Título resumido | Status |
+|---|---|---|
+| [#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29) | Loader Email-Enron + execução secundária | ✅ Fechada |
+| [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | Ataque por entropia (baseline uniforme) | ✅ Fechada |
+| [#99](https://github.com/chrisjulio/moduloreidentificacao/issues/99) | Encaminhamentos pós-D-08 | ✅ Fechada |
+
+---
+
+## S9 — Enron + issues correlatas (EM ANDAMENTO 🔄)
+
+> Issues do ciclo Enron (S9) inferidas a partir dos fechamentos e abertura de #136. Detalhamento completo sujeito à listagem das issues fechadas do ciclo.
+
+| # | Título resumido | Status |
+|---|---|---|
+| Issues #100–#135 (aprox.) | Ciclo S9 — Enron e correlatos | ✅ Fechadas (estimativa) |
+| [#136](https://github.com/chrisjulio/moduloreidentificacao/issues/136) | Análise de custo do ataque VF2 — rotas de otimização (não-bloqueante) | 🔴 Aberta (registro) |
+
+---
+
+## Issues abertas remanescentes
+
+| # | Rótulo | Título resumido | Status |
 |---|---|---|---|
-| [#29](https://github.com/chrisjulio/moduloreidentificacao/issues/29) | DESEJÁVEL | Loader Email-Enron como dataset secundário | 🔴 Aberta |
-| [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | DESEJÁVEL | Ataque por entropia reutilizando grupos de equivalência | 🔴 Aberta |
-| [#31](https://github.com/chrisjulio/moduloreidentificacao/issues/31) | ASPIRACIONAL | Implementação inicial de Nettleton & Salas (2016) | 🔴 Aberta |
+| [#136](https://github.com/chrisjulio/moduloreidentificacao/issues/136) | ASPIRACIONAL | Análise de custo VF2 — rotas de otimização para escala (registro, não-bloqueante) | 🔴 Aberta |
+| [#148](https://github.com/chrisjulio/moduloreidentificacao/issues/148) | DESEJÁVEL | Entropia: probabilidades não uniformes — extensão de #30 (D-E2-b) | 🔴 Aberta (06/06) |
+| [#31](https://github.com/chrisjulio/moduloreidentificacao/issues/31) | ASPIRACIONAL | Implementação inicial Nettleton & Salas (2016) | 🔴 Aberta |
 
 ---
 
-*Documento gerado automaticamente a partir da API do GitHub em 2026-06-02.*
+*Documento gerado automaticamente a partir da API do GitHub em 2026-06-08.*
