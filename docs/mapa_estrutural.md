@@ -39,15 +39,22 @@ que parte de sua infraestrutura já exista.
 
 | ID | Issue | Status | Artefato/documento afetado | Tipo de contribuição | Localização | Uso futuro esperado |
 |---|---|---|---|---|---|---|
-| A01 | [#154](https://github.com/chrisjulio/moduloreidentificacao/issues/154) | ✅ fechada (PR #159) | `docs/artifact_writing_checklist.md` (criação) | Infraestrutura: esqueleto, template `W-NN`, seções vazias | [`artifact_writing_checklist.md`](artifact_writing_checklist.md) | Estrutura-base onde as pendências de escrita (`W-NN`) serão populadas (#141). |
+| A01 | [#154](https://github.com/chrisjulio/moduloreidentificacao/issues/154) | ✅ fechada (PR #159) | `docs/artifact_writing_checklist.md` (criação) | Infraestrutura: esqueleto, template `W-NN`, seções vazias | [`artifact_writing_checklist.md`](artifact_writing_checklist.md) | Estrutura-base onde as pendências de escrita (`W-NN`) foram populadas e resolvidas (#141, fechada). |
 | A02 | [#155](https://github.com/chrisjulio/moduloreidentificacao/issues/155) | ✅ fechada (PR #160) | `docs/artifact_writing_checklist.md` (seção) | Conceitual: diferenciação dos 3 papéis documentais | [`artifact_writing_checklist.md` §"Papéis documentais e fronteiras"](artifact_writing_checklist.md) | Regra de fronteira para decidir *onde* registrar cada achado durante a redação. |
 | A03 | [#156](https://github.com/chrisjulio/moduloreidentificacao/issues/156) | ✅ fechada (PR #162) | `README.md`, `scope.md`, `progress.md`, `achados_divergencias.md`, `decision_log.md` | Apontadores de localização (links de 1 linha) | índices vivos + docs retrospectivos | Navegação rápida do leitor até o checklist a partir de qualquer doc central. |
 | A04 | [#157](https://github.com/chrisjulio/moduloreidentificacao/issues/157) | ✅ fechada (PR #163) | `docs/artifact_writing_checklist.md` (piloto `W-00`) | Validação: dry-run do template `W-NN` | [`artifact_writing_checklist.md` §"Itens ativos"](artifact_writing_checklist.md) | Veredito de suficiência do template; `W-00` é EXEMPLO removível (substituído em #141). |
-| A05 | [#158](https://github.com/chrisjulio/moduloreidentificacao/issues/158) | ✅ fechada (PR #164) | `docs/progress.md` + fechamento da #140 | Fechamento de ciclo: DoD da guarda-chuva #140; habilitação da #141 | [`progress.md`](progress.md); comentário na #141 | Marca a infraestrutura como pronta — libera a produção substantiva (#141). |
-| A06 | [#161](https://github.com/chrisjulio/moduloreidentificacao/issues/161) | 🔄 em andamento (este PR) | `docs/mapa_estrutural.md` (criação) + sanitização documental | Rastreabilidade + sanitização de registros | [`mapa_estrutural.md`](mapa_estrutural.md) (este doc); correções em `scope.md`/`achados_divergencias.md` | Mapa de leitura da S10; insumo de orientação para a redação (#141). |
+| A05 | [#158](https://github.com/chrisjulio/moduloreidentificacao/issues/158) | ✅ fechada (PR #164) | `docs/progress.md` + fechamento da #140 | Fechamento de ciclo: DoD da guarda-chuva [#140](https://github.com/chrisjulio/moduloreidentificacao/issues/140) (fechada); habilitação da #141 | [`progress.md`](progress.md); comentário na #141 | Marcou a infraestrutura como pronta — liberou a produção substantiva (#141, depois fechada). |
+| A06 | [#161](https://github.com/chrisjulio/moduloreidentificacao/issues/161) | ✅ fechada (PR #166) | `docs/mapa_estrutural.md` (criação) + sanitização documental | Rastreabilidade + sanitização de registros | [`mapa_estrutural.md`](mapa_estrutural.md) (este doc); correções em `scope.md`/`achados_divergencias.md` | Mapa de leitura da S10; insumo de orientação para a redação (S10-W). |
 
 Legenda: ✅ = issue fechada, conteúdo consolidado em `main`; 🔄 = produção em
 andamento (não inferir como concluída).
+
+> **Nota de atualização (2026-06-09).** Este mapa foi criado pelo PR #166 (08/06
+> 23:02), **46 min antes** do fechamento da #141 (08/06 23:48). Saneamento
+> pós-fechamento: as menções a #140/#141 e aos itens `W-NN` foram alinhadas ao
+> estado consolidado em `main` (ambas as issues fechadas; `W-01..W-06` resolvidos,
+> piloto `W-00` removido — PRs #167–#170). Atualização factual de registro, não
+> reescrita retrospectiva de conteúdo.
 
 ---
 
@@ -62,7 +69,7 @@ andamento (não inferir como concluída).
   `W-NN` (7 campos), convenção de numeração sequencial não reaproveitada, seções
   "Itens ativos"/"Itens resolvidos" vazias.
 - **Localização.** [`docs/artifact_writing_checklist.md`](artifact_writing_checklist.md).
-- **Estado.** Produzido e em `main`. Itens reais `W-NN` **não** populados (é da #141).
+- **Estado.** Produzido e em `main`. Itens reais `W-NN` populados e **todos resolvidos** pela #141 (fechada em 2026-06-08; PRs #167–#170).
 
 ### A02 — [#155](https://github.com/chrisjulio/moduloreidentificacao/issues/155) · ✅ fechada (PR #160)
 
@@ -109,7 +116,7 @@ andamento (não inferir como concluída).
 - **Localização.** [`docs/progress.md`](progress.md); comentário na #141.
 - **Estado.** Produzido e em `main`. Infraestrutura do checklist completa.
 
-### A06 — [#161](https://github.com/chrisjulio/moduloreidentificacao/issues/161) · 🔄 em andamento (este PR)
+### A06 — [#161](https://github.com/chrisjulio/moduloreidentificacao/issues/161) · ✅ fechada (PR #166)
 
 - **Objetivo documental.** **(escopo primário)** criar este mapa de rastreabilidade;
   **(etapa anteposta)** executar uma *sanitização documental* dos artefatos da S10 e
@@ -127,7 +134,7 @@ andamento (não inferir como concluída).
 - **Localização.** [`docs/mapa_estrutural.md`](mapa_estrutural.md); diffs em
   [`scope.md`](scope.md) e [`achados_divergencias.md`](achados_divergencias.md);
   lista consolidada da sanitização registrada na própria #161.
-- **Estado.** Em andamento neste PR — **não inferir como concluído** até o merge.
+- **Estado.** Consolidado em `main` (PR #166, mergeado em 2026-06-08 23:02).
 
 ---
 
@@ -137,7 +144,8 @@ Como o mapa cobre apenas as issues `A-NN`, registra-se aqui a relação de cada
 documento central com a S10:
 
 - [`artifact_writing_checklist.md`](artifact_writing_checklist.md) — **núcleo da
-  S10**: produzido por A01–A04; populado (itens reais `W-NN`) por #141.
+  S10**: produzido por A01–A04; populado e **com `W-01..W-06` todos resolvidos** pela
+  #141 (fechada; piloto `W-00` removido — PRs #167–#170).
 - [`achados_divergencias.md`](achados_divergencias.md) — *retrospectivo, fechado*;
   recebeu apontador (A03) e correção de registro na §5 (A06/sanitização). Não recebe
   novas pendências de escrita.
@@ -149,8 +157,8 @@ documento central com a S10:
   recebeu apontador (A03) e a entrada de fechamento de A05.
 - [`README.md`](../README.md) — *operacional*; recebeu o bloco S10 no índice de docs
   (A03).
-- [`results_enron.md`](results_enron.md) — não é produto da S10, mas é **insumo** das
-  verificações `W-NN` (#141): comparativo Facebook×Enron e validade externa.
+- [`results_enron.md`](results_enron.md) — não é produto da S10, mas foi **insumo** das
+  verificações `W-NN` (#141, já resolvidas): comparativo Facebook×Enron e validade externa.
 
 ---
 
@@ -159,10 +167,12 @@ documento central com a S10:
 Este mapa é **orientador**, não um checklist operacional. Pontos que continuam
 abertos devem ser resolvidos pelas issues próprias da S10, não aqui:
 
-- **Produção substantiva da escrita (`W-01..W-06`).** Pertence à **#141**: popular
-  os itens reais no checklist e **remover/substituir** o piloto `W-00`. Os
-  pré-requisitos estão maduros (#128 e #139 fechadas), mas a produção **não** está
-  concluída — não inferir entrega.
+- **Produção substantiva da escrita (`W-01..W-06`).** Pertencia à **#141**, agora
+  **fechada**: os itens reais foram populados no checklist e **todos resolvidos**, e
+  o piloto `W-00` foi **removido** (PRs #167–#170). `W-01` resolvido via **DL-05**;
+  `W-02..W-06` consolidados a partir de **#128** (DL-04) e **#139** (D-16/D-13) e da
+  confirmação empírica de B1 nos dois datasets. Pendência encerrada; o aproveitamento
+  na redação segue como tarefa das issues **S10-W**.
 - **Sanitização documental — itens encaminhados (não aplicados em A06).** A etapa de
   sanitização desta issue corrigiu diretamente apenas registros defasados (links,
   IDs, status). Os demais achados foram **encaminhados**:
