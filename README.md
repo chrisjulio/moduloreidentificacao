@@ -5,9 +5,15 @@
 > de reidentificação. Componente preparatório da tese de doutorado em geração de
 > redes sociais sintéticas — PPGInf/UFPR.
 >
-> **Estado:** escopo mínimo (S1–S5) + D-08 (d-sweep k×d) + S9 (dataset secundário
-> Email-Enron) concluídos. Repositório em condições de entrega acadêmica.
-> Última revisão: 06/06/2026.
+> **Estado:** escopo Mínimo (S1–S5) e escopo Desejável — D-08 (d-sweep k×d), S9
+> (dataset secundário Email-Enron) e entropia (métrica/ataque) — concluídos;
+> consolidação documental (S10) em curso. **Processamento experimental congelado:**
+> nenhuma execução em aberto e nenhuma frente nova será iniciada nesta etapa; o
+> trabalho restante é exclusivamente de produção documental (relatório + artigo).
+> Frentes não executadas (entropia não uniforme, otimização do subgrafo em escala,
+> Nettleton & Salas) ficam registradas como **trabalho futuro**, posterior à entrega
+> da documentação. Repositório em condições de entrega acadêmica.
+> Última revisão: 09/06/2026.
 
 ![CI](https://github.com/chrisjulio/moduloreidentificacao/actions/workflows/ci.yml/badge.svg)
 
@@ -155,8 +161,9 @@ python -m src.visualization.tables \
     --logs experiments/logs/he2009_facebook_baseline \
     --dataset facebook --out results/tables
 
-# 5. Verificação automática contra docs/results_baseline.md
-python -m scripts.verify_reproduction --tables results/tables
+# 5. Conferência dos resultados: comparar as tabelas geradas em results/tables/
+#    com os valores de referência em docs/results_baseline.md
+#    (procedimento detalhado em docs/reproducibility.md §6).
 ```
 
 Tempo estimado do baseline em hardware típico: ~6–12 min (dominado pelo ataque por
@@ -185,8 +192,10 @@ Ver [`docs/reproducibility.md`](docs/reproducibility.md) §8.
 
 ## 4. Status do projeto
 
-**Atualizado em 06/06/2026.** Escopo Mínimo (S1–S5) concluído e escopo Desejável
+**Atualizado em 09/06/2026.** Escopo Mínimo (S1–S5) concluído e escopo Desejável
 integralmente concluído (dataset secundário Email-Enron + métrica/ataque por entropia).
+Processamento experimental **congelado** — sem novas execuções ou frentes em aberto;
+o esforço corrente é de consolidação documental (S10) e produção do relatório/artigo.
 
 | Fase | Período planejado | Status |
 |---|---|---|
@@ -565,8 +574,10 @@ métrica de privacidade adicional.
   algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep e d>1)
   metrics_definitions.md     # definições operacionais das métricas
   data_dictionary.md         # dicionário de parâmetros, datasets (§1.1) e métricas
-  decision_log.md            # registro formal de decisões técnicas (DL-01 a DL-04, D-04 a D-17)
+  decision_log.md            # registro formal de decisões técnicas (DL-01 a DL-05, D-04 a D-17)
   achados_divergencias.md    # síntese de divergências proposto × executado (insumo para qualificação)
+  artifact_writing_checklist.md  # fila prospectiva de verificações pré-redação dos artefatos (S10)
+  mapa_estrutural.md         # mapa de rastreabilidade A01–A06 → produto documental (S10)
   progress.md                # log de progresso sessão a sessão
   validacao_k_anonimato.md   # resultados consolidados da validação empírica de k-anonimato
   results_baseline.md        # tabela bruta + agregações do experimento baseline (d=1)
