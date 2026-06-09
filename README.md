@@ -569,6 +569,7 @@ métrica de privacidade adicional.
 /tests/                      # suíte de testes (espelha a estrutura de src/)
 /scripts/                    # setup de ambiente (Conda/Windows, VS Code) e medição de ego-nets
 /bugs/                       # registro acumulativo de bugs (execução + explicação + decisão)
+/academic/                   # documentos acadêmicos (relatório de qualificação, artigo) — conteúdo NÃO versionado; só o README.md da pasta é público (ver academic/README.md)
 /docs/
   scope.md                   # escopo, não-escopo e condições de contorno ética
   algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep e d>1)
