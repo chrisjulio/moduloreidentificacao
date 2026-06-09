@@ -16,6 +16,24 @@
 **Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
 
 **Último passo concluído:**
+- **Saneamento pós-fechamento da #141 (S10-V1): resolver W-02..W-06 no checklist. ✅
+  (docs, PR #170 aberto).** Regularização de **rastreabilidade**, não reabertura: a
+  #141 cumpriu sua DoD original (popular `W-01..W-06` + resolver `W-01`/DL-05); esta
+  PR alinha `docs/artifact_writing_checklist.md` ao estado já consolidado em `main`
+  por **#128**/DL-04 e **#139**/D-16/D-13 e à confirmação empírica de **B1**. Move os
+  cinco itens de "Itens ativos" para "Itens resolvidos" com ponteiro de fechamento:
+  **W-02** (WL puro / opção (b), **D-16**, PR #139); **W-03** (`subgraph_timeout_count
+  == 0` → **D-13** trivialmente satisfeito); **W-04** (B1 generaliza — gap `rr_subgrafo
+  ≫ rr_grau` em `d=1` nos dois datasets: Facebook k=2 0,7914 vs 0,0263 em
+  `results_baseline.md`; Enron k=2 0,123 vs 0,003 em `results_enron.md`; magnitudes
+  distintas por escala/densidade, sinal qualitativo robusto); **W-05** (frase canônica
+  fixada — Facebook principal `[M]` / Enron secundário `[D]` para validade externa, não
+  réplica simétrica nem ponto de curva única; `scope.md` §3); **W-06** (painéis por
+  dataset + painel normalizado complementar, **DL-04**/#128). "Itens ativos" passa a
+  declarar explicitamente que **não há itens ativos**; resolução de redação migra para
+  S10-W. Argumento de consistência: o `DL-05` já apontava para W-02/W-03 como local de
+  rastreamento — o laço fica fechado. Só docs; `ruff check .` limpo. Branch
+  `docs/writing-checklist-w02-w06-sanitize` (`Refs #141`).
 - **Issue #141 (S10-V1): popular W-01..W-06 + resolver W-01. ✅ (docs, 2 PRs
   empilhados).** Primeira issue de *verificação* (S10-V) do milestone S10, sobre a
   infraestrutura criada por #140/#154. Executada em **dois PRs em sequência** (a
