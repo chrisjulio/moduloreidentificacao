@@ -112,3 +112,9 @@ desktop.ini
 /results/plots/*
 !/results/tables/.gitkeep
 !/results/plots/.gitkeep
+
+# Documentos acadêmicos (relatório de qualificação #174, artigo #175): conteúdo
+# privado, sujeito a avaliação qualificada — o repositório é público. Apenas o
+# README.md da pasta é versionado (documenta a existência, não o conteúdo).
+/academic/*
+!/academic/README.md

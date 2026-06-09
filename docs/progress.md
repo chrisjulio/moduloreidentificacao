@@ -11,11 +11,36 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-08
+**Data da última atualização:** 2026-06-09
 
-**Semana corrente:** S10 — Consolidação documental (issue-mãe #140).
+**Semana corrente:** S10 — fase de redação (S10-W): relatório de qualificação
+(#174, guarda-chuva) e artigo (#175, dependente). Código **congelado** — somente
+análise e documentação.
 
 **Último passo concluído:**
+- **Issue #174 (S10-W1) — análise, infraestrutura `academic/` e proposta de
+  desdobramento. ✅ (docs/setup, PR aberto).** **(1) Análise da #174** contra o
+  estado de `main`: bloqueios zerados (nenhum PR aberto; PRs #167–#170 e #164
+  todos MERGED), `W-01..W-06` todos resolvidos no checklist, mapa estrutural
+  consolidado — pré-condições da redação satisfeitas. **(2) Infraestrutura
+  `academic/`** (decisão do autor, 2026-06-09): criada a pasta `/academic` para
+  abrigar os documentos acadêmicos (relatório #174, artigo #175), que são
+  sujeitos a **avaliação qualificada** e não podem ser públicos (o repositório é
+  aberto). Regra no `.gitignore` (`/academic/*` + `!/academic/README.md`): só o
+  `academic/README.md` é versionado — documenta a existência e a regra, não o
+  conteúdo. Apontador adicionado ao `README.md` §7 (estrutura). **Implicação na
+  DoD da #174:** o item "arquivo do relatório versionado no repositório via PR"
+  fica **substituído** — o texto do relatório vive em `academic/` (privado);
+  o que se versiona publicamente é a rastreabilidade (esqueleto/sumário e
+  matriz seção→fontes em `docs/`, se validado pelo humano). **(3) Proposta de
+  desdobramento da #174 em sub-issues (S10-W1a..f)** postada como comentário na
+  própria #174 para discussão/validação humana — a redação não cabe em uma
+  sessão única. Pontos pendentes de decisão humana sinalizados no comentário:
+  formato do documento (Markdown vs LaTeX/DOCX), destino público da
+  rastreabilidade e o **enquadramento instrumental** (#99/#140/#141 — exige
+  validação humana antes de entrar no texto, cf. mapa_estrutural §Lacunas).
+  Sem alteração em `src/` ou testes. Branch `docs/academic-dir-174`
+  (`Refs #174`).
 - **Saneamento pós-fechamento da #141 (S10-V1): resolver W-02..W-06 no checklist. ✅
   (docs, PR #170 aberto).** Regularização de **rastreabilidade**, não reabertura: a
   #141 cumpriu sua DoD original (popular `W-01..W-06` + resolver `W-01`/DL-05); esta
@@ -601,34 +626,23 @@
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Issue #158 (S10 / A05):** ✅ PR aberto (`docs/s10-x1-umbrella-close`,
-  `Closes #140`, `Closes #158`); comentário de habilitação deixado na #141. Aguarda
-  CI + revisão humana. Claude Code não faz merge.
-- **Issue #157 (S10 / A04):** ✅ PR #163 **MERGED**; #157 fechada.
-- **Issue #156 (S10 / A03):** ✅ PR #162 **MERGED**; #156 fechada.
-- **Issue #155 (S10 / A02):** ✅ PR #160 **MERGED**; #155 fechada.
-- **Issue #154 (S10 / A01):** ✅ PR #159 **MERGED**; #154 fechada.
-- **Issue #140 (S10, guarda-chuva):** DoD cumprida em `main` (#154/#155/#156/#157);
-  fechamento formal via PR da #158.
-- **Issue #141 (S10-V1):** ✅ **2 PRs abertos e empilhados** — PR **#167**
-  (`docs/writing-checklist-facebook-enron`, base `main`, registro de W-01..W-06) e
-  PR **#168** (`docs/writing-checklist-w01-resolve`, base na branch do #167,
-  resolução de W-01 via DL-05, `Closes #141`). Aguardam CI + revisão humana; ao
-  mergear o #167, o GitHub re-aponta o #168 para `main`. Claude Code não faz merge.
-  Resolução final de **W-04/W-05/W-06** (e recordar o desfecho de W-02/W-03 no
-  texto) migra para issues S10-W de redação.
-- **Issue #30 (entropia):** ✅ mergeada (PR #149) e fechada (`COMPLETED`); auditoria
-  bibliográfica de fechamento ✅ mergeada (PR #150). A continuação é a #148 (abaixo).
-- **Issue #148 (entropia não uniforme, sem milestone):** continuação aberta; exige
-  decisão D-xx (esquema de pesos) antes de implementar — não iniciar sem o humano.
-- Revisão humana e **fechamento manual da issue #74** (não fechada pela auditoria).
-- (Se ainda abertas) fechar a umbrella #72 (d-sweep) com comentário de
-  encerramento — toda a engenharia já concluída por #80.
+- **Discussão do desdobramento da #174** (comentário postado na issue): humano
+  valida/ajusta a proposta de sub-issues S10-W1a..f e responde aos 3 pontos de
+  decisão (formato do documento; destino público da rastreabilidade;
+  enquadramento instrumental).
+- **Após a validação:** criar as sub-issues aprovadas sob a #174 e iniciar pela
+  primeira (esqueleto do relatório em `academic/` + matriz seção→fontes).
+- **Issue #175 (artigo, S10-W2):** bloqueada pela #174 — não iniciar antes do
+  relatório consolidado.
+- **Issue #148 (entropia não uniforme, sem milestone):** congelada; exige decisão
+  D-xx (esquema de pesos) antes de implementar — não iniciar sem o humano.
+  Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- Nenhum — pré-requisitos da #141 (#128, #139, #140, #158) todos fechados; os 2 PRs
-  da #141 (#167, #168) aguardam apenas CI + revisão humana. PR da #158
-  (`docs/s10-x1-umbrella-close`) aguarda CI + revisão humana para fechar #140 e #158.
+- **#174:** desdobramento em sub-issues e 3 pontos de decisão aguardam validação
+  humana (comentário na issue). PR da infraestrutura `academic/`
+  (`docs/academic-dir-174`) aguarda CI + revisão humana. Claude Code não faz
+  merge.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
