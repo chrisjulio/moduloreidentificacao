@@ -118,3 +118,13 @@ desktop.ini
 # README.md da pasta é versionado (documenta a existência, não o conteúdo).
 /academic/*
 !/academic/README.md
+
+# ------------------------------------------------------------
+# Referências bibliográficas (PDFs / documentos / relatórios) — issue #177
+# Conteúdo potencialmente privado ou protegido por copyright.
+# Uso acadêmico isolado é permitido; redistribuição via repo, não.
+# Versiona-se apenas a estrutura (.gitkeep) e o catálogo (README.md).
+# ------------------------------------------------------------
+/references/*
+!/references/.gitkeep
+!/references/README.md
