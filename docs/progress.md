@@ -18,6 +18,26 @@
 análise e documentação.
 
 **Último passo concluído:**
+- **Complemento manual da #177 — população de `/references/` + catálogo
+  completo. ✅ (docs, PR aberto).** A #177 (fechada via PR #178) deixou pendente
+  o item manual de download da bibliografia. **(1) Downloads:** 11 das 14
+  referências do `README.md` §12 baixadas para `/references/` (gitignored;
+  `git status` limpo) a partir de fontes de acesso aberto legítimas — arXiv
+  (Narayanan), JMLR (Shervashidze), Springer VoR aberto (Wörlein), páginas de
+  autor (Backstrom/Cornell, Leskovec/Stanford, Liu-Terzi/BU, Zhou-Pei/SFU,
+  Serjantov-Danezis/UCL, Sweeney/DataPrivacyLab), anonbib (Díaz) e espelho de
+  curso (Karypis/UT Austin); todos verificados por magic bytes `%PDF`.
+  **(2) Pendências manuais (3):** He 2009 e Cordella 2004 só existem no IEEE
+  Xplore (VoR, paywall — exige acesso institucional CAFe/VPN); o AAM do
+  Nettleton 2016 (CC BY-NC-ND, O2/UOC) está atrás de verificação anti-bot
+  (Anubis) que exige navegador real. **(3) Catálogo:** `references/README.md`
+  atualizado com as 14 entradas (arquivo, referência, DOI/link, status de
+  acesso e fonte usada). **(4) Achado bibliográfico:** o DOI do Wörlein no
+  `README.md` §12 estava **errado** (`10.1007/11564126_32` resolve para
+  "Weka4WS", outro capítulo do mesmo LNCS 3721; confirmado via Crossref e
+  Semantic Scholar) — corrigido para `10.1007/11564126_39`. Só docs; código
+  congelado respeitado. Branch `docs/references-catalog-populate`
+  (`Refs #177`).
 - **Discussão de desdobramento da #174 — 5 pontos resolvidos pelo autor;
   enquadramento instrumental validado (DL-06). ✅ (docs, PR empilhado).**
   Respostas do autor aos pontos abertos no comentário de proposta: **(1)** formato
