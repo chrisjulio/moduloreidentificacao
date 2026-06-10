@@ -691,8 +691,9 @@ análise e documentação.
   DL-06: "anonimizar não é o suficiente") e independência do EpiCNet. Fontes:
   `scope.md` §4/§5/§8, `decision_log.md`. Pré-requisito: merge do PR da W1a
   (matriz de rastreabilidade).
-- **Formalização das sub-issues S10-W1a..f no GitHub:** a cargo do autor
-  (criação via agente bloqueada pelo classifier nesta sessão).
+- **Rastreio das etapas (decisão do autor, 2026-06-09):** **sem sub-issues**
+  no GitHub — cada etapa executada é registrada por comentário na #174 e em
+  `docs/relatorio_execucoes.md` (contabilização + registro detalhado).
 - **Issue #175 (artigo, S10-W2):** bloqueada pela #174 — não iniciar antes do
   relatório consolidado.
 - **Issue #148 (entropia não uniforme, sem milestone):** congelada; exige decisão
@@ -702,9 +703,9 @@ análise e documentação.
 **Bloqueios ativos:**
 - **PR da W1a (`docs/relatorio-skeleton-w1a`) aguardando CI + revisão humana.**
   Claude Code não faz merge. W1b não inicia antes do merge.
-- **Sub-issues S10-W1a..f ainda não formalizadas no GitHub** (criação via
-  agente bloqueada pelo classifier; a cargo do autor). Rastreio provisório em
-  `docs/relatorio_rastreabilidade.md`.
+- **Sub-issues S10-W1a..f: dispensadas** (decisão do autor, 2026-06-09) —
+  rastreio oficial por comentário na #174 + `docs/relatorio_execucoes.md` +
+  matriz em `docs/relatorio_rastreabilidade.md`.
 - #176 (infraestrutura `academic/`) e #179 (DL-06) **MERGED** em 2026-06-09 —
   bloqueios anteriores resolvidos.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;

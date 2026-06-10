@@ -78,5 +78,8 @@ reabre.
 | W1f | Revisão integrada + DoD da #174 | ⏳ pendente |
 
 > As etapas seguem a proposta de desdobramento validada pelo autor na #174
-> (comentário de 2026-06-09, 5 pontos resolvidos). A formalização em
-> sub-issues no GitHub permanece a cargo do autor.
+> (comentário de 2026-06-09, 5 pontos resolvidos). Decisão do autor
+> (2026-06-09): as etapas **não** viram sub-issues no GitHub — cada execução
+> é registrada por comentário na #174 e em
+> [`relatorio_execucoes.md`](relatorio_execucoes.md) (contabilização e
+> registro detalhado por etapa).
