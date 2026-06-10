@@ -11,13 +11,39 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-09
+**Data da última atualização:** 2026-06-10
 
 **Semana corrente:** S10 — fase de redação (S10-W): relatório de qualificação
 (#174, guarda-chuva) e artigo (#175, dependente). Código **congelado** — somente
 análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W1f da #174 — revisão integrada + apêndices + DoD. ✅ (docs, PR
+  aberto — fecha a #174).** Sexta e última etapa do desdobramento S10-W1a..f.
+  Bloqueio verificado antes de iniciar: PR **#186** (W1e) `MERGED` via `gh`
+  (`2026-06-10T12:52:17Z`); nenhum PR aberto. **(1) Revisão integrada
+  (texto privado, gitignorado, fora do diff):** conferência integral das
+  Seções 1–8 de `academic/relatorio_qualificacao.md` contra `main` —
+  números das tabelas §5.1/§5.4 **exatos** vs `results_baseline.md`/
+  `results_enron.md`; alegações do d-sweep conferem com `results_dsweep.md`;
+  W-01..W-06 nos destinos do checklist; terminologia de aferição limpa;
+  artefatos citados todos presentes. **Única não-conformidade encontrada e
+  corrigida:** §7.2 citava `scripts.verify_reproduction` como verificação
+  automática entregue — script **não versionado** em `main` (resíduo
+  documental já registrado pela #172, que corrigiu o README mas não
+  `reproducibility.md`); §7.2 reescrita (conferência manual dos agregados
+  por k, tolerância 0,02; script = pendência pós-qualificação) + linha nova
+  na tabela de ameaças (§6.3). **(2) Decisões da revisão:** Apêndice A
+  (tabelas brutas FB+Enron embutidas; d-sweep referenciado) e Apêndice B
+  (14 referências do README §12) **entram**; inventário de entregáveis não
+  entra (doc vivo); diagrama do pipeline (Mermaid de `pipeline.md` §1)
+  incluído para a conversão final; checklists W1b..e mantidos como rastro,
+  a remover na conversão. **(3) DoD da #174 (emendada) conferida item a
+  item — cumprida**; registro na seção "Revisão integrada (W1f)" do próprio
+  documento. **(4) Rastreabilidade pública (no PR):** matriz com W1f ✅ +
+  apêndices + nota da revisão; `relatorio_execucoes.md` (6/6; W1e →
+  MERGED). Só docs; código congelado respeitado. Branch
+  `docs/relatorio-w1f-revisao-integrada` (`Closes #174`).
 - **Etapa W1e da #174 — redação das Seções 6–8 (Limitações; Reprodutibilidade;
   Ética) do relatório de qualificação. ✅ (docs, PR aberto).** Quinta etapa do
   desdobramento S10-W1a..f — **conclui a redação substantiva** (Seções 1–8);
@@ -798,29 +824,24 @@ análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W1f (#174) — última:** revisão integrada do relatório em
-  `academic/relatorio_qualificacao.md` — conferência das "Coberturas do
-  checklist (W1b..e)" seção a seção; revisão cruzada contra `progress.md` e
-  `entregaveis.md` (sem citar item ausente de `main`); varredura final de
-  terminologia de aferição; decisão dos apêndices (tabelas brutas,
-  inventário de entregáveis, referências do README §12/§13); inserção
-  física das figuras/tabelas referenciadas (conversão final); conferência
-  item a item da **DoD emendada da #174** e fechamento da issue via PR.
-  Pré-requisito: merge do PR da W1e.
-- **Rastreio das etapas (decisão do autor, 2026-06-09):** **sem sub-issues**
-  no GitHub — cada etapa executada é registrada por comentário na #174 e em
-  `docs/relatorio_execucoes.md` (contabilização + registro detalhado).
-- **Issue #175 (artigo, S10-W2):** bloqueada pela #174 — não iniciar antes do
-  relatório consolidado.
+- **Merge do PR da W1f** (fecha a #174 — desdobramento S10-W1a..f
+  concluído). Depois dele, a fase de redação avança para a **issue #175
+  (artigo, S10-W2)**, cuja dependência (#174) estará satisfeita.
+- **Fora do escopo da #174 (pendências anotadas na revisão W1f):**
+  conversão final do relatório via pandoc (inserção física das figuras
+  regeneráveis; remoção dos checklists de processo W1b..e) — a cargo do
+  autor; versionamento de `scripts/verify_reproduction.py` (resíduo
+  documental da #172) — exigiria degelo de código, decisão humana.
 - **Issue #148 (entropia não uniforme, sem milestone):** congelada; exige decisão
   D-xx (esquema de pesos) antes de implementar — não iniciar sem o humano.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da W1e (`docs/relatorio-w1e-limitacoes-repro-etica`) aguardando CI +
-  revisão humana.** Claude Code não faz merge. W1f não inicia antes do merge.
-- PRs #181 (W1a), #182 (W1b), #183 (W1c) e #185 (W1d) **MERGED** em
-  2026-06-10 (UTC) — bloqueios anteriores resolvidos.
+- **PR da W1f (`docs/relatorio-w1f-revisao-integrada`) aguardando CI +
+  revisão humana.** Claude Code não faz merge. Fecha a #174; a #175 não
+  inicia antes do merge.
+- PRs #181 (W1a), #182 (W1b), #183 (W1c), #185 (W1d) e #186 (W1e) **MERGED**
+  em 2026-06-10 (UTC) — bloqueios anteriores resolvidos.
 - **Sub-issues S10-W1a..f: dispensadas** (decisão do autor, 2026-06-09) —
   rastreio oficial por comentário na #174 + `docs/relatorio_execucoes.md` +
   matriz em `docs/relatorio_rastreabilidade.md`.
@@ -855,6 +876,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Etapa W1f da #174: revisão integrada + apêndices + DoD (fecha a #174)
+
+- **Concluído:** Sexta e última etapa do desdobramento S10-W1a..f. Bloqueio
+  verificado: PR #186 (W1e) `MERGED` via `gh`; nenhum PR aberto. **Revisão
+  integrada** das Seções 1–8 do relatório privado contra `main`: números
+  exatos vs `results_*.md`; W-01..W-06 nos destinos do checklist;
+  terminologia de aferição limpa; artefatos citados presentes. **Achado
+  corrigido:** §7.2 citava `scripts.verify_reproduction` (não versionado;
+  resíduo da #172) — reescrita para conferência manual + linha nova na
+  tabela de ameaças §6.3. **Apêndices decididos:** A (tabelas brutas
+  FB+Enron) e B (14 referências) entram; inventário não; diagrama do
+  pipeline incluído para a conversão. **DoD da #174 conferida — cumprida.**
+  Rastreabilidade pública atualizada: matriz (W1f ✅ + nota da revisão) +
+  `relatorio_execucoes.md` (6/6). Só docs. Branch
+  `docs/relatorio-w1f-revisao-integrada` (`Closes #174`).
+- **Próximo:** Revisão humana + merge do PR da W1f (fecha a #174); depois
+  issue #175 (artigo, S10-W2). Conversão pandoc e script de verificação
+  ficam como pendências fora do escopo da #174.
+- **Bloqueios:** PR da W1f aguardando CI + revisão.
+- **Decisões pendentes:** D-08 (d=2 mantido, anotado degenerate) — confirmar.
 
 ### 2026-06-09 — Etapa W1e da #174: Seções 6–8 (limitações; reprodutibilidade; ética)
 
