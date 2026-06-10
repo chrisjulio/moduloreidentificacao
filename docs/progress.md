@@ -14,10 +14,41 @@
 **Data da última atualização:** 2026-06-10
 
 **Semana corrente:** S10 — fase de redação (S10-W): relatório de qualificação
-(#174, **fechada** em 2026-06-10) e artigo (#175, em andamento — S10-W2).
+(#174, **fechada** em 2026-06-10) e artigo (#175 — redação e revisão
+**concluídas**; PR da W2f com `Closes #175` aguardando merge).
 Código **congelado** — somente análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W2f da #175 — revisão integrada do artigo + DoD. ✅ (docs, PR
+  aberto — fecha a #175).** Sexta e última etapa do desdobramento
+  S10-W2a..f, orientada pelo relatório de validação externo do autor
+  (`validacao_w2f_175.md`). Bloqueio verificado antes de iniciar: PR
+  **#196** (W2e) `MERGED` via `gh` (`2026-06-10T22:17:13Z`); nenhum PR
+  aberto. **(1) Revisão integrada (texto privado, gitignorado, fora do
+  diff):** conferência das Seções 1–6 + abstract contra `main` — Tabelas
+  2–4 **exatas** vs `results_baseline.md`/`results_enron.md`; painel
+  normalizado (§4.5) e d-sweep (§4.6) conferem com `results_enron.md`/
+  `results_dsweep.md`; terminologia de aferição conforme (única ocorrência
+  de "de-anonimização" nomeia a linha da literatura que o trabalho não
+  executa); citação↔lista fechada nos dois sentidos (12/12). **(2) Itens
+  1.1–1.5 do relatório de validação:** *1.1* — as 3 refs ausentes reais
+  são **Wörlein 2005, Díaz 2003 e Serjantov & Danezis 2003** (a tabela do
+  relatório supunha Leskovec/Karypis/Shervashidze, que **estão** no artigo
+  desde a W2c); omissões registradas como intencionais (artigo não discute
+  minerador FSM nem reporta entropia) com justificativa privada + nota
+  pública; *1.2* — explicação do desvio-padrão zero em k=2 **adicionada à
+  §4.1** (3 sementes idênticas na tabela bruta; KS-D/Δclust exatamente
+  nulos; redução d=1→grau); *1.3* — motor não-pareado **já visível** ao
+  par revisor (§4.1 nota; §4.5 confundidor; §5.1 ¶2 interpretativo), sem
+  ajuste; *1.4* — assimetria do adendo [15] registrada na matriz pública;
+  *1.5* — política de arredondamento fixada (inteiro mais próximo:
+  30,1→~30; 37,6→~38) com quocientes exatos na legenda da Tabela 4.
+  **(3) DoD emendada da #175 conferida item a item — cumprida (7/7)**;
+  checklists W2b..e mantidos como rastro (remoção na conversão).
+  **(4) Rastreabilidade pública (no PR):** matriz com W2f ✅ + notas de
+  assimetria [15] e de referências; `artigo_execucoes.md` (6/6; W2e →
+  MERGED #196). Só docs; código congelado respeitado. Branch
+  `docs/artigo-w2f-revisao-integrada` (`Closes #175`).
 - **Etapa W2e da #175 — redação das Seções 5–6 do artigo (discussão +
   conclusão) + abstract final. ✅ (docs, PR aberto).** Quinta etapa do
   desdobramento S10-W2a..f — **conclui a redação substantiva** do artigo
@@ -1000,13 +1031,14 @@ Código **congelado** — somente análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W2f da #175** (revisão integrada do artigo: conferência das
-  Seções 1–6 + abstract contra o relatório e `main` — números, terminologia
-  de aferição, citação↔lista de referências, coerência com `progress.md`;
-  remoção/manutenção dos checklists de cobertura W2b..e como rastro; DoD
-  emendada da #175 conferida item a item — **fecha a issue**), após merge
-  do PR da W2e (`docs/artigo-w2e-discussao-conclusao`). Ciclo: 1 etapa por
-  sessão; bloqueio verificado via `gh` antes de iniciar.
+- **Merge do PR da W2f** (revisão humana; Claude Code não faz merge) —
+  fecha a **#175** e conclui a produção acadêmica da fase S10-W
+  (relatório #174 + artigo #175).
+- **Fora do escopo da #175 (pendências anotadas na revisão W2f):**
+  conversão final do artigo via pandoc (inserção física das figuras
+  regeneráveis; remoção dos checklists de processo W2b..e; venue/template
+  a decidir) — a cargo do autor. As 3 referências omitidas (Wörlein; Díaz;
+  Serjantov & Danezis) são revisáveis pelo autor na conversão.
 - **Fora do escopo da #174 (pendências anotadas na revisão W1f):**
   conversão final do relatório via pandoc (inserção física das figuras
   regeneráveis; remoção dos checklists de processo W1b..e) — a cargo do
@@ -1017,9 +1049,12 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da etapa W2e (`docs/artigo-w2e-discussao-conclusao`) aguardando CI +
-  revisão humana.** Claude Code não faz merge. A etapa W2f (revisão
-  integrada — fecha a #175) inicia após o merge deste PR.
+- **PR da etapa W2f (`docs/artigo-w2f-revisao-integrada`, `Closes #175`)
+  aguardando CI + revisão humana.** Claude Code não faz merge. Último PR
+  do desdobramento S10-W2a..f.
+- PR **#196** (W2e) **MERGED** em 2026-06-10 (`22:17:13Z`) — Seções 5–6 +
+  abstract final e rastreabilidade em `main`; bloqueio anterior da W2f
+  resolvido.
 - PR **#195** (W2d) **MERGED** em 2026-06-10 (`21:19:59Z`) — Seção 4 do
   artigo e rastreabilidade em `main`; bloqueio anterior da W2e resolvido.
 - PR **#194** (W2c) **MERGED** em 2026-06-10 (`21:06:57Z`) — Seção 3 do
@@ -1075,6 +1110,30 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Etapa W2f da #175: revisão integrada do artigo + DoD (fecha a issue)
+
+- **Concluído:** Pré-verificação: PR #196 (W2e) `MERGED` via `gh`
+  (22:17:13Z); nenhum PR aberto. Revisão integrada de `academic/artigo.md`
+  (privado, fora do diff) orientada pelo relatório de validação externo do
+  autor (`validacao_w2f_175.md`): números das Tabelas 2–4, painel
+  normalizado e d-sweep **exatos** contra os relatórios versionados;
+  terminologia de aferição conforme; citação↔lista fechada (12/12).
+  Itens 1.1–1.5 do relatório de validação resolvidos: 3 refs ausentes
+  reidentificadas (Wörlein/Díaz/Serjantov — não as supostas na validação)
+  e justificadas como omissão intencional; explicação do desvio-padrão
+  zero em k=2 adicionada à §4.1; visibilidade do motor não-pareado
+  confirmada (sem ajuste); assimetria do adendo [15] registrada na matriz
+  pública; política de arredondamento fixada (inteiro mais próximo) com
+  quocientes exatos na Tabela 4. DoD emendada conferida (7/7).
+  Rastreabilidade pública: matriz com W2f ✅ + 2 notas;
+  `artigo_execucoes.md` 6/6. Branch `docs/artigo-w2f-revisao-integrada`
+  (`Closes #175`).
+- **Próximo:** Merge do PR da W2f (fecha a #175). Conversão pandoc do
+  artigo e do relatório a cargo do autor.
+- **Bloqueios:** PR da W2f aguardando CI + revisão humana.
+- **Decisões pendentes:** Nenhuma nova (D-08 segue como única pendência
+  herdada). Autor pode rever na conversão as 3 refs omitidas.
 
 ### 2026-06-10 — Etapa W2e da #175: Seções 5–6 do artigo (discussão + conclusão) + abstract final
 
