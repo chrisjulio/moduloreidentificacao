@@ -164,4 +164,11 @@
 - **Sem descongelamento:** nenhuma alteração em `src/` ou testes — o
   congelamento da S10-W cobre código; documentação é o modo ativo da fase.
 - **Branch:** `docs/references-narayanan-2009` (empilhada sobre
-  `docs/artigo-w2b-intro-relacionados`, `Refs #175`).
+  `docs/artigo-w2b-intro-relacionados`, `Refs #175`), PR **#192**.
+- **Incidente de roteamento do #192 (adendo, 2026-06-10):** o #192 foi
+  mergeado às 20:38:36Z **na base original** (a branch da W2b), **depois**
+  do merge do #191 em `main` (20:30:22Z); como a branch da W2b não foi
+  apagada antes, o GitHub não retargetou a base e o conteúdo **não chegou a
+  `main`**. Corrigido por **cherry-pick** do commit `2c9cdeb` em branch
+  nova a partir de `main` (`docs/references-narayanan-2009-main`, novo PR;
+  conteúdo idêntico ao do #192).

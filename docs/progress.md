@@ -927,10 +927,18 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR #191 da etapa W2b (`docs/artigo-w2b-intro-relacionados`) + PR
-  empilhado da decisão A+B (`docs/references-narayanan-2009`) aguardando CI
-  + revisão humana.** Claude Code não faz merge. Ordem de merge: #191
-  primeiro, depois o empilhado. A etapa W2c inicia após o merge de ambos.
+- **PR de reencaminhamento da decisão A+B
+  (`docs/references-narayanan-2009-main`) aguardando CI + revisão humana.**
+  Claude Code não faz merge. A etapa W2c inicia após o merge deste PR.
+  **Incidente de roteamento (registrado):** o PR #191 (W2b) foi mergeado em
+  `main` às 20:30:22Z de 2026-06-10, mas o PR #192 (empilhado, decisão A+B)
+  foi mergeado às 20:38:36Z **na base original**
+  (`docs/artigo-w2b-intro-relacionados`) — como a branch da W2b não foi
+  apagada antes, o GitHub não retargetou a base para `main` e o conteúdo do
+  #192 **não chegou a `main`**. Corrigido por cherry-pick do commit
+  `2c9cdeb` em branch nova a partir de `main` (este PR); conteúdo idêntico.
+- PR **#191** (W2b) **MERGED** em 2026-06-10 — Seções 1–2 do artigo e
+  rastreabilidade em `main`.
 - PR **#190** (registro da validação) **MERGED** em 2026-06-10 — bloqueio
   anterior da W2b resolvido.
 - PR **#188** (W2a) **MERGED** em 2026-06-10 e **desdobramento S10-W2a..f
