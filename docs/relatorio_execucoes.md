@@ -18,15 +18,15 @@
 
 ## Contabilização
 
-**Etapas executadas: 4 de 6.**
+**Etapas executadas: 5 de 6.**
 
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
 | W1a | Esqueleto em `academic/` + matriz + este registro | 2026-06-09 | `docs/relatorio-skeleton-w1a` | [#181](https://github.com/chrisjulio/moduloreidentificacao/pull/181) | ✅ executada (PR **MERGED**) |
 | W1b | Seções 1–2: introdução/posicionamento (DL-06) + independência do EpiCNet | 2026-06-09 | `docs/relatorio-w1b-intro-epicnet` | [#182](https://github.com/chrisjulio/moduloreidentificacao/pull/182) | ✅ executada (PR **MERGED**) |
 | W1c | Seções 3–4: método + desenho experimental [M]/[D] | 2026-06-09 | `docs/relatorio-w1c-metodo-desenho` | [#183](https://github.com/chrisjulio/moduloreidentificacao/pull/183) | ✅ executada (PR **MERGED**) |
-| W1d | Seção 5: resultados (a mais pesada — sessão própria) | 2026-06-09 | `docs/relatorio-w1d-resultados` | [#185](https://github.com/chrisjulio/moduloreidentificacao/pull/185) | ✅ executada (PR em revisão) |
-| W1e | Seções 6–8: limitações, reprodutibilidade, ética | — | — | — | ⏳ pendente |
+| W1d | Seção 5: resultados (a mais pesada — sessão própria) | 2026-06-09 | `docs/relatorio-w1d-resultados` | [#185](https://github.com/chrisjulio/moduloreidentificacao/pull/185) | ✅ executada (PR **MERGED**) |
+| W1e | Seções 6–8: limitações, reprodutibilidade, ética | 2026-06-09 | `docs/relatorio-w1e-limitacoes-repro-etica` | [#186](https://github.com/chrisjulio/moduloreidentificacao/pull/186) | ✅ executada (PR em revisão) |
 | W1f | Revisão integrada + fechamento da DoD da #174 | — | — | — | ⏳ pendente |
 
 ---
@@ -201,3 +201,64 @@
   código congelado (S10-W) respeitado.
 - **Próxima etapa:** W1e (Seções 6–8: limitações, reprodutibilidade,
   ética), após merge do PR desta etapa.
+
+### W1e — 2026-06-09 — Seções 6–8: limitações, reprodutibilidade, ética
+
+- **Pré-verificação de bloqueios:** PR #185 (W1d) confirmado `MERGED` via
+  `gh` (`mergedAt: 2026-06-10T01:13:32Z`); nenhum PR aberto.
+- **Artefato privado (gitignorado, fora do diff):** redação substantiva das
+  Seções 6, 7 e 8 em `academic/relatorio_qualificacao.md`, substituindo os
+  placeholders do esqueleto; cabeçalho de status atualizado para
+  "EM REDAÇÃO (S10-W1e)" — **redação substantiva completa** (Seções 1–8);
+  resta a revisão integrada W1f. Backup externo a cargo do autor.
+  - **Seção 6 — Limitações e ameaças à validade** (3 subseções): §6.1
+    limitações de escopo selecionadas de `limitations.md` §1 — um dataset
+    por tier com gap de validade externa **parcialmente fechado** pelo
+    Enron (achado **B2**; resíduo explícito: `multiple_egonets` não
+    executado); algoritmo único; d-sweep restrito à ego-rede 3437; cenários
+    restritos a grau + subgrafo 1-hop ⇒ taxas como **cota inferior**
+    (entropia é métrica, D-17, não cenário); §6.2 limitações técnicas —
+    FSM simplificado (D-01), fallback KL sem garantia de balanceamento
+    (D-04/D-07) com mitigações de rastreabilidade (`partition_backend`,
+    `allow_kl_fallback`), **grupo final incompleto (D-06)** com a
+    interpretação de `SUCCESS_PARTIAL`/cobertura ≥0,996 e
+    `deficit_fully_structural` (DL-01), verificador conservador (D-05),
+    custo VF2 mitigado por WL (D-16), desempate lexicográfico (D-03);
+    §6.3 tabela consolidada de ameaças à validade (externa/construto/
+    interna/reprodutibilidade) + detalhe da ameaça do **motor não-pareado**
+    KL×pymetis (encaminhada da nota do motor da Seção 5.1; interpretativa,
+    baixa magnitude; pareamento estrito como trabalho pós-qualificação).
+  - **Seção 7 — Reprodutibilidade** (4 subseções): §7.1 reprodutibilidade
+    por desenho — sementes sempre do YAML (≥3; 42/1337/2718), um YAML
+    versionado por experimento, logs JSONL + `summary.json` como fonte
+    única dos outputs, dados brutos fora do versionamento (download
+    scriptado com SHA-256); §7.2 validação end-to-end (issue #27,
+    `reproducibility.md`) — dois cenários, pipeline canônico de 6 comandos,
+    verificação automática (`scripts.verify_reproduction`, agregados por k,
+    tolerância 0,02 absoluto, exit codes CI-compatíveis), exclusão
+    deliberada de hash de imagem; §7.3 fatores conhecidos de divergência
+    (backend D-04 como maior risco; timeout sensível a hardware; deriva de
+    bibliotecas/lockfile); §7.4 CI obrigatório (ruff + pytest, 3.11/3.12)
+    em todo PR + processo (PRs, decisões D-xx/DL-xx, registro de bugs).
+    Fluxogramas 1–2 de `docs/img/` referenciados como figuras.
+  - **Seção 8 — Enquadramento ético** (3 subseções, `scope.md` §7): §8.1
+    datasets públicos desidentificados pela fonte (SNAP), nenhum dado
+    pessoal novo coletado, sem dados de produção, condição extensível a
+    datasets futuros; §8.2 dispensa de aprovação de CEP — Resolução CNS
+    510/2016, Art. 1º, §único, III, com `scope.md` §7 como registro formal;
+    §8.3 salvaguardas de desenho e de escrita — ciclo fechado por desenho
+    (cross-ref §1.2), informação auxiliar externa nunca utilizada
+    (cross-ref §1.3), apresentação como aferidor de defesas e regra global
+    de terminologia de aferição.
+  - Checklists do esqueleto preservados em cada seção como "Cobertura do
+    checklist (W1e)" com itens marcados — insumo da revisão integrada W1f.
+  - **Terminologia de aferição** respeitada (sem "quebrar anonimização",
+    "identificar usuários", "desanonimizar pessoas").
+- **Artefatos públicos (versionados neste PR):** matriz
+  ([`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)) com W1e
+  marcada concluída; este registro; `progress.md` atualizado.
+- **Verificação:** `git check-ignore academic/relatorio_qualificacao.md`
+  confirma privacidade; diff público contém só docs de rastreabilidade —
+  código congelado (S10-W) respeitado.
+- **Próxima etapa:** W1f (revisão integrada + decisão de apêndices +
+  fechamento da DoD da #174), após merge do PR desta etapa.

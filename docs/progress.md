@@ -18,6 +18,38 @@
 análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W1e da #174 — redação das Seções 6–8 (Limitações; Reprodutibilidade;
+  Ética) do relatório de qualificação. ✅ (docs, PR aberto).** Quinta etapa do
+  desdobramento S10-W1a..f — **conclui a redação substantiva** (Seções 1–8);
+  resta a revisão integrada W1f. Bloqueio verificado antes de iniciar: PR
+  **#185** (W1d) `MERGED` via `gh` (`2026-06-10T01:13:32Z`); nenhum PR aberto.
+  **(1) Texto privado (gitignorado, fora do diff):** Seções 6–8 redigidas em
+  `academic/relatorio_qualificacao.md`. **Seção 6** (3 subseções): §6.1
+  limitações de escopo (`limitations.md` §1) — dataset por tier com gap de
+  validade externa parcialmente fechado pelo Enron (**B2**; resíduo
+  `multiple_egonets` explícito), algoritmo único, d-sweep restrito à ego-rede
+  3437, cenários grau+subgrafo ⇒ taxas como **cota inferior** (entropia =
+  métrica, D-17); §6.2 limitações técnicas — FSM/D-01, fallback KL D-04/D-07
+  (mitigações `partition_backend`/`allow_kl_fallback`), **D-06 com a
+  interpretação de `SUCCESS_PARTIAL`** (déficit 100% estrutural, DL-01),
+  verificador conservador D-05, custo VF2 mitigado por WL/D-16, desempate
+  D-03; §6.3 tabela de ameaças à validade + detalhe do **motor não-pareado**
+  KL×pymetis (encaminhado da §5.1; interpretativo, baixa magnitude,
+  pareamento estrito pós-qualificação). **Seção 7** (4 subseções):
+  reprodutibilidade por desenho (sementes do YAML ≥3, configs versionados,
+  outputs só de logs JSONL); validação end-to-end #27 (pipeline canônico,
+  `verify_reproduction` com tolerância 0,02, exit codes); fatores de
+  divergência (backend D-04, timeout/hardware, lockfile); CI obrigatório +
+  processo; fluxogramas de `docs/img/` como figuras. **Seção 8** (3
+  subseções, `scope.md` §7): datasets públicos desidentificados (SNAP, sem
+  dado pessoal novo); dispensa de CEP (CNS 510/2016, Art. 1º, §único, III);
+  salvaguardas de desenho e escrita (ciclo fechado por desenho; aferidor;
+  terminologia de aferição). Checklists preservados como "Cobertura do
+  checklist (W1e)" para a revisão W1f. **(2) Rastreabilidade pública (no
+  PR):** matriz com W1e ✅; registro detalhado em `relatorio_execucoes.md`
+  (5 de 6 etapas executadas; W1d marcada MERGED). Só docs; código congelado
+  respeitado. Branch `docs/relatorio-w1e-limitacoes-repro-etica`
+  (`Refs #174`).
 - **Etapa W1d da #174 — redação da Seção 5 (Resultados) do relatório de
   qualificação. ✅ (docs, PR aberto).** Quarta etapa do desdobramento
   S10-W1a..f — a mais pesada, executada em sessão própria conforme planejado.
@@ -766,14 +798,15 @@ análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W1d (#174):** redigir a seção 5 do relatório (resultados — a mais
-  pesada, sessão própria) em `academic/relatorio_qualificacao.md` — baseline
-  Facebook [M] (nota do motor KL), leitura-chave B1, d-sweep, Enron [D],
-  **B1 generalizável (W-04)**, painel normalizado `comparison_fb_enron`
-  (**DL-04/W-06**, nota da cota 1/k), entropia (D-17) onde couber; inserir
-  figuras/tabelas do inventário da matriz. Fontes: `results_baseline.md`,
-  `results_dsweep.md`, `results_enron.md`, `data_dictionary.md`.
-  Pré-requisito: merge do PR da W1c.
+- **Etapa W1f (#174) — última:** revisão integrada do relatório em
+  `academic/relatorio_qualificacao.md` — conferência das "Coberturas do
+  checklist (W1b..e)" seção a seção; revisão cruzada contra `progress.md` e
+  `entregaveis.md` (sem citar item ausente de `main`); varredura final de
+  terminologia de aferição; decisão dos apêndices (tabelas brutas,
+  inventário de entregáveis, referências do README §12/§13); inserção
+  física das figuras/tabelas referenciadas (conversão final); conferência
+  item a item da **DoD emendada da #174** e fechamento da issue via PR.
+  Pré-requisito: merge do PR da W1e.
 - **Rastreio das etapas (decisão do autor, 2026-06-09):** **sem sub-issues**
   no GitHub — cada etapa executada é registrada por comentário na #174 e em
   `docs/relatorio_execucoes.md` (contabilização + registro detalhado).
@@ -784,10 +817,10 @@ análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da W1c (`docs/relatorio-w1c-metodo-desenho`) aguardando CI + revisão
-  humana.** Claude Code não faz merge. W1d não inicia antes do merge.
-- PRs #181 (W1a) e #182 (W1b) **MERGED** em 2026-06-10 (UTC) — bloqueios
-  anteriores resolvidos.
+- **PR da W1e (`docs/relatorio-w1e-limitacoes-repro-etica`) aguardando CI +
+  revisão humana.** Claude Code não faz merge. W1f não inicia antes do merge.
+- PRs #181 (W1a), #182 (W1b), #183 (W1c) e #185 (W1d) **MERGED** em
+  2026-06-10 (UTC) — bloqueios anteriores resolvidos.
 - **Sub-issues S10-W1a..f: dispensadas** (decisão do autor, 2026-06-09) —
   rastreio oficial por comentário na #174 + `docs/relatorio_execucoes.md` +
   matriz em `docs/relatorio_rastreabilidade.md`.
@@ -822,6 +855,25 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-09 — Etapa W1e da #174: Seções 6–8 (limitações; reprodutibilidade; ética)
+
+- **Concluído:** Quinta etapa do desdobramento S10-W1a..f — **redação
+  substantiva completa** (Seções 1–8). Bloqueio verificado: PR #185 (W1d)
+  `MERGED` via `gh`. Redigidas as **Seções 6–8** do relatório em
+  `academic/relatorio_qualificacao.md` (privado, gitignorado): §6 limitações
+  e ameaças à validade (escopo × técnicas de `limitations.md`; B2 com resíduo
+  `multiple_egonets`; D-06/`SUCCESS_PARTIAL`; tabela de ameaças; motor
+  não-pareado KL×pymetis), §7 reprodutibilidade (desenho; end-to-end #27 com
+  `verify_reproduction`; fatores de divergência D-04/timeout/lockfile; CI) e
+  §8 enquadramento ético (`scope.md` §7; CNS 510/2016; salvaguardas de
+  desenho e escrita). Rastreabilidade pública atualizada: matriz (W1e ✅) +
+  `relatorio_execucoes.md` (registro detalhado, 5/6; W1d → MERGED). Só docs.
+  Branch `docs/relatorio-w1e-limitacoes-repro-etica` (`Refs #174`).
+- **Próximo:** Revisão humana + merge do PR da W1e; depois **W1f** (revisão
+  integrada + apêndices + fechamento da DoD da #174).
+- **Bloqueios:** PR da W1e aguardando CI + revisão.
+- **Decisões pendentes:** D-08 (d=2 mantido, anotado degenerate) — confirmar.
 
 ### 2026-06-09 — Etapa W1c da #174: Seções 3–4 (método; desenho experimental)
 
