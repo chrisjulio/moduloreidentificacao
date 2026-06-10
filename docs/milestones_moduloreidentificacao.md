@@ -1,7 +1,7 @@
 # Milestones — Módulo de Reidentificação
 
 **Repositório:** [chrisjulio/moduloreidentificacao](https://github.com/chrisjulio/moduloreidentificacao)
-**Atualizado em:** 2026-06-08 (22h10) — varredura completa
+**Atualizado em:** 2026-06-10 (18h20) — pós-varredura 10/06
 
 ---
 
@@ -138,7 +138,9 @@ Ciclo que materializou a issue desejável [#29](https://github.com/chrisjulio/mo
 
 ## S10 — Consolidação Documental — Relatório + Artigo (EM ANDAMENTO 🔄)
 
-Ciclo de infraestrutura documental para a escrita. Cria `docs/artifact_writing_checklist.md` com itens W-NN a verificar antes de cada seção do relatório/artigo.
+Ciclo de infraestrutura documental e produção acadêmica (relatório de qualificação + artigo). A infraestrutura do checklist W-NN e os documentos de suporte estão completos; a issue S10-W2 (artigo) está em execução.
+
+### Infraestrutura documental (COMPLETO ✅)
 
 | # | Título resumido | Principal tarefa | Status |
 |---|---|---|---|
@@ -150,7 +152,27 @@ Ciclo de infraestrutura documental para a escrita. Cria `docs/artifact_writing_c
 | [#158](https://github.com/chrisjulio/moduloreidentificacao/issues/158) | A05 | Abrir PR, fechar DoD #140 e habilitar #141 | ✅ Fechada |
 | [#161](https://github.com/chrisjulio/moduloreidentificacao/issues/161) | A06 | Criar `docs/mapa_estrutural.md` | ✅ Fechada |
 | [#141](https://github.com/chrisjulio/moduloreidentificacao/issues/141) | S10-V1 | Popular W-01..W-06 (comparabilidade FB×Enron) | ✅ Fechada |
-| [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | Ataque por entropia (baseline uniforme) | `src/metrics/entropy.py` + D-17 | ✅ Fechada |
+
+### Docs de suporte e preparo (COMPLETO ✅)
+
+| # | Título resumido | Principal tarefa | Status |
+|---|---|---|---|
+| [#172](https://github.com/chrisjulio/moduloreidentificacao/issues/172) | Varredura README × estado executado | Congelamento documental do README | ✅ Fechada 09/06 |
+| [#177](https://github.com/chrisjulio/moduloreidentificacao/issues/177) | Criar `/references` (PDFs bibliográficos) | `.gitignore` + catálogo de referências | ✅ Fechada 09/06 |
+| [#184](https://github.com/chrisjulio/moduloreidentificacao/issues/184) | Scripts de replicação via PowerShell/Bash | Scripts independentes de IDE para a banca | ✅ Fechada 10/06 |
+
+### Produção acadêmica S10-W (EM EXECUÇÃO 🔄)
+
+| # | Título resumido | Dependência | Status |
+|---|---|---|---|
+| [#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174) | S10-W1 — Relatório de qualificação | — (precede artigo) | ✅ Fechada 10/06 |
+| [#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175) | S10-W2 — Artigo | Depende de #174 | 🔴 **Aberta** |
+
+### Outras fechadas no ciclo
+
+| # | Título resumido | Status |
+|---|---|---|
+| [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30) | Ataque por entropia (baseline uniforme) | ✅ Fechada |
 
 ---
 
@@ -158,10 +180,11 @@ Ciclo de infraestrutura documental para a escrita. Cria `docs/artifact_writing_c
 
 | # | Rótulo | Título resumido | Status |
 |---|---|---|---|
+| [#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175) | S10-W2 | Redigir artigo (recorte argumentativo) | 🔄 Em execução |
 | [#148](https://github.com/chrisjulio/moduloreidentificacao/issues/148) | DESEJÁVEL | Entropia não uniforme (D-E2-b) — extensão de #30 | 🔴 Aberta |
 | [#136](https://github.com/chrisjulio/moduloreidentificacao/issues/136) | ASPIRACIONAL | Análise de custo VF2 — rotas de otimização (registro não-bloqueante) | 🔴 Aberta |
 | [#31](https://github.com/chrisjulio/moduloreidentificacao/issues/31) | ASPIRACIONAL | Nettleton & Salas (2016) — implementação inicial | 🔴 Aberta |
 
 ---
 
-*Documento gerado a partir da API do GitHub em 2026-06-08 — varredura completa de issues fechadas.*
+*Documento gerado a partir da API do GitHub em 2026-06-10 — pós-varredura completa.*
