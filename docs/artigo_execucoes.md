@@ -18,15 +18,15 @@
 
 ## Contabilização
 
-**Etapas executadas: 4 de 6.**
+**Etapas executadas: 5 de 6.**
 
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
 | W2a | Esqueleto em `academic/artigo.md` + matriz + este registro | 2026-06-10 | `docs/artigo-skeleton-w2a` | [#188](https://github.com/chrisjulio/moduloreidentificacao/pull/188) | ✅ MERGED (2026-06-10) |
 | W2b | Seções 1–2: introdução + trabalhos relacionados | 2026-06-10 | `docs/artigo-w2b-intro-relacionados` | [#191](https://github.com/chrisjulio/moduloreidentificacao/pull/191) | ✅ MERGED (2026-06-10; complemento A+B reencaminhado via [#193](https://github.com/chrisjulio/moduloreidentificacao/pull/193), MERGED) |
 | W2c | Seção 3: método condensado | 2026-06-10 | `docs/artigo-w2c-metodo` | [#194](https://github.com/chrisjulio/moduloreidentificacao/pull/194) | ✅ MERGED (2026-06-10) |
-| W2d | Seção 4: resultados (a mais pesada — sessão própria) | 2026-06-10 | `docs/artigo-w2d-resultados` | — | ✅ executada (PR aberto) |
-| W2e | Seções 5–6: discussão + conclusão + abstract final | — | — | — | ⏳ pendente |
+| W2d | Seção 4: resultados (a mais pesada — sessão própria) | 2026-06-10 | `docs/artigo-w2d-resultados` | [#195](https://github.com/chrisjulio/moduloreidentificacao/pull/195) | ✅ MERGED (2026-06-10) |
+| W2e | Seções 5–6: discussão + conclusão + abstract final | 2026-06-10 | `docs/artigo-w2e-discussao-conclusao` | — | ✅ executada (PR aberto) |
 | W2f | Revisão integrada + fechamento da DoD da #175 | — | — | — | ⏳ pendente |
 
 ---
@@ -278,3 +278,62 @@
 - **Verificação:** só docs — código congelado (S10-W) respeitado.
 - **Próxima etapa:** W2e (Seções 5–6 — discussão + conclusão + abstract
   final), após merge do PR desta etapa (bloqueio a verificar via `gh`).
+
+### W2e — 2026-06-10 — Seções 5–6 (discussão + conclusão) + abstract final
+
+- **Pré-verificação de bloqueios:** PR **#195** (W2d) confirmado `MERGED`
+  via `gh pr view 195` (`mergedAt: 2026-06-10T21:19:59Z`); nenhum PR
+  aberto. Sem dúvidas em aberto na #175 para esta etapa — pré-condições da
+  W2e satisfeitas. Última etapa de **redação substantiva**; resta a revisão
+  integrada W2f.
+- **Texto privado (gitignorado, fora do diff):** Seções 5–6 redigidas em
+  `academic/artigo.md`, substituindo os checklists do esqueleto
+  (preservados como "Cobertura do checklist (W2e)" para a revisão W2f);
+  **abstract final** reescrito no lugar do provisório da W2b, conforme
+  previsto no esqueleto:
+  - **Resumo (final):** mantém a tese central e os números k=2 dos dois
+    datasets (Facebook 0,7914 vs 0,0263 ~30×; Enron 0,1241 vs 0,0033
+    ~38×); acrescenta, à luz das Seções 4–5: os dois cenários adversariais
+    explícitos; o deslocamento do vetor de ataque (k alto distorce graus e
+    fortalece o cenário por grau); e a leitura de **cota inferior** das
+    taxas. Nota de redação registra as diferenças em relação ao provisório.
+  - **Seção 5 — Discussão** (4 subseções): §5.1 validade externa — as
+    tendências sobrevivem no Enron (rede ~63× maior, origem distinta), gap
+    parcialmente fechado; resíduos explícitos (`multiple_egonets` não
+    executado — generalização dentro da família de ego-redes não
+    demonstrada; d-sweep restrito à ego-rede principal) + limitações
+    selecionadas do relatório §6 (algoritmo único — sem afirmações
+    comparativas; motor não-pareado KL×METIS, argumento de inocuidade em
+    d=1 sólido porém **interpretativo**, baixa magnitude, pareamento
+    estrito como verificação futura); §5.2 taxas como **cota inferior**
+    (cenários deliberadamente básicos; leitura agrava o achado, não
+    atenua; entropia = métrica complementar, não cenário adversarial);
+    §5.3 resultado negativo como contribuição defensiva (descompasso entre
+    garantia formal declarada e superfície estrutural protegida — é isso
+    que o aferidor detecta; deslocamento do vetor de ataque na mesma
+    leitura; não é defeito da técnica, é o regime d=1); §5.4 ponte para a
+    deliberação metodológica da tese — 4 vias citadas, módulo **não
+    escolhe**, fornece a régua; independência como valor de auditoria
+    (framework citado genericamente, sem nome interno — coerente com a
+    nota de confidencialidade de `scope.md` §8).
+  - **Seção 6 — Conclusão e trabalhos futuros** (2 parágrafos): síntese
+    (aferidor entregue; achado generalizável ~30–38× como evidência da
+    premissa fundadora; cota inferior reiterada); futuros derivados dos
+    resíduos da Seção 5 — (i) `multiple_egonets`; (ii) d-sweep no Enron +
+    pareamento estrito do motor; (iii) entropia promovida de métrica a
+    cenário adversarial (**não executado**); (iv) comparação com outras
+    técnicas, Nettleton & Salas 2016 **não executada**; (v) extensão
+    temporal (fase seguinte do programa de pesquisa). Fecho preserva o
+    enquadramento instrumental (aferição reprodutível; não mecanismo novo,
+    não ferramenta ofensiva).
+  - **Referências:** nenhuma nova exigida (lista fecha a redação
+    substantiva com 12 entradas, todas em `main`); consolidação final na
+    W2f. Terminologia de aferição respeitada; nenhum codinome interno no
+    corpo do artigo.
+- **Artefatos públicos (versionados no PR):** matriz
+  ([`artigo_rastreabilidade.md`](artigo_rastreabilidade.md)) com W2e ✅ (e
+  W2d atualizada para MERGED, PR #195); este registro (5/6); `progress.md`
+  atualizado.
+- **Verificação:** só docs — código congelado (S10-W) respeitado.
+- **Próxima etapa:** W2f (revisão integrada + DoD da #175 — **fecha a
+  issue**), após merge do PR desta etapa (bloqueio a verificar via `gh`).

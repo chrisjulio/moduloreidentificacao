@@ -18,6 +18,37 @@
 Código **congelado** — somente análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W2e da #175 — redação das Seções 5–6 do artigo (discussão +
+  conclusão) + abstract final. ✅ (docs, PR aberto).** Quinta etapa do
+  desdobramento S10-W2a..f — **conclui a redação substantiva** do artigo
+  (Resumo + Seções 1–6); resta a revisão integrada W2f. Bloqueio verificado
+  antes de iniciar: PR **#195** (W2d) `MERGED` via `gh`
+  (`2026-06-10T21:19:59Z`); nenhum PR aberto; sem dúvidas em aberto na #175
+  para a etapa. **(1) Texto privado (gitignorado, fora do diff):**
+  **Abstract final** reescrito no lugar do provisório da W2b (mantém tese
+  central e números k=2; acrescenta os 2 cenários explícitos, o
+  deslocamento do vetor de ataque e a leitura de cota inferior). **Seção 5**
+  (4 subseções): §5.1 validade externa — tendências sobrevivem no Enron,
+  gap parcialmente fechado; resíduos explícitos (`multiple_egonets` não
+  executado; d-sweep só na ego-rede principal) + limitações selecionadas
+  (algoritmo único; motor não-pareado KL×METIS — inocuidade em d=1 sólida
+  porém interpretativa, baixa magnitude, pareamento futuro); §5.2 taxas
+  como **cota inferior** (leitura agrava o achado; entropia = métrica, não
+  cenário); §5.3 resultado negativo como contribuição defensiva
+  (descompasso garantia formal × superfície protegida — o que o aferidor
+  detecta; não é defeito da técnica, é o regime d=1); §5.4 ponte para a
+  deliberação metodológica da tese (4 vias; módulo fornece a régua, não
+  escolhe; independência = valor de auditoria; framework citado
+  genericamente). **Seção 6** (2 ¶): síntese (aferidor entregue; achado
+  ~30–38× como evidência da premissa fundadora) + 5 futuros sem afirmar
+  execução (multiple_egonets; d-sweep Enron + pareamento de motor; entropia
+  métrica→cenário; Nettleton & Salas; extensão temporal), fecho preservando
+  o enquadramento instrumental. **Referências:** nenhuma nova (12 entradas,
+  todas em `main`). Checklists preservados como "Cobertura do checklist
+  (W2e)" para a W2f. **(2) Rastreabilidade pública (no PR):** matriz
+  (`artigo_rastreabilidade.md`) com W2e ✅ (W2d → MERGED #195);
+  `artigo_execucoes.md` (5 de 6 etapas). Só docs; código congelado
+  respeitado. Branch `docs/artigo-w2e-discussao-conclusao` (`Refs #175`).
 - **Etapa W2d da #175 — redação da Seção 4 do artigo (resultados).
   ✅ (docs, PR aberto).** Quarta etapa do desdobramento S10-W2a..f — a mais
   pesada, executada em sessão própria conforme o desdobramento validado.
@@ -969,13 +1000,12 @@ Código **congelado** — somente análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W2e da #175** (Seções 5–6 do artigo: discussão + conclusão +
-  **abstract final** — reescrita do resumo provisório da W2b à luz das
-  Seções 4–6; validade externa/B2 parcialmente fechado; resultado negativo
-  como contribuição defensiva; taxas como cota inferior; limitações
-  selecionadas; ponte para a deliberação metodológica da tese sem decidir a
-  via; futuros sem afirmar execução de entropia-ataque/Nettleton), após
-  merge do PR da W2d (`docs/artigo-w2d-resultados`). Ciclo: 1 etapa por
+- **Etapa W2f da #175** (revisão integrada do artigo: conferência das
+  Seções 1–6 + abstract contra o relatório e `main` — números, terminologia
+  de aferição, citação↔lista de referências, coerência com `progress.md`;
+  remoção/manutenção dos checklists de cobertura W2b..e como rastro; DoD
+  emendada da #175 conferida item a item — **fecha a issue**), após merge
+  do PR da W2e (`docs/artigo-w2e-discussao-conclusao`). Ciclo: 1 etapa por
   sessão; bloqueio verificado via `gh` antes de iniciar.
 - **Fora do escopo da #174 (pendências anotadas na revisão W1f):**
   conversão final do relatório via pandoc (inserção física das figuras
@@ -987,9 +1017,11 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da etapa W2d (`docs/artigo-w2d-resultados`) aguardando CI + revisão
-  humana.** Claude Code não faz merge. A etapa W2e inicia após o merge
-  deste PR.
+- **PR da etapa W2e (`docs/artigo-w2e-discussao-conclusao`) aguardando CI +
+  revisão humana.** Claude Code não faz merge. A etapa W2f (revisão
+  integrada — fecha a #175) inicia após o merge deste PR.
+- PR **#195** (W2d) **MERGED** em 2026-06-10 (`21:19:59Z`) — Seção 4 do
+  artigo e rastreabilidade em `main`; bloqueio anterior da W2e resolvido.
 - PR **#194** (W2c) **MERGED** em 2026-06-10 (`21:06:57Z`) — Seção 3 do
   artigo e rastreabilidade em `main`; bloqueio anterior da W2d resolvido.
 - PR **#193** (reencaminhamento da decisão A+B) **MERGED** em 2026-06-10
@@ -1043,6 +1075,28 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Etapa W2e da #175: Seções 5–6 do artigo (discussão + conclusão) + abstract final
+
+- **Concluído:** Pré-verificação: PR #195 (W2d) `MERGED` via `gh`
+  (21:19:59Z); nenhum PR aberto; sem dúvidas em aberto na #175 para a
+  etapa. Abstract final reescrito (2 cenários explícitos; deslocamento do
+  vetor de ataque; cota inferior) e Seções 5–6 redigidas em
+  `academic/artigo.md` (privado, fora do diff): §5.1 validade externa +
+  limitações selecionadas (resíduos `multiple_egonets`/d-sweep; algoritmo
+  único; motor não-pareado interpretativo); §5.2 cota inferior; §5.3
+  resultado negativo como contribuição defensiva; §5.4 ponte para a tese
+  (módulo = régua, não escolha); §6 síntese + 5 futuros sem afirmar
+  execução + fecho instrumental. Nenhuma referência nova (12 entradas).
+  Redação substantiva do artigo **concluída** (resta W2f).
+  Rastreabilidade pública atualizada (`artigo_rastreabilidade.md` W2e ✅;
+  `artigo_execucoes.md` 5/6). Branch `docs/artigo-w2e-discussao-conclusao`
+  (`Refs #175`).
+- **Próximo:** Etapa W2f (revisão integrada + DoD — fecha a #175), após
+  merge do PR desta etapa (verificar via `gh`).
+- **Bloqueios:** PR da W2e aguardando CI + revisão humana.
+- **Decisões pendentes:** Nenhuma nova (D-08 segue como única pendência
+  herdada).
 
 ### 2026-06-10 — Etapa W2d da #175: Seção 4 do artigo (resultados)
 
