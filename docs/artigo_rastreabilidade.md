@@ -47,8 +47,8 @@ Seções do relatório que **não** viram seção no artigo: §7 (reprodutibilid
 
 | Artigo | Insumo (relatório #174) | Fontes (docs) | Decisões citáveis | `W-NN` | Figuras/Tabelas | Etapa |
 |---|---|---|---|---|---|---|
-| 1. Resumo + Introdução | §1.1–§1.4 | [`scope.md`](scope.md) §4/§5/§6 | **DL-06** | — | — | W2b (abstract final: W2e) |
-| 2. Trabalhos relacionados | §1.3/§2.1; Apêndice B | `README.md` §12 | — | — | — | W2b |
+| 1. Resumo + Introdução | §1.1–§1.4 | [`scope.md`](scope.md) §4/§5/§6 | **DL-06** | — | — | W2b ✅ (abstract provisório; final: W2e) |
+| 2. Trabalhos relacionados | §1.3/§2.1; Apêndice B | `README.md` §12 (subconjunto de 7 refs) | — | — | — | W2b ✅ |
 | 3. Método condensado | §3–§4 | [`pipeline.md`](pipeline.md); [`metrics_definitions.md`](metrics_definitions.md) | DL-05; D-16; D-11; DL-01 | W-01; W-02; W-03; W-05 | diagrama do pipeline; tabela de parâmetros | W2c |
 | 4. Resultados | §5.1–§5.6 | [`results_baseline.md`](results_baseline.md); [`results_enron.md`](results_enron.md); [`results_dsweep.md`](results_dsweep.md) | DL-04; D-17 (menção) | **W-04**; W-06 | curvas por dataset; painel normalizado ([`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png)) | W2d |
 | 5. Discussão | §6 + §2.3 | [`limitations.md`](limitations.md) | D-06 (menção) | — | — | W2e |
@@ -68,7 +68,7 @@ relatório — ver [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md
 | Etapa | Escopo | Status |
 |---|---|---|
 | W2a | Esqueleto em `academic/artigo.md` + esta matriz + registro de execuções | ✅ concluída (PR #188 MERGED, 2026-06-10) |
-| W2b | Seções 1–2 (introdução + trabalhos relacionados; abstract provisório) | ⏳ pendente |
+| W2b | Seções 1–2 (introdução + trabalhos relacionados; abstract provisório) | ✅ concluída (2026-06-10) |
 | W2c | Seção 3 (método condensado — compressão de §3–§4 do relatório) | ⏳ pendente |
 | W2d | Seção 4 (resultados — a mais pesada; sessão própria) | ⏳ pendente |
 | W2e | Seções 5–6 (discussão + conclusão) + abstract final | ⏳ pendente |
