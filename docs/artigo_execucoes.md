@@ -23,7 +23,7 @@
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
 | W2a | Esqueleto em `academic/artigo.md` + matriz + este registro | 2026-06-10 | `docs/artigo-skeleton-w2a` | [#188](https://github.com/chrisjulio/moduloreidentificacao/pull/188) | ✅ MERGED (2026-06-10) |
-| W2b | Seções 1–2: introdução + trabalhos relacionados | 2026-06-10 | `docs/artigo-w2b-intro-relacionados` | — | ✅ executada (PR aberto) |
+| W2b | Seções 1–2: introdução + trabalhos relacionados | 2026-06-10 | `docs/artigo-w2b-intro-relacionados` | [#191](https://github.com/chrisjulio/moduloreidentificacao/pull/191) | ✅ executada (PR aberto) |
 | W2c | Seção 3: método condensado | — | — | — | ⏳ pendente |
 | W2d | Seção 4: resultados (a mais pesada — sessão própria) | — | — | — | ⏳ pendente |
 | W2e | Seções 5–6: discussão + conclusão + abstract final | — | — | — | ⏳ pendente |
