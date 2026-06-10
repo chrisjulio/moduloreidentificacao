@@ -630,7 +630,9 @@ Em resumo:
 - **Validade de construção.** A "reidentificação" medida é acerto contra rótulos
   internos de nós, não identificação de pessoas — ao contrário da de-anonimização
   real de datasets ([Backstrom et al., 2007](https://doi.org/10.1145/1242572.1242598);
-  [Narayanan & Shmatikov, 2008](https://doi.org/10.1109/SP.2008.33)); similaridade
+  [Narayanan & Shmatikov, 2008](https://doi.org/10.1109/SP.2008.33)) e da
+  de-anonimização estrutural de redes sociais por grafo auxiliar
+  ([Narayanan & Shmatikov, 2009](https://doi.org/10.1109/SP.2009.22)); similaridade
   estrutural não é identidade.
 - **Validade ética.** O módulo opera apenas com datasets públicos desidentificados,
   em ciclo experimental fechado, sem cruzamento com bases pessoais externas e com
@@ -698,17 +700,19 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 
 [8] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
 
-[9] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
+[9] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2009.22) De-anonymizing social networks. In: *2009 30th IEEE Symposium on Security and Privacy (S&P 2009)*. [S. l.]: IEEE, 2009. p. 173–187.
 
-[10] [SERJANTOV, A.; DANEZIS, G.](https://doi.org/10.1007/3-540-36467-6_4) Towards an information theoretic metric for anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 41–53. (Lecture Notes in Computer Science, v. 2482).
+[10] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
 
-[11] [SHERVASHIDZE, N.; SCHWEITZER, P.; VAN LEEUWEN, E. J.; MEHLHORN, K.; BORGWARDT, K. M.](https://www.jmlr.org/papers/v12/shervashidze11a.html) Weisfeiler-Lehman graph kernels. *Journal of Machine Learning Research*, v. 12, p. 2539–2561, 2011.
+[11] [SERJANTOV, A.; DANEZIS, G.](https://doi.org/10.1007/3-540-36467-6_4) Towards an information theoretic metric for anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 41–53. (Lecture Notes in Computer Science, v. 2482).
 
-[12] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+[12] [SHERVASHIDZE, N.; SCHWEITZER, P.; VAN LEEUWEN, E. J.; MEHLHORN, K.; BORGWARDT, K. M.](https://www.jmlr.org/papers/v12/shervashidze11a.html) Weisfeiler-Lehman graph kernels. *Journal of Machine Learning Research*, v. 12, p. 2539–2561, 2011.
 
-[13] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_39) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+[13] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
 
-[14] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
+[14] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_39) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+
+[15] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
 
 ---
 
