@@ -71,7 +71,7 @@ reabre.
 | Etapa | Escopo | Status |
 |---|---|---|
 | W1a | Esqueleto em `academic/` + esta matriz | ✅ concluída (2026-06-09) |
-| W1b | Seções 1–2 (introdução; EpiCNet) | ⏳ pendente |
+| W1b | Seções 1–2 (introdução; EpiCNet) | ✅ concluída (2026-06-09) |
 | W1c | Seções 3–4 (método; desenho experimental) | ⏳ pendente |
 | W1d | Seção 5 (resultados) | ⏳ pendente |
 | W1e | Seções 6–8 (limitações; reprodutibilidade; ética) | ⏳ pendente |

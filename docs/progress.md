@@ -18,8 +18,32 @@
 análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W1b da #174 — redação das Seções 1–2 do relatório de qualificação.
+  ✅ (docs, PR aberto).** Segunda etapa do desdobramento S10-W1a..f. Bloqueio
+  verificado antes de iniciar: PR **#181** (W1a) `MERGED` via `gh`
+  (`2026-06-10T00:32:33Z`); nenhum PR aberto. **(1) Texto privado
+  (gitignorado, fora do diff):** Seções 1 e 2 redigidas em
+  `academic/relatorio_qualificacao.md`, substituindo os placeholders do
+  esqueleto. **Seção 1** (4 subseções): premissa fundadora **DL-06**
+  ("anonimizar não é o suficiente") abrindo a introdução com a cadeia
+  hipótese → replicação por meios próprios → evidência empírica (B1,
+  cross-ref Seção 5) → motivação do EpiCNet no nível da tese; aferidor /
+  adversário formal e ciclo fechado (`scope.md` §2); fronteira instrumento ×
+  ferramenta ofensiva (`scope.md` §5, Narayanan & Shmatikov como exemplo
+  canônico do movimento que o módulo nunca executa); não-escopo + necessidade
+  metodológica (Kerckhoffs, `scope.md` §4/§6). **Seção 2** (3 subseções):
+  separação de responsabilidades (módulo não escolhe entre as 4 vias da
+  tese; Nettleton & Salas citado só como trabalho futuro); reprodutibilidade
+  como condição verificável de independência (#27); uso futuro como
+  benchmark/auditoria do framework integrado (`scope.md` §8). Checklists do
+  esqueleto preservados como "Cobertura do checklist (W1b)" ([x]) para a
+  revisão W1f; terminologia de aferição respeitada. **(2) Rastreabilidade
+  pública (no PR):** matriz (`relatorio_rastreabilidade.md`) com W1b ✅;
+  registro detalhado em `relatorio_execucoes.md` (2 de 6 etapas executadas).
+  Só docs; código congelado respeitado. Branch
+  `docs/relatorio-w1b-intro-epicnet` (`Refs #174`).
 - **Etapa W1a da #174 — esqueleto do relatório + matriz de rastreabilidade
-  pública. ✅ (docs, PR aberto).** Primeira etapa do desdobramento S10-W1a..f
+  pública. ✅ (docs, PR #181 MERGED).** Primeira etapa do desdobramento S10-W1a..f
   validado na #174 (autor, 2026-06-09). Bloqueios verificados antes de iniciar:
   PRs **#176** e **#179** ambos `MERGED`; nenhum PR aberto. **(1) Esqueleto
   privado:** `academic/relatorio_qualificacao.md` criado (gitignorado, fora do
@@ -686,11 +710,13 @@ análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W1b (#174):** redigir as seções 1–2 do relatório em
-  `academic/relatorio_qualificacao.md` — introdução/posicionamento (abre com
-  DL-06: "anonimizar não é o suficiente") e independência do EpiCNet. Fontes:
-  `scope.md` §4/§5/§8, `decision_log.md`. Pré-requisito: merge do PR da W1a
-  (matriz de rastreabilidade).
+- **Etapa W1c (#174):** redigir as seções 3–4 do relatório em
+  `academic/relatorio_qualificacao.md` — método (pipeline, parâmetros
+  W-01/DL-05, equivalência VF2↔WL W-02/D-16, validade Enron W-03/D-13,
+  4 métricas, validação independente DL-01) e desenho experimental (frase
+  canônica W-05, D-11, sementes/configs). Fontes: `pipeline.md`,
+  `metrics_definitions.md`, `algorithm_notes.md`, `data_dictionary.md` §1.1,
+  `preprocessing_decision.md`. Pré-requisito: merge do PR da W1b.
 - **Rastreio das etapas (decisão do autor, 2026-06-09):** **sem sub-issues**
   no GitHub — cada etapa executada é registrada por comentário na #174 e em
   `docs/relatorio_execucoes.md` (contabilização + registro detalhado).
@@ -701,8 +727,9 @@ análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da W1a (`docs/relatorio-skeleton-w1a`) aguardando CI + revisão humana.**
-  Claude Code não faz merge. W1b não inicia antes do merge.
+- **PR da W1b (`docs/relatorio-w1b-intro-epicnet`) aguardando CI + revisão
+  humana.** Claude Code não faz merge. W1c não inicia antes do merge.
+- PR #181 (W1a) **MERGED** em 2026-06-10 (UTC) — bloqueio anterior resolvido.
 - **Sub-issues S10-W1a..f: dispensadas** (decisão do autor, 2026-06-09) —
   rastreio oficial por comentário na #174 + `docs/relatorio_execucoes.md` +
   matriz em `docs/relatorio_rastreabilidade.md`.
@@ -737,6 +764,23 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-09 — Etapa W1b da #174: Seções 1–2 (introdução; independência do EpiCNet)
+
+- **Concluído:** Segunda etapa do desdobramento S10-W1a..f. Bloqueio verificado:
+  PR #181 (W1a) `MERGED` via `gh`. Redigidas as **Seções 1–2** do relatório em
+  `academic/relatorio_qualificacao.md` (privado, gitignorado): §1 introdução e
+  posicionamento (DL-06 abrindo; aferidor/adversário formal; fronteira
+  instrumento × ofensiva de `scope.md` §5; não-escopo + Kerckhoffs) e §2
+  independência do EpiCNet (separação de responsabilidades; reprodutibilidade
+  como condição de independência; benchmark/auditoria futura, `scope.md` §8).
+  Rastreabilidade pública atualizada: matriz (W1b ✅) +
+  `relatorio_execucoes.md` (registro detalhado, 2/6). Só docs. Branch
+  `docs/relatorio-w1b-intro-epicnet` (`Refs #174`).
+- **Próximo:** Revisão humana + merge do PR da W1b; depois **W1c** (seções 3–4:
+  método + desenho experimental).
+- **Bloqueios:** PR da W1b aguardando CI + revisão.
+- **Decisões pendentes:** D-08 (d=2 mantido, anotado degenerate) — confirmar.
 
 ### 2026-06-09 — Etapa W1a da #174: esqueleto do relatório + matriz de rastreabilidade
 
