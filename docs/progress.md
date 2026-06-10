@@ -18,6 +18,24 @@
 Código **congelado** — somente análise e documentação.
 
 **Último passo concluído:**
+- **Decisão A+B do achado "Narayanan & Shmatikov 2009 × 2008" executada. ✅
+  (docs, PR empilhado).** O autor decidiu **A+B** na discussão da #175:
+  manter o 2008 (Netflix) nos papéis que já cumpre **e** adicionar o 2009
+  (*De-anonymizing social networks*, S&P 2009, DOI `10.1109/SP.2009.22`)
+  como referência complementar. **Retificação:** o corpo da #175 **não traz
+  ano** para Narayanan & Shmatikov (verificado via `gh`) — o "2009" nasceu
+  no esqueleto W2a, não na issue; a opção A não exigiu `gh issue edit`.
+  **Execução B (só docs):** `README.md` §12 — nova ref [9], lista
+  renumerada para 15 entradas (numeração não citada por outros docs,
+  verificado por grep) + citação inline na §8 (regra C2 preservada);
+  `references/` — PDF baixado do arXiv (`0903.3276`, `%PDF` verificado) +
+  catálogo 15/15; **artigo (privado)** — §2 ¶3 cita o 2009 como extensão do
+  movimento ofensivo ao domínio de redes sociais (fronteira mantida),
+  referências com 8 entradas; **relatório (privado)** — adendo marcado ao
+  Apêndice B ([15], pós-fechamento, **não** reabertura da #174). Sem
+  descongelamento (nenhum toque em `src/`/testes). Registro detalhado em
+  `artigo_execucoes.md`. Branch `docs/references-narayanan-2009`
+  (empilhada sobre `docs/artigo-w2b-intro-relacionados`, `Refs #175`).
 - **Etapa W2b da #175 — redação das Seções 1–2 do artigo (introdução +
   trabalhos relacionados; abstract provisório). ✅ (docs, PR aberto).**
   Segunda etapa do desdobramento S10-W2a..f (validado pelo autor em
@@ -909,9 +927,10 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da etapa W2b (`docs/artigo-w2b-intro-relacionados`) aguardando CI +
-  revisão humana.** Claude Code não faz merge. A etapa W2c inicia após o
-  merge deste PR.
+- **PR #191 da etapa W2b (`docs/artigo-w2b-intro-relacionados`) + PR
+  empilhado da decisão A+B (`docs/references-narayanan-2009`) aguardando CI
+  + revisão humana.** Claude Code não faz merge. Ordem de merge: #191
+  primeiro, depois o empilhado. A etapa W2c inicia após o merge de ambos.
 - PR **#190** (registro da validação) **MERGED** em 2026-06-10 — bloqueio
   anterior da W2b resolvido.
 - PR **#188** (W2a) **MERGED** em 2026-06-10 e **desdobramento S10-W2a..f
@@ -931,17 +950,10 @@ Código **congelado** — somente análise e documentação.
   S9 `closed`). Milestones S8 e S9 concluídos.
 
 **Decisões pendentes de validação humana:**
-- **Achado W2b "Narayanan & Shmatikov 2009 × 2008" — encaminhamento aberto
-  para discussão na #175** (comentário de 2026-06-10). São **dois papers
-  distintos** (2008 Netflix, consolidado em `main`; 2009 "De-anonymizing
-  social networks", S&P 2009, ausente de `main` e tematicamente mais próximo
-  do artigo). Opções postas: **A** manter 2008 (typo; mínima, já aplicada na
-  W2b; corrigir corpo da issue via `gh issue edit`); **B** adicionar o paper
-  de 2009 como referência **complementar** (PR README §12 + `references/` +
-  citação na W2c/W2e; adendo — não reabertura — no Apêndice B do relatório);
-  **C** substituir 2008→2009 (não recomendada). Nenhuma opção exige
-  descongelamento (congelamento cobre código; docs são o modo ativo da
-  S10-W). Recomendação: **A agora, B opcional**. Aguardando decisão do autor.
+- **Achado W2b "Narayanan & Shmatikov 2009 × 2008": RESOLVIDO** — autor
+  decidiu **A+B** (2026-06-10) e a execução está no PR empilhado
+  `docs/references-narayanan-2009` (ver "Último passo concluído" e
+  `artigo_execucoes.md`). Sem pendência restante.
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
   d=2 (anotado como potencialmente degenerate, precedente D-10) em vez de excluir;
   confirmar se essa escolha é a definitiva.
@@ -965,6 +977,21 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Decisão A+B do achado "Narayanan 2009 × 2008" (follow-up da W2b)
+
+- **Concluído:** Autor decidiu **A+B** na discussão aberta na #175.
+  Retificação: o "2009" nasceu no esqueleto W2a (a issue não traz ano) —
+  opção A sem `gh issue edit`. Opção B executada: README §12 com 15ª ref
+  (Narayanan & Shmatikov 2009, S&P 2009) + citação inline §8; PDF do arXiv
+  em `references/` + catálogo 15/15; artigo §2 cita o 2009; adendo [15] ao
+  Apêndice B do relatório (pós-fechamento, sem reabrir a #174). Sem
+  descongelamento. Branch `docs/references-narayanan-2009` (empilhada
+  sobre a W2b, `Refs #175`).
+- **Próximo:** merge do PR #191 e do PR empilhado; depois etapa W2c.
+- **Bloqueios:** os dois PRs aguardando CI + revisão humana.
+- **Decisões pendentes:** Nenhuma nova (achado 2009×2008 resolvido; D-08
+  segue como única pendência histórica).
 
 ### 2026-06-10 — Etapa W2b da #175: Seções 1–2 do artigo (introdução + trabalhos relacionados)
 
