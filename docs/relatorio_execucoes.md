@@ -23,7 +23,7 @@
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
 | W1a | Esqueleto em `academic/` + matriz + este registro | 2026-06-09 | `docs/relatorio-skeleton-w1a` | [#181](https://github.com/chrisjulio/moduloreidentificacao/pull/181) | ✅ executada (PR **MERGED**) |
-| W1b | Seções 1–2: introdução/posicionamento (DL-06) + independência do EpiCNet | 2026-06-09 | `docs/relatorio-w1b-intro-epicnet` | (a preencher no PR) | ✅ executada (PR em revisão) |
+| W1b | Seções 1–2: introdução/posicionamento (DL-06) + independência do EpiCNet | 2026-06-09 | `docs/relatorio-w1b-intro-epicnet` | [#182](https://github.com/chrisjulio/moduloreidentificacao/pull/182) | ✅ executada (PR em revisão) |
 | W1c | Seções 3–4: método + desenho experimental [M]/[D] | — | — | — | ⏳ pendente |
 | W1d | Seção 5: resultados (a mais pesada — sessão própria) | — | — | — | ⏳ pendente |
 | W1e | Seções 6–8: limitações, reprodutibilidade, ética | — | — | — | ⏳ pendente |
