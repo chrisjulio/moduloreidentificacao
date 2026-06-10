@@ -29,12 +29,14 @@ Exemplos:
 
 ## Catálogo
 
-Cobre as 14 referências da seção 12 do [`README.md`](../README.md) raiz.
-Estado do download em 2026-06-09: **14/14 baixadas** — 11 de fontes de acesso
+Cobre as 15 referências da seção 12 do [`README.md`](../README.md) raiz.
+Estado do download em 2026-06-10: **15/15 baixadas** — 12 de fontes de acesso
 aberto legítimas (arXiv, páginas de autor, repositórios institucionais, JMLR)
 e 3 obtidas manualmente pelo autor (He 2009 e Cordella 2004 via acesso
 institucional ao IEEE Xplore; Nettleton 2016 = manuscrito aceito da O2/UOC,
-baixado em navegador).
+baixado em navegador). A 15ª (Narayanan & Shmatikov 2009) foi adicionada em
+2026-06-10 por decisão do autor na issue #175 (discussão W2b — paper distinto
+do Narayanan & Shmatikov 2008, complementar a ele).
 
 | Arquivo | Referência | DOI / Link | Acesso |
 |---|---|---|---|
@@ -46,6 +48,7 @@ baixado em navegador).
 | `Leskovec_2012_SocialCirclesEgoNetworks.pdf` | Leskovec, J.; McAuley, J.J. *Learning to discover social circles in ego networks.* NIPS 2012. | https://dl.acm.org/doi/10.5555/2999134.2999195 — cópia de autor: https://cs.stanford.edu/people/jure/pubs/circles-nips12.pdf | ✅ baixado (cópia de autor, Stanford) |
 | `Liu_2008_IdentityAnonymizationGraphs.pdf` | Liu, K.; Terzi, E. *Towards identity anonymization on graphs.* SIGMOD 2008. | https://doi.org/10.1145/1376616.1376629 — cópia de autora: https://cs-people.bu.edu/evimaria/cs591/sigmod_privacy_graph.pdf | ✅ baixado (cópia de autora, BU) |
 | `Narayanan_2008_RobustDeanonymization.pdf` | Narayanan, A.; Shmatikov, V. *Robust de-anonymization of large sparse datasets.* IEEE S&P 2008. | https://doi.org/10.1109/SP.2008.33 — preprint: https://arxiv.org/abs/cs/0610105 | ✅ baixado (arXiv, preprint) |
+| `Narayanan_2009_DeanonymizingSocialNetworks.pdf` | Narayanan, A.; Shmatikov, V. *De-anonymizing social networks.* IEEE S&P 2009, p. 173–187. | https://doi.org/10.1109/SP.2009.22 — preprint: https://arxiv.org/abs/0903.3276 | ✅ baixado (arXiv, preprint) |
 | `Nettleton_2016_DataDrivenAnonymizationOSN.pdf` | Nettleton, D.F.; Salas, J. *A data driven anonymization system for information rich online social network graphs.* Expert Systems with Applications, 55, 87–105, 2016. | https://doi.org/10.1016/j.eswa.2016.02.004 — manuscrito aceito (AAM): http://hdl.handle.net/10609/150625 (CC BY-NC-ND) | ✅ baixado manualmente (AAM, O2/UOC, via navegador) |
 | `Serjantov_2003_InformationTheoreticMetricAnonymity.pdf` | Serjantov, A.; Danezis, G. *Towards an information theoretic metric for anonymity.* PET 2002, LNCS 2482. | https://doi.org/10.1007/3-540-36467-6_4 — cópia de autor: http://www0.cs.ucl.ac.uk/staff/g.danezis/papers/set.pdf | ✅ baixado (cópia de autor, UCL) |
 | `Shervashidze_2011_WeisfeilerLehmanGraphKernels.pdf` | Shervashidze, N. et al. *Weisfeiler-Lehman graph kernels.* JMLR 12, 2539–2561, 2011. | https://www.jmlr.org/papers/v12/shervashidze11a.html | ✅ baixado (JMLR, VoR aberto) |

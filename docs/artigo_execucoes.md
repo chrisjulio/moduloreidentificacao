@@ -129,3 +129,46 @@
 - **Verificação:** só docs — código congelado (S10-W) respeitado.
 - **Próxima etapa:** W2c (Seção 3 — método condensado), após merge do PR
   desta etapa (bloqueio a verificar via `gh`).
+
+### Decisão A+B sobre o achado "2009 × 2008" — 2026-06-10 (follow-up da W2b; não é etapa de redação)
+
+- **Contexto:** a discussão aberta na #175 (comentário de 2026-06-10) expôs
+  que Narayanan & Shmatikov têm **dois papers distintos** — 2008 (*Robust
+  de-anonymization of large sparse datasets*, S&P 2008, Netflix; consolidado
+  em `main`) e 2009 (*De-anonymizing social networks*, S&P 2009, DOI
+  `10.1109/SP.2009.22`; ausente de `main`, tematicamente mais próximo do
+  artigo). **Decisão do autor: A+B** — manter o 2008 nos papéis que já
+  cumpre e **adicionar** o 2009 como referência complementar.
+- **Retificação de registro (corrige o registro W2b acima, sem
+  sobrescrevê-lo):** o corpo da issue #175 **não traz ano** para Narayanan &
+  Shmatikov ("He et al. 2009; Nettleton & Salas; Narayanan & Shmatikov;
+  Backstrom") — verificado via `gh issue view 175`. O "2009" foi introduzido
+  **apenas no esqueleto W2a** (`academic/artigo.md`), não na issue; a opção
+  A, portanto, **não exigiu** `gh issue edit`.
+- **Execução da opção B (só docs):**
+  - `README.md` §12: nova referência **[9]** (Narayanan & Shmatikov 2009),
+    lista renumerada [9]→[15] (15 entradas; numeração não é citada por
+    outros docs — verificado por grep); citação inline no corpo (§8,
+    validade de construção) preservando a regra C2 (lista de referências
+    citadas honesta).
+  - `references/`: PDF `Narayanan_2009_DeanonymizingSocialNetworks.pdf`
+    baixado do arXiv (preprint `0903.3276`), magic bytes `%PDF` verificados;
+    catálogo `references/README.md` atualizado (**15/15 baixadas**).
+  - **Artigo (privado):** §2 ¶3 cita o 2009 como extensão do movimento
+    ofensivo ao domínio de redes sociais (fronteira mantida: depende de
+    informação auxiliar externa, nunca usada aqui); referências do artigo
+    com 8 entradas; nota de cobertura atualizada.
+  - **Relatório (privado):** **adendo** marcado ao Apêndice B ([15], com
+    nota "pós-fechamento, não é reabertura") — a #174 permanece fechada; o
+    corpo do relatório não cita o 2009.
+- **Sem descongelamento:** nenhuma alteração em `src/` ou testes — o
+  congelamento da S10-W cobre código; documentação é o modo ativo da fase.
+- **Branch:** `docs/references-narayanan-2009` (empilhada sobre
+  `docs/artigo-w2b-intro-relacionados`, `Refs #175`), PR **#192**.
+- **Incidente de roteamento do #192 (adendo, 2026-06-10):** o #192 foi
+  mergeado às 20:38:36Z **na base original** (a branch da W2b), **depois**
+  do merge do #191 em `main` (20:30:22Z); como a branch da W2b não foi
+  apagada antes, o GitHub não retargetou a base e o conteúdo **não chegou a
+  `main`**. Corrigido por **cherry-pick** do commit `2c9cdeb` em branch
+  nova a partir de `main` (`docs/references-narayanan-2009-main`, novo PR;
+  conteúdo idêntico ao do #192).
