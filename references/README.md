@@ -30,22 +30,23 @@ Exemplos:
 ## Catálogo
 
 Cobre as 14 referências da seção 12 do [`README.md`](../README.md) raiz.
-Estado do download em 2026-06-09: **11 baixadas** (fontes de acesso aberto
-legítimas — arXiv, páginas de autor, repositórios institucionais, JMLR) e
-**3 pendentes de ação manual** (paywall IEEE/Elsevier ou portal com
-verificação anti-bot que exige navegador real).
+Estado do download em 2026-06-09: **14/14 baixadas** — 11 de fontes de acesso
+aberto legítimas (arXiv, páginas de autor, repositórios institucionais, JMLR)
+e 3 obtidas manualmente pelo autor (He 2009 e Cordella 2004 via acesso
+institucional ao IEEE Xplore; Nettleton 2016 = manuscrito aceito da O2/UOC,
+baixado em navegador).
 
 | Arquivo | Referência | DOI / Link | Acesso |
 |---|---|---|---|
 | `Backstrom_2007_WhereforeArtThouR3579X.pdf` | Backstrom, L.; Dwork, C.; Kleinberg, J. *Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography.* WWW 2007. | https://doi.org/10.1145/1242572.1242598 — cópia de autor: https://www.cs.cornell.edu/home/kleinber/www07-anon.pdf | ✅ baixado (cópia de autor, Cornell) |
-| `Cordella_2004_SubgraphIsomorphismVF2.pdf` | Cordella, L.P.; Foggia, P.; Sansone, C.; Vento, M. *A (sub)graph isomorphism algorithm for matching large graphs.* IEEE TPAMI 26(10), 2004. | https://doi.org/10.1109/TPAMI.2004.75 | ⏳ pendente — só IEEE Xplore (VoR); usar acesso institucional (CAFe/VPN) |
+| `Cordella_2004_SubgraphIsomorphismVF2.pdf` | Cordella, L.P.; Foggia, P.; Sansone, C.; Vento, M. *A (sub)graph isomorphism algorithm for matching large graphs.* IEEE TPAMI 26(10), 2004. | https://doi.org/10.1109/TPAMI.2004.75 | ✅ baixado manualmente (IEEE Xplore, VoR, acesso institucional) |
 | `Diaz_2003_TowardsMeasuringAnonymity.pdf` | Díaz, C.; Seys, S.; Claessens, J.; Preneel, B. *Towards measuring anonymity.* PET 2002, LNCS 2482. | https://doi.org/10.1007/3-540-36467-6_5 — cópia: https://www.freehaven.net/anonbib/cache/Diaz02.pdf | ✅ baixado (anonbib/freehaven, pré-print) |
-| `He_2009_PrivacyPreservingStructureAware.pdf` | He, X.; Vaidya, J.; Shafiq, B.; Adam, N.; Atluri, V. *Preserving Privacy in Social Networks: A Structure-Aware Approach.* WI-IAT 2009. | https://doi.org/10.1109/WI-IAT.2009.108 | ⏳ pendente — só IEEE Xplore (VoR); usar acesso institucional (CAFe/VPN) |
+| `He_2009_PrivacyPreservingStructureAware.pdf` | He, X.; Vaidya, J.; Shafiq, B.; Adam, N.; Atluri, V. *Preserving Privacy in Social Networks: A Structure-Aware Approach.* WI-IAT 2009. | https://doi.org/10.1109/WI-IAT.2009.108 | ✅ baixado manualmente (IEEE Xplore, VoR, acesso institucional) |
 | `Karypis_1998_MultilevelGraphPartitioning.pdf` | Karypis, G.; Kumar, V. *A fast and high quality multilevel scheme for partitioning irregular graphs.* SIAM J. Sci. Comput. 20(1), 1998. | https://doi.org/10.1137/S1064827595287997 — cópia: https://www.cs.utexas.edu/~pingali/CS395T/2009fa/papers/metis.pdf | ✅ baixado (espelho de curso, UT Austin) |
 | `Leskovec_2012_SocialCirclesEgoNetworks.pdf` | Leskovec, J.; McAuley, J.J. *Learning to discover social circles in ego networks.* NIPS 2012. | https://dl.acm.org/doi/10.5555/2999134.2999195 — cópia de autor: https://cs.stanford.edu/people/jure/pubs/circles-nips12.pdf | ✅ baixado (cópia de autor, Stanford) |
 | `Liu_2008_IdentityAnonymizationGraphs.pdf` | Liu, K.; Terzi, E. *Towards identity anonymization on graphs.* SIGMOD 2008. | https://doi.org/10.1145/1376616.1376629 — cópia de autora: https://cs-people.bu.edu/evimaria/cs591/sigmod_privacy_graph.pdf | ✅ baixado (cópia de autora, BU) |
 | `Narayanan_2008_RobustDeanonymization.pdf` | Narayanan, A.; Shmatikov, V. *Robust de-anonymization of large sparse datasets.* IEEE S&P 2008. | https://doi.org/10.1109/SP.2008.33 — preprint: https://arxiv.org/abs/cs/0610105 | ✅ baixado (arXiv, preprint) |
-| `Nettleton_2016_DataDrivenAnonymizationOSN.pdf` | Nettleton, D.F.; Salas, J. *A data driven anonymization system for information rich online social network graphs.* Expert Systems with Applications, 55, 87–105, 2016. | https://doi.org/10.1016/j.eswa.2016.02.004 — manuscrito aceito (AAM): http://hdl.handle.net/10609/150625 (CC BY-NC-ND) | ⏳ pendente — AAM aberto na O2/UOC, mas o portal exige navegador real (verificação anti-bot); baixar manualmente |
+| `Nettleton_2016_DataDrivenAnonymizationOSN.pdf` | Nettleton, D.F.; Salas, J. *A data driven anonymization system for information rich online social network graphs.* Expert Systems with Applications, 55, 87–105, 2016. | https://doi.org/10.1016/j.eswa.2016.02.004 — manuscrito aceito (AAM): http://hdl.handle.net/10609/150625 (CC BY-NC-ND) | ✅ baixado manualmente (AAM, O2/UOC, via navegador) |
 | `Serjantov_2003_InformationTheoreticMetricAnonymity.pdf` | Serjantov, A.; Danezis, G. *Towards an information theoretic metric for anonymity.* PET 2002, LNCS 2482. | https://doi.org/10.1007/3-540-36467-6_4 — cópia de autor: http://www0.cs.ucl.ac.uk/staff/g.danezis/papers/set.pdf | ✅ baixado (cópia de autor, UCL) |
 | `Shervashidze_2011_WeisfeilerLehmanGraphKernels.pdf` | Shervashidze, N. et al. *Weisfeiler-Lehman graph kernels.* JMLR 12, 2539–2561, 2011. | https://www.jmlr.org/papers/v12/shervashidze11a.html | ✅ baixado (JMLR, VoR aberto) |
 | `Sweeney_2002_KAnonymity.pdf` | Sweeney, L. *k-anonymity: A model for protecting privacy.* IJUFKS 10(5), 557–570, 2002. | https://doi.org/10.1142/S0218488502001648 — cópia de autora: https://dataprivacylab.org/dataprivacy/projects/kanonymity/kanonymity.pdf | ✅ baixado (cópia de autora, Data Privacy Lab) |

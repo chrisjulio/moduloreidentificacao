@@ -30,7 +30,10 @@ análise e documentação.
   **(2) Pendências manuais (3):** He 2009 e Cordella 2004 só existem no IEEE
   Xplore (VoR, paywall — exige acesso institucional CAFe/VPN); o AAM do
   Nettleton 2016 (CC BY-NC-ND, O2/UOC) está atrás de verificação anti-bot
-  (Anubis) que exige navegador real. **(3) Catálogo:** `references/README.md`
+  (Anubis) que exige navegador real. *Resolvidas na mesma sessão:* os 3 PDFs
+  foram baixados manualmente pelo autor, renomeados para a convenção
+  `Autor_Ano_PalavraChave.pdf` e o catálogo passou a registrar **14/14
+  baixadas**. **(3) Catálogo:** `references/README.md`
   atualizado com as 14 entradas (arquivo, referência, DOI/link, status de
   acesso e fonte usada). **(4) Achado bibliográfico:** o DOI do Wörlein no
   `README.md` §12 estava **errado** (`10.1007/11564126_32` resolve para
