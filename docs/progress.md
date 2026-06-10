@@ -931,6 +931,17 @@ Código **congelado** — somente análise e documentação.
   S9 `closed`). Milestones S8 e S9 concluídos.
 
 **Decisões pendentes de validação humana:**
+- **Achado W2b "Narayanan & Shmatikov 2009 × 2008" — encaminhamento aberto
+  para discussão na #175** (comentário de 2026-06-10). São **dois papers
+  distintos** (2008 Netflix, consolidado em `main`; 2009 "De-anonymizing
+  social networks", S&P 2009, ausente de `main` e tematicamente mais próximo
+  do artigo). Opções postas: **A** manter 2008 (typo; mínima, já aplicada na
+  W2b; corrigir corpo da issue via `gh issue edit`); **B** adicionar o paper
+  de 2009 como referência **complementar** (PR README §12 + `references/` +
+  citação na W2c/W2e; adendo — não reabertura — no Apêndice B do relatório);
+  **C** substituir 2008→2009 (não recomendada). Nenhuma opção exige
+  descongelamento (congelamento cobre código; docs são o modo ativo da
+  S10-W). Recomendação: **A agora, B opcional**. Aguardando decisão do autor.
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
   d=2 (anotado como potencialmente degenerate, precedente D-10) em vez de excluir;
   confirmar se essa escolha é a definitiva.
