@@ -18,6 +18,25 @@
 análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W1a da #174 — esqueleto do relatório + matriz de rastreabilidade
+  pública. ✅ (docs, PR aberto).** Primeira etapa do desdobramento S10-W1a..f
+  validado na #174 (autor, 2026-06-09). Bloqueios verificados antes de iniciar:
+  PRs **#176** e **#179** ambos `MERGED`; nenhum PR aberto. **(1) Esqueleto
+  privado:** `academic/relatorio_qualificacao.md` criado (gitignorado, fora do
+  diff; backup externo a cargo do autor) — 8 seções da estrutura mínima da
+  #174 + apêndices candidatos, cada seção com checklist de conteúdo, fontes
+  citáveis (docs/decisões `D-xx`/`DL-xx`), destinos `W-NN` e figuras a
+  inserir; regra global de terminologia de aferição no cabeçalho; DL-06 na
+  abertura da introdução. **(2) Rastreabilidade pública:**
+  `docs/relatorio_rastreabilidade.md` (versionado) — sumário do esqueleto,
+  matriz seção → fontes → `W-NN` → figuras → etapa, inventário de
+  figuras/tabelas citáveis (versionadas × regeneráveis) e estado por etapa
+  (W1a ✅; W1b..f pendentes). **(3) Sub-issues S10-W1a..f não criadas:** a
+  criação via `gh` foi bloqueada pelo classifier de permissão (sessão
+  executou somente a 1ª etapa, conforme pedido) — formalização das sub-issues
+  no GitHub fica a cargo do autor; rastreio das etapas vive na matriz. Só
+  docs; código congelado respeitado. Branch `docs/relatorio-skeleton-w1a`
+  (`Refs #174`).
 - **Complemento manual da #177 — população de `/references/` + catálogo
   completo. ✅ (docs, PR aberto).** A #177 (fechada via PR #178) deixou pendente
   o item manual de download da bibliografia. **(1) Downloads:** 11 das 14
@@ -667,10 +686,13 @@ análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Nova sessão (a abrir pelo autor):** criar as sub-issues S10-W1a..f sob a #174
-  (proposta validada na discussão de 2026-06-09, com os 5 pontos resolvidos) e
-  iniciar pela **W1a** — esqueleto do relatório em `academic/` (Markdown) +
-  matriz pública seção → fontes → `W-NN` → figuras em `docs/`.
+- **Etapa W1b (#174):** redigir as seções 1–2 do relatório em
+  `academic/relatorio_qualificacao.md` — introdução/posicionamento (abre com
+  DL-06: "anonimizar não é o suficiente") e independência do EpiCNet. Fontes:
+  `scope.md` §4/§5/§8, `decision_log.md`. Pré-requisito: merge do PR da W1a
+  (matriz de rastreabilidade).
+- **Formalização das sub-issues S10-W1a..f no GitHub:** a cargo do autor
+  (criação via agente bloqueada pelo classifier nesta sessão).
 - **Issue #175 (artigo, S10-W2):** bloqueada pela #174 — não iniciar antes do
   relatório consolidado.
 - **Issue #148 (entropia não uniforme, sem milestone):** congelada; exige decisão
@@ -678,12 +700,13 @@ análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PRs empilhados aguardando CI + revisão humana:** #176 (`docs/academic-dir-174`,
-  infraestrutura `academic/`) e o PR do DL-06 (`docs/dl06-instrumental-framing`,
-  base na branch do #176 — ao mergear o #176, o GitHub re-aponta para `main`).
-  Claude Code não faz merge.
-- **Sub-issues S10-W1a..f:** criação reservada para nova sessão, por decisão do
-  autor.
+- **PR da W1a (`docs/relatorio-skeleton-w1a`) aguardando CI + revisão humana.**
+  Claude Code não faz merge. W1b não inicia antes do merge.
+- **Sub-issues S10-W1a..f ainda não formalizadas no GitHub** (criação via
+  agente bloqueada pelo classifier; a cargo do autor). Rastreio provisório em
+  `docs/relatorio_rastreabilidade.md`.
+- #176 (infraestrutura `academic/`) e #179 (DL-06) **MERGED** em 2026-06-09 —
+  bloqueios anteriores resolvidos.
 - #30 (PR #149) e a auditoria bibliográfica (PR #150) mergeadas em `main`;
   #30 fechada (`COMPLETED`). A entropia (baseline uniforme) está em `main`.
 - Ciclo S9 totalmente encerrado (#122–#129, #139 em `main`; #29 fechada; milestone
@@ -713,6 +736,24 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-09 — Etapa W1a da #174: esqueleto do relatório + matriz de rastreabilidade
+
+- **Concluído:** Primeira etapa do desdobramento S10-W1a..f (validado na #174).
+  Bloqueios verificados via `gh`: #176 e #179 `MERGED`, nenhum PR aberto.
+  Criados: **(1)** `academic/relatorio_qualificacao.md` (esqueleto privado,
+  gitignorado) — 8 seções da estrutura mínima + apêndices candidatos, cada uma
+  com checklist de conteúdo, fontes, decisões citáveis, destinos `W-NN` e
+  figuras; terminologia de aferição como regra global; DL-06 abrindo a
+  introdução; **(2)** `docs/relatorio_rastreabilidade.md` (público) — matriz
+  seção → fontes → `W-NN` → figuras, inventário de figuras citáveis e estado
+  por etapa. Sub-issues **não** criadas (bloqueio do classifier de permissão;
+  escopo da sessão era só a 1ª etapa). Só docs. Branch
+  `docs/relatorio-skeleton-w1a` (`Refs #174`).
+- **Próximo:** Revisão humana + merge do PR da W1a; depois **W1b** (seções 1–2).
+  Autor formaliza as sub-issues S10-W1a..f se desejar.
+- **Bloqueios:** PR da W1a aguardando CI + revisão.
+- **Decisões pendentes:** D-08 (d=2 mantido, anotado degenerate) — confirmar.
 
 ### 2026-06-08 — Issue #141 (S10-V1): popular W-01..W-06 + resolver W-01
 
