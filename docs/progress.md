@@ -18,6 +18,33 @@
 análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W1d da #174 — redação da Seção 5 (Resultados) do relatório de
+  qualificação. ✅ (docs, PR aberto).** Quarta etapa do desdobramento
+  S10-W1a..f — a mais pesada, executada em sessão própria conforme planejado.
+  Bloqueio verificado antes de iniciar: PR **#183** (W1c) `MERGED` via `gh`
+  (`2026-06-10T00:59:45Z`); nenhum PR aberto. **(1) Texto privado
+  (gitignorado, fora do diff):** Seção 5 redigida em
+  `academic/relatorio_qualificacao.md` (7 subseções), todo número proveniente
+  dos relatórios versionados (`results_baseline.md`, `results_dsweep.md`,
+  `results_enron.md`), regeneráveis dos logs JSONL. §5.1 baseline Facebook
+  [M] d=1 (k-anonimato atingido pelo critério DL-01; tabela agregada
+  embutida; nota do motor A1 — KL inócuo em d=1, encaminhada à Seção 6/C2);
+  §5.2 leitura-chave **B1** (d=1 ≡ k-anonimato de grau; contraste com
+  d∈{5,10} como evidência de privacidade estrutural); §5.3 d-sweep (48 runs
+  pymetis; tendências opostas dos ataques em k — deslocamento do vetor de
+  ataque; EGS ≈ k·d; degenerados D-08/D-10; zeros genuínos #93/DL-02); §5.4
+  Enron [D] (12 runs; rr_subgrafo 0,124→0,057 monotônico; rr_grau ~40×
+  menor; nota da cota 1/k — violação esperada em k=20, não bug); §5.5 **B1
+  generalizável** (**W-04**, critério satisfeito nos dois datasets); §5.6
+  painel normalizado FB×Enron (**DL-04/W-06** — 3 confundidores; painéis
+  fração da cota e decaimento relativo; snapshot versionado em
+  `docs/assets/`); §5.7 entropia baseline uniforme (**D-17** — métrica, não
+  ataque; logs consolidados antecedem a métrica, nenhum dado inexistente
+  citado). Checklist preservado como "Cobertura do checklist (W1d)" para a
+  revisão W1f; terminologia de aferição respeitada. **(2) Rastreabilidade
+  pública (no PR):** matriz com W1d ✅; registro detalhado em
+  `relatorio_execucoes.md` (4 de 6 etapas executadas). Só docs; código
+  congelado respeitado. Branch `docs/relatorio-w1d-resultados` (`Refs #174`).
 - **Etapa W1c da #174 — redação das Seções 3–4 do relatório de qualificação.
   ✅ (docs, PR aberto).** Terceira etapa do desdobramento S10-W1a..f. Bloqueio
   verificado antes de iniciar: PR **#182** (W1b) `MERGED` via `gh`
