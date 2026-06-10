@@ -18,13 +18,13 @@
 
 ## Contabilização
 
-**Etapas executadas: 2 de 6.**
+**Etapas executadas: 3 de 6.**
 
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
 | W1a | Esqueleto em `academic/` + matriz + este registro | 2026-06-09 | `docs/relatorio-skeleton-w1a` | [#181](https://github.com/chrisjulio/moduloreidentificacao/pull/181) | ✅ executada (PR **MERGED**) |
-| W1b | Seções 1–2: introdução/posicionamento (DL-06) + independência do EpiCNet | 2026-06-09 | `docs/relatorio-w1b-intro-epicnet` | [#182](https://github.com/chrisjulio/moduloreidentificacao/pull/182) | ✅ executada (PR em revisão) |
-| W1c | Seções 3–4: método + desenho experimental [M]/[D] | — | — | — | ⏳ pendente |
+| W1b | Seções 1–2: introdução/posicionamento (DL-06) + independência do EpiCNet | 2026-06-09 | `docs/relatorio-w1b-intro-epicnet` | [#182](https://github.com/chrisjulio/moduloreidentificacao/pull/182) | ✅ executada (PR **MERGED**) |
+| W1c | Seções 3–4: método + desenho experimental [M]/[D] | 2026-06-09 | `docs/relatorio-w1c-metodo-desenho` | [#183](https://github.com/chrisjulio/moduloreidentificacao/pull/183) | ✅ executada (PR em revisão) |
 | W1d | Seção 5: resultados (a mais pesada — sessão própria) | — | — | — | ⏳ pendente |
 | W1e | Seções 6–8: limitações, reprodutibilidade, ética | — | — | — | ⏳ pendente |
 | W1f | Revisão integrada + fechamento da DoD da #174 | — | — | — | ⏳ pendente |
@@ -92,3 +92,57 @@
   código congelado (S10-W) respeitado.
 - **Próxima etapa:** W1c (Seções 3–4: método + desenho experimental), após
   merge do PR desta etapa.
+
+### W1c — 2026-06-09 — Seções 3–4: método + desenho experimental [M]/[D]
+
+- **Pré-verificação de bloqueios:** PR #182 (W1b) confirmado `MERGED` via
+  `gh` (`mergedAt: 2026-06-10T00:45:44Z`); nenhum PR aberto.
+- **Artefato privado (gitignorado, fora do diff):** redação substantiva das
+  Seções 3 e 4 em `academic/relatorio_qualificacao.md`, substituindo os
+  placeholders do esqueleto; cabeçalho de status atualizado para
+  "EM REDAÇÃO (S10-W1c)". Backup externo a cargo do autor.
+  - **Seção 3 — Método** (7 subseções): §3.1 visão geral do pipeline
+    (config → anonimização → ataque → métrica → visualização; outputs
+    gerados de logs JSONL, `pipeline.md` §1); §3.2 anonimizador He et al.
+    (2009) — 5 fases, FSM simplificado, backends pymetis/Kernighan-Lin com
+    `partition_backend` gravado no JSONL; §3.3 uniformidade de parâmetros
+    entre datasets (**W-01/DL-05**) — tabela dos 5 parâmetros
+    (k∈{2,5,10,20}, d=1, sigma=0.5, s_max=4, `add_or_delete`), defaults do
+    runner idênticos aos valores explícitos do Enron, valor efetivo
+    auditável nos logs; §3.4 cenários formais de reidentificação — grau
+    (tolerance=0) e subgrafo 1-hop, VF2 (Facebook) × WL-bucketing (Enron,
+    **D-16**), com a **equivalência semântica VF2↔WL** (**W-02**) em três
+    camadas (invariante necessário com viés conservador; 100% de
+    equivalência exata em grafos pequenos; 70 nós estratificados no Enron,
+    0 divergências) — não aproximação heurística; §3.5 validade da execução
+    Enron (**W-03/D-13**) — custo agregado ⇒ `subgraph_timeout_count = 0`,
+    gate trivialmente satisfeito, validade repousa na prova WL=VF2; §3.6 as
+    4 métricas com definição operacional (`metrics_definitions.md`;
+    `data_dictionary.md` §2–§3); §3.7 validação independente de k-anonimato
+    (**DL-01** — critério substantivo `deficit_fully_structural`, piso 0,9
+    rebaixado a limite operacional; `validation.py` sem import de
+    `he2009.py`).
+  - **Seção 4 — Desenho experimental** (5 subseções): §4.1 frase canônica
+    de **W-05** verbatim + consequência de leitura (tendências, não
+    magnitudes; `data_dictionary.md` §1.1); §4.2 Facebook [M] — ego-rede
+    3437, exclusão do ego, LCC, piso `10 × k_max`
+    (`preprocessing_decision.md` §3), n=532/m=4.812; resíduo
+    `multiple_egonets` encaminhado à Seção 6 (B2); §4.3 Enron [D] —
+    simetrização **OR** (**D-11**) com justificativa tripla e alternativa
+    AND rejeitada, LCC n=33.696/m=180.811; §4.4 configs YAML versionados,
+    3 sementes [42, 1337, 2718], 12 runs por dataset; §4.5 d-sweep como
+    exercício da propriedade estrutural — **grade corrigida para
+    d∈{1,2,5,10}** (48 runs, `results_dsweep.md`; o esqueleto listava
+    {1,5,10}), d=2 anotado degenerate (D-08/D-10), cross-ref Seção 5.
+  - Checklists do esqueleto preservados em cada seção como "Cobertura do
+    checklist (W1c)" com itens marcados — insumo da revisão integrada W1f.
+  - **Terminologia de aferição** respeitada (sem "quebrar anonimização",
+    "identificar usuários", "desanonimizar pessoas").
+- **Artefatos públicos (versionados neste PR):** matriz
+  ([`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)) com W1c
+  marcada concluída; este registro; `progress.md` atualizado.
+- **Verificação:** `git check-ignore academic/relatorio_qualificacao.md`
+  confirma privacidade; diff público contém só docs de rastreabilidade —
+  código congelado (S10-W) respeitado.
+- **Próxima etapa:** W1d (Seção 5: resultados — a mais pesada, sessão
+  própria), após merge do PR desta etapa.

@@ -18,8 +18,37 @@
 análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W1c da #174 — redação das Seções 3–4 do relatório de qualificação.
+  ✅ (docs, PR aberto).** Terceira etapa do desdobramento S10-W1a..f. Bloqueio
+  verificado antes de iniciar: PR **#182** (W1b) `MERGED` via `gh`
+  (`2026-06-10T00:45:44Z`); nenhum PR aberto. **(1) Texto privado
+  (gitignorado, fora do diff):** Seções 3 e 4 redigidas em
+  `academic/relatorio_qualificacao.md`, substituindo os placeholders do
+  esqueleto. **Seção 3 — Método** (7 subseções): visão geral do pipeline
+  (outputs gerados de logs JSONL); anonimizador He et al. (2009) — 5 fases,
+  backends pymetis/KL com `partition_backend` no JSONL; uniformidade de
+  parâmetros entre datasets (**W-01/DL-05**, tabela dos 5 parâmetros,
+  defaults do runner = valores explícitos do Enron, auditável nos logs);
+  ataques grau + subgrafo 1-hop com VF2 (Facebook) × WL-bucketing (Enron,
+  **D-16**) e a **equivalência semântica VF2↔WL** (**W-02**) em 3 camadas
+  (invariante necessário/viés conservador; 100% em grafos pequenos; 70 nós
+  no Enron, 0 divergências); validade da execução Enron (**W-03/D-13**, gate
+  trivialmente satisfeito, validade repousa na prova WL=VF2); 4 métricas;
+  validação independente de k-anonimato (**DL-01**). **Seção 4 — Desenho
+  experimental** (5 subseções): frase canônica **W-05** verbatim (tendências,
+  não magnitudes); Facebook [M] (ego 3437, exclusão do ego, LCC, piso
+  10×k_max; n=532/m=4.812; resíduo `multiple_egonets` → Seção 6/B2); Enron
+  [D] (simetrização OR **D-11**, LCC n=33.696/m=180.811); configs YAML +
+  3 sementes + 12 runs/dataset; d-sweep com **grade corrigida d∈{1,2,5,10}**
+  (48 runs — o esqueleto listava {1,5,10}), d=2 anotado degenerate
+  (D-08/D-10). Checklists preservados como "Cobertura do checklist (W1c)"
+  para a revisão W1f; terminologia de aferição respeitada. **(2)
+  Rastreabilidade pública (no PR):** matriz com W1c ✅; registro detalhado em
+  `relatorio_execucoes.md` (3 de 6 etapas executadas). Só docs; código
+  congelado respeitado. Branch `docs/relatorio-w1c-metodo-desenho`
+  (`Refs #174`).
 - **Etapa W1b da #174 — redação das Seções 1–2 do relatório de qualificação.
-  ✅ (docs, PR aberto).** Segunda etapa do desdobramento S10-W1a..f. Bloqueio
+  ✅ (docs, PR #182 MERGED).** Segunda etapa do desdobramento S10-W1a..f. Bloqueio
   verificado antes de iniciar: PR **#181** (W1a) `MERGED` via `gh`
   (`2026-06-10T00:32:33Z`); nenhum PR aberto. **(1) Texto privado
   (gitignorado, fora do diff):** Seções 1 e 2 redigidas em
@@ -710,13 +739,14 @@ análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W1c (#174):** redigir as seções 3–4 do relatório em
-  `academic/relatorio_qualificacao.md` — método (pipeline, parâmetros
-  W-01/DL-05, equivalência VF2↔WL W-02/D-16, validade Enron W-03/D-13,
-  4 métricas, validação independente DL-01) e desenho experimental (frase
-  canônica W-05, D-11, sementes/configs). Fontes: `pipeline.md`,
-  `metrics_definitions.md`, `algorithm_notes.md`, `data_dictionary.md` §1.1,
-  `preprocessing_decision.md`. Pré-requisito: merge do PR da W1b.
+- **Etapa W1d (#174):** redigir a seção 5 do relatório (resultados — a mais
+  pesada, sessão própria) em `academic/relatorio_qualificacao.md` — baseline
+  Facebook [M] (nota do motor KL), leitura-chave B1, d-sweep, Enron [D],
+  **B1 generalizável (W-04)**, painel normalizado `comparison_fb_enron`
+  (**DL-04/W-06**, nota da cota 1/k), entropia (D-17) onde couber; inserir
+  figuras/tabelas do inventário da matriz. Fontes: `results_baseline.md`,
+  `results_dsweep.md`, `results_enron.md`, `data_dictionary.md`.
+  Pré-requisito: merge do PR da W1c.
 - **Rastreio das etapas (decisão do autor, 2026-06-09):** **sem sub-issues**
   no GitHub — cada etapa executada é registrada por comentário na #174 e em
   `docs/relatorio_execucoes.md` (contabilização + registro detalhado).
@@ -727,9 +757,10 @@ análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da W1b (`docs/relatorio-w1b-intro-epicnet`) aguardando CI + revisão
-  humana.** Claude Code não faz merge. W1c não inicia antes do merge.
-- PR #181 (W1a) **MERGED** em 2026-06-10 (UTC) — bloqueio anterior resolvido.
+- **PR da W1c (`docs/relatorio-w1c-metodo-desenho`) aguardando CI + revisão
+  humana.** Claude Code não faz merge. W1d não inicia antes do merge.
+- PRs #181 (W1a) e #182 (W1b) **MERGED** em 2026-06-10 (UTC) — bloqueios
+  anteriores resolvidos.
 - **Sub-issues S10-W1a..f: dispensadas** (decisão do autor, 2026-06-09) —
   rastreio oficial por comentário na #174 + `docs/relatorio_execucoes.md` +
   matriz em `docs/relatorio_rastreabilidade.md`.
@@ -764,6 +795,24 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-09 — Etapa W1c da #174: Seções 3–4 (método; desenho experimental)
+
+- **Concluído:** Terceira etapa do desdobramento S10-W1a..f. Bloqueio
+  verificado: PR #182 (W1b) `MERGED` via `gh`. Redigidas as **Seções 3–4** do
+  relatório em `academic/relatorio_qualificacao.md` (privado, gitignorado):
+  §3 método (pipeline; He et al. 2009 com backends pymetis/KL; uniformidade
+  de parâmetros W-01/DL-05; ataques grau + subgrafo com equivalência VF2↔WL
+  W-02/D-16; validade Enron W-03/D-13; 4 métricas; validação independente
+  DL-01) e §4 desenho experimental (frase canônica W-05; Facebook [M] com
+  pré-processamento; Enron [D] com OR/D-11; configs/sementes; d-sweep com
+  grade corrigida d∈{1,2,5,10}). Rastreabilidade pública atualizada: matriz
+  (W1c ✅) + `relatorio_execucoes.md` (registro detalhado, 3/6). Só docs.
+  Branch `docs/relatorio-w1c-metodo-desenho` (`Refs #174`).
+- **Próximo:** Revisão humana + merge do PR da W1c; depois **W1d** (seção 5:
+  resultados — sessão própria).
+- **Bloqueios:** PR da W1c aguardando CI + revisão.
+- **Decisões pendentes:** D-08 (d=2 mantido, anotado degenerate) — confirmar.
 
 ### 2026-06-09 — Etapa W1b da #174: Seções 1–2 (introdução; independência do EpiCNet)
 
