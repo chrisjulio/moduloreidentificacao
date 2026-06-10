@@ -18,13 +18,13 @@
 
 ## Contabilização
 
-**Etapas executadas: 2 de 6.**
+**Etapas executadas: 3 de 6.**
 
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
 | W2a | Esqueleto em `academic/artigo.md` + matriz + este registro | 2026-06-10 | `docs/artigo-skeleton-w2a` | [#188](https://github.com/chrisjulio/moduloreidentificacao/pull/188) | ✅ MERGED (2026-06-10) |
-| W2b | Seções 1–2: introdução + trabalhos relacionados | 2026-06-10 | `docs/artigo-w2b-intro-relacionados` | [#191](https://github.com/chrisjulio/moduloreidentificacao/pull/191) | ✅ executada (PR aberto) |
-| W2c | Seção 3: método condensado | — | — | — | ⏳ pendente |
+| W2b | Seções 1–2: introdução + trabalhos relacionados | 2026-06-10 | `docs/artigo-w2b-intro-relacionados` | [#191](https://github.com/chrisjulio/moduloreidentificacao/pull/191) | ✅ MERGED (2026-06-10; complemento A+B reencaminhado via [#193](https://github.com/chrisjulio/moduloreidentificacao/pull/193), MERGED) |
+| W2c | Seção 3: método condensado | 2026-06-10 | `docs/artigo-w2c-metodo` | — | ✅ executada (PR aberto) |
 | W2d | Seção 4: resultados (a mais pesada — sessão própria) | — | — | — | ⏳ pendente |
 | W2e | Seções 5–6: discussão + conclusão + abstract final | — | — | — | ⏳ pendente |
 | W2f | Revisão integrada + fechamento da DoD da #175 | — | — | — | ⏳ pendente |
@@ -171,4 +171,54 @@
   apagada antes, o GitHub não retargetou a base e o conteúdo **não chegou a
   `main`**. Corrigido por **cherry-pick** do commit `2c9cdeb` em branch
   nova a partir de `main` (`docs/references-narayanan-2009-main`, novo PR;
-  conteúdo idêntico ao do #192).
+  conteúdo idêntico ao do #192). *Desfecho:* PR **#193** `MERGED` em
+  2026-06-10 (`20:45:22Z`) — conteúdo da decisão A+B em `main`.
+
+### W2c — 2026-06-10 — Seção 3 (método condensado)
+
+- **Pré-verificação de bloqueios:** PR **#193** (reencaminhamento da decisão
+  A+B) confirmado `MERGED` via `gh pr view 193` (`mergedAt:
+  2026-06-10T20:45:22Z`); nenhum PR aberto. Sem dúvidas em aberto na #175
+  para esta etapa (3 pontos do desdobramento decididos; achado 2008×2009
+  resolvido e mergeado) — pré-condições da W2c satisfeitas.
+- **Texto privado (gitignorado, fora do diff):** Seção 3 redigida em
+  `academic/artigo.md`, substituindo o checklist do esqueleto (preservado
+  como "Cobertura do checklist (W2c)" para a revisão W2f). Compressão de
+  §3–§4 do relatório em 5 subseções:
+  - **§3.1 Pipeline de aferição** (1 parágrafo + Figura 1): etapas
+    `anonimização → ataque → métrica` parametrizadas por YAML; produto =
+    logs JSONL; figura Mermaid **condensada** (derivada de `pipeline.md`
+    §1–§2) com nota de conversão pandoc.
+  - **§3.2 Anonimização** (2 parágrafos + Tabela 1): 5 fases de He et al.
+    (2009) em 1 parágrafo; backends METIS/Kernighan-Lin gravados no log;
+    tabela dos 5 parâmetros uniformes entre datasets com auditabilidade
+    *a posteriori* nos logs (compressão de §3.3 do relatório).
+  - **§3.3 Cenários formais de reidentificação** (2 parágrafos): grau
+    (linha de base) e subgrafo 1-hop; VF2 no Facebook × WL-bucketing no
+    Enron, com a equivalência semântica em **1 parágrafo** (invariante
+    necessário/viés conservador; 100% em grafos pequenos; 70 nós/0
+    divergências no Enron; ~36 s vs ~70 dias). O gate de timeout do Enron
+    (§3.5 do relatório) foi **comprimido na equivalência exata** — sem
+    parágrafo próprio no artigo.
+  - **§3.4 Métricas e validação** (2 parágrafos): 4 métricas em 1
+    parágrafo; verificador independente de k-anonimato com critério
+    substantivo em 3 frases.
+  - **§3.5 Datasets e desenho experimental** (4 parágrafos): frase canônica
+    da assimetria de papéis (tendências, não magnitudes); Facebook ego 3437
+    (exclusão do ego, LCC, piso 10×k_max; n=532/m=4.812); Enron
+    (simetrização OR conservadora; LCC n=33.696/m=180.811); grade 12
+    runs/dataset (3 sementes do YAML); d-sweep 48 runs como exercício da
+    propriedade estrutural; reprodutibilidade em 1 parágrafo (sementes do
+    YAML; outputs de logs; CI) — **sem** citar `verify_reproduction` como
+    script entregue (cuidado anotado na W1f respeitado).
+  - **Referências:** +4 do método (Cordella 2004; Shervashidze 2011;
+    Karypis & Kumar 1998; Leskovec & McAuley 2012) — todas já em `main`
+    (README §12); lista do artigo com **12 entradas**. Terminologia de
+    aferição respeitada; nenhum codinome interno no corpo do artigo.
+- **Artefatos públicos (versionados no PR):** matriz
+  ([`artigo_rastreabilidade.md`](artigo_rastreabilidade.md)) com W2c ✅ (e
+  W2b atualizada para MERGED); este registro (3/6); `progress.md`
+  atualizado.
+- **Verificação:** só docs — código congelado (S10-W) respeitado.
+- **Próxima etapa:** W2d (Seção 4 — resultados; a mais pesada, sessão
+  própria), após merge do PR desta etapa (bloqueio a verificar via `gh`).
