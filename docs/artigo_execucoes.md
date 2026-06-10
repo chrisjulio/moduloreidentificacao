@@ -18,14 +18,14 @@
 
 ## Contabilização
 
-**Etapas executadas: 3 de 6.**
+**Etapas executadas: 4 de 6.**
 
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
 | W2a | Esqueleto em `academic/artigo.md` + matriz + este registro | 2026-06-10 | `docs/artigo-skeleton-w2a` | [#188](https://github.com/chrisjulio/moduloreidentificacao/pull/188) | ✅ MERGED (2026-06-10) |
 | W2b | Seções 1–2: introdução + trabalhos relacionados | 2026-06-10 | `docs/artigo-w2b-intro-relacionados` | [#191](https://github.com/chrisjulio/moduloreidentificacao/pull/191) | ✅ MERGED (2026-06-10; complemento A+B reencaminhado via [#193](https://github.com/chrisjulio/moduloreidentificacao/pull/193), MERGED) |
-| W2c | Seção 3: método condensado | 2026-06-10 | `docs/artigo-w2c-metodo` | — | ✅ executada (PR aberto) |
-| W2d | Seção 4: resultados (a mais pesada — sessão própria) | — | — | — | ⏳ pendente |
+| W2c | Seção 3: método condensado | 2026-06-10 | `docs/artigo-w2c-metodo` | [#194](https://github.com/chrisjulio/moduloreidentificacao/pull/194) | ✅ MERGED (2026-06-10) |
+| W2d | Seção 4: resultados (a mais pesada — sessão própria) | 2026-06-10 | `docs/artigo-w2d-resultados` | — | ✅ executada (PR aberto) |
 | W2e | Seções 5–6: discussão + conclusão + abstract final | — | — | — | ⏳ pendente |
 | W2f | Revisão integrada + fechamento da DoD da #175 | — | — | — | ⏳ pendente |
 
@@ -222,3 +222,59 @@
 - **Verificação:** só docs — código congelado (S10-W) respeitado.
 - **Próxima etapa:** W2d (Seção 4 — resultados; a mais pesada, sessão
   própria), após merge do PR desta etapa (bloqueio a verificar via `gh`).
+
+### W2d — 2026-06-10 — Seção 4 (resultados)
+
+- **Pré-verificação de bloqueios:** PR **#194** (W2c) confirmado `MERGED`
+  via `gh pr view 194` (`mergedAt: 2026-06-10T21:06:57Z`); nenhum PR
+  aberto. Sem dúvidas em aberto na #175 para esta etapa — pré-condições da
+  W2d satisfeitas. Etapa executada em **sessão própria**, conforme o
+  desdobramento validado (a mais pesada, como a W1d do relatório).
+- **Texto privado (gitignorado, fora do diff):** Seção 4 redigida em
+  `academic/artigo.md`, substituindo o checklist do esqueleto (preservado
+  como "Cobertura do checklist (W2d)" para a revisão W2f). Compressão de
+  §5.1–§5.7 do relatório em 6 subseções:
+  - **§4.1 Facebook** (k-anonimato atingido): critério substantivo do
+    verificador independente descrito sem codinome; **Tabela 2** (agregados
+    por k, de `results_baseline.md`); leitura da curva (rr_subgrafo
+    0,79→0,00 monotônico; KS-D 0,00→0,65; rr_grau sobe a 0,0990 em k=20);
+    **Figura 2** (curva privacidade-utilidade FB, regenerável — nota de
+    conversão); nota do motor (Kernighan-Lin no baseline, inócuo em d=1;
+    backend gravado no log; implicação residual encaminhada à Seção 5).
+  - **§4.2 Achado central:** d=1 ≡ k-anonimato de grau; 0,7914 vs 0,0263
+    em k=2 — o grafo satisfaz a definição formal e ~4/5 das vizinhanças
+    permanecem únicas.
+  - **§4.3 Enron:** **Tabela 3** (agregados por k, de `results_enron.md`);
+    rr_subgrafo 0,1241→0,0569 monotônico; rr_grau residual (≤0,0033, ~40×
+    menor); utilidade melhor preservada em escala; divergência em k=20
+    (colapso a zero no FB vs ~0,057 no Enron = escala, não mecanismo);
+    **Figura 3** (curva Enron, regenerável); nota da cota 1/k (pressupõe
+    d≥2; violação em k=20 esperada, não anomalia).
+  - **§4.4 Resultado generalizável:** critério pré-fixado (gap nos dois
+    datasets) satisfeito; **Tabela 4** (gap k=2: FB ~30×; Enron ~38×);
+    sinal qualitativo robusto, magnitudes não comparáveis.
+  - **§4.5 Painel normalizado:** justificativa de não sobrepor magnitudes
+    brutas (3 confundidores: escala; densidade/origem OR; motor
+    não-pareado); **Figura 4** = snapshot versionado
+    `docs/assets/comparison_fb_enron.png`; painéis (A) fração da cota 1/k
+    (FB acima em k∈{2,5,10}, pico ~2,03; Enron cruza só em k=20 ~1,14;
+    cruzamento ~k≈14) e (B) decaimento relativo (FB 1,0→0,18→0,0; Enron
+    1,0→0,63→0,46); alternativa de eixo log rejeitada (falha no zero).
+  - **§4.6 d-sweep como suporte** (1 parágrafo): tendências opostas dos
+    dois cenários em k (deslocamento do vetor de ataque de subgrafo para
+    grau); EGS ≈ k·d (19,70; 133,0); degenerados documentados (d=2;
+    d=10/k=20 cobertura 0,752) e zeros genuínos (sem timeout nas 48
+    execuções) — sem codinomes; + **2 frases** sobre a entropia como
+    métrica complementar (mapa de compressão), sem reportar valores
+    inexistentes.
+  - **Referências:** nenhuma nova exigida (lista permanece com 12
+    entradas). Terminologia de aferição respeitada; nenhum codinome
+    interno no corpo do artigo. Todo número conferido contra
+    `results_baseline.md`/`results_enron.md`/`results_dsweep.md` em `main`.
+- **Artefatos públicos (versionados no PR):** matriz
+  ([`artigo_rastreabilidade.md`](artigo_rastreabilidade.md)) com W2d ✅ (e
+  W2c atualizada para MERGED, PR #194); este registro (4/6); `progress.md`
+  atualizado.
+- **Verificação:** só docs — código congelado (S10-W) respeitado.
+- **Próxima etapa:** W2e (Seções 5–6 — discussão + conclusão + abstract
+  final), após merge do PR desta etapa (bloqueio a verificar via `gh`).
