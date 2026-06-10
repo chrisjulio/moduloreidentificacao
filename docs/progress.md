@@ -18,6 +18,33 @@
 Código **congelado** — somente análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W2c da #175 — redação da Seção 3 do artigo (método condensado).
+  ✅ (docs, PR aberto).** Terceira etapa do desdobramento S10-W2a..f.
+  Bloqueio verificado antes de iniciar: PR **#193** (reencaminhamento da
+  decisão A+B) `MERGED` via `gh` (`2026-06-10T20:45:22Z`); nenhum PR
+  aberto; sem dúvidas em aberto na #175 para a etapa. **(1) Texto privado
+  (gitignorado, fora do diff):** Seção 3 redigida em `academic/artigo.md`
+  (5 subseções), comprimindo §3–§4 do relatório: §3.1 pipeline + Figura 1
+  (Mermaid condensado, nota de conversão pandoc); §3.2 He et al. (2009) — 5
+  fases em 1 parágrafo, backends METIS/KL gravados no log, **Tabela 1 dos 5
+  parâmetros uniformes** (DL-05/W-01) com auditabilidade nos logs; §3.3
+  cenários grau + subgrafo 1-hop, **equivalência VF2↔WL (D-16/W-02) em 1
+  parágrafo** (invariante necessário/viés conservador; 100% grafos
+  pequenos; 70 nós/0 divergências; ~36 s vs ~70 dias) — gate de timeout
+  (W-03/D-13) comprimido na equivalência, sem parágrafo próprio; §3.4 as 4
+  métricas em 1 parágrafo + verificador independente (DL-01) em 3 frases;
+  §3.5 desenho — frase canônica W-05 (tendências, não magnitudes), Facebook
+  ego 3437 (n=532/m=4.812) `[M]`, Enron OR/D-11 (n=33.696/m=180.811) `[D]`,
+  12 runs/dataset (3 sementes do YAML), d-sweep 48 runs, reprodutibilidade
+  em 1 parágrafo **sem** citar `verify_reproduction` (cuidado da W1f).
+  **Referências:** +4 do método (Cordella; Shervashidze; Karypis & Kumar;
+  Leskovec & McAuley — todas já em `main`), lista com 12 entradas. Sem
+  codinomes internos no corpo; checklist preservado como "Cobertura do
+  checklist (W2c)" para a W2f. **(2) Rastreabilidade pública (no PR):**
+  matriz (`artigo_rastreabilidade.md`) com W2c ✅ (W2b → MERGED);
+  `artigo_execucoes.md` (3 de 6 etapas; desfecho do incidente #192/#193
+  registrado). Só docs; código congelado respeitado. Branch
+  `docs/artigo-w2c-metodo` (`Refs #175`).
 - **Decisão A+B do achado "Narayanan & Shmatikov 2009 × 2008" executada. ✅
   (docs, PR empilhado).** O autor decidiu **A+B** na discussão da #175:
   manter o 2008 (Netflix) nos papéis que já cumpre **e** adicionar o 2009
@@ -912,11 +939,13 @@ Código **congelado** — somente análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W2c da #175** (Seção 3 do artigo: método condensado — compressão
-  de §3–§4 do relatório; DL-05 como tabela; equivalência VF2↔WL D-16/W-02
-  em 1 parágrafo; reprodutibilidade em 1 parágrafo), após merge do PR da
-  W2b (`docs/artigo-w2b-intro-relacionados`). Ciclo: 1 etapa por sessão;
-  bloqueio verificado via `gh` antes de iniciar.
+- **Etapa W2d da #175** (Seção 4 do artigo: resultados — **a mais pesada,
+  sessão própria**, como a W1d do relatório; baseline Facebook d=1 + achado
+  B1 + Enron + B1 generalizável W-04 + figuras por dataset e painel
+  normalizado DL-04/W-06 + d-sweep como suporte; todo número conferido
+  contra `results_baseline.md`/`results_enron.md`/`results_dsweep.md`),
+  após merge do PR da W2c (`docs/artigo-w2c-metodo`). Ciclo: 1 etapa por
+  sessão; bloqueio verificado via `gh` antes de iniciar.
 - **Fora do escopo da #174 (pendências anotadas na revisão W1f):**
   conversão final do relatório via pandoc (inserção física das figuras
   regeneráveis; remoção dos checklists de processo W1b..e) — a cargo do
@@ -927,16 +956,12 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR de reencaminhamento da decisão A+B
-  (`docs/references-narayanan-2009-main`) aguardando CI + revisão humana.**
-  Claude Code não faz merge. A etapa W2c inicia após o merge deste PR.
-  **Incidente de roteamento (registrado):** o PR #191 (W2b) foi mergeado em
-  `main` às 20:30:22Z de 2026-06-10, mas o PR #192 (empilhado, decisão A+B)
-  foi mergeado às 20:38:36Z **na base original**
-  (`docs/artigo-w2b-intro-relacionados`) — como a branch da W2b não foi
-  apagada antes, o GitHub não retargetou a base para `main` e o conteúdo do
-  #192 **não chegou a `main`**. Corrigido por cherry-pick do commit
-  `2c9cdeb` em branch nova a partir de `main` (este PR); conteúdo idêntico.
+- **PR da etapa W2c (`docs/artigo-w2c-metodo`) aguardando CI + revisão
+  humana.** Claude Code não faz merge. A etapa W2d inicia após o merge
+  deste PR.
+- PR **#193** (reencaminhamento da decisão A+B) **MERGED** em 2026-06-10
+  (`20:45:22Z`) — incidente de roteamento do #192 **encerrado**: conteúdo
+  da decisão A+B em `main`.
 - PR **#191** (W2b) **MERGED** em 2026-06-10 — Seções 1–2 do artigo e
   rastreabilidade em `main`.
 - PR **#190** (registro da validação) **MERGED** em 2026-06-10 — bloqueio
@@ -985,6 +1010,28 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Etapa W2c da #175: Seção 3 do artigo (método condensado)
+
+- **Concluído:** Pré-verificação: PR #193 `MERGED` via `gh` (20:45:22Z);
+  nenhum PR aberto; sem dúvidas em aberto na #175 para a etapa. Seção 3
+  redigida em `academic/artigo.md` (privado, fora do diff) em 5 subseções,
+  comprimindo §3–§4 do relatório: pipeline + figura Mermaid condensada;
+  He et al. (2009) em 1 parágrafo + Tabela 1 dos 5 parâmetros uniformes
+  (DL-05); cenários grau/subgrafo com equivalência VF2↔WL (D-16) em 1
+  parágrafo; 4 métricas + validador independente (DL-01); desenho
+  experimental (W-05 verbatim; FB n=532/m=4.812; Enron OR n=33.696/
+  m=180.811; 12 runs/dataset; d-sweep 48 runs) + reprodutibilidade em 1
+  parágrafo (sem citar `verify_reproduction`). Referências +4 (Cordella,
+  Shervashidze, Karypis & Kumar, Leskovec & McAuley), 12 entradas.
+  Rastreabilidade pública atualizada (`artigo_rastreabilidade.md` W2c ✅;
+  `artigo_execucoes.md` 3/6). Branch `docs/artigo-w2c-metodo`
+  (`Refs #175`).
+- **Próximo:** Etapa W2d (Seção 4 — resultados; sessão própria), após
+  merge do PR da W2c.
+- **Bloqueios:** PR da W2c aguardando CI + revisão humana.
+- **Decisões pendentes:** Nenhuma nova (D-08 segue como única pendência
+  histórica).
 
 ### 2026-06-10 — Decisão A+B do achado "Narayanan 2009 × 2008" (follow-up da W2b)
 
