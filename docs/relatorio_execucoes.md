@@ -27,7 +27,7 @@
 | W1c | Seções 3–4: método + desenho experimental [M]/[D] | 2026-06-09 | `docs/relatorio-w1c-metodo-desenho` | [#183](https://github.com/chrisjulio/moduloreidentificacao/pull/183) | ✅ executada (PR **MERGED**) |
 | W1d | Seção 5: resultados (a mais pesada — sessão própria) | 2026-06-09 | `docs/relatorio-w1d-resultados` | [#185](https://github.com/chrisjulio/moduloreidentificacao/pull/185) | ✅ executada (PR **MERGED**) |
 | W1e | Seções 6–8: limitações, reprodutibilidade, ética | 2026-06-09 | `docs/relatorio-w1e-limitacoes-repro-etica` | [#186](https://github.com/chrisjulio/moduloreidentificacao/pull/186) | ✅ executada (PR **MERGED**) |
-| W1f | Revisão integrada + fechamento da DoD da #174 | 2026-06-10 | `docs/relatorio-w1f-revisao-integrada` | — | ✅ executada (PR em revisão) |
+| W1f | Revisão integrada + fechamento da DoD da #174 | 2026-06-10 | `docs/relatorio-w1f-revisao-integrada` | [#187](https://github.com/chrisjulio/moduloreidentificacao/pull/187) | ✅ executada (PR em revisão) |
 
 ---
 
