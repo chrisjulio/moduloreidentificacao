@@ -24,7 +24,7 @@
 |---|---|---|---|---|---|
 | W1a | Esqueleto em `academic/` + matriz + este registro | 2026-06-09 | `docs/relatorio-skeleton-w1a` | [#181](https://github.com/chrisjulio/moduloreidentificacao/pull/181) | ✅ executada (PR **MERGED**) |
 | W1b | Seções 1–2: introdução/posicionamento (DL-06) + independência do EpiCNet | 2026-06-09 | `docs/relatorio-w1b-intro-epicnet` | [#182](https://github.com/chrisjulio/moduloreidentificacao/pull/182) | ✅ executada (PR **MERGED**) |
-| W1c | Seções 3–4: método + desenho experimental [M]/[D] | 2026-06-09 | `docs/relatorio-w1c-metodo-desenho` | — | ✅ executada (PR em revisão) |
+| W1c | Seções 3–4: método + desenho experimental [M]/[D] | 2026-06-09 | `docs/relatorio-w1c-metodo-desenho` | [#183](https://github.com/chrisjulio/moduloreidentificacao/pull/183) | ✅ executada (PR em revisão) |
 | W1d | Seção 5: resultados (a mais pesada — sessão própria) | — | — | — | ⏳ pendente |
 | W1e | Seções 6–8: limitações, reprodutibilidade, ética | — | — | — | ⏳ pendente |
 | W1f | Revisão integrada + fechamento da DoD da #174 | — | — | — | ⏳ pendente |
