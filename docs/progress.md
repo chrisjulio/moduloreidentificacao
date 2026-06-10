@@ -14,10 +14,34 @@
 **Data da última atualização:** 2026-06-10
 
 **Semana corrente:** S10 — fase de redação (S10-W): relatório de qualificação
-(#174, guarda-chuva) e artigo (#175, dependente). Código **congelado** — somente
-análise e documentação.
+(#174, **fechada** em 2026-06-10) e artigo (#175, em andamento — S10-W2).
+Código **congelado** — somente análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W2a da #175 — esqueleto do artigo + rastreabilidade pública +
+  proposta de desdobramento. ✅ (docs, PR aberto).** Abertura da redação do
+  artigo (S10-W2). Bloqueio verificado antes de iniciar: PR **#187** (W1f)
+  `MERGED` via `gh` (`2026-06-10T13:17:15Z`) e **#174 CLOSED** — a dependência
+  da #175 (relatório consolidado primeiro) está satisfeita; nenhum PR aberto.
+  **(1) Esqueleto privado:** `academic/artigo.md` criado (gitignorado, fora do
+  diff; backup externo do autor) — 6 seções da estrutura mínima da #175
+  (resumo+introdução; trabalhos relacionados; método condensado; resultados;
+  discussão; conclusão), cada uma com checklist de conteúdo, fontes citáveis e
+  cuidados; **tese central fixada no cabeçalho** (B1/W-04, tabela k=2 dos dois
+  datasets: FB 0,7914 vs 0,0263 ~30×; Enron 0,1241 vs 0,0033 ~38×); **mapa de
+  compressão relatório → artigo** (cada seção aponta o trecho do relatório
+  que comprime e o que corta: §7 vira 1 parágrafo no método; §8 vira 2–3
+  frases na introdução; Apêndice A não entra); terminologia de aferição;
+  DoD emendada e "não fazer" da #175 reproduzidos. **(2) Rastreabilidade
+  pública (no PR):** `docs/artigo_rastreabilidade.md` (matriz seção → insumo
+  no relatório → fontes → W-NN → figuras → etapa; estado por etapa) e
+  `docs/artigo_execucoes.md` (contabilização 1/6 + registro W2a). **(3)
+  Proposta de desdobramento S10-W2a..f** postada como comentário na #175
+  para validação humana — espelha o padrão da #174: W2b (seções 1–2), W2c
+  (método), W2d (resultados, sessão própria — etapa mais pesada), W2e
+  (discussão+conclusão+abstract), W2f (revisão integrada + DoD); sem
+  sub-issues (rastreio por comentário + registro). Só docs; código congelado
+  respeitado. Branch `docs/artigo-skeleton-w2a` (`Refs #175`).
 - **Etapa W1f da #174 — revisão integrada + apêndices + DoD. ✅ (docs, PR
   aberto — fecha a #174).** Sexta e última etapa do desdobramento S10-W1a..f.
   Bloqueio verificado antes de iniciar: PR **#186** (W1e) `MERGED` via `gh`
@@ -824,9 +848,11 @@ análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Merge do PR da W1f** (fecha a #174 — desdobramento S10-W1a..f
-  concluído). Depois dele, a fase de redação avança para a **issue #175
-  (artigo, S10-W2)**, cuja dependência (#174) estará satisfeita.
+- **Merge do PR da W2a** (esqueleto do artigo + rastreabilidade) e
+  **validação do desdobramento S10-W2a..f pelo autor na #175**. Em seguida,
+  **etapa W2b** (Seções 1–2 do artigo: introdução + trabalhos relacionados),
+  espelhando o ciclo de execução do relatório (1 etapa por sessão; bloqueio
+  verificado via `gh` antes de iniciar).
 - **Fora do escopo da #174 (pendências anotadas na revisão W1f):**
   conversão final do relatório via pandoc (inserção física das figuras
   regeneráveis; remoção dos checklists de processo W1b..e) — a cargo do
@@ -837,11 +863,14 @@ análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da W1f (`docs/relatorio-w1f-revisao-integrada`) aguardando CI +
-  revisão humana.** Claude Code não faz merge. Fecha a #174; a #175 não
-  inicia antes do merge.
-- PRs #181 (W1a), #182 (W1b), #183 (W1c), #185 (W1d) e #186 (W1e) **MERGED**
-  em 2026-06-10 (UTC) — bloqueios anteriores resolvidos.
+- **PR da W2a (`docs/artigo-skeleton-w2a`) aguardando CI + revisão humana.**
+  Claude Code não faz merge. A etapa W2b não inicia antes do merge **e** da
+  validação do desdobramento S10-W2a..f pelo autor na #175.
+- **Desdobramento S10-W2a..f: proposto, não validado** — comentário de
+  proposta na #175 aguarda decisão do autor (inclusive se mantém o modelo
+  sem sub-issues usado na #174).
+- Relatório (#174) **fechado** em 2026-06-10: PRs #181–#183, #185–#187
+  (W1a..f) todos **MERGED** — bloqueios anteriores resolvidos.
 - **Sub-issues S10-W1a..f: dispensadas** (decisão do autor, 2026-06-09) —
   rastreio oficial por comentário na #174 + `docs/relatorio_execucoes.md` +
   matriz em `docs/relatorio_rastreabilidade.md`.
@@ -876,6 +905,25 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Etapa W2a da #175: esqueleto do artigo + rastreabilidade + proposta de desdobramento
+
+- **Concluído:** Abertura da redação do artigo (S10-W2). Bloqueio verificado:
+  PR #187 (W1f) `MERGED` e #174 `CLOSED` via `gh` — dependência da #175
+  satisfeita. **Esqueleto privado** `academic/artigo.md` (gitignorado): 6
+  seções da estrutura mínima da #175 com checklists, fontes e cuidados; tese
+  central B1/W-04 fixada (tabela k=2, FB ~30× / Enron ~38×); mapa de
+  compressão relatório → artigo. **Rastreabilidade pública:**
+  `docs/artigo_rastreabilidade.md` (matriz) + `docs/artigo_execucoes.md`
+  (1/6). **Proposta de desdobramento W2a..f** postada na #175 para validação
+  (W2d isolada — etapa mais pesada; sem sub-issues, molde da #174). Só docs.
+  Branch `docs/artigo-skeleton-w2a` (`Refs #175`).
+- **Próximo:** merge do PR da W2a + validação do desdobramento na #175;
+  depois W2b (Seções 1–2 do artigo).
+- **Bloqueios:** PR da W2a aguardando CI + revisão humana; desdobramento
+  W2a..f aguardando validação do autor.
+- **Decisões pendentes:** validação do desdobramento S10-W2a..f (#175);
+  D-08 (d=2 mantido no d-sweep) ainda aguardando confirmação.
 
 ### 2026-06-10 — Etapa W1f da #174: revisão integrada + apêndices + DoD (fecha a #174)
 
