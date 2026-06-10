@@ -18,7 +18,7 @@
 
 ## Contabilização
 
-**Etapas executadas: 5 de 6.**
+**Etapas executadas: 6 de 6 — desdobramento S10-W2a..f concluído.**
 
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
@@ -26,8 +26,8 @@
 | W2b | Seções 1–2: introdução + trabalhos relacionados | 2026-06-10 | `docs/artigo-w2b-intro-relacionados` | [#191](https://github.com/chrisjulio/moduloreidentificacao/pull/191) | ✅ MERGED (2026-06-10; complemento A+B reencaminhado via [#193](https://github.com/chrisjulio/moduloreidentificacao/pull/193), MERGED) |
 | W2c | Seção 3: método condensado | 2026-06-10 | `docs/artigo-w2c-metodo` | [#194](https://github.com/chrisjulio/moduloreidentificacao/pull/194) | ✅ MERGED (2026-06-10) |
 | W2d | Seção 4: resultados (a mais pesada — sessão própria) | 2026-06-10 | `docs/artigo-w2d-resultados` | [#195](https://github.com/chrisjulio/moduloreidentificacao/pull/195) | ✅ MERGED (2026-06-10) |
-| W2e | Seções 5–6: discussão + conclusão + abstract final | 2026-06-10 | `docs/artigo-w2e-discussao-conclusao` | — | ✅ executada (PR aberto) |
-| W2f | Revisão integrada + fechamento da DoD da #175 | — | — | — | ⏳ pendente |
+| W2e | Seções 5–6: discussão + conclusão + abstract final | 2026-06-10 | `docs/artigo-w2e-discussao-conclusao` | [#196](https://github.com/chrisjulio/moduloreidentificacao/pull/196) | ✅ MERGED (2026-06-10) |
+| W2f | Revisão integrada + fechamento da DoD da #175 | 2026-06-10 | `docs/artigo-w2f-revisao-integrada` | — | ✅ executada (PR aberto — **fecha a #175**) |
 
 ---
 
@@ -337,3 +337,67 @@
 - **Verificação:** só docs — código congelado (S10-W) respeitado.
 - **Próxima etapa:** W2f (revisão integrada + DoD da #175 — **fecha a
   issue**), após merge do PR desta etapa (bloqueio a verificar via `gh`).
+
+### W2f — 2026-06-10 — Revisão integrada + DoD da #175 (fecha a issue)
+
+- **Pré-verificação de bloqueios:** PR **#196** (W2e) confirmado `MERGED`
+  via `gh pr view 196` (`mergedAt: 2026-06-10T22:17:13Z`); nenhum PR
+  aberto — pré-condições da W2f satisfeitas. Sessão orientada pelo
+  relatório de validação externo do autor (`validacao_w2f_175.md`,
+  2026-06-10), que pré-mapeou 5 itens de ação (1.1–1.5) e 11 itens já
+  verificados sem divergência.
+- **Revisão integrada (texto privado, gitignorado, fora do diff):**
+  conferência integral das Seções 1–6 + abstract de `academic/artigo.md`
+  contra `main` — registro detalhado na seção "Revisão integrada (W2f)" do
+  próprio documento:
+  - **Números:** Tabelas 2–4 **exatas** contra `results_baseline.md` /
+    `results_enron.md`; painel normalizado (§4.5) e d-sweep (§4.6)
+    conferem com `results_enron.md` / `results_dsweep.md`. Nenhuma
+    divergência.
+  - **Item 1.1 (referências):** as 3 ausências reais (artigo: 12 de 15 do
+    README §12) são **Wörlein 2005, Díaz 2003 e Serjantov & Danezis 2003**
+    — a tabela do relatório de validação supunha Leskovec/Karypis/
+    Shervashidze, mas essas três **estão** no artigo desde a W2c
+    (verificado no corpo §3.2/§3.3/§3.5). Omissões registradas como
+    **intencionais**: o artigo não discute a escolha do minerador FSM
+    (Wörlein) nem reporta valores de entropia / "degree of anonymity"
+    (Díaz; Serjantov). Justificativa na Nota de consolidação das
+    Referências (privado) + nota pública na matriz.
+  - **Item 1.2 (desvio-padrão zero em k=2):** explicação **adicionada à
+    §4.1** (1 parágrafo após a Tabela 2), ancorada nos observáveis da
+    tabela bruta de `results_baseline.md` (3 sementes com linhas
+    idênticas; KS-D e Δclust exatamente nulos) e na redução d=1 → grau.
+  - **Item 1.3 (motor não-pareado):** verificado **já visível** ao par
+    revisor sem acesso ao relatório — §4.1 (nota KL×METIS + mecanismo de
+    inocuidade em d=1), §4.5 (3º confundidor) e §5.1 ¶2 (argumento
+    marcado como interpretativo; pareamento estrito como futuro). Sem
+    ajuste necessário.
+  - **Item 1.4 (assimetria do adendo [15]):** nota pública adicionada à
+    matriz ([`artigo_rastreabilidade.md`](artigo_rastreabilidade.md)) —
+    artigo cita Narayanan & Shmatikov 2009 no corpo; relatório só no
+    adendo pós-fechamento do Apêndice B; diferença intencional (decisão
+    A+B), não inconsistência.
+  - **Item 1.5 (arredondamento do abstract):** política fixada —
+    **inteiro mais próximo** (30,1× → ~30×; 37,6× → ~38×; arredondamento
+    padrão, nenhum viés direcional); quocientes exatos anotados na
+    legenda da Tabela 4 do artigo, ao lado dos valores brutos que
+    permitem recomputá-los. Opções (a)+(c) do relatório de validação.
+  - **Terminologia de aferição:** varredura dos termos proibidos — única
+    ocorrência ("de-anonimização", §2 ¶3) nomeia a linha da literatura
+    que o trabalho **não** executa (título do próprio paper de 2009);
+    precedente do relatório. Conforme.
+  - **Citação↔lista:** fechada nos dois sentidos (12/12 citadas no corpo;
+    nenhuma citação fora da lista; todas em `main`).
+  - **Checklists de cobertura W2b..e:** mantidos como rastro de processo,
+    a remover na conversão final (pandoc) — mesmo tratamento do relatório.
+  - **DoD emendada da #175 conferida item a item — cumprida** (7/7;
+    registro no próprio documento).
+- **Artefatos públicos (versionados no PR):** matriz
+  ([`artigo_rastreabilidade.md`](artigo_rastreabilidade.md)) com W2f ✅ +
+  notas de assimetria [15] e de referências; este registro (6/6; W2e →
+  MERGED #196); `progress.md` atualizado.
+- **Verificação:** só docs — código congelado (S10-W) respeitado.
+- **Desfecho:** desdobramento S10-W2a..f **concluído**. O PR desta etapa
+  traz `Closes #175`. Pendências fora do escopo da issue: conversão final
+  via pandoc (figuras regeneráveis; remoção dos checklists de processo) — a
+  cargo do autor, com venue/template a decidir.
