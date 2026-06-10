@@ -18,6 +18,36 @@
 Código **congelado** — somente análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W2b da #175 — redação das Seções 1–2 do artigo (introdução +
+  trabalhos relacionados; abstract provisório). ✅ (docs, PR aberto).**
+  Segunda etapa do desdobramento S10-W2a..f (validado pelo autor em
+  2026-06-10). Bloqueio verificado antes de iniciar: PR **#190** (registro
+  da validação) `MERGED` via `gh` (`2026-06-10T14:11:15Z`); nenhum PR
+  aberto. **(1) Texto privado (gitignorado, fora do diff):** Seções 1–2
+  redigidas em `academic/artigo.md`, substituindo os checklists do esqueleto
+  (preservados como "Cobertura do checklist (W2b)" para a revisão W2f).
+  **Resumo provisório** (a reescrever na W2e) fixando a tese central com os
+  números k=2 dos dois datasets (FB 0,7914 vs 0,0263 ~30×; Enron 0,1241 vs
+  0,0033 ~38×). **Seção 1** (5 ¶): premissa fundadora **DL-06** abrindo o
+  texto (topologia como quase-identificador; hipótese demonstrada em He et
+  al. 2009 → prova por meios próprios); contribuição tripla (aferidor
+  formal reprodutível; curvas privacidade-vs-utilidade; achado generalizável
+  ~30–38×); fronteira aferidor × ofensiva (4 dimensões, ciclo fechado,
+  análogo a Kerckhoffs, resultado negativo como contribuição defensiva);
+  enquadramento ético em 3 frases (SNAP desidentificado; sem dado pessoal
+  novo); estrutura do artigo. **Seção 2** (4 ¶): Sweeney 2002 → Backstrom
+  2007 → escada grau→vizinhança (Liu & Terzi 2008; Zhou & Pei 2008; He et
+  al. 2009 — defesa **e** adversário implementados); Narayanan & Shmatikov
+  2008 como fronteira; Nettleton & Salas 2016 como direção futura **sem
+  afirmar execução**; posicionamento instrumental. **Referências iniciadas**
+  (7 das 14 do Apêndice B). Sem codinomes internos (`B1`/`W-NN`/`D-xx`) no
+  corpo do artigo. **Achado de registro:** a #175/esqueleto grafavam
+  Narayanan & Shmatikov "2009"; a referência em `main` é **2008** (S&P,
+  Netflix) — usado 2008, nenhuma referência nova. **(2) Rastreabilidade
+  pública (no PR):** matriz (`artigo_rastreabilidade.md`) com W2b ✅;
+  registro detalhado em `artigo_execucoes.md` (2 de 6 etapas). Só docs;
+  código congelado respeitado. Branch `docs/artigo-w2b-intro-relacionados`
+  (`Refs #175`).
 - **Validação do desdobramento S10-W2a..f da #175 — 3 pontos decididos pelo
   autor; W2b liberada. ✅ (docs, PR aberto).** Sessão de registro, não de
   redação. Pré-verificação: PR **#188** (W2a) `MERGED` via `gh`
@@ -864,12 +894,11 @@ Código **congelado** — somente análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W2b da #175** (Seções 1–2 do artigo: introdução + trabalhos
-  relacionados; abstract provisório), após merge do PR de registro da
-  validação (`docs/artigo-w2-validacao`). Pré-condições já satisfeitas: PR
-  #188 (W2a) MERGED e desdobramento S10-W2a..f **validado pelo autor**
-  (2026-06-10). Ciclo: 1 etapa por sessão; bloqueio verificado via `gh`
-  antes de iniciar.
+- **Etapa W2c da #175** (Seção 3 do artigo: método condensado — compressão
+  de §3–§4 do relatório; DL-05 como tabela; equivalência VF2↔WL D-16/W-02
+  em 1 parágrafo; reprodutibilidade em 1 parágrafo), após merge do PR da
+  W2b (`docs/artigo-w2b-intro-relacionados`). Ciclo: 1 etapa por sessão;
+  bloqueio verificado via `gh` antes de iniciar.
 - **Fora do escopo da #174 (pendências anotadas na revisão W1f):**
   conversão final do relatório via pandoc (inserção física das figuras
   regeneráveis; remoção dos checklists de processo W1b..e) — a cargo do
@@ -880,9 +909,11 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR do registro de validação (`docs/artigo-w2-validacao`) aguardando CI +
-  revisão humana.** Claude Code não faz merge. A etapa W2b inicia após o
+- **PR da etapa W2b (`docs/artigo-w2b-intro-relacionados`) aguardando CI +
+  revisão humana.** Claude Code não faz merge. A etapa W2c inicia após o
   merge deste PR.
+- PR **#190** (registro da validação) **MERGED** em 2026-06-10 — bloqueio
+  anterior da W2b resolvido.
 - PR **#188** (W2a) **MERGED** em 2026-06-10 e **desdobramento S10-W2a..f
   validado pelo autor** na #175 (2026-06-10; sem sub-issues, agrupamento
   como proposto, sem venue/template por ora) — bloqueios anteriores da W2b
@@ -900,6 +931,17 @@ Código **congelado** — somente análise e documentação.
   S9 `closed`). Milestones S8 e S9 concluídos.
 
 **Decisões pendentes de validação humana:**
+- **Achado W2b "Narayanan & Shmatikov 2009 × 2008" — encaminhamento aberto
+  para discussão na #175** (comentário de 2026-06-10). São **dois papers
+  distintos** (2008 Netflix, consolidado em `main`; 2009 "De-anonymizing
+  social networks", S&P 2009, ausente de `main` e tematicamente mais próximo
+  do artigo). Opções postas: **A** manter 2008 (typo; mínima, já aplicada na
+  W2b; corrigir corpo da issue via `gh issue edit`); **B** adicionar o paper
+  de 2009 como referência **complementar** (PR README §12 + `references/` +
+  citação na W2c/W2e; adendo — não reabertura — no Apêndice B do relatório);
+  **C** substituir 2008→2009 (não recomendada). Nenhuma opção exige
+  descongelamento (congelamento cobre código; docs são o modo ativo da
+  S10-W). Recomendação: **A agora, B opcional**. Aguardando decisão do autor.
 - D-08 (conectividade de LSs): decisão Opção B registrada. O d-sweep **manteve**
   d=2 (anotado como potencialmente degenerate, precedente D-10) em vez de excluir;
   confirmar se essa escolha é a definitiva.
@@ -923,6 +965,27 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Etapa W2b da #175: Seções 1–2 do artigo (introdução + trabalhos relacionados)
+
+- **Concluído:** Pré-verificação: PR #190 `MERGED` via `gh`; nenhum PR
+  aberto; desdobramento já validado pelo autor. Seções 1–2 redigidas em
+  `academic/artigo.md` (privado, fora do diff): resumo provisório com a tese
+  central (números k=2 dos dois datasets), introdução em 5 parágrafos
+  (DL-06; contribuição tripla; fronteira aferidor × ofensiva/Kerckhoffs;
+  ética; estrutura) e trabalhos relacionados em 4 parágrafos (Sweeney;
+  Backstrom; Liu & Terzi; Zhou & Pei; He 2009; Narayanan & Shmatikov 2008;
+  Nettleton & Salas como futuro). Referências iniciadas (7/14 do Apêndice
+  B). Correção de registro: Narayanan & Shmatikov é 2008 em `main`, não
+  2009 como grafado na #175/esqueleto. Rastreabilidade pública atualizada
+  (`artigo_rastreabilidade.md` W2b ✅; `artigo_execucoes.md` 2/6). Branch
+  `docs/artigo-w2b-intro-relacionados` (`Refs #175`).
+- **Próximo:** Etapa W2c (Seção 3 — método condensado), após merge do PR
+  da W2b.
+- **Bloqueios:** PR da W2b aguardando CI + revisão humana (Claude Code não
+  faz merge).
+- **Decisões pendentes:** Nenhuma nova (D-08 segue como única pendência
+  histórica).
 
 ### 2026-06-10 — Validação do desdobramento S10-W2a..f da #175 (registro; sem redação)
 
