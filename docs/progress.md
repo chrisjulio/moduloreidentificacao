@@ -18,6 +18,36 @@
 Código **congelado** — somente análise e documentação.
 
 **Último passo concluído:**
+- **Etapa W2d da #175 — redação da Seção 4 do artigo (resultados).
+  ✅ (docs, PR aberto).** Quarta etapa do desdobramento S10-W2a..f — a mais
+  pesada, executada em sessão própria conforme o desdobramento validado.
+  Bloqueio verificado antes de iniciar: PR **#194** (W2c) `MERGED` via `gh`
+  (`2026-06-10T21:06:57Z`); nenhum PR aberto; sem dúvidas em aberto na #175
+  para a etapa. **(1) Texto privado (gitignorado, fora do diff):** Seção 4
+  redigida em `academic/artigo.md` (6 subseções), comprimindo §5.1–§5.7 do
+  relatório: §4.1 Facebook — k-anonimato atingido (critério substantivo sem
+  codinome), **Tabela 2** (agregados por k), leitura da curva (rr_subgrafo
+  0,79→0,00; KS-D 0,00→0,65; rr_grau sobe a 0,0990 em k=20), **Figura 2**
+  (regenerável, nota de conversão), nota do motor KL (inócua em d=1,
+  encaminhada à Seção 5); §4.2 achado central — d=1 ≡ k-anonimato de grau
+  (0,7914 vs 0,0263 em k=2); §4.3 Enron — **Tabela 3**, rr_subgrafo
+  0,1241→0,0569 monotônico, rr_grau ~40× menor, **Figura 3**, nota da cota
+  1/k (violação em k=20 esperada); §4.4 resultado generalizável — critério
+  pré-fixado satisfeito nos dois datasets, **Tabela 4** (gap k=2 ~30×/~38×),
+  sinal robusto/magnitudes não comparáveis; §4.5 painel normalizado —
+  3 confundidores, **Figura 4** (snapshot versionado
+  `docs/assets/comparison_fb_enron.png`), painéis fração da cota (pico
+  ~2,03; cruzamento ~k≈14) e decaimento relativo (1,0→0,18→0,0 vs
+  1,0→0,63→0,46), eixo log rejeitado; §4.6 d-sweep em 1 parágrafo
+  (tendências opostas/deslocamento do vetor de ataque; EGS ≈ k·d;
+  degenerados e zeros genuínos sem codinome) + entropia em 2 frases (sem
+  reportar valores inexistentes). **Referências:** nenhuma nova (12
+  entradas). Todo número conferido contra `results_baseline.md`/
+  `results_enron.md`/`results_dsweep.md`; checklist preservado como
+  "Cobertura do checklist (W2d)" para a W2f. **(2) Rastreabilidade pública
+  (no PR):** matriz (`artigo_rastreabilidade.md`) com W2d ✅ (W2c → MERGED
+  #194); `artigo_execucoes.md` (4 de 6 etapas). Só docs; código congelado
+  respeitado. Branch `docs/artigo-w2d-resultados` (`Refs #175`).
 - **Etapa W2c da #175 — redação da Seção 3 do artigo (método condensado).
   ✅ (docs, PR aberto).** Terceira etapa do desdobramento S10-W2a..f.
   Bloqueio verificado antes de iniciar: PR **#193** (reencaminhamento da
@@ -939,12 +969,13 @@ Código **congelado** — somente análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Etapa W2d da #175** (Seção 4 do artigo: resultados — **a mais pesada,
-  sessão própria**, como a W1d do relatório; baseline Facebook d=1 + achado
-  B1 + Enron + B1 generalizável W-04 + figuras por dataset e painel
-  normalizado DL-04/W-06 + d-sweep como suporte; todo número conferido
-  contra `results_baseline.md`/`results_enron.md`/`results_dsweep.md`),
-  após merge do PR da W2c (`docs/artigo-w2c-metodo`). Ciclo: 1 etapa por
+- **Etapa W2e da #175** (Seções 5–6 do artigo: discussão + conclusão +
+  **abstract final** — reescrita do resumo provisório da W2b à luz das
+  Seções 4–6; validade externa/B2 parcialmente fechado; resultado negativo
+  como contribuição defensiva; taxas como cota inferior; limitações
+  selecionadas; ponte para a deliberação metodológica da tese sem decidir a
+  via; futuros sem afirmar execução de entropia-ataque/Nettleton), após
+  merge do PR da W2d (`docs/artigo-w2d-resultados`). Ciclo: 1 etapa por
   sessão; bloqueio verificado via `gh` antes de iniciar.
 - **Fora do escopo da #174 (pendências anotadas na revisão W1f):**
   conversão final do relatório via pandoc (inserção física das figuras
@@ -956,9 +987,11 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da etapa W2c (`docs/artigo-w2c-metodo`) aguardando CI + revisão
-  humana.** Claude Code não faz merge. A etapa W2d inicia após o merge
+- **PR da etapa W2d (`docs/artigo-w2d-resultados`) aguardando CI + revisão
+  humana.** Claude Code não faz merge. A etapa W2e inicia após o merge
   deste PR.
+- PR **#194** (W2c) **MERGED** em 2026-06-10 (`21:06:57Z`) — Seção 3 do
+  artigo e rastreabilidade em `main`; bloqueio anterior da W2d resolvido.
 - PR **#193** (reencaminhamento da decisão A+B) **MERGED** em 2026-06-10
   (`20:45:22Z`) — incidente de roteamento do #192 **encerrado**: conteúdo
   da decisão A+B em `main`.
@@ -1010,6 +1043,28 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Etapa W2d da #175: Seção 4 do artigo (resultados)
+
+- **Concluído:** Pré-verificação: PR #194 (W2c) `MERGED` via `gh`
+  (21:06:57Z); nenhum PR aberto; sem dúvidas em aberto na #175 para a
+  etapa. Seção 4 redigida em `academic/artigo.md` (privado, fora do diff)
+  em 6 subseções, comprimindo §5.1–§5.7 do relatório: Facebook (Tabela 2;
+  Figura 2; nota do motor KL inócua em d=1); achado central (d=1 ≡
+  k-anonimato de grau; 0,7914 vs 0,0263 em k=2); Enron (Tabela 3; Figura 3;
+  rr_subgrafo 0,1241→0,0569; cota 1/k violada em k=20 — esperado);
+  resultado generalizável (Tabela 4: ~30×/~38×); painel normalizado
+  (Figura 4 = `docs/assets/comparison_fb_enron.png`; 3 confundidores);
+  d-sweep em 1 parágrafo + entropia em 2 frases. Nenhuma referência nova
+  (12 entradas); todo número conferido contra os relatórios versionados.
+  Rastreabilidade pública atualizada (`artigo_rastreabilidade.md` W2d ✅;
+  `artigo_execucoes.md` 4/6). Branch `docs/artigo-w2d-resultados`
+  (`Refs #175`).
+- **Próximo:** Etapa W2e (Seções 5–6 + abstract final), após merge do PR
+  desta etapa (verificar via `gh`).
+- **Bloqueios:** PR da W2d aguardando CI + revisão humana.
+- **Decisões pendentes:** Nenhuma nova (D-08 segue como única pendência
+  herdada).
 
 ### 2026-06-10 — Etapa W2c da #175: Seção 3 do artigo (método condensado)
 
