@@ -2,8 +2,8 @@
 
 > **Propósito.** Contabiliza e registra as **execuções das etapas de redação**
 > do artigo ([#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175),
-> desdobramento S10-W2a..f — **proposto em 2026-06-10, aguardando validação do
-> autor na #175**). Rastreio proposto no mesmo molde da #174: as etapas não
+> desdobramento S10-W2a..f — proposto e **validado pelo autor em 2026-06-10**
+> na #175). Rastreio no mesmo molde da #174 (decisão do autor): as etapas não
 > são formalizadas como sub-issues no GitHub — comentário de execução na
 > própria #175 + este registro versionado. Complementa a matriz de
 > rastreabilidade ([`artigo_rastreabilidade.md`](artigo_rastreabilidade.md)),
@@ -22,7 +22,7 @@
 
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
-| W2a | Esqueleto em `academic/artigo.md` + matriz + este registro | 2026-06-10 | `docs/artigo-skeleton-w2a` | [#188](https://github.com/chrisjulio/moduloreidentificacao/pull/188) | ✅ executada (PR em revisão) |
+| W2a | Esqueleto em `academic/artigo.md` + matriz + este registro | 2026-06-10 | `docs/artigo-skeleton-w2a` | [#188](https://github.com/chrisjulio/moduloreidentificacao/pull/188) | ✅ MERGED (2026-06-10) |
 | W2b | Seções 1–2: introdução + trabalhos relacionados | — | — | — | ⏳ pendente |
 | W2c | Seção 3: método condensado | — | — | — | ⏳ pendente |
 | W2d | Seção 4: resultados (a mais pesada — sessão própria) | — | — | — | ⏳ pendente |
@@ -65,3 +65,19 @@
   só docs — código congelado (S10-W) respeitado.
 - **Próxima etapa:** W2b, após merge deste PR **e** validação do
   desdobramento pelo autor na #175.
+
+### Validação do desdobramento — 2026-06-10 (não é etapa de redação)
+
+- **Pré-verificação:** PR **#188** (W2a) confirmado `MERGED` via `gh pr view
+  188` (`mergedAt: 2026-06-10T13:52:52Z`); nenhum PR aberto.
+- **Decisões do autor sobre os 3 pontos abertos da proposta** (registradas em
+  [comentário na #175](https://github.com/chrisjulio/moduloreidentificacao/issues/175#issuecomment-4671084769)):
+  1. **Modelo de rastreio:** mantido o da #174 — sem sub-issues; comentário
+     de execução na #175 + este registro.
+  2. **Agrupamento das etapas:** mantido como proposto (W2b..f, com W2d em
+     sessão própria).
+  3. **Venue/template:** sem template por ora — Markdown neutro, conversão
+     posterior (pandoc); limites de página tratados quando houver venue-alvo.
+- **Decisão de ritmo:** esta sessão registra **apenas a validação** (decisão
+  do autor); a **W2b** fica liberada para a próxima sessão — 1 etapa por
+  sessão, bloqueio verificado via `gh` antes de iniciar.

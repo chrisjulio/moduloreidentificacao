@@ -18,6 +18,22 @@
 Código **congelado** — somente análise e documentação.
 
 **Último passo concluído:**
+- **Validação do desdobramento S10-W2a..f da #175 — 3 pontos decididos pelo
+  autor; W2b liberada. ✅ (docs, PR aberto).** Sessão de registro, não de
+  redação. Pré-verificação: PR **#188** (W2a) `MERGED` via `gh`
+  (`2026-06-10T13:52:52Z`); nenhum PR aberto. **Decisões do autor** sobre os
+  pontos abertos da proposta (comentário de validação postado na #175):
+  **(1)** modelo de rastreio = o da #174 (sem sub-issues; comentário de
+  execução na #175 + `docs/artigo_execucoes.md`); **(2)** agrupamento das
+  etapas mantido como proposto (W2b intro+relacionados; W2c método; W2d
+  resultados em sessão própria; W2e discussão+conclusão+abstract; W2f revisão
+  integrada); **(3)** venue/template = nenhum por ora (Markdown neutro,
+  conversão posterior via pandoc; limites de página quando houver
+  venue-alvo). **Rastreabilidade atualizada:** `artigo_execucoes.md` (W2a →
+  MERGED; seção de validação) e `artigo_rastreabilidade.md` (cabeçalho +
+  estado por etapa). Por decisão do autor, a **W2b não foi executada nesta
+  sessão** — fica para a próxima (1 etapa por sessão). Só docs; código
+  congelado respeitado. Branch `docs/artigo-w2-validacao` (`Refs #175`).
 - **Etapa W2a da #175 — esqueleto do artigo + rastreabilidade pública +
   proposta de desdobramento. ✅ (docs, PR aberto).** Abertura da redação do
   artigo (S10-W2). Bloqueio verificado antes de iniciar: PR **#187** (W1f)
@@ -848,11 +864,12 @@ Código **congelado** — somente análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Merge do PR da W2a** (esqueleto do artigo + rastreabilidade) e
-  **validação do desdobramento S10-W2a..f pelo autor na #175**. Em seguida,
-  **etapa W2b** (Seções 1–2 do artigo: introdução + trabalhos relacionados),
-  espelhando o ciclo de execução do relatório (1 etapa por sessão; bloqueio
-  verificado via `gh` antes de iniciar).
+- **Etapa W2b da #175** (Seções 1–2 do artigo: introdução + trabalhos
+  relacionados; abstract provisório), após merge do PR de registro da
+  validação (`docs/artigo-w2-validacao`). Pré-condições já satisfeitas: PR
+  #188 (W2a) MERGED e desdobramento S10-W2a..f **validado pelo autor**
+  (2026-06-10). Ciclo: 1 etapa por sessão; bloqueio verificado via `gh`
+  antes de iniciar.
 - **Fora do escopo da #174 (pendências anotadas na revisão W1f):**
   conversão final do relatório via pandoc (inserção física das figuras
   regeneráveis; remoção dos checklists de processo W1b..e) — a cargo do
@@ -863,12 +880,13 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da W2a (`docs/artigo-skeleton-w2a`) aguardando CI + revisão humana.**
-  Claude Code não faz merge. A etapa W2b não inicia antes do merge **e** da
-  validação do desdobramento S10-W2a..f pelo autor na #175.
-- **Desdobramento S10-W2a..f: proposto, não validado** — comentário de
-  proposta na #175 aguarda decisão do autor (inclusive se mantém o modelo
-  sem sub-issues usado na #174).
+- **PR do registro de validação (`docs/artigo-w2-validacao`) aguardando CI +
+  revisão humana.** Claude Code não faz merge. A etapa W2b inicia após o
+  merge deste PR.
+- PR **#188** (W2a) **MERGED** em 2026-06-10 e **desdobramento S10-W2a..f
+  validado pelo autor** na #175 (2026-06-10; sem sub-issues, agrupamento
+  como proposto, sem venue/template por ora) — bloqueios anteriores da W2b
+  resolvidos.
 - Relatório (#174) **fechado** em 2026-06-10: PRs #181–#183, #185–#187
   (W1a..f) todos **MERGED** — bloqueios anteriores resolvidos.
 - **Sub-issues S10-W1a..f: dispensadas** (decisão do autor, 2026-06-09) —
@@ -905,6 +923,22 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-10 — Validação do desdobramento S10-W2a..f da #175 (registro; sem redação)
+
+- **Concluído:** Pré-verificação: PR #188 (W2a) `MERGED` via `gh`; nenhum PR
+  aberto. **3 pontos abertos da proposta decididos pelo autor** e registrados
+  em comentário na #175: (1) rastreio sem sub-issues (molde da #174);
+  (2) agrupamento W2b..f mantido como proposto (W2d em sessão própria);
+  (3) sem venue/template por ora (Markdown + pandoc). Rastreabilidade
+  atualizada: `artigo_execucoes.md` (W2a → MERGED; seção de validação) +
+  `artigo_rastreabilidade.md`. W2b **não** executada (decisão do autor —
+  fica para a próxima sessão). Só docs. Branch `docs/artigo-w2-validacao`
+  (`Refs #175`).
+- **Próximo:** merge do PR de registro; depois **W2b** (Seções 1–2 do
+  artigo).
+- **Bloqueios:** PR de registro aguardando CI + revisão humana.
+- **Decisões pendentes:** D-08 (d=2 mantido no d-sweep) — confirmar.
 
 ### 2026-06-10 — Etapa W2a da #175: esqueleto do artigo + rastreabilidade + proposta de desdobramento
 
