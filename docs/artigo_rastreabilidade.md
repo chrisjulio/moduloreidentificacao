@@ -15,8 +15,9 @@
 > **derivado**: mesma evidência, narrativa comprimida para par revisor.
 >
 > Criada na etapa **S10-W2a** (esqueleto + matriz). Atualizada a cada etapa
-> de redação (S10-W2b..f). Desdobramento **proposto na #175 — aguardando
-> validação do autor**.
+> de redação (S10-W2b..f). Desdobramento **validado pelo autor na #175 em
+> 2026-06-10** (sem sub-issues; agrupamento como proposto; sem venue/template
+> por ora — Markdown neutro, conversão posterior).
 
 ---
 
@@ -62,11 +63,11 @@ relatório — ver [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md
 
 ---
 
-## Estado por etapa (S10-W2a..f — proposta em discussão na #175)
+## Estado por etapa (S10-W2a..f — validado pelo autor em 2026-06-10)
 
 | Etapa | Escopo | Status |
 |---|---|---|
-| W2a | Esqueleto em `academic/artigo.md` + esta matriz + registro de execuções | ✅ concluída (2026-06-10) |
+| W2a | Esqueleto em `academic/artigo.md` + esta matriz + registro de execuções | ✅ concluída (PR #188 MERGED, 2026-06-10) |
 | W2b | Seções 1–2 (introdução + trabalhos relacionados; abstract provisório) | ⏳ pendente |
 | W2c | Seção 3 (método condensado — compressão de §3–§4 do relatório) | ⏳ pendente |
 | W2d | Seção 4 (resultados — a mais pesada; sessão própria) | ⏳ pendente |
@@ -74,6 +75,7 @@ relatório — ver [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md
 | W2f | Revisão integrada (coerência com o relatório e `main`) + DoD da #175 | ⏳ pendente |
 
 > Desdobramento espelha o padrão validado do relatório (S10-W1a..f, #174).
-> Rastreio proposto: **sem sub-issues** — comentário de execução na #175 +
-> [`artigo_execucoes.md`](artigo_execucoes.md), como na decisão do autor para
-> a #174 (2026-06-09). **Aguardando validação do autor na #175.**
+> Rastreio: **sem sub-issues** — comentário de execução na #175 +
+> [`artigo_execucoes.md`](artigo_execucoes.md), como na #174. **Validado pelo
+> autor na #175 em 2026-06-10** (3 pontos abertos decididos: modelo de
+> rastreio da #174; agrupamento como proposto; sem venue/template por ora).
