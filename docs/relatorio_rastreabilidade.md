@@ -26,8 +26,12 @@ Estrutura mínima fixada pela #174:
 7. Reprodutibilidade
 8. Enquadramento ético
 
-Apêndices (decisão na revisão integrada): tabelas brutas, inventário de
-entregáveis, referências bibliográficas (README §12/§13).
+Apêndices — decididos na revisão integrada (W1f, 2026-06-10): **Apêndice A**
+(tabelas brutas por (k, semente) do baseline Facebook e do Enron, embutidas;
+d-sweep referenciado a `results_dsweep.md`) e **Apêndice B** (as 14
+referências bibliográficas do README §12, embutidas) entram; o inventário de
+entregáveis **não** entra (documento vivo do repositório — referenciado, não
+copiado).
 
 ---
 
@@ -75,7 +79,20 @@ reabre.
 | W1c | Seções 3–4 (método; desenho experimental) | ✅ concluída (2026-06-09) |
 | W1d | Seção 5 (resultados) | ✅ concluída (2026-06-09) |
 | W1e | Seções 6–8 (limitações; reprodutibilidade; ética) | ✅ concluída (2026-06-09) |
-| W1f | Revisão integrada + DoD da #174 | ⏳ pendente |
+| W1f | Revisão integrada + DoD da #174 | ✅ concluída (2026-06-10) |
+
+> **W1f executada (2026-06-10):** conferência integral das Seções 1–8
+> contra `main` (números × `results_*.md`: exatos; W-01..W-06 nos destinos
+> do checklist; terminologia de aferição conforme; artefatos citados todos
+> presentes). **Única não-conformidade encontrada e corrigida:** a Seção 7.2
+> citava `scripts.verify_reproduction` como verificação automática entregue
+> — o script não está versionado em `main` (resíduo documental registrado
+> na issue #172); a seção foi reescrita (conferência manual dos agregados
+> por k, tolerância 0,02) e a ameaça correspondente adicionada à tabela da
+> Seção 6.3. Apêndices decididos (acima); diagrama do pipeline (Mermaid de
+> `pipeline.md` §1) incluído para a conversão final. **DoD da #174
+> conferida item a item: cumprida.** Registro detalhado em
+> [`relatorio_execucoes.md`](relatorio_execucoes.md).
 
 > As etapas seguem a proposta de desdobramento validada pelo autor na #174
 > (comentário de 2026-06-09, 5 pontos resolvidos). Decisão do autor

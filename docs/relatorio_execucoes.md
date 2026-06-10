@@ -18,7 +18,7 @@
 
 ## Contabilização
 
-**Etapas executadas: 5 de 6.**
+**Etapas executadas: 6 de 6 — desdobramento S10-W1a..f concluído.**
 
 | Etapa | Escopo | Data | Branch | PR | Status |
 |---|---|---|---|---|---|
@@ -26,8 +26,8 @@
 | W1b | Seções 1–2: introdução/posicionamento (DL-06) + independência do EpiCNet | 2026-06-09 | `docs/relatorio-w1b-intro-epicnet` | [#182](https://github.com/chrisjulio/moduloreidentificacao/pull/182) | ✅ executada (PR **MERGED**) |
 | W1c | Seções 3–4: método + desenho experimental [M]/[D] | 2026-06-09 | `docs/relatorio-w1c-metodo-desenho` | [#183](https://github.com/chrisjulio/moduloreidentificacao/pull/183) | ✅ executada (PR **MERGED**) |
 | W1d | Seção 5: resultados (a mais pesada — sessão própria) | 2026-06-09 | `docs/relatorio-w1d-resultados` | [#185](https://github.com/chrisjulio/moduloreidentificacao/pull/185) | ✅ executada (PR **MERGED**) |
-| W1e | Seções 6–8: limitações, reprodutibilidade, ética | 2026-06-09 | `docs/relatorio-w1e-limitacoes-repro-etica` | [#186](https://github.com/chrisjulio/moduloreidentificacao/pull/186) | ✅ executada (PR em revisão) |
-| W1f | Revisão integrada + fechamento da DoD da #174 | — | — | — | ⏳ pendente |
+| W1e | Seções 6–8: limitações, reprodutibilidade, ética | 2026-06-09 | `docs/relatorio-w1e-limitacoes-repro-etica` | [#186](https://github.com/chrisjulio/moduloreidentificacao/pull/186) | ✅ executada (PR **MERGED**) |
+| W1f | Revisão integrada + fechamento da DoD da #174 | 2026-06-10 | `docs/relatorio-w1f-revisao-integrada` | [#187](https://github.com/chrisjulio/moduloreidentificacao/pull/187) | ✅ executada (PR em revisão) |
 
 ---
 
@@ -262,3 +262,56 @@
   código congelado (S10-W) respeitado.
 - **Próxima etapa:** W1f (revisão integrada + decisão de apêndices +
   fechamento da DoD da #174), após merge do PR desta etapa.
+
+### W1f — 2026-06-10 — Revisão integrada + decisão de apêndices + DoD da #174
+
+- **Pré-verificação de bloqueios:** PR #186 (W1e) confirmado `MERGED` via
+  `gh` (`mergedAt: 2026-06-10T12:52:17Z`); nenhum PR aberto.
+- **Artefato privado (gitignorado, fora do diff):** revisão integrada das
+  Seções 1–8 de `academic/relatorio_qualificacao.md`; cabeçalho de status
+  atualizado para "REDAÇÃO CONCLUÍDA E REVISADA (S10-W1f)". Backup externo
+  a cargo do autor.
+  - **Conferências realizadas (todas contra `main`):** (1) números das
+    tabelas agregadas §5.1/§5.4 × `results_baseline.md`/`results_enron.md`
+    — **exatos**; alegações do d-sweep §5.3 × `results_dsweep.md` (48
+    runs, 33 SP/15 FLC, EGS 19,70/133,0, cobertura mínima 0,752) —
+    conferem; (2) W-01..W-06 incorporados nos destinos fixados pelo
+    `artifact_writing_checklist.md` (W-01→§3.3, W-02→§3.4, W-03→§3.5,
+    W-04→§5.5, W-05→§4.1+§6, W-06→§5.6), nenhum reaberto; (3)
+    terminologia de aferição: varredura por termos proibidos limpa; (4)
+    artefatos citados todos presentes em `main`
+    (`comparison_fb_enron.{png,csv}`, fluxogramas, 3 configs YAML).
+  - **Achado e correção (única não-conformidade):** a §7.2 citava
+    `scripts.verify_reproduction` como verificação automática entregue —
+    o script **não está versionado** em `main` (nunca existiu no histórico
+    git; discrepância já identificada na revisão de consistência do README,
+    issue #172, que corrigiu o README e registrou o resíduo de
+    `reproducibility.md`). Correção aplicada no texto privado: §7.2
+    reescrita (validação end-to-end da #27 mantida; conferência final
+    **manual** dos agregados por k sob tolerância 0,02; script anotado como
+    especificado-mas-não-versionado, pendência pós-qualificação) + linha
+    nova na tabela de ameaças (§6.3). O item da DoD "sem citar item
+    ausente de `main`" passa a ser cumprido.
+  - **Decisões de apêndices:** Apêndice A (tabelas brutas FB + Enron
+    embutidas; d-sweep referenciado) e Apêndice B (14 referências do
+    README §12 embutidas) **entram**; inventário de entregáveis **não
+    entra** (documento vivo — referenciado, não copiado). Diagrama do
+    pipeline (Mermaid de `pipeline.md` §1) **incluído** para renderização
+    na conversão final. Checklists "Cobertura do checklist (W1b..e)"
+    mantidos como rastro de redação, a remover na conversão (pandoc).
+  - **Conferência da DoD da #174 (emendada):** 7 itens conferidos item a
+    item e marcados na seção "Revisão integrada (W1f)" do próprio
+    documento — **DoD cumprida**. Pendências fora do escopo da #174:
+    conversão final (pandoc, com inserção física das figuras regeneráveis
+    e remoção dos checklists de processo) e versionamento do script de
+    verificação (resíduo de #172).
+- **Artefatos públicos (versionados neste PR):** matriz
+  ([`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)) com W1f
+  concluída + decisão de apêndices + nota da revisão; este registro
+  (contabilização 6/6; W1e → MERGED); `progress.md` atualizado.
+- **Verificação:** `git check-ignore academic/relatorio_qualificacao.md`
+  confirma privacidade; diff público contém só docs de rastreabilidade —
+  código congelado (S10-W) respeitado.
+- **Encerramento:** o PR desta etapa fecha a **#174** (`Closes #174`) —
+  desdobramento S10-W1a..f concluído. Continuidade da fase de redação:
+  artigo (**#175**, S10-W2), que declara dependência desta issue.
