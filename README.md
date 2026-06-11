@@ -7,13 +7,15 @@
 >
 > **Estado:** escopo Mínimo (S1–S5) e escopo Desejável — D-08 (d-sweep k×d), S9
 > (dataset secundário Email-Enron) e entropia (métrica/ataque) — concluídos;
-> consolidação documental (S10) em curso. **Processamento experimental congelado:**
-> nenhuma execução em aberto e nenhuma frente nova será iniciada nesta etapa; o
-> trabalho restante é exclusivamente de produção documental (relatório + artigo).
+> consolidação documental (S10) **concluída**, incluindo a produção acadêmica:
+> relatório técnico (#174) e artigo (#175) redigidos e revisados
+> (fase S10-W — ver §4). Os textos acadêmicos vivem em `academic/` (privado);
+> a rastreabilidade do processo de escrita é pública em `docs/`.
+> **Processamento experimental congelado:** nenhuma execução em aberto.
 > Frentes não executadas (entropia não uniforme, otimização do subgrafo em escala,
-> Nettleton & Salas) ficam registradas como **trabalho futuro**, posterior à entrega
-> da documentação. Repositório em condições de entrega acadêmica.
-> Última revisão: 09/06/2026.
+> Nettleton & Salas) permanecem registradas como **trabalho futuro**.
+> Repositório em condições de entrega acadêmica.
+> Última revisão: 10/06/2026.
 
 ![CI](https://github.com/chrisjulio/moduloreidentificacao/actions/workflows/ci.yml/badge.svg)
 
@@ -192,10 +194,11 @@ Ver [`docs/reproducibility.md`](docs/reproducibility.md) §8.
 
 ## 4. Status do projeto
 
-**Atualizado em 09/06/2026.** Escopo Mínimo (S1–S5) concluído e escopo Desejável
+**Atualizado em 10/06/2026.** Escopo Mínimo (S1–S5) concluído e escopo Desejável
 integralmente concluído (dataset secundário Email-Enron + métrica/ataque por entropia).
-Processamento experimental **congelado** — sem novas execuções ou frentes em aberto;
-o esforço corrente é de consolidação documental (S10) e produção do relatório/artigo.
+Processamento experimental **congelado** — sem novas execuções ou frentes em aberto.
+A consolidação documental (S10) está **concluída**, incluindo a redação e revisão
+do relatório técnico (#174) e do artigo (#175) — ver o bloco **S10** abaixo.
 
 | Fase | Período planejado | Status |
 |---|---|---|
@@ -259,6 +262,46 @@ ciclo encerrado pelas PRs #149, #150 e #151. Issue
 Com isso, o escopo **Desejável** está integralmente concluído. O escopo Aspiracional
 ([Nettleton & Salas, 2016](https://doi.org/10.1016/j.eswa.2016.02.004)) não é
 perseguido — ver [Seção 6 — Entregáveis](#6-entregáveis).
+
+**S10 — consolidação documental e produção acadêmica: CONCLUÍDO em 10/06/2026.**
+Fase final, executada com o processamento experimental **congelado** (somente
+análise e documentação). Em duas camadas:
+
+1. **Infraestrutura de escrita** (issues #140, #141, #154–#158, #161, #177):
+   checklist prospectivo de verificações pré-redação
+   ([`docs/artifact_writing_checklist.md`](docs/artifact_writing_checklist.md))
+   com os itens `W-01..W-06` populados e **todos resolvidos** antes da redação;
+   mapa estrutural de rastreabilidade A01–A06
+   ([`docs/mapa_estrutural.md`](docs/mapa_estrutural.md)); e catálogo
+   bibliográfico completo — as 14 referências da §12 baixadas para
+   `/references/` (PDFs não versionados; catálogo público em
+   `references/README.md`), com correção de um DOI incorreto (Wörlein) achada
+   na auditoria bibliográfica.
+2. **Produção acadêmica (fase S10-W):** redação e revisão dos dois artefatos,
+   ambos derivados exclusivamente dos artefatos versionados do repositório
+   (relatórios de resultados, decisões `D-xx`/`DL-xx`, figuras de `docs/assets/`):
+   - **Relatório técnico ([#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174))** —
+     redigido em 6 etapas incrementais (desdobramento S10-W1a..f), uma etapa
+     por sessão, cada uma entregue por PR (#181–#187) com bloqueio verificado
+     antes de iniciar; a etapa final de revisão integrada conferiu todos os
+     números do texto contra os relatórios versionados (`results_baseline.md`,
+     `results_enron.md`, `results_dsweep.md`). Fechado em 10/06/2026.
+   - **Artigo ([#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175))** —
+     derivado do relatório (mesma evidência, narrativa comprimida), redigido
+     sob o mesmo protocolo em 6 etapas (S10-W2a..f, PRs #188–#197). Fechado
+     em 10/06/2026.
+
+**Regra de privacidade da produção acadêmica (decisão do autor, DoDs emendadas):**
+o texto substantivo dos dois documentos vive em `academic/` (gitignorado;
+backup externo do autor) e **não é versionado** — o repositório é aberto e a
+destinação formal dos documentos no fluxo da tese ainda não está definida. O
+que se versiona é a **rastreabilidade do processo**: as matrizes
+seção → fontes → `W-NN` → figuras
+([`docs/relatorio_rastreabilidade.md`](docs/relatorio_rastreabilidade.md),
+[`docs/artigo_rastreabilidade.md`](docs/artigo_rastreabilidade.md)) e os
+registros de execução etapa a etapa
+([`docs/relatorio_execucoes.md`](docs/relatorio_execucoes.md),
+[`docs/artigo_execucoes.md`](docs/artigo_execucoes.md)).
 
 ### Componentes implementados
 
@@ -368,12 +411,29 @@ perseguido — ver [Seção 6 — Entregáveis](#6-entregáveis).
   `docs/metrics_definitions.md`, `docs/algorithm_notes.md` §4.4 e
   [`docs/decision_log.md`](docs/decision_log.md) (D-17).
 
-**S10 — consolidação documental (issue-mãe #140)**
+**S10 — consolidação documental e produção acadêmica (issues #140, #174, #175, #177)**
 - [`docs/artifact_writing_checklist.md`](docs/artifact_writing_checklist.md) —
   fila *prospectiva* de verificações a confirmar/declarar antes de redigir cada
   seção dos artefatos finais (relatório + artigo); complementa, sem substituir,
   os documentos retrospectivos (`achados_divergencias.md`, `decision_log.md`,
-  `limitations.md`).
+  `limitations.md`). Itens `W-01..W-06` populados e resolvidos (#141).
+- [`docs/mapa_estrutural.md`](docs/mapa_estrutural.md) — mapa de
+  rastreabilidade A01–A06 → produto documental (#161).
+- [`docs/relatorio_rastreabilidade.md`](docs/relatorio_rastreabilidade.md) e
+  [`docs/relatorio_execucoes.md`](docs/relatorio_execucoes.md) —
+  rastreabilidade pública da redação do relatório técnico (#174):
+  matriz seção → fontes → `W-NN` → figuras e registro das 6 etapas S10-W1a..f
+  (PRs #181–#187).
+- [`docs/artigo_rastreabilidade.md`](docs/artigo_rastreabilidade.md) e
+  [`docs/artigo_execucoes.md`](docs/artigo_execucoes.md) — rastreabilidade
+  pública da redação do artigo (#175): matriz com mapa de compressão
+  relatório → artigo (seção → insumo no relatório → fontes → figuras) e
+  registro das 6 etapas S10-W2a..f (PRs #188–#197).
+- `references/README.md` — catálogo público da bibliografia (14 entradas:
+  arquivo, referência, DOI/link, fonte); PDFs em `/references/` não
+  versionados (#177).
+- `academic/` — textos do relatório e do artigo (conteúdo privado; só
+  `academic/README.md` é versionado — ver §7).
 
 ---
 
@@ -538,8 +598,15 @@ consolidado em [`docs/entregaveis.md`](docs/entregaveis.md).
   privacidade; [#30](https://github.com/chrisjulio/moduloreidentificacao/issues/30)
   fechada).
 
+- **Produção acadêmica (✅ concluída).** Relatório técnico
+  ([#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174)) e
+  artigo ([#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175))
+  redigidos e revisados na fase S10-W (ver §4). Textos em `academic/`
+  (privados); processo de produção rastreável publicamente em `docs/`.
+
 O Mínimo é entregável defensável em si; o Desejável agrega validade externa e uma
-métrica de privacidade adicional.
+métrica de privacidade adicional; a produção acadêmica consolida ambos em
+documentos de circulação restrita.
 
 ---
 
@@ -569,16 +636,21 @@ métrica de privacidade adicional.
 /tests/                      # suíte de testes (espelha a estrutura de src/)
 /scripts/                    # setup de ambiente (Conda/Windows, VS Code) e medição de ego-nets
 /bugs/                       # registro acumulativo de bugs (execução + explicação + decisão)
-/academic/                   # documentos acadêmicos (relatório de qualificação, artigo) — conteúdo NÃO versionado; só o README.md da pasta é público (ver academic/README.md)
+/academic/                   # documentos acadêmicos (relatório técnico, artigo) — conteúdo NÃO versionado; só o README.md da pasta é público (ver academic/README.md)
+/references/                 # PDFs da bibliografia (não versionados); catálogo público em references/README.md
 /docs/
   scope.md                   # escopo, não-escopo e condições de contorno ética
   algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep e d>1)
   metrics_definitions.md     # definições operacionais das métricas
   data_dictionary.md         # dicionário de parâmetros, datasets (§1.1) e métricas
   decision_log.md            # registro formal de decisões técnicas (DL-01 a DL-05, D-04 a D-17)
-  achados_divergencias.md    # síntese de divergências proposto × executado (insumo para qualificação)
+  achados_divergencias.md    # síntese de divergências proposto × executado (insumo para os artefatos acadêmicos)
   artifact_writing_checklist.md  # fila prospectiva de verificações pré-redação dos artefatos (S10)
   mapa_estrutural.md         # mapa de rastreabilidade A01–A06 → produto documental (S10)
+  relatorio_rastreabilidade.md  # matriz pública de rastreabilidade do relatório técnico (#174)
+  relatorio_execucoes.md     # registro das 6 etapas de redação do relatório (S10-W1a..f)
+  artigo_rastreabilidade.md  # matriz pública de rastreabilidade do artigo (#175), com mapa de compressão relatório → artigo
+  artigo_execucoes.md        # registro das 6 etapas de redação do artigo (S10-W2a..f)
   progress.md                # log de progresso sessão a sessão
   validacao_k_anonimato.md   # resultados consolidados da validação empírica de k-anonimato
   results_baseline.md        # tabela bruta + agregações do experimento baseline (d=1)

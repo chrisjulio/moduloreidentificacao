@@ -136,9 +136,9 @@ Ciclo que materializou a issue desejável [#29](https://github.com/chrisjulio/mo
 
 ---
 
-## S10 — Consolidação Documental — Relatório + Artigo (EM ANDAMENTO 🔄)
+## S10 — Consolidação Documental — Relatório + Artigo (CONCLUÍDO ✅)
 
-Ciclo de infraestrutura documental e produção acadêmica (relatório de qualificação + artigo). A infraestrutura do checklist W-NN e os documentos de suporte estão completos; a issue S10-W2 (artigo) está em execução.
+Ciclo de infraestrutura documental e produção acadêmica (relatório técnico + artigo). A infraestrutura do checklist W-NN e os documentos de suporte estão completos; as issues S10-W1 (relatório, #174) e S10-W2 (artigo, #175) foram fechadas em 10/06.
 
 ### Infraestrutura documental (COMPLETO ✅)
 
@@ -159,14 +159,14 @@ Ciclo de infraestrutura documental e produção acadêmica (relatório de qualif
 |---|---|---|---|
 | [#172](https://github.com/chrisjulio/moduloreidentificacao/issues/172) | Varredura README × estado executado | Congelamento documental do README | ✅ Fechada 09/06 |
 | [#177](https://github.com/chrisjulio/moduloreidentificacao/issues/177) | Criar `/references` (PDFs bibliográficos) | `.gitignore` + catálogo de referências | ✅ Fechada 09/06 |
-| [#184](https://github.com/chrisjulio/moduloreidentificacao/issues/184) | Scripts de replicação via PowerShell/Bash | Scripts independentes de IDE para a banca | ✅ Fechada 10/06 |
+| [#184](https://github.com/chrisjulio/moduloreidentificacao/issues/184) | Scripts de replicação via PowerShell/Bash | Scripts independentes de IDE para demonstração externa | ✅ Fechada 10/06 |
 
-### Produção acadêmica S10-W (EM EXECUÇÃO 🔄)
+### Produção acadêmica S10-W (COMPLETO ✅)
 
 | # | Título resumido | Dependência | Status |
 |---|---|---|---|
-| [#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174) | S10-W1 — Relatório de qualificação | — (precede artigo) | ✅ Fechada 10/06 |
-| [#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175) | S10-W2 — Artigo | Depende de #174 | 🔴 **Aberta** |
+| [#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174) | S10-W1 — Relatório técnico | — (precede artigo) | ✅ Fechada 10/06 |
+| [#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175) | S10-W2 — Artigo | Depende de #174 | ✅ Fechada 10/06 |
 
 ### Outras fechadas no ciclo
 

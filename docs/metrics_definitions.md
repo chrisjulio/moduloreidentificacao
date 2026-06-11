@@ -437,7 +437,7 @@ O verificador certifica que *o algoritmo cumpriu sua promessa dada a partição
 produzida*, não que *`G'` é estruturalmente k-anônimo para qualquer
 particionamento alternativo de `G'`*. A segunda afirmação é mais forte, não
 está coberta, e deve ser listada como **ameaça à validade externa** no relatório
-de qualificação.
+técnico.
 
 ---
 

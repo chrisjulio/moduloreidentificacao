@@ -1,12 +1,12 @@
 # academic/ — Documentos acadêmicos (conteúdo não versionado)
 
 > **Propósito.** Esta pasta abriga os documentos acadêmicos produzidos a partir
-> deste repositório — o **relatório de qualificação**
+> deste repositório — o **relatório técnico**
 > ([#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174)) e o
-> **artigo** ([#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175))
-> — que estão sujeitos a **avaliação qualificada** (banca de qualificação /
-> par revisor) e, por isso, **não podem ser publicados** neste repositório,
-> que é aberto.
+> **artigo** ([#175](https://github.com/chrisjulio/moduloreidentificacao/issues/175)).
+> São documentos de **circulação restrita**: podem vir a integrar etapas
+> formais de avaliação acadêmica da tese — destinação ainda não definida — e,
+> por isso, **não podem ser publicados** neste repositório, que é aberto.
 
 ## Regra de versionamento
 

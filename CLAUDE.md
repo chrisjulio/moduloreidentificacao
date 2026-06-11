@@ -70,19 +70,28 @@ doutorado (PPGInf/UFPR) — não propõe mecanismo de privacidade novo.
 
 ## Fase atual
 
-| Período | Semana | Foco | Status |
+| Período | Fase | Foco | Status |
 |---|---|---|---|
-| 15-22/05/2026 | 1 | Setup; leitura de He et al. (2009); loader Facebook Ego-Nets | ✅ Concluída |
-| 22-29/05/2026 | 2 | Implementação He et al.; **validação obrigatória de k-anonimato** | ✅ Concluída |
-| 29/05-05/06 | 3 | Ataques (grau → subgrafos); experimentos | ✅ Concluída |
-| 05-12/06 | 4 | Gráficos, tabelas, documentação técnica | ✅ Concluída |
-| 12-14/06 | 5 | Polimento e entrega | 🔄 Em andamento |
+| 15-22/05/2026 | S1 | Setup; leitura de He et al. (2009); loader Facebook Ego-Nets | ✅ Concluída |
+| 22-29/05/2026 | S2 | Implementação He et al.; **validação obrigatória de k-anonimato** | ✅ Concluída |
+| 29/05-05/06 | S3 | Ataques (grau → subgrafos); experimentos | ✅ Concluída |
+| 05-12/06 | S4 | Gráficos, tabelas, documentação técnica | ✅ Concluída |
+| 12-14/06 | S5 | Polimento e entrega | ✅ Concluída (em 26/05) |
+| 27/05-02/06 | D-08 | d-sweep k×d (escopo Desejável) | ✅ Concluída |
+| 03-06/06 | S9 | Dataset secundário Email-Enron + entropia (Desejável) | ✅ Concluída |
+| 07-10/06 | S10 | Consolidação documental + produção acadêmica (S10-W) | ✅ Concluída |
 
 **Marco não-negociável: 29/05/2026.** Cumprido antecipadamente em 21/05/2026. k-anonimato
 empíricamente atingido em todas as configurações do Mínimo (k ∈ {2, 5, 10, 20}).
 
-**Estado atual (S5):** issues #27 (reprodutibilidade end-to-end) e #28 (README final
-+ revisão global da documentação). Ver `docs/progress.md` para estado detalhado.
+**Estado atual (pós-S10):** processamento experimental **congelado**; relatório
+técnico (#174) e artigo (#175) redigidos e revisados (fase S10-W, fechadas em
+10/06/2026). Os textos acadêmicos vivem em `academic/` (**privados**,
+gitignorados; destinação formal no fluxo da tese ainda não definida — não
+afirmar vínculo com etapas de avaliação); a rastreabilidade do processo é
+pública em `docs/` (`relatorio_*` e `artigo_*`). Trabalho restante: pendências
+pós-entrega a cargo do autor (conversão pandoc, venue) e manutenção documental.
+Ver `docs/progress.md` para estado detalhado.
 
 ---
 
@@ -93,8 +102,9 @@ A linha entre Mínimo e Desejável é firme.
 - **Mínimo (obrigatório):** He et al. (2009) + Facebook Ego-Nets + k ∈ {2,5,10,20}
   + ataques por grau e subgrafos + 4 métricas + ≥3 sementes + gráfico com barras
   de erro + README operacional. **✅ Totalmente implementado.**
-- **Desejável (perseguir se houver folga):** Email-Enron + ataque por entropia.
-- **Aspiracional (não perseguir em detrimento do Mínimo):** Nettleton & Salas (2016).
+- **Desejável:** Email-Enron + métrica/ataque por entropia. **✅ Concluído.**
+- **Aspiracional (não perseguido):** Nettleton & Salas (2016) — registrado como
+  trabalho futuro.
 
 Qualquer tarefa que ponha o Mínimo em risco deve ser interrompida e sinalizada
 na própria issue antes de prosseguir.

@@ -24,7 +24,7 @@ produzem exatamente os mesmos resultados.
 > Windows/PowerShell**: foram preparados por **espelhamento direto** da lógica
 > dos wrappers Bash (mesma chamada ao driver Python `replicate.py`) e
 > **requerem validação em uma máquina Windows/PowerShell antes de uso em
-> demonstração de banca**. O driver `replicate.py` em si é multiplataforma e foi
+> demonstração ao vivo**. O driver `replicate.py` em si é multiplataforma e foi
 > testado; o risco residual está restrito à camada fina de invólucro PowerShell
 > (resolução de caminho, escolha do interpretador, *splatting* de argumentos).
 
@@ -194,7 +194,7 @@ check-env  →  prepare-data  →  run  →  results
 
 A **execução completa** (`all` / `run_experiment`) e a **execução por etapas**
 (subcomandos individuais) são ambas suportadas — a segunda facilita depuração e
-demonstração parcial perante a banca.
+demonstração parcial a avaliadores.
 
 ---
 
@@ -282,7 +282,7 @@ A execução terminou com sucesso quando:
 | `cannot be loaded because running scripts is disabled` (PowerShell) | Política de execução | `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`. |
 | `no python interpreter found` | Python fora do PATH | Ative o venv ou instale o Python e reabra o terminal. |
 | Aviso `networkx-kl fallback` | `pymetis` ausente | Resultado válido, porém é aproximação KL (D-04). Em Windows, instale `pymetis` via Conda/conda-forge (§1.1); em Linux/macOS via Conda ou `pip install -e ".[partition-c]"`. |
-| Comportamento inesperado dos `.ps1` | Wrappers PowerShell **não testados em Windows** (ver nota no topo) | Valide em uma máquina Windows/PowerShell antes da banca; como alternativa, invoque o driver diretamente: `python scripts/replication/replicate.py ...`. |
+| Comportamento inesperado dos `.ps1` | Wrappers PowerShell **não testados em Windows** (ver nota no topo) | Valide em uma máquina Windows/PowerShell antes de uma demonstração; como alternativa, invoque o driver diretamente: `python scripts/replication/replicate.py ...`. |
 
 ---
 

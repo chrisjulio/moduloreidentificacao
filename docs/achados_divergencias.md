@@ -1,7 +1,7 @@
 # Achados — Divergências entre o proposto e o executado
 
-> **Propósito.** Documento consolidado de achados para compor relatório de
-> qualificação e/ou artigo posterior. Reúne, em um único lugar, as divergências
+> **Propósito.** Documento consolidado de achados para compor relatório
+> técnico e/ou artigo posterior. Reúne, em um único lugar, as divergências
 > entre (A) o que o artigo de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108)
 > propõe e o que o protótipo efetivamente implementa; e (B) o que o
 > planejamento/escopo previu e o que foi de fato executado.
@@ -549,7 +549,7 @@ Pontos onde a documentação existente ainda descrevia o *proposto* como se foss
     subgrafo *full* no Enron (D-16) e da forma canônica do FSM simplificado (A2).
 - **Por que importa.** A corretude dos resultados depende de propriedades dessas
   técnicas (ex.: "WL é invariante necessário ⇒ nenhum isomorfo é perdido", D-16;
-  custo do VF2, D-05/D-09) que a banca só pode auditar a partir da fonte primária.
+  custo do VF2, D-05/D-09) que avaliadores externos só podem auditar a partir da fonte primária.
 - **Resolução.** Adicionadas as referências canônicas — [Cordella et al. (2004)](https://doi.org/10.1109/TPAMI.2004.75)
   para o VF2 e [Shervashidze et al. (2011)](https://www.jmlr.org/papers/v12/shervashidze11a.html)
   para o WL — ao README §13 (bibliografia canônica) e citadas no ponto de uso em
