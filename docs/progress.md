@@ -11,7 +11,7 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-10
+**Data da última atualização:** 2026-06-11
 
 **Semana corrente:** S10 — **concluída**: relatório técnico (#174, fechada em
 2026-06-10) e artigo (#175, fechada em 2026-06-10 via PR #197/W2f — MERGED).
@@ -20,6 +20,13 @@ do README/CLAUDE/progress para refletir a conclusão da produção acadêmica
 (PR a abrir após validação do autor).
 
 **Último passo concluído:**
+- **D-18 — registro retroativo da escolha `sigma = 0.5`. ✅ (docs, PR a
+  abrir).** Auditoria da origem do default `sigma=0.5` do FSM (fixado no
+  commit `90dd035`/issue #14 sem critério registrado) e nova entrada D-18 no
+  `decision_log.md`: escolha de implementação sem ancoragem registrada na
+  literatura; não afeta a garantia de k-anonimato; sensibilidade não medida.
+  Pendência do autor: verificar o σ experimental de He et al. (2009) antes
+  de citá-lo. Ver entrada de sessão 2026-06-11 no Histórico.
 - **Atualização documental pós-S10-W + saneamento de terminologia. ✅ (docs,
   working tree — PR a abrir após validação do autor).** Bloqueios zerados
   verificados via `gh` (PR #197/W2f MERGED; #174 e #175 CLOSED; nenhum PR
@@ -1143,6 +1150,30 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-11 — D-18: registro retroativo da escolha `sigma = 0.5` (lacuna de rastreabilidade)
+
+- **Concluído:** Auditoria da origem do default `sigma = 0.5` do FSM
+  simplificado, a pedido do autor (dúvida sobre amparo na literatura).
+  Verificado: o valor foi fixado no commit `90dd035` (2026-05-21, issue
+  #14) como "parâmetro interno fixo", com justificativa apenas
+  qualitativa no docstring de `anonymize()` ("valor conservador");
+  nenhuma entrada de decisão dedicada ao valor existia. O exemplo
+  "0.20 para 20%" no docstring de `_group_isomorphic()` entrou via
+  commit `a30ad7f` (2026-05-18, issue #33 — docstrings conforme o
+  artigo); a atribuição de σ=0,2 a He et al. (2009) permanece **não
+  verificada** no repositório. Registrada a entrada **D-18** no
+  `docs/decision_log.md` (registro retroativo): escolha de implementação
+  sem ancoragem registrada na literatura; baixo impacto metodológico
+  (garantia de k-anonimato independe do FSM — D-01 nota G2 / achado A2;
+  valor uniforme em todas as execuções — DL-05); sensibilidade a sigma
+  não medida (trabalho futuro). Branch `docs/decision-log-d18-sigma`.
+- **Próximo:** Merge do PR de D-18. Pendência do autor registrada na
+  entrada: conferir o valor de σ usado nos experimentos de He et al.
+  (2009) antes de citá-lo nos textos acadêmicos.
+- **Bloqueios:** PR de D-18 aguardando CI + revisão humana.
+- **Decisões pendentes:** Nenhuma nova (D-08 segue como única pendência
+  herdada).
 
 ### 2026-06-10 — Etapa W2f da #175: revisão integrada do artigo + DoD (fecha a issue)
 

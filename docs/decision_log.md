@@ -46,6 +46,7 @@
 | [D-15](#d-15) | 2026-06-04 | Experimento | Ataque por subgrafo full no Enron é proibitivo (~70 dias); execução #127 é só-grau |
 | [D-16](#d-16) | 2026-06-05 | Implementação | Caminho rápido por bucketing de WL-hash torna o subgrafo full viável no Enron (resolve D-15) |
 | [D-17](#d-17) | 2026-06-06 | Implementação / escopo | Ataque por entropia (#30): formulação ancorada na literatura de entropia-como-anonimato; classificado como **métrica** (com leitura de ataque); D-E2/D-E3 resolvidas |
+| [D-18](#d-18) | 2026-05-21 *(registro retroativo: 2026-06-11)* | Implementação | `sigma = 0.5` como default do suporte do FSM — escolha de implementação sem ancoragem registrada na literatura; não afeta a garantia de k-anonimato |
 
 ---
 
@@ -1680,4 +1681,82 @@ esquema de pesos, a normalização e a eventual reclassificação métrica × at
 - Comentário-proposta da #30 (D-E1…D-E6); Issue #30; Issue #148 (não uniforme, D-E2(b))
 - Serjantov, A.; Danezis, G. *Towards an Information Theoretic Metric for Anonymity.* PET 2002, LNCS 2482, p. 41–53. DOI 10.1007/3-540-36467-6_4.
 - Díaz, C.; Seys, S.; Claessens, J.; Preneel, B. *Towards Measuring Anonymity.* PET 2002, LNCS 2482, p. 54–68. DOI 10.1007/3-540-36467-6_5.
+
+---
+
+## D-18 — `sigma = 0.5` como default do suporte do FSM (registro retroativo)
+
+**Data da decisão:** 2026-05-21 (commit `90dd035`, issue #14)
+**Data do registro:** 2026-06-11 (registro retroativo — lacuna de rastreabilidade)
+**Módulo afetado:** `src/anonymization/he2009.py` — `anonymize()`, `_group_isomorphic()`
+**Decisão sobre:** valor default do limiar de suporte `σ` do FSM simplificado (D-01)
+
+### Contexto
+
+He et al. (2009) usam Frequent Subgraph Mining com limiar de suporte `σ` para
+agrupar Local Structures (Algorithm 1), mas o repositório **nunca registrou o
+valor experimental de `σ` usado no artigo**. O docstring de
+`_group_isomorphic()` traz o exemplo "ex.: 0.20 para 20%", introduzido no
+commit `a30ad7f` (2026-05-18, issue #33 — revisão de docstrings *conforme o
+artigo*), e a lembrança do autor é de que 0,2 é o valor citado por He et al. —
+mas essa atribuição **não foi verificada nem registrada com citação** neste
+repositório.
+
+Três dias depois, o commit `90dd035` (2026-05-21, issue #14 — pipeline
+`anonymize()`) fixou `sigma=0.5` como um dos "parâmetros internos fixos" da
+chamada de alto nível, sem critério na mensagem de commit. A única
+justificativa escrita é a frase qualitativa do docstring de `anonymize()`:
+
+> `sigma=0.5`: suporte mínimo de 50 % para o FSM simplificado (D-01). Valor
+> conservador que garante padrões estruturalmente representativos sem
+> restringir demais o agrupamento.
+
+Posteriormente, `sigma` passou a ser chave YAML lida pelo runner (default
+`0.5`, `run.py`) e foi exposta no `config_example.yml` (DL-03 / #106). Todos
+os experimentos do projeto — baseline, k-sweep, d-sweep, Enron — rodaram com
+`sigma = 0.5` (DL-05).
+
+### Decisão (consolidação retroativa)
+
+Reconhecer e registrar que `sigma = 0.5` foi uma **escolha de implementação**
+da issue #14, justificada apenas qualitativamente ("valor conservador"), **sem
+ancoragem registrada na literatura, sem comparação com alternativas e sem
+análise de sensibilidade**. Não houve critério documentado do tipo "ponto
+médio entre o valor do artigo e 1"; a frase do docstring é o único racional
+contemporâneo à decisão.
+
+### Por que a lacuna é de baixo impacto metodológico
+
+1. **A garantia de k-anonimato não depende de `sigma`.** O isomorfismo
+   intra-grupo é garantido por `_modify_structure` (fase de modificação de
+   arestas); o FSM apenas orienta a heurística de agrupamento (D-01 nota G2;
+   achado A2 em `docs/achados_divergencias.md`). A validação empírica do
+   k-anonimato (#16, `docs/validacao_k_anonimato.md`) é independente do valor.
+2. **Uniformidade entre execuções.** `sigma = 0.5` foi idêntico em todas as
+   configurações e datasets (DL-05), portanto não é variável confundente em
+   nenhuma comparação reportada.
+3. **Ressalva honesta.** `sigma` pode, em tese, afetar *quais* LSs são
+   agrupadas e, por essa via, as métricas de utilidade. Nenhuma sensibilidade
+   a `sigma` foi medida — todos os resultados valem para `sigma = 0.5`.
+
+### Consequências
+
+- **Textos acadêmicos (#174/#175):** declarar `sigma = 0.5` como escolha de
+  implementação fixada sem calibração empírica nem ancoragem registrada na
+  literatura; não atribuir valor de `σ` a He et al. (2009) sem verificação.
+- **Pendência do autor:** conferir no artigo de He et al. (2009) o valor de
+  `σ` efetivamente usado nos experimentos antes de citá-lo (a lembrança "0,2"
+  permanece não verificada).
+- **Trabalho futuro:** análise de sensibilidade a `sigma` (candidata natural a
+  acompanhar a comparação com gSpan completo já listada em D-01).
+
+### Referências cruzadas
+
+- D-01 (FSM simplificado; nota G2 — corretude vem de `_modify_structure`)
+- DL-03 (#106 — `config_example.yml` expõe `sigma`, default `0.5`)
+- DL-05 (#141 — `sigma = 0.5` idêntico entre Facebook e Enron)
+- Achado A2 em `docs/achados_divergencias.md` (FSM como heurística de agrupamento)
+- `src/anonymization/he2009.py` — docstring de `anonymize()` ("valor conservador") e de `_group_isomorphic()` ("ex.: 0.20 para 20%")
+- Commits `a30ad7f` (issue #33, docstrings conforme artigo) e `90dd035` (issue #14, `sigma=0.5` fixado)
+- `docs/algorithm_notes.md` §5.1 (mapeamento `σ` → `anonymization.sigma`)
 
