@@ -1,7 +1,7 @@
 # Checklist de verificação para escrita — artefatos finais (S10)
 
 > **Propósito.** Este documento acumula **pontos de verificação a resolver ou
-> declarar _antes_ da redação de cada seção** do relatório de qualificação e/ou
+> declarar _antes_ da redação de cada seção** do relatório técnico e/ou
 > do artigo. Cada item (`W-NN`) é uma pendência de escrita: algo que precisa ser
 > conferido, decidido ou explicitamente declarado no texto para que aquela seção
 > possa ser escrita sem deixar afirmação sem amparo. Fechar todos os itens ativos

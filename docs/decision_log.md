@@ -430,8 +430,8 @@ esclarecimento, que passa a ser citável na redação:
 
 Consequências para a redação (S10-W):
 
-- A premissa entra na **introdução/posicionamento** do relatório de
-  qualificação (#174) e do artigo (#175), com a cadeia argumentativa:
+- A premissa entra na **introdução/posicionamento** do relatório
+  técnico (#174) e do artigo (#175), com a cadeia argumentativa:
   hipótese fundadora (demonstrada na literatura de referência) → replicação
   por meios próprios (He et al. 2009 sobre Facebook `[M]`; validade externa
   Enron `[D]`) → evidência empírica própria (achado **B1**: `rr_subgrafo ≫
@@ -512,7 +512,7 @@ forma auditável e expõe o trade-off cobertura × custo como variável explíci
 
 ### Consequências
 
-- Declarar como **aproximação do FSM do artigo** no relatório de qualificação.
+- Declarar como **aproximação do FSM do artigo** no relatório técnico.
 - O parâmetro `fsm_max_size` deve ser exposto no YAML de configuração
   (`anonymization.fsm.max_size`) para reprodutibilidade.
 - Comparação com gSpan completo: fora do escopo mínimo; candidata a trabalho futuro.
@@ -693,7 +693,7 @@ D-07 (Opção A). Este comportamento está documentado nos testes em
 `tests/anonymization/test_partition_backend.py`, que verificam cobertura —
 não tamanho exato — de forma consistente com essa limitação.
 
-### Consequências para a qualificação
+### Consequências para o relato metodológico
 
 - A divergência entre os dois motores deve ser reportada como **parâmetro
   metodológico**, não como detalhe de implementação.
@@ -847,7 +847,7 @@ para `_partition_neighborhoods`, `_group_isomorphic` e `_modify_structure`.
 - Não introduz nós fictícios no grafo publicado.
 - Pode aumentar o número de violadores via D-06 quando o backend KL produz
   partições desbalanceadas (especialmente para `d > 1`).
-- Declarada como **limitação do protótipo** no relatório de qualificação.
+- Declarada como **limitação do protótipo** no relatório técnico.
 - A produção futura pode usar `tpwgts` do pymetis para forçar tamanhos
   exatos, eliminando a necessidade desta política.
 
@@ -1145,8 +1145,8 @@ Self-loops e multi-arestas resultantes são colapsados.
 **Justificativa:**
 
 1. **Comparabilidade** — é a convenção padrão do SNAP e da maioria dos
-   trabalhos que usam o Email-Enron, o que torna os números defensáveis na
-   qualificação e comparáveis à literatura.
+   trabalhos que usam o Email-Enron, o que torna os números academicamente
+   defensáveis e comparáveis à literatura.
 2. **Retenção de estrutura** — o OR preserva o máximo de arestas, em paralelo
    metodológico com a retenção do LCC adotada no Facebook (Seção 3.2 dos docs
    de resultados).

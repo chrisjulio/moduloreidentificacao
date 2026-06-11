@@ -32,7 +32,7 @@ para o entregável-alvo, cujo critério declarado é uma curva privacidade-vs-ut
 **`single_egonet`.** As barras de erro derivam apenas das sementes aleatórias.
 Elas medem a estabilidade do algoritmo de [He et al. (2009)](https://doi.org/10.1109/WI-IAT.2009.108) sobre *uma* rede, dada
 a aleatoriedade interna da etapa de modificação estrutural. Não respondem, porém,
-à pergunta de robustez que orientação ou banca naturalmente levantam: a curva
+à pergunta de robustez que orientadores e avaliadores naturalmente levantam: a curva
 observada é uma propriedade de He et al. + k-anonimato, ou um artefato da
 ego-rede específica escolhida? Para um baseline cujo critério de qualidade é
 “defensável”, essa limitação é relevante.

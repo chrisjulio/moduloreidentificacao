@@ -1,7 +1,7 @@
-# Registro de execuções — Relatório de qualificação (#174)
+# Registro de execuções — Relatório técnico (#174)
 
 > **Propósito.** Contabiliza e registra as **execuções das etapas de redação**
-> do relatório de qualificação ([#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174),
+> do relatório técnico ([#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174),
 > desdobramento S10-W1a..f validado pelo autor em 2026-06-09). Decisão do autor
 > (2026-06-09): as etapas **não** são formalizadas como sub-issues no GitHub —
 > o rastreio é feito por **comentário de execução na própria #174** + este
@@ -38,7 +38,7 @@
 - **Pré-verificação de bloqueios:** PRs #176 (infraestrutura `academic/`) e
   #179 (DL-06) confirmados `MERGED` via `gh`; nenhum PR aberto.
 - **Artefato privado (gitignorado, fora do diff):**
-  `academic/relatorio_qualificacao.md` — esqueleto com as 8 seções da
+  `academic/relatorio_tecnico.md` — esqueleto com as 8 seções da
   estrutura mínima da #174 + apêndices candidatos; cada seção com checklist
   de conteúdo, fontes citáveis (docs/decisões `D-xx`/`DL-xx`), destinos
   `W-NN` e figuras a inserir; regra global de terminologia de aferição;
@@ -61,7 +61,7 @@
 - **Pré-verificação de bloqueios:** PR #181 (W1a) confirmado `MERGED` via
   `gh pr view 181` (`mergedAt: 2026-06-10T00:32:33Z`); nenhum PR aberto.
 - **Artefato privado (gitignorado, fora do diff):** redação substantiva das
-  Seções 1 e 2 em `academic/relatorio_qualificacao.md`, substituindo os
+  Seções 1 e 2 em `academic/relatorio_tecnico.md`, substituindo os
   placeholders do esqueleto; cabeçalho de status atualizado para
   "EM REDAÇÃO (S10-W1b)". Backup externo a cargo do autor.
   - **Seção 1 — Introdução e posicionamento** (4 subseções): §1.1 premissa
@@ -87,7 +87,7 @@
 - **Artefatos públicos (versionados neste PR):** matriz
   ([`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)) com W1b
   marcada concluída; este registro; `progress.md` atualizado.
-- **Verificação:** `git check-ignore academic/relatorio_qualificacao.md`
+- **Verificação:** `git check-ignore academic/relatorio_tecnico.md`
   confirma privacidade; diff público contém só docs de rastreabilidade —
   código congelado (S10-W) respeitado.
 - **Próxima etapa:** W1c (Seções 3–4: método + desenho experimental), após
@@ -98,7 +98,7 @@
 - **Pré-verificação de bloqueios:** PR #182 (W1b) confirmado `MERGED` via
   `gh` (`mergedAt: 2026-06-10T00:45:44Z`); nenhum PR aberto.
 - **Artefato privado (gitignorado, fora do diff):** redação substantiva das
-  Seções 3 e 4 em `academic/relatorio_qualificacao.md`, substituindo os
+  Seções 3 e 4 em `academic/relatorio_tecnico.md`, substituindo os
   placeholders do esqueleto; cabeçalho de status atualizado para
   "EM REDAÇÃO (S10-W1c)". Backup externo a cargo do autor.
   - **Seção 3 — Método** (7 subseções): §3.1 visão geral do pipeline
@@ -141,7 +141,7 @@
 - **Artefatos públicos (versionados neste PR):** matriz
   ([`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)) com W1c
   marcada concluída; este registro; `progress.md` atualizado.
-- **Verificação:** `git check-ignore academic/relatorio_qualificacao.md`
+- **Verificação:** `git check-ignore academic/relatorio_tecnico.md`
   confirma privacidade; diff público contém só docs de rastreabilidade —
   código congelado (S10-W) respeitado.
 - **Próxima etapa:** W1d (Seção 5: resultados — a mais pesada, sessão
@@ -152,7 +152,7 @@
 - **Pré-verificação de bloqueios:** PR #183 (W1c) confirmado `MERGED` via
   `gh` (`mergedAt: 2026-06-10T00:59:45Z`); nenhum PR aberto.
 - **Artefato privado (gitignorado, fora do diff):** redação substantiva da
-  Seção 5 em `academic/relatorio_qualificacao.md`, substituindo o
+  Seção 5 em `academic/relatorio_tecnico.md`, substituindo o
   placeholder do esqueleto; cabeçalho de status atualizado para
   "EM REDAÇÃO (S10-W1d)". Backup externo a cargo do autor.
   - **Seção 5 — Resultados** (7 subseções, todo número proveniente dos
@@ -196,7 +196,7 @@
 - **Artefatos públicos (versionados neste PR):** matriz
   ([`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)) com W1d
   marcada concluída; este registro; `progress.md` atualizado.
-- **Verificação:** `git check-ignore academic/relatorio_qualificacao.md`
+- **Verificação:** `git check-ignore academic/relatorio_tecnico.md`
   confirma privacidade; diff público contém só docs de rastreabilidade —
   código congelado (S10-W) respeitado.
 - **Próxima etapa:** W1e (Seções 6–8: limitações, reprodutibilidade,
@@ -207,7 +207,7 @@
 - **Pré-verificação de bloqueios:** PR #185 (W1d) confirmado `MERGED` via
   `gh` (`mergedAt: 2026-06-10T01:13:32Z`); nenhum PR aberto.
 - **Artefato privado (gitignorado, fora do diff):** redação substantiva das
-  Seções 6, 7 e 8 em `academic/relatorio_qualificacao.md`, substituindo os
+  Seções 6, 7 e 8 em `academic/relatorio_tecnico.md`, substituindo os
   placeholders do esqueleto; cabeçalho de status atualizado para
   "EM REDAÇÃO (S10-W1e)" — **redação substantiva completa** (Seções 1–8);
   resta a revisão integrada W1f. Backup externo a cargo do autor.
@@ -227,7 +227,7 @@
     §6.3 tabela consolidada de ameaças à validade (externa/construto/
     interna/reprodutibilidade) + detalhe da ameaça do **motor não-pareado**
     KL×pymetis (encaminhada da nota do motor da Seção 5.1; interpretativa,
-    baixa magnitude; pareamento estrito como trabalho pós-qualificação).
+    baixa magnitude; pareamento estrito como trabalho pós-entrega).
   - **Seção 7 — Reprodutibilidade** (4 subseções): §7.1 reprodutibilidade
     por desenho — sementes sempre do YAML (≥3; 42/1337/2718), um YAML
     versionado por experimento, logs JSONL + `summary.json` como fonte
@@ -257,7 +257,7 @@
 - **Artefatos públicos (versionados neste PR):** matriz
   ([`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)) com W1e
   marcada concluída; este registro; `progress.md` atualizado.
-- **Verificação:** `git check-ignore academic/relatorio_qualificacao.md`
+- **Verificação:** `git check-ignore academic/relatorio_tecnico.md`
   confirma privacidade; diff público contém só docs de rastreabilidade —
   código congelado (S10-W) respeitado.
 - **Próxima etapa:** W1f (revisão integrada + decisão de apêndices +
@@ -268,7 +268,7 @@
 - **Pré-verificação de bloqueios:** PR #186 (W1e) confirmado `MERGED` via
   `gh` (`mergedAt: 2026-06-10T12:52:17Z`); nenhum PR aberto.
 - **Artefato privado (gitignorado, fora do diff):** revisão integrada das
-  Seções 1–8 de `academic/relatorio_qualificacao.md`; cabeçalho de status
+  Seções 1–8 de `academic/relatorio_tecnico.md`; cabeçalho de status
   atualizado para "REDAÇÃO CONCLUÍDA E REVISADA (S10-W1f)". Backup externo
   a cargo do autor.
   - **Conferências realizadas (todas contra `main`):** (1) números das
@@ -289,7 +289,7 @@
     `reproducibility.md`). Correção aplicada no texto privado: §7.2
     reescrita (validação end-to-end da #27 mantida; conferência final
     **manual** dos agregados por k sob tolerância 0,02; script anotado como
-    especificado-mas-não-versionado, pendência pós-qualificação) + linha
+    especificado-mas-não-versionado, pendência pós-entrega) + linha
     nova na tabela de ameaças (§6.3). O item da DoD "sem citar item
     ausente de `main`" passa a ser cumprido.
   - **Decisões de apêndices:** Apêndice A (tabelas brutas FB + Enron
@@ -309,7 +309,7 @@
   ([`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)) com W1f
   concluída + decisão de apêndices + nota da revisão; este registro
   (contabilização 6/6; W1e → MERGED); `progress.md` atualizado.
-- **Verificação:** `git check-ignore academic/relatorio_qualificacao.md`
+- **Verificação:** `git check-ignore academic/relatorio_tecnico.md`
   confirma privacidade; diff público contém só docs de rastreabilidade —
   código congelado (S10-W) respeitado.
 - **Encerramento:** o PR desta etapa fecha a **#174** (`Closes #174`) —

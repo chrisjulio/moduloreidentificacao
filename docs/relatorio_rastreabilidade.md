@@ -1,7 +1,7 @@
-# Matriz de rastreabilidade — Relatório de qualificação (#174)
+# Matriz de rastreabilidade — Relatório técnico (#174)
 
-> **Propósito.** Rastreabilidade **pública** da redação do relatório de
-> qualificação (issue [#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174),
+> **Propósito.** Rastreabilidade **pública** da redação do relatório
+> técnico (issue [#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174),
 > S10-W1). O texto substantivo do relatório vive em `academic/` (**privado**,
 > gitignorado — PR #176; backup externo do autor) e **não** é versionado neste
 > repositório; o que se versiona é esta matriz: seção → fontes → `W-NN` →

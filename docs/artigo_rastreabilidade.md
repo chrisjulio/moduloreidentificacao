@@ -8,7 +8,7 @@
 > fontes → `W-NN` → figuras, mais o sumário do esqueleto. Mesma regra de
 > privacidade do relatório (decisão do autor, 2026-06-09, DoD emendada).
 >
-> **Insumo primário:** o relatório de qualificação
+> **Insumo primário:** o relatório técnico
 > ([#174](https://github.com/chrisjulio/moduloreidentificacao/issues/174),
 > concluído e revisado em 2026-06-10 — ver
 > [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md)). O artigo é

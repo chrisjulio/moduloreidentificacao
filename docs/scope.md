@@ -25,14 +25,14 @@ Este módulo implementa ataques de reidentificação contra grafos sociais anoni
 Lida fora de contexto, a frase "ferramenta que reidentifica pessoas em redes sociais"
 descreve igualmente bem este módulo e uma ferramenta ofensiva de desanonimização. Essa
 sobreposição é tecnicamente incorreta, mas não é autoevidente: ela precisa ser desfeita
-de forma explícita. Numa qualificação de doutorado cujo objeto é privacidade, deixá-la
+de forma explícita. Num doutorado cujo objeto é privacidade, deixá-la
 implícita é um custo retórico desnecessário e evitável.
 
 O documento existe para fixar, de forma verificável e citável, a fronteira entre o que
 este módulo faz e o que ele não faz — e, em particular, para tornar explícito por que um
 instrumento de **aferição** de anonimização não é uma ferramenta de **ataque** à
 privacidade, ainda que ambos compartilhem mecanismos algorítmicos. Destina-se a três
-leitores: a banca de qualificação, colaboradores eventuais do repositório, e o próprio
+leitores: os avaliadores acadêmicos do trabalho, colaboradores eventuais do repositório, e o próprio
 autor em fase posterior da tese, quando o módulo migrar para o contexto temporal e para
 o framework integrado.
 

@@ -13,12 +13,43 @@
 
 **Data da última atualização:** 2026-06-10
 
-**Semana corrente:** S10 — fase de redação (S10-W): relatório de qualificação
-(#174, **fechada** em 2026-06-10) e artigo (#175 — redação e revisão
-**concluídas**; PR da W2f com `Closes #175` aguardando merge).
-Código **congelado** — somente análise e documentação.
+**Semana corrente:** S10 — **concluída**: relatório técnico (#174, fechada em
+2026-06-10) e artigo (#175, fechada em 2026-06-10 via PR #197/W2f — MERGED).
+Código **congelado** — somente análise e documentação. Em curso: atualização
+do README/CLAUDE/progress para refletir a conclusão da produção acadêmica
+(PR a abrir após validação do autor).
 
 **Último passo concluído:**
+- **Atualização documental pós-S10-W + saneamento de terminologia. ✅ (docs,
+  working tree — PR a abrir após validação do autor).** Bloqueios zerados
+  verificados via `gh` (PR #197/W2f MERGED; #174 e #175 CLOSED; nenhum PR
+  aberto). **(1) README** atualizado para refletir a conclusão da S10:
+  cabeçalho de estado; novo bloco de status S10 (infraestrutura de escrita +
+  produção acadêmica em 6+6 etapas via PRs #181–#187 e #188–#197, com regra
+  de privacidade); componentes S10; entregável "Produção acadêmica"; árvore
+  com `/references/` e os 4 docs de rastreabilidade. Apenas o **processo** de
+  produção descrito — nenhum conteúdo dos textos privados. **(2) Saneamento
+  de terminologia (decisão do autor, 2026-06-10):** os documentos de
+  `academic/` **não** têm destinação formal acordada no fluxo da tese —
+  removida de todos os arquivos (versionados e locais) a terminologia que
+  afirmava vínculo com etapas formais de avaliação não acordadas.
+  Vocabulário novo: "relatório técnico" (#174), "avaliação acadêmica
+  externa"/"avaliadores", "pós-entrega", "circulação restrita". Arquivos
+  varridos: README, .gitignore, academic/README.md,
+  academic/relatorio_tecnico.md (**renomeado** — o nome antigo carregava o
+  termo descontinuado; título interno ajustado), academic/artigo.md, e
+  docs/ (rastreabilidades, execuções, achados, limitations, decision_log,
+  algorithm_notes, metrics_definitions, preprocessing_decision, scope,
+  checklist, milestones, results_enron) + `make_enron_table.py` (string de
+  doc do gerador — sem lógica) + `scripts/replication/README.md`. Usos do
+  vocábulo no sentido de *ressalva* (qualifier) mantidos (`limitations.md`).
+  **Fora do escopo, por decisão do autor (2026-06-10):** issues fechadas e
+  estruturas de processo/controle no GitHub (títulos/corpos de issues,
+  milestone) e o snapshot `issues.json` — o registro histórico do processo
+  pode conter a nomenclatura antiga. Achado lateral anotado: `issues.json`
+  está em UTF-16 com mojibake cp850 interno (ilegível para o git) —
+  eventual reparo é decisão futura do autor.
+  **(3) CLAUDE.md** atualizado (fase atual + estado).
 - **Etapa W2f da #175 — revisão integrada do artigo + DoD. ✅ (docs, PR
   aberto — fecha a #175).** Sexta e última etapa do desdobramento
   S10-W2a..f, orientada pelo relatório de validação externo do autor
@@ -230,7 +261,7 @@ Código **congelado** — somente análise e documentação.
   Bloqueio verificado antes de iniciar: PR **#186** (W1e) `MERGED` via `gh`
   (`2026-06-10T12:52:17Z`); nenhum PR aberto. **(1) Revisão integrada
   (texto privado, gitignorado, fora do diff):** conferência integral das
-  Seções 1–8 de `academic/relatorio_qualificacao.md` contra `main` —
+  Seções 1–8 de `academic/relatorio_tecnico.md` contra `main` —
   números das tabelas §5.1/§5.4 **exatos** vs `results_baseline.md`/
   `results_enron.md`; alegações do d-sweep conferem com `results_dsweep.md`;
   W-01..W-06 nos destinos do checklist; terminologia de aferição limpa;
@@ -239,7 +270,7 @@ Código **congelado** — somente análise e documentação.
   automática entregue — script **não versionado** em `main` (resíduo
   documental já registrado pela #172, que corrigiu o README mas não
   `reproducibility.md`); §7.2 reescrita (conferência manual dos agregados
-  por k, tolerância 0,02; script = pendência pós-qualificação) + linha nova
+  por k, tolerância 0,02; script = pendência pós-entrega) + linha nova
   na tabela de ameaças (§6.3). **(2) Decisões da revisão:** Apêndice A
   (tabelas brutas FB+Enron embutidas; d-sweep referenciado) e Apêndice B
   (14 referências do README §12) **entram**; inventário de entregáveis não
@@ -252,12 +283,12 @@ Código **congelado** — somente análise e documentação.
   MERGED). Só docs; código congelado respeitado. Branch
   `docs/relatorio-w1f-revisao-integrada` (`Closes #174`).
 - **Etapa W1e da #174 — redação das Seções 6–8 (Limitações; Reprodutibilidade;
-  Ética) do relatório de qualificação. ✅ (docs, PR aberto).** Quinta etapa do
+  Ética) do relatório técnico. ✅ (docs, PR aberto).** Quinta etapa do
   desdobramento S10-W1a..f — **conclui a redação substantiva** (Seções 1–8);
   resta a revisão integrada W1f. Bloqueio verificado antes de iniciar: PR
   **#185** (W1d) `MERGED` via `gh` (`2026-06-10T01:13:32Z`); nenhum PR aberto.
   **(1) Texto privado (gitignorado, fora do diff):** Seções 6–8 redigidas em
-  `academic/relatorio_qualificacao.md`. **Seção 6** (3 subseções): §6.1
+  `academic/relatorio_tecnico.md`. **Seção 6** (3 subseções): §6.1
   limitações de escopo (`limitations.md` §1) — dataset por tier com gap de
   validade externa parcialmente fechado pelo Enron (**B2**; resíduo
   `multiple_egonets` explícito), algoritmo único, d-sweep restrito à ego-rede
@@ -268,7 +299,7 @@ Código **congelado** — somente análise e documentação.
   verificador conservador D-05, custo VF2 mitigado por WL/D-16, desempate
   D-03; §6.3 tabela de ameaças à validade + detalhe do **motor não-pareado**
   KL×pymetis (encaminhado da §5.1; interpretativo, baixa magnitude,
-  pareamento estrito pós-qualificação). **Seção 7** (4 subseções):
+  pareamento estrito pós-entrega). **Seção 7** (4 subseções):
   reprodutibilidade por desenho (sementes do YAML ≥3, configs versionados,
   outputs só de logs JSONL); validação end-to-end #27 (pipeline canônico,
   `verify_reproduction` com tolerância 0,02, exit codes); fatores de
@@ -283,13 +314,13 @@ Código **congelado** — somente análise e documentação.
   (5 de 6 etapas executadas; W1d marcada MERGED). Só docs; código congelado
   respeitado. Branch `docs/relatorio-w1e-limitacoes-repro-etica`
   (`Refs #174`).
-- **Etapa W1d da #174 — redação da Seção 5 (Resultados) do relatório de
-  qualificação. ✅ (docs, PR aberto).** Quarta etapa do desdobramento
+- **Etapa W1d da #174 — redação da Seção 5 (Resultados) do relatório
+  técnico. ✅ (docs, PR aberto).** Quarta etapa do desdobramento
   S10-W1a..f — a mais pesada, executada em sessão própria conforme planejado.
   Bloqueio verificado antes de iniciar: PR **#183** (W1c) `MERGED` via `gh`
   (`2026-06-10T00:59:45Z`); nenhum PR aberto. **(1) Texto privado
   (gitignorado, fora do diff):** Seção 5 redigida em
-  `academic/relatorio_qualificacao.md` (7 subseções), todo número proveniente
+  `academic/relatorio_tecnico.md` (7 subseções), todo número proveniente
   dos relatórios versionados (`results_baseline.md`, `results_dsweep.md`,
   `results_enron.md`), regeneráveis dos logs JSONL. §5.1 baseline Facebook
   [M] d=1 (k-anonimato atingido pelo critério DL-01; tabela agregada
@@ -310,12 +341,12 @@ Código **congelado** — somente análise e documentação.
   pública (no PR):** matriz com W1d ✅; registro detalhado em
   `relatorio_execucoes.md` (4 de 6 etapas executadas). Só docs; código
   congelado respeitado. Branch `docs/relatorio-w1d-resultados` (`Refs #174`).
-- **Etapa W1c da #174 — redação das Seções 3–4 do relatório de qualificação.
+- **Etapa W1c da #174 — redação das Seções 3–4 do relatório técnico.
   ✅ (docs, PR aberto).** Terceira etapa do desdobramento S10-W1a..f. Bloqueio
   verificado antes de iniciar: PR **#182** (W1b) `MERGED` via `gh`
   (`2026-06-10T00:45:44Z`); nenhum PR aberto. **(1) Texto privado
   (gitignorado, fora do diff):** Seções 3 e 4 redigidas em
-  `academic/relatorio_qualificacao.md`, substituindo os placeholders do
+  `academic/relatorio_tecnico.md`, substituindo os placeholders do
   esqueleto. **Seção 3 — Método** (7 subseções): visão geral do pipeline
   (outputs gerados de logs JSONL); anonimizador He et al. (2009) — 5 fases,
   backends pymetis/KL com `partition_backend` no JSONL; uniformidade de
@@ -339,12 +370,12 @@ Código **congelado** — somente análise e documentação.
   `relatorio_execucoes.md` (3 de 6 etapas executadas). Só docs; código
   congelado respeitado. Branch `docs/relatorio-w1c-metodo-desenho`
   (`Refs #174`).
-- **Etapa W1b da #174 — redação das Seções 1–2 do relatório de qualificação.
+- **Etapa W1b da #174 — redação das Seções 1–2 do relatório técnico.
   ✅ (docs, PR #182 MERGED).** Segunda etapa do desdobramento S10-W1a..f. Bloqueio
   verificado antes de iniciar: PR **#181** (W1a) `MERGED` via `gh`
   (`2026-06-10T00:32:33Z`); nenhum PR aberto. **(1) Texto privado
   (gitignorado, fora do diff):** Seções 1 e 2 redigidas em
-  `academic/relatorio_qualificacao.md`, substituindo os placeholders do
+  `academic/relatorio_tecnico.md`, substituindo os placeholders do
   esqueleto. **Seção 1** (4 subseções): premissa fundadora **DL-06**
   ("anonimizar não é o suficiente") abrindo a introdução com a cadeia
   hipótese → replicação por meios próprios → evidência empírica (B1,
@@ -367,7 +398,7 @@ Código **congelado** — somente análise e documentação.
   pública. ✅ (docs, PR #181 MERGED).** Primeira etapa do desdobramento S10-W1a..f
   validado na #174 (autor, 2026-06-09). Bloqueios verificados antes de iniciar:
   PRs **#176** e **#179** ambos `MERGED`; nenhum PR aberto. **(1) Esqueleto
-  privado:** `academic/relatorio_qualificacao.md` criado (gitignorado, fora do
+  privado:** `academic/relatorio_tecnico.md` criado (gitignorado, fora do
   diff; backup externo a cargo do autor) — 8 seções da estrutura mínima da
   #174 + apêndices candidatos, cada seção com checklist de conteúdo, fontes
   citáveis (docs/decisões `D-xx`/`DL-xx`), destinos `W-NN` e figuras a
@@ -430,7 +461,7 @@ Código **congelado** — somente análise e documentação.
   consolidado — pré-condições da redação satisfeitas. **(2) Infraestrutura
   `academic/`** (decisão do autor, 2026-06-09): criada a pasta `/academic` para
   abrigar os documentos acadêmicos (relatório #174, artigo #175), que são
-  sujeitos a **avaliação qualificada** e não podem ser públicos (o repositório é
+  de **circulação restrita** e não podem ser públicos (o repositório é
   aberto). Regra no `.gitignore` (`/academic/*` + `!/academic/README.md`): só o
   `academic/README.md` é versionado — documenta a existência e a regra, não o
   conteúdo. Apontador adicionado ao `README.md` §7 (estrutura). **Implicação na
@@ -658,7 +689,7 @@ Código **congelado** — somente análise e documentação.
   cruzando em k=20; curvas se cruzam ~k≈14) e (B) decaimento relativo
   `rr(k)/rr(k_min)` (forma da curva, magnitude removida). Snapshot **versionado**
   em `docs/assets/comparison_fb_enron.{png,csv}` (exceção documentada à regra de
-  gitignore — artefato auditável da banca, regenerável). Embed + explicação +
+  gitignore — artefato auditável publicamente, regenerável). Embed + explicação +
   cruzamentos em `results_enron.md`; decisão registrada como **DL-04**
   (`decision_log.md`). **(2) C1 — cota `1/k`:** nota explícita de que `rr_subgrafo
   ≤ 1/k` pressupõe k-anon da estrutura inspecionada (`d≥2`) e **não vale em `d=1`**
@@ -1031,9 +1062,11 @@ Código **congelado** — somente análise e documentação.
   Suíte **525 passed** (+19), ruff limpo.
 
 **Próximo passo planejado:**
-- **Merge do PR da W2f** (revisão humana; Claude Code não faz merge) —
-  fecha a **#175** e conclui a produção acadêmica da fase S10-W
-  (relatório #174 + artigo #175).
+- **Merge do PR da atualização documental pós-S10-W** (README + CLAUDE.md +
+  progress.md + saneamento de terminologia) — revisão humana; Claude Code
+  não faz merge. Escopo do saneamento validado pelo autor (2026-06-10):
+  somente arquivos produzidos (locais e versionados); issues fechadas e
+  estruturas de processo/controle ficam como estão.
 - **Fora do escopo da #175 (pendências anotadas na revisão W2f):**
   conversão final do artigo via pandoc (inserção física das figuras
   regeneráveis; remoção dos checklists de processo W2b..e; venue/template
@@ -1049,9 +1082,9 @@ Código **congelado** — somente análise e documentação.
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **PR da etapa W2f (`docs/artigo-w2f-revisao-integrada`, `Closes #175`)
-  aguardando CI + revisão humana.** Claude Code não faz merge. Último PR
-  do desdobramento S10-W2a..f.
+- **Nenhum.** PR **#197** (W2f, `Closes #175`) **MERGED** em 2026-06-10
+  (`22:53Z`); **#175 CLOSED** — desdobramento S10-W2a..f integralmente em
+  `main`; nenhum PR aberto (verificado via `gh` em 2026-06-10).
 - PR **#196** (W2e) **MERGED** em 2026-06-10 (`22:17:13Z`) — Seções 5–6 +
   abstract final e rastreabilidade em `main`; bloqueio anterior da W2f
   resolvido.
@@ -1298,7 +1331,7 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 - **Concluído:** Quinta etapa do desdobramento S10-W1a..f — **redação
   substantiva completa** (Seções 1–8). Bloqueio verificado: PR #185 (W1d)
   `MERGED` via `gh`. Redigidas as **Seções 6–8** do relatório em
-  `academic/relatorio_qualificacao.md` (privado, gitignorado): §6 limitações
+  `academic/relatorio_tecnico.md` (privado, gitignorado): §6 limitações
   e ameaças à validade (escopo × técnicas de `limitations.md`; B2 com resíduo
   `multiple_egonets`; D-06/`SUCCESS_PARTIAL`; tabela de ameaças; motor
   não-pareado KL×pymetis), §7 reprodutibilidade (desenho; end-to-end #27 com
@@ -1316,7 +1349,7 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 
 - **Concluído:** Terceira etapa do desdobramento S10-W1a..f. Bloqueio
   verificado: PR #182 (W1b) `MERGED` via `gh`. Redigidas as **Seções 3–4** do
-  relatório em `academic/relatorio_qualificacao.md` (privado, gitignorado):
+  relatório em `academic/relatorio_tecnico.md` (privado, gitignorado):
   §3 método (pipeline; He et al. 2009 com backends pymetis/KL; uniformidade
   de parâmetros W-01/DL-05; ataques grau + subgrafo com equivalência VF2↔WL
   W-02/D-16; validade Enron W-03/D-13; 4 métricas; validação independente
@@ -1334,7 +1367,7 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 
 - **Concluído:** Segunda etapa do desdobramento S10-W1a..f. Bloqueio verificado:
   PR #181 (W1a) `MERGED` via `gh`. Redigidas as **Seções 1–2** do relatório em
-  `academic/relatorio_qualificacao.md` (privado, gitignorado): §1 introdução e
+  `academic/relatorio_tecnico.md` (privado, gitignorado): §1 introdução e
   posicionamento (DL-06 abrindo; aferidor/adversário formal; fronteira
   instrumento × ofensiva de `scope.md` §5; não-escopo + Kerckhoffs) e §2
   independência do EpiCNet (separação de responsabilidades; reprodutibilidade
@@ -1351,7 +1384,7 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 
 - **Concluído:** Primeira etapa do desdobramento S10-W1a..f (validado na #174).
   Bloqueios verificados via `gh`: #176 e #179 `MERGED`, nenhum PR aberto.
-  Criados: **(1)** `academic/relatorio_qualificacao.md` (esqueleto privado,
+  Criados: **(1)** `academic/relatorio_tecnico.md` (esqueleto privado,
   gitignorado) — 8 seções da estrutura mínima + apêndices candidatos, cada uma
   com checklist de conteúdo, fontes, decisões citáveis, destinos `W-NN` e
   figuras; terminologia de aferição como regra global; DL-06 abrindo a

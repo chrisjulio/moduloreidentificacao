@@ -314,7 +314,7 @@ reprodutibilidade ao publicar resultados.
 ## 3. Ameaças à validade
 
 As limitações acima traduzem-se nas seguintes ameaças à validade, relevantes
-para o relatório de qualificação:
+para o relatório técnico:
 
 | Ameaça | Tipo | Limitação de origem |
 |---|---|---|
@@ -341,14 +341,14 @@ para o relatório de qualificação:
 
 | Limitação | Versão sugerida | Esforço estimado |
 |---|---|---|
-| FSM completo (gSpan) em lugar do simplificado (D-01) | Pós-qualificação | Médio |
-| `tpwgts` para partições exatas (D-07) | Pós-qualificação | Baixo |
-| Varredura global de `G'` no verificador (D-05) | Pós-qualificação | Baixo |
-| Pré-filtros VF2 para `d > 20` | Pós-qualificação | Médio |
+| FSM completo (gSpan) em lugar do simplificado (D-01) | Pós-entrega | Médio |
+| `tpwgts` para partições exatas (D-07) | Pós-entrega | Baixo |
+| Varredura global de `G'` no verificador (D-05) | Pós-entrega | Baixo |
+| Pré-filtros VF2 para `d > 20` | Pós-entrega | Médio |
 | Validação empírica com `d > 1` e outros datasets | Versão 2 | Alto |
 | Ataques por entropia e background knowledge combinado | Versão 2 | Alto |
 | Comparação com outros algoritmos de anonimização | Versão 2 | Alto |
-| Pareamento estrito do comparativo FB × Enron (Facebook reexecutado em pymetis) | Pós-qualificação | Baixo |
+| Pareamento estrito do comparativo FB × Enron (Facebook reexecutado em pymetis) | Pós-entrega | Baixo |
 
 ---
 
