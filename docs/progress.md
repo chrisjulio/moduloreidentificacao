@@ -20,6 +20,16 @@ do README/CLAUDE/progress para refletir a conclusão da produção acadêmica
 (PR a abrir após validação do autor).
 
 **Último passo concluído:**
+- **PDF do painel comparativo FB×Enron adicionado ao snapshot versionado. ✅
+  (docs, PR a abrir).** A pedido do autor: o snapshot em `docs/assets/`
+  (exceção DL-04 ao gitignore de `results/`) passou a incluir
+  `comparison_fb_enron.pdf` além do `.png` e `.csv`, em paridade com os demais
+  gráficos (`results/plots/` sempre gera PNG+PDF). PDF regenerado dos logs
+  congelados via `--pdf` do gerador (CSV e PNG resultantes byte-idênticos aos
+  versionados — logs intactos). Comando de regeneração em `results_enron.md`
+  (via `make_enron_table.py`) atualizado com `--pdf`; menções `{png,csv}`
+  atualizadas em README e `relatorio_rastreabilidade.md`. Sem reprocessamento
+  experimental. Ver entrada de sessão 2026-06-11 no Histórico.
 - **D-18 — registro retroativo da escolha `sigma = 0.5`. ✅ (docs, PR a
   abrir).** Auditoria da origem do default `sigma=0.5` do FSM (fixado no
   commit `90dd035`/issue #14 sem critério registrado) e nova entrada D-18 no
@@ -1150,6 +1160,32 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-11 — PDF do painel comparativo FB×Enron no snapshot versionado
+
+- **Concluído:** A pedido do autor, o snapshot versionado do painel
+  comparativo normalizado (DL-04, `docs/assets/`) ganhou a versão **PDF**
+  (`comparison_fb_enron.pdf`), em paridade com os demais gráficos do
+  pipeline, que sempre produzem PNG+PDF em `results/plots/`. O PDF foi
+  regenerado dos logs congelados (`he2009_facebook_baseline` +
+  `he2009_enron_secondary`) com o flag `--pdf` já existente em
+  `src/visualization/comparison.py` (nenhuma mudança de código de
+  visualização); sanidade: o CSV e o PNG regenerados na mesma execução
+  saíram **byte-idênticos** aos versionados, confirmando logs intactos e
+  render determinístico. Atualizações documentais: comando de regeneração
+  nº 5 e nota de exceção em `results_enron.md` (editados na fonte,
+  `experiments/make_enron_table.py`, e doc regenerado), menções
+  `comparison_fb_enron.{png,csv}` → `{png,pdf,csv}` no README (2 pontos) e
+  ponteiro `.pdf` na tabela de artefatos de `relatorio_rastreabilidade.md`.
+  DL-04 e entradas históricas não retro-editadas. Sem reprocessamento
+  experimental — congelamento respeitado. `ruff check`/`format` limpos.
+  Branch `docs/comparison-pdf-asset`.
+- **Próximo:** Merge do PR. Contexto registrado: a localização em
+  `docs/assets/` (e não `results/plots/`) é a exceção documentada DL-04 —
+  `results/` é gitignored e o painel precisa ser versionado por ser
+  referenciado como figura nos textos acadêmicos e auditável publicamente.
+- **Bloqueios:** PR de D-18 e PR deste passo aguardando CI + revisão humana.
+- **Decisões pendentes:** Nenhuma nova.
 
 ### 2026-06-11 — D-18: registro retroativo da escolha `sigma = 0.5` (lacuna de rastreabilidade)
 

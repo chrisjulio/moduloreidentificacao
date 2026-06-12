@@ -63,7 +63,7 @@ reabre.
 | Curva privacidade-utilidade Facebook | `python -m src.visualization.privacy_utility --logs experiments/logs/he2009_facebook_baseline` → `results/plots/privacy_utility_facebook.*` | regenerável (gitignored) |
 | Curva privacidade-utilidade Enron | idem com logs do Enron → `results/plots/privacy_utility_enron.*` | regenerável (gitignored) |
 | Figuras do d-sweep | regeneradas do log (ver [`results_dsweep.md`](results_dsweep.md)) | regenerável (gitignored) |
-| Painel comparativo normalizado FB×Enron | [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png) (+ [`.csv`](assets/comparison_fb_enron.csv)); gerador `src/visualization/comparison.py` | **versionado** (exceção DL-04) |
+| Painel comparativo normalizado FB×Enron | [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png) (+ [`.pdf`](assets/comparison_fb_enron.pdf) e [`.csv`](assets/comparison_fb_enron.csv)); gerador `src/visualization/comparison.py` | **versionado** (exceção DL-04) |
 | Tabelas CSV por (dataset, ataque) | `python -m src.visualization.tables --logs <dir> --out results/tables` | regenerável (gitignored) |
 | Tabelas agregadas por k | `experiments/make_baseline_table.py` / `make_enron_table.py`; embutidas em `results_*.md` | versionadas nos docs |
 | Fluxogramas de reprodutibilidade | [`img/fluxograma1_reproducibilidade.jpg`](img/fluxograma1_reproducibilidade.jpg), [`img/fluxograma2_reproducibilidade.jpg`](img/fluxograma2_reproducibilidade.jpg) | versionados |
