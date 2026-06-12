@@ -78,6 +78,14 @@ relatório — ver [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md
 > discute a escolha do minerador FSM nem reporta valores de entropia
 > (justificativa detalhada no texto privado, Nota de consolidação das
 > Referências; revisável pelo autor na conversão final).
+>
+> **Atualização (rodada pós-W2f, 2026-06-11):** a parte desta nota relativa
+> a Díaz/Serjantov ficou **superada** — a compilação de 11/06/2026 (versão
+> LaTeX) **incluiu** Díaz et al. 2003 e Serjantov & Danezis 2003 (citadas na
+> §4.6, no enquadramento da métrica de entropia) e a autorreferência Brito
+> 2026, fechando a lista compilada em **15 entradas** (citação↔lista nos
+> dois sentidos). **Wörlein 2005 permanece como a única omissão
+> intencional.**
 
 ---
 
@@ -97,3 +105,63 @@ relatório — ver [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md
 > [`artigo_execucoes.md`](artigo_execucoes.md), como na #174. **Validado pelo
 > autor na #175 em 2026-06-10** (3 pontos abertos decididos: modelo de
 > rastreio da #174; agrupamento como proposto; sem venue/template por ora).
+
+---
+
+## Rodada pós-W2f (2026-06-11) — correções do autor sobre a versão compilada
+
+Decisões consolidadas pelo autor em 2026-06-11, aplicadas ao texto privado
+(`academic/artigo.md`) e à versão compilada (projeto LaTeX/Overleaf; PDF de
+11/06/2026). Sem alteração de números, tabelas ou resultados (congelados);
+sem alteração de código.
+
+1. **Claim de disponibilidade (§3.5 — opção B do autor):** a frase final do
+   método passou a afirmar como artefato público os **relatórios
+   consolidados gerados dos logs** — não os logs brutos, que não são
+   versionados (README §7; `scripts/replication/README.md` §8); os logs
+   brutos são descritos como **regeneráveis** a partir das configurações
+   versionadas, pelo pipeline de replicação documentado. A abertura da
+   Seção 4 ("consolidados em relatórios versionados") já era compatível e
+   não foi alterada.
+2. **Referência Brito (2026):** descrição alinhada ao item 1 — "código-fonte,
+   configurações e **relatórios** dos experimentos". **Pendência aberta:**
+   o identificador estável (tag/release ou DOI) **ainda não existe** — o
+   PR [#199](https://github.com/chrisjulio/moduloreidentificacao/pull/199)
+   mergeado em 2026-06-11 tratou do registro D-18 (sigma do FSM), não do
+   identificador, e o repositório não possui tags nem releases. O campo de
+   versão da referência será preenchido quando o identificador for criado.
+3. **Terminologia cenário × ataque (decisão do autor):** o corpo do artigo
+   adota os rótulos das legendas das figuras — **ataque por grau / ataque
+   por subgrafo** —, com **ponte de nomenclatura** inserida na §3.3
+   (sentido de simulação controlada interna ao ciclo experimental fechado,
+   nunca procedimento ofensivo contra indivíduos). Âncoras do enquadramento
+   preservadas: título da §3.3 ("Cenários formais de reidentificação"),
+   abstract ("dois cenários formais de reidentificação"), parágrafo de
+   fronteira do Capítulo 1 e §3.4 ("taxa de reidentificação por cenário").
+   **Substitui** a recomendação anterior de renomear as legendas das
+   Figuras 4.1/4.2/4.4 — nenhuma figura foi regenerada.
+4. **Setas tipográficas:** padronização global de `→` (U+2192) para `->`
+   no corpo do artigo (§4.1, §4.5, §4.6; abstract, §1, §3.1 e §6 já usavam
+   `->`).
+5. **Ano 2003 (PET 2002 / LNCS 2482):** o artigo já estava correto;
+   harmonizados os documentos internos que citavam 2002 — relatório técnico
+   §5.7, [`metrics_definitions.md`](metrics_definitions.md),
+   [`algorithm_notes.md`](algorithm_notes.md) — e **errata** anotada ao
+   final da entrada D-17 do [`decision_log.md`](decision_log.md) (registro
+   histórico não reescrito).
+6. **Folha de rosto e Figura 3.1 (versão compilada):** placeholders da capa
+   substituídos (orientador Prof. Dr. André Luís Vignatti; coorientador
+   Prof. Dr. Sidgley Camargo de Andrade — titulações confirmadas); legenda
+   da Figura 3.1 sem o rastro "[Convertida do diagrama Mermaid...]".
+7. **Figura 4.3 vetorial:** a versão compilada passou a usar o **PDF
+   vetorial** do painel comparativo — o mesmo artefato versionado em
+   [`assets/comparison_fb_enron.pdf`](assets/comparison_fb_enron.pdf)
+   (PR [#200](https://github.com/chrisjulio/moduloreidentificacao/pull/200),
+   regenerado dos logs congelados pelo gerador existente, sem mudança de
+   código; PNG e CSV byte-idênticos).
+8. **Origem nominal:** o endereço público do repositório citado no artigo é
+   `github.com/chrisjulio/reidentificacao` (URL confirmada pelo autor); a
+   documentação interna usa `chrisjulio/moduloreidentificacao` como origem.
+   Fica registrado o alinhamento — relatório e artigo apontam para o mesmo
+   repositório. *(Verificação de 2026-06-11: o endereço público ainda não
+   estava ativo; pendência associada ao identificador do item 2.)*

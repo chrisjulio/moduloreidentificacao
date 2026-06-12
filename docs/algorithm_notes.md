@@ -647,12 +647,15 @@ como tal, não como falha do algoritmo.
 A métrica "por entropia" da tabela acima é definida com amparo na literatura de
 **entropia-como-anonimato**, não apenas na cota `1/k` de He et al. (2009):
 
-- **Serjantov & Danezis (2002)** medem anonimato pela entropia de Shannon
+- **Serjantov & Danezis (2003)** medem anonimato pela entropia de Shannon
   `H = −Σ_i p_i · log₂ p_i` da distribuição que o adversário atribui sobre o
   conjunto de candidatos. O caso **uniforme** (`p_i = 1/N`) dá `H = log₂(N)` — a
   **entropia máxima** (cota superior do anonimato) para um conjunto de tamanho `N`.
-- **Díaz, Seys, Claessens & Preneel (2002)** acrescentam o **grau de anonimato
+- **Díaz, Seys, Claessens & Preneel (2003)** acrescentam o **grau de anonimato
   normalizado** `d = H / H_max ∈ [0,1]`, com `H_max = log₂(N)`.
+
+Ambos os trabalhos são do workshop PET 2002, publicados em 2003 no volume
+LNCS 2482.
 
 Aplicada à partição de equivalência produzida por He et al., para um grupo `G_r`
 com `n_r` nós a entropia uniforme é `H(G_r) = log₂(n_r)` e o risco por nó é

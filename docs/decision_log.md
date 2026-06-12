@@ -1682,6 +1682,10 @@ esquema de pesos, a normalização e a eventual reclassificação métrica × at
 - Serjantov, A.; Danezis, G. *Towards an Information Theoretic Metric for Anonymity.* PET 2002, LNCS 2482, p. 41–53. DOI 10.1007/3-540-36467-6_4.
 - Díaz, C.; Seys, S.; Claessens, J.; Preneel, B. *Towards Measuring Anonymity.* PET 2002, LNCS 2482, p. 54–68. DOI 10.1007/3-540-36467-6_5.
 
+> *Errata (2026-06-11): as referências Serjantov & Danezis e Díaz et al.
+> correspondem ao volume LNCS 2482 (PET 2002), publicado em 2003 — ano
+> adotado nas referências do artigo e do relatório.*
+
 ---
 
 ## D-18 — `sigma = 0.5` como default do suporte do FSM (registro retroativo)
