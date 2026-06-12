@@ -20,6 +20,23 @@ do README/CLAUDE/progress para refletir a conclusão da produção acadêmica
 (PR a abrir após validação do autor).
 
 **Último passo concluído:**
+- **Rodada pós-W2f de correções do artigo (2026-06-11). ✅ (docs, PR a
+  abrir).** Aplicação das decisões consolidadas do autor sobre a versão
+  compilada de 11/06 e o fonte privado: (i) claim de disponibilidade da
+  §3.5 reescrito (opção B — "relatórios consolidados gerados dos logs"
+  como artefato público; logs brutos regeneráveis); (ii) referência Brito
+  2026 com descrição "relatórios dos experimentos"; (iii) terminologia —
+  corpo adota **ataque por grau / ataque por subgrafo** com ponte de
+  nomenclatura na §3.3, âncoras preservadas; (iv) setas padronizadas em
+  `->`; (v) ano 2003 harmonizado nos docs internos (relatório §5.7,
+  `metrics_definitions.md`, `algorithm_notes.md`; errata no D-17); (vi)
+  folha de rosto sem placeholders e legenda da Figura 3.1 limpa (versão
+  compilada); (vii) Figura 4.3 vetorial no compilado usando o PDF do
+  snapshot (PR #200). Registro completo na seção "Rodada pós-W2f" de
+  `artigo_rastreabilidade.md`. **Pendência aberta:** identificador estável
+  (tag/release ou DOI) da referência Brito 2026 — o PR #199 tratou do D-18
+  (sigma), não do identificador; repositório sem tags/releases e endereço
+  público `chrisjulio/reidentificacao` ainda inativo (decisão do autor).
 - **PDF do painel comparativo FB×Enron adicionado ao snapshot versionado. ✅
   (docs, PR a abrir).** A pedido do autor: o snapshot em `docs/assets/`
   (exceção DL-04 ao gitignore de `results/`) passou a incluir
@@ -1160,6 +1177,36 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-11 — Rodada pós-W2f: correções do artigo decididas pelo autor
+
+- **Concluído:** Aplicadas as 11 decisões consolidadas do autor
+  (orientação de 2026-06-11) sobre o artigo — fonte privado
+  (`academic/artigo.md`), versão compilada (projeto LaTeX/Overleaf) e docs
+  internos. No texto: claim de logs da §3.5 reescrito (opção B), referência
+  Brito 2026 com "relatórios dos experimentos", ponte de nomenclatura na
+  §3.3 + substituição "cenário por X" → "ataque por X" (§3.3, §4.2, §4.3,
+  §4.5 incl. legenda da Figura 4.3, §5.3; âncoras intactas), setas `→`
+  padronizadas em `->` (§4.5, §4.6 — demais seções já conformes), folha de
+  rosto sem placeholders (titulações Prof. Dr. confirmadas) e legenda da
+  Figura 3.1 sem rastro de conversão. Figura 4.3 passou a vetorial no
+  compilado, reutilizando `docs/assets/comparison_fb_enron.pdf` (PR #200 —
+  sem regeneração nova, sem mudança de código). Docs internos: ano 2003
+  (PET 2002/LNCS 2482) harmonizado em `metrics_definitions.md`,
+  `algorithm_notes.md` e relatório técnico §5.7; errata na D-17;
+  nota Díaz/Serjantov da matriz atualizada (superada pela inclusão na
+  compilação de 11/06 — Wörlein 2005 única omissão intencional); seção
+  "Rodada pós-W2f" criada em `artigo_rastreabilidade.md` (itens i–v +
+  origem nominal `moduloreidentificacao` × `reidentificacao`). Itens 4 e 6
+  da orientação: sem ação, por decisão do autor. Números/resultados
+  intocados; código congelado respeitado.
+- **Próximo:** Merge do PR desta rodada; criação do identificador estável
+  (tag/release ou DOI) e preenchimento do campo de versão na referência
+  Brito 2026; ativação do endereço público `chrisjulio/reidentificacao`.
+- **Bloqueios:** Nenhum (PRs #199 e #200 MERGED em 2026-06-11).
+- **Decisões pendentes:** Identificador estável da autorreferência (o
+  PR #199 mergeado tratou do D-18/sigma — o identificador segue
+  inexistente); momento de publicação/renomeação do repositório público.
 
 ### 2026-06-11 — PDF do painel comparativo FB×Enron no snapshot versionado
 

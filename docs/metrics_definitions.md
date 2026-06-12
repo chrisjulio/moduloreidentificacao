@@ -82,11 +82,12 @@ risk(v) = 1 / n_r           # confiança de reidentificação, v ∈ G_r
 ```
 
 **Amparo na literatura.** A entropia de Shannon como métrica de anonimato foi
-estabelecida por **Serjantov & Danezis (2002)** — `H = −Σ_i p_i·log2 p_i` sobre
+estabelecida por **Serjantov & Danezis (2003)** — `H = −Σ_i p_i·log2 p_i` sobre
 o conjunto de candidatos; o caso uniforme dá `H = log2(N)`, a **entropia máxima**
-para um conjunto de tamanho `N` — e por **Díaz, Seys, Claessens & Preneel (2002)**,
+para um conjunto de tamanho `N` — e por **Díaz, Seys, Claessens & Preneel (2003)**,
 que definem o **grau de anonimato normalizado** `d = H / H_max ∈ [0,1]`,
-`H_max = log2(N)`. O caso uniforme alinha-se à cota `≤ 1/k` de He et al. (Def. 2–3).
+`H_max = log2(N)` (ambos trabalhos do workshop PET 2002, publicados em 2003
+no volume LNCS 2482). O caso uniforme alinha-se à cota `≤ 1/k` de He et al. (Def. 2–3).
 
 **Métricas reportadas:**
 - `entropy_mean` — média de `H(v) = log2(n_r)` sobre os nós cobertos pelos grupos.
