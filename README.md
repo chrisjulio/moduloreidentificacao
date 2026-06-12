@@ -393,7 +393,7 @@ registros de execução etapa a etapa
 - `experiments/make_enron_table.py` — gerador de `docs/results_enron.md` a partir
   do log JSONL do Enron.
 - `src/visualization/comparison.py` — painel comparativo normalizado Facebook ×
-  Enron (DL-04); snapshot versionado em `docs/assets/comparison_fb_enron.{png,csv}`.
+  Enron (DL-04); snapshot versionado em `docs/assets/comparison_fb_enron.{png,pdf,csv}`.
 - `docs/results_enron.md` — relatório consolidado do experimento secundário:
   tabelas por k, comparativo Facebook × Enron e leitura por tendências.
 
@@ -663,7 +663,7 @@ documentos de circulação restrita.
   reproducibility.md         # guia de reprodução end-to-end
   preprocessing_decision.md  # decisões de pré-processamento dos datasets
   entregaveis.md             # entregáveis consolidados por nível
-  assets/                    # snapshots versionados (ex.: comparison_fb_enron.{png,csv})
+  assets/                    # snapshots versionados (ex.: comparison_fb_enron.{png,pdf,csv})
   img/                       # figuras versionadas (fluxogramas de reprodutibilidade)
 README.md                    # este arquivo — visão operacional canônica
 CLAUDE.md                    # instruções de desenvolvimento para sessões de agente
