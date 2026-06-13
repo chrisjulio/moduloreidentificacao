@@ -33,8 +33,12 @@ correta**: a série rotulada "Ataque por grau" usa a cor de grau e a coluna
 
 O que ficou pendente é um **teste de regressão** que travaria essa
 correspondência. A proposta de asserções, como redigida, **reprova sobre dados
-corretos** em três pontos. Aplicar o teste agora exigiria reformular as
-asserções (mexer em arquivo versionado durante o congelamento). Decisão:
+corretos** em três pontos — e, na revisão de escopo (2026-06-13), duas delas se
+revelaram do **tipo errado de teste**: asserções de forma-de-dado, derivadas do
+CSV, que **não enxergam o código de plotagem** e portanto não guardam a fiação
+coluna↔cor↔rótulo (a única classe de bug que este teste deveria pegar). Escopo
+do teste reduzido à **guarda de fiação por função** (ver §"Correção"). Aplicar
+agora exigiria mexer em arquivo versionado durante o congelamento. Decisão:
 **assumir a pendência e diferir** para depois da revisão, evitando refatoração
 sobre o que já está em texto e sob visão dos orientadores.
 
@@ -97,28 +101,44 @@ contém três asserções problemáticas:
    `_plot_dsweep_series` o ataque é codificado por **estilo de linha**, não por
    `_ATTACK_COLORS`; aplicar a mesma asserção à série quebra.
 
-> Asserção robusta (pode manter sem alteração): **`rr_degree(k=2)` e
+**Reclassificação (2026-06-13):** as asserções 1 e 2 não são apenas
+mal-redigidas — são do **tipo errado de teste**. Ambas são computadas a partir
+do CSV, à parte do código de desenho; se alguém des-fiasse a coluna lida no plot
+(ex.: a série de grau passar a ler `reidentification_rate_subgraph`), elas
+**continuariam passando**, porque reafirmam propriedades dos *dados congelados*,
+não do desenho. Não guardam o swap. São, portanto, **descartadas**, não
+reformuladas. Os fatos que tentavam afirmar (grau estoura em k=10; subgrafo
+decai) já têm valor onde estão: na narrativa do texto e neste report. Resta
+apenas a asserção 3 (guarda de fiação), que é a única que pega — e pegou,
+manualmente — a classe de bug em questão.
+
+> Asserção robusta (sanity documental, pode manter): **`rr_degree(k=2)` e
 > `rr_degree(k=5)` < `rr_degree(k=10)` por ampla margem** — vale em qualquer
-> granularidade e em todo `d`.
+> granularidade e em todo `d`. É *sanity-check de dado*, não guarda de plot.
 
 ---
 
 ## Correção a aplicar (pós-revisão) — no TESTE, não na figura
 
-A figura está correta; **não alterar cor/label/dado**. A correção é só na
-especificação do teste de regressão:
+A figura está correta; **não alterar cor/label/dado**. Revisão de escopo
+(2026-06-13): as asserções de **forma-de-dado** (pico de grau, monotonicidade do
+subgrafo) são **descartadas** — não guardam a fiação do plot (ver §"Problema
+diferido"). O teste de regressão fica reduzido à **guarda de fiação por função**:
 
-1. **Asserção de pico de grau:** comparar a **média agregada sobre todos os `d`**
-   (`argmax_k == 10`), ou fixar `d=1` (também dá 10). **Não** fazer argmax por-d
-   sem excluir d=2.
-2. **Asserção de monotonicidade do subgrafo:** usar a **média agregada sobre
-   `d`**, ou afirmar monotonicidade por-d **apenas para `d ∈ {2,5,10}`**, ou
-   afrouxar para "k=2 > k=10 por ampla margem" (vale em todo `d`). A
-   monotonicidade estrita por-d **não é propriedade verdadeira de d=1**.
-3. **Guarda de código:** asserir `_ATTACK_COLORS` **só** sobre
-   `_plot_dsweep_facets`. Para `_plot_dsweep_series`, a guarda correta é
-   "grau = `--`/marker `o`, e `_style_legend` mapeia tracejado → 'Grau'".
-4. **Manter** a asserção robusta (margem k=2,k=5 ≪ k=10).
+1. **`_plot_dsweep_facets` (guarda por cor):** asserir que a série `rr_degree` é
+   plotada com `_ATTACK_COLORS["degree"]` e label "Ataque por grau", e
+   `rr_subgraph` com `_ATTACK_COLORS["subgraph"]` e label "Ataque por subgrafo".
+2. **`_plot_dsweep_series` (guarda por estilo):** asserir que a série de grau usa
+   tracejado `--`/marker `o` e a de subgrafo sólido `-`/marker `s`, e que
+   `_style_legend(ax, "Subgrafo", "Grau")` mapeia sólido → "Subgrafo",
+   tracejado → "Grau". **Não** aplicar a guarda de cor aqui — a série não usa
+   `_ATTACK_COLORS`.
+3. **Sanity documental (opcional):** manter a margem `rr_degree(k=2),
+   rr_degree(k=5) ≪ rr_degree(k=10)` (vale em todo `d`), **rotulada como
+   sanity-check de dado** — ciente de que não guarda o plot.
+
+**Descartadas** (tipo errado de teste): `argmax_k(rr_degree) == 10` e
+`rr_subgraph decrescente por d`.
 
 Após aplicar, **regenerar** `privacy_utility_dsweep_{facets,series}.{png,pdf}`
 pelos comandos registrados em `docs/results_dsweep.md` (§ reprodutibilidade,
