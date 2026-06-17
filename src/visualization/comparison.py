@@ -44,7 +44,7 @@ matplotlib.use("Agg")  # headless backend — safe for CI and import-time use
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.visualization.privacy_utility import load_jsonl_records
+from src.visualization.privacy_utility import LANGUAGES, load_jsonl_records
 
 # ---------------------------------------------------------------------------
 # Aggregation
@@ -109,8 +109,35 @@ def relative_decay(rr_by_k: dict[int, float]) -> dict[int, float]:
 # ---------------------------------------------------------------------------
 
 _DATASET_STYLE: dict[str, dict[str, str]] = {
-    "facebook": {"color": "#1f77b4", "marker": "o", "label": "Facebook (ego-rede 3437)"},
-    "enron": {"color": "#ff7f0e", "marker": "s", "label": "Email-Enron (LCC)"},
+    "facebook": {"color": "#1f77b4", "marker": "o"},
+    "enron": {"color": "#ff7f0e", "marker": "s"},
+}
+
+#: Display strings by language. Portuguese ("pt") is the canonical/default
+#: wording; English ("en") follows the target journal article (US spelling,
+#: "scenario" instead of "ataque"). Single source of truth for localisation;
+#: ``LANGUAGES`` (the supported set) is shared with ``privacy_utility``.
+_LABELS: dict[str, dict[str, str]] = {
+    "pt": {
+        "title": "Facebook x Enron — comparativo normalizado (ataque por subgrafo)",
+        "facebook_label": "Facebook (ego-rede 3437)",
+        "enron_label": "Email-Enron (LCC)",
+        "bound_line": "cota 1/k (rr·k = 1)",
+        "bound_ylabel": "rr_subgrafo · k  (fração da cota 1/k)",
+        "panel_a": "(A) Fração da cota 1/k — acima de 1 viola a cota (B1, d=1)",
+        "decay_ylabel": "rr_subgrafo(k) / rr_subgrafo(k mínimo)",
+        "panel_b": "(B) Decaimento relativo — forma da curva (magnitude removida)",
+    },
+    "en": {
+        "title": "Facebook x Enron — normalized comparison (subgraph scenario)",
+        "facebook_label": "Facebook (ego-net 3437)",
+        "enron_label": "Email-Enron (LCC)",
+        "bound_line": "1/k bound (rr·k = 1)",
+        "bound_ylabel": "rr_subgraph · k  (fraction of 1/k bound)",
+        "panel_a": "(A) Fraction of 1/k bound — above 1 violates the bound (B1, d=1)",
+        "decay_ylabel": "rr_subgraph(k) / rr_subgraph(min k)",
+        "panel_b": "(B) Relative decay — curve shape (magnitude removed)",
+    },
 }
 
 
@@ -118,9 +145,10 @@ def plot_comparison(
     fb_rr_by_k: dict[int, float],
     en_rr_by_k: dict[int, float],
     output_dir: Path,
-    title: str = "Facebook x Enron — comparativo normalizado (ataque por subgrafo)",
+    title: str | None = None,
     filename_stem: str = "comparison_fb_enron",
     write_pdf: bool = False,
+    lang: str = "pt",
 ) -> dict[str, Path]:
     """Render the two-panel normalised comparison figure to *output_dir*.
 
@@ -131,11 +159,16 @@ def plot_comparison(
     output_dir:
         Destination directory (created if absent).
     title:
-        Figure suptitle.
+        Figure suptitle. When ``None`` (default), a language-appropriate
+        default title is used (see *lang*).
     filename_stem:
         Base filename without extension.
     write_pdf:
         Also save a PDF alongside the PNG.
+    lang:
+        Figure text language. ``"pt"`` (default, primary/canonical) or ``"en"``
+        (the journal-article wording). Only display strings change; data,
+        layout and colours are identical.
 
     Returns
     -------
@@ -143,6 +176,9 @@ def plot_comparison(
         Mapping with keys ``"png"`` (always) and ``"pdf"`` (only if requested).
     """
     output_dir.mkdir(parents=True, exist_ok=True)
+    labels = _LABELS[lang]
+    if title is None:
+        title = labels["title"]
 
     series = {"facebook": fb_rr_by_k, "enron": en_rr_by_k}
     fig, (ax_bound, ax_decay) = plt.subplots(1, 2, figsize=(12, 5))
@@ -158,15 +194,13 @@ def plot_comparison(
             vals,
             marker=style["marker"],
             color=style["color"],
-            label=style["label"],
+            label=labels[f"{name}_label"],
             linewidth=1.8,
         )
-    ax_bound.axhline(1.0, color="#555", linestyle=":", linewidth=1.4, label="cota 1/k (rr·k = 1)")
+    ax_bound.axhline(1.0, color="#555", linestyle=":", linewidth=1.4, label=labels["bound_line"])
     ax_bound.set_xlabel("k", fontsize=11)
-    ax_bound.set_ylabel("rr_subgrafo · k  (fração da cota 1/k)", fontsize=11)
-    ax_bound.set_title(
-        "(A) Fração da cota 1/k — acima de 1 viola a cota (B1, d=1)", fontsize=10, color="#444"
-    )
+    ax_bound.set_ylabel(labels["bound_ylabel"], fontsize=11)
+    ax_bound.set_title(labels["panel_a"], fontsize=10, color="#444")
     ax_bound.grid(True, linestyle="--", alpha=0.4)
     ax_bound.legend(fontsize=9)
 
@@ -180,14 +214,12 @@ def plot_comparison(
             vals,
             marker=style["marker"],
             color=style["color"],
-            label=style["label"],
+            label=labels[f"{name}_label"],
             linewidth=1.8,
         )
     ax_decay.set_xlabel("k", fontsize=11)
-    ax_decay.set_ylabel("rr_subgrafo(k) / rr_subgrafo(k mínimo)", fontsize=11)
-    ax_decay.set_title(
-        "(B) Decaimento relativo — forma da curva (magnitude removida)", fontsize=10, color="#444"
-    )
+    ax_decay.set_ylabel(labels["decay_ylabel"], fontsize=11)
+    ax_decay.set_title(labels["panel_b"], fontsize=10, color="#444")
     ax_decay.set_ylim(bottom=0)
     ax_decay.grid(True, linestyle="--", alpha=0.4)
     ax_decay.legend(fontsize=9)
@@ -275,6 +307,12 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--stem", type=str, default="comparison_fb_enron", help="Output filename stem.")
     p.add_argument("--title", type=str, default=None, help="Figure suptitle.")
     p.add_argument("--pdf", action="store_true", help="Also write a PDF.")
+    p.add_argument(
+        "--lang",
+        choices=list(LANGUAGES),
+        default="pt",
+        help="Figure text language: 'pt' (default, primary) or 'en' (journal-article wording).",
+    )
     return p
 
 
@@ -292,9 +330,14 @@ def main(argv: list[str] | None = None) -> None:
     fb_ks = mean_ks_d_by_k(fb_records)
     en_ks = mean_ks_d_by_k(en_records)
 
-    title = args.title or "Facebook x Enron — comparativo normalizado (ataque por subgrafo)"
     paths = plot_comparison(
-        fb_rr, en_rr, output_dir=args.out, title=title, filename_stem=args.stem, write_pdf=args.pdf
+        fb_rr,
+        en_rr,
+        output_dir=args.out,
+        title=args.title,
+        filename_stem=args.stem,
+        write_pdf=args.pdf,
+        lang=args.lang,
     )
     csv_path = write_comparison_csv(fb_rr, en_rr, fb_ks, en_ks, args.out / f"{args.stem}.csv")
 

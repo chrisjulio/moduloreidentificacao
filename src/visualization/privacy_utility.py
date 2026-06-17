@@ -234,12 +234,53 @@ _UTILITY_COLORS: dict[str, str] = {
     "ks_d": "#d62728",  # matplotlib red
 }
 
+#: Supported figure languages — Portuguese ("pt") is primary/default; English
+#: ("en") backs the eng-* figures produced for the journal article.
+LANGUAGES: tuple[str, ...] = ("pt", "en")
+
+#: Display strings by language. Portuguese ("pt") is the canonical/default
+#: wording. English ("en") follows the target journal article's terminology:
+#: US spelling ("anonymization") and "scenario" for the adversary settings
+#: (where the Portuguese text says "ataque"). This dict is the single place to
+#: change or extend the figures' localisation.
+_LABELS: dict[str, dict[str, str]] = {
+    "pt": {
+        "degree_full": "Ataque por grau",
+        "subgraph_full": "Ataque por subgrafo",
+        "reident_rate": "Taxa de Reidentificação (%)",
+        "privacy_panel": "Privacidade  (↓ melhor)",
+        "clustering_full": "Variação de Clustering",
+        "ksd_degdist": "KS-D (distribuição de grau)",
+        "k_axis": "k (parâmetro de anonimização)",
+        "utility_degr": "Degradação de Utilidade",
+        "utility_panel": "Utilidade  (↓ melhor)",
+        "subgraph_short": "Subgrafo",
+        "degree_short": "Grau",
+        "ksd_degree": "KS-D (grau)",
+    },
+    "en": {
+        "degree_full": "Degree scenario",
+        "subgraph_full": "Subgraph scenario",
+        "reident_rate": "Re-identification Rate (%)",
+        "privacy_panel": "Privacy  (↓ better)",
+        "clustering_full": "Clustering Variation",
+        "ksd_degdist": "KS-D (degree distribution)",
+        "k_axis": "k (anonymization parameter)",
+        "utility_degr": "Utility Degradation",
+        "utility_panel": "Utility  (↓ better)",
+        "subgraph_short": "Subgraph",
+        "degree_short": "Degree",
+        "ksd_degree": "KS-D (degree)",
+    },
+}
+
 
 def plot_privacy_utility(
     stats: dict[int, dict[str, dict[str, float]]],
     output_dir: Path,
     title: str = "Privacy vs. Utility — He et al. (2009)",
     filename_stem: str = "privacy_utility",
+    lang: str = "pt",
 ) -> tuple[Path, Path]:
     """Generate a two-panel privacy-utility figure and save to *output_dir*.
 
@@ -260,6 +301,10 @@ def plot_privacy_utility(
         Figure suptitle.
     filename_stem:
         Base filename without extension (e.g. ``"privacy_utility"``).
+    lang:
+        Figure text language. ``"pt"`` (default, primary/canonical) or ``"en"``
+        (the journal-article wording). Only display strings change; data,
+        layout and colours are identical.
 
     Returns
     -------
@@ -267,6 +312,7 @@ def plot_privacy_utility(
         Absolute paths of the saved files.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
+    labels = _LABELS[lang]
 
     k_values = sorted(stats.keys())
     k_arr = np.asarray(k_values, dtype=float)
@@ -291,7 +337,7 @@ def plot_privacy_utility(
         yerr=rr_deg_s * 100,
         marker="o",
         color=_ATTACK_COLORS["degree"],
-        label="Ataque por grau",
+        label=labels["degree_full"],
         capsize=4,
         linewidth=1.8,
     )
@@ -301,15 +347,15 @@ def plot_privacy_utility(
         yerr=rr_sub_s * 100,
         marker="s",
         color=_ATTACK_COLORS["subgraph"],
-        label="Ataque por subgrafo",
+        label=labels["subgraph_full"],
         capsize=4,
         linewidth=1.8,
     )
-    ax_priv.set_ylabel("Taxa de Reidentificação (%)", fontsize=11)
+    ax_priv.set_ylabel(labels["reident_rate"], fontsize=11)
     ax_priv.set_ylim(bottom=0)
     ax_priv.legend(fontsize=10)
     ax_priv.grid(True, linestyle="--", alpha=0.4)
-    ax_priv.set_title("Privacidade  (↓ melhor)", fontsize=10, color="#444")
+    ax_priv.set_title(labels["privacy_panel"], fontsize=10, color="#444")
 
     # ---- Panel 2: Utility ------------------------------------------------
     ax_util.errorbar(
@@ -318,7 +364,7 @@ def plot_privacy_utility(
         yerr=clust_s,
         marker="^",
         color=_UTILITY_COLORS["clust_var"],
-        label="Variação de Clustering",
+        label=labels["clustering_full"],
         capsize=4,
         linewidth=1.8,
     )
@@ -328,16 +374,16 @@ def plot_privacy_utility(
         yerr=ks_s,
         marker="D",
         color=_UTILITY_COLORS["ks_d"],
-        label="KS-D (distribuição de grau)",
+        label=labels["ksd_degdist"],
         capsize=4,
         linewidth=1.8,
     )
-    ax_util.set_xlabel("k (parâmetro de anonimização)", fontsize=11)
-    ax_util.set_ylabel("Degradação de Utilidade", fontsize=11)
+    ax_util.set_xlabel(labels["k_axis"], fontsize=11)
+    ax_util.set_ylabel(labels["utility_degr"], fontsize=11)
     ax_util.set_ylim(bottom=0)
     ax_util.legend(fontsize=10)
     ax_util.grid(True, linestyle="--", alpha=0.4)
-    ax_util.set_title("Utilidade  (↓ melhor)", fontsize=10, color="#444")
+    ax_util.set_title(labels["utility_panel"], fontsize=10, color="#444")
 
     # x-ticks only at the actual k values used
     ax_util.set_xticks(k_arr)
@@ -399,6 +445,7 @@ def plot_privacy_utility_dsweep(
     title: str = "Privacy vs. Utility (d-sweep) — He et al. (2009)",
     filename_stem: str = "privacy_utility_dsweep",
     layout: str = "series",
+    lang: str = "pt",
 ) -> tuple[Path, Path]:
     """Generate a d-aware privacy-utility figure from :func:`aggregate_by_k_d` stats.
 
@@ -426,6 +473,9 @@ def plot_privacy_utility_dsweep(
         Base filename without extension.
     layout:
         Either ``"series"`` or ``"facets"``.
+    lang:
+        Figure text language. ``"pt"`` (default, primary/canonical) or ``"en"``
+        (the journal-article wording). Only display strings change.
 
     Returns
     -------
@@ -446,8 +496,8 @@ def plot_privacy_utility_dsweep(
     colors = _d_color_map(d_values)
 
     if layout == "series":
-        return _plot_dsweep_series(stats, d_values, colors, output_dir, title, filename_stem)
-    return _plot_dsweep_facets(stats, d_values, colors, output_dir, title, filename_stem)
+        return _plot_dsweep_series(stats, d_values, colors, output_dir, title, filename_stem, lang)
+    return _plot_dsweep_facets(stats, d_values, colors, output_dir, title, filename_stem, lang)
 
 
 def _plot_dsweep_series(
@@ -457,8 +507,10 @@ def _plot_dsweep_series(
     output_dir: Path,
     title: str,
     filename_stem: str,
+    lang: str = "pt",
 ) -> tuple[Path, Path]:
     """Two-panel layout: colour encodes d, line style encodes attack/metric."""
+    labels = _LABELS[lang]
     fig, (ax_priv, ax_util) = plt.subplots(2, 1, figsize=(7.5, 8.5), sharex=True)
     fig.suptitle(title, fontsize=13, fontweight="bold", y=0.98)
 
@@ -487,11 +539,11 @@ def _plot_dsweep_series(
             capsize=3,
             linewidth=1.6,
         )
-    ax_priv.set_ylabel("Taxa de Reidentificação (%)", fontsize=11)
+    ax_priv.set_ylabel(labels["reident_rate"], fontsize=11)
     ax_priv.set_ylim(bottom=0)
     ax_priv.grid(True, linestyle="--", alpha=0.4)
-    ax_priv.set_title("Privacidade  (↓ melhor)", fontsize=10, color="#444")
-    _style_legend(ax_priv, "Subgrafo", "Grau")
+    ax_priv.set_title(labels["privacy_panel"], fontsize=10, color="#444")
+    _style_legend(ax_priv, labels["subgraph_short"], labels["degree_short"])
 
     # ---- Panel 2: Utility (clustering solid, KS-D dashed) ----------------
     for d in d_values:
@@ -518,12 +570,12 @@ def _plot_dsweep_series(
             capsize=3,
             linewidth=1.6,
         )
-    ax_util.set_xlabel("k (parâmetro de anonimização)", fontsize=11)
-    ax_util.set_ylabel("Degradação de Utilidade", fontsize=11)
+    ax_util.set_xlabel(labels["k_axis"], fontsize=11)
+    ax_util.set_ylabel(labels["utility_degr"], fontsize=11)
     ax_util.set_ylim(bottom=0)
     ax_util.grid(True, linestyle="--", alpha=0.4)
-    ax_util.set_title("Utilidade  (↓ melhor)", fontsize=10, color="#444")
-    _style_legend(ax_util, "Variação de Clustering", "KS-D (grau)")
+    ax_util.set_title(labels["utility_panel"], fontsize=10, color="#444")
+    _style_legend(ax_util, labels["clustering_full"], labels["ksd_degree"])
 
     # Shared d-colour legend (one entry per d), placed on the privacy panel.
     d_handles = [
@@ -557,8 +609,10 @@ def _plot_dsweep_facets(
     output_dir: Path,
     title: str,
     filename_stem: str,
+    lang: str = "pt",
 ) -> tuple[Path, Path]:
     """Grid layout: 2 rows (privacy, utility) x one column per d value."""
+    labels = _LABELS[lang]
     ncols = len(d_values)
     fig, axes = plt.subplots(2, ncols, figsize=(3.6 * ncols + 1.5, 7.5), sharex=True, squeeze=False)
     fig.suptitle(title, fontsize=13, fontweight="bold", y=0.99)
@@ -581,7 +635,7 @@ def _plot_dsweep_facets(
             color=_ATTACK_COLORS["degree"],
             capsize=3,
             linewidth=1.6,
-            label="Ataque por grau",
+            label=labels["degree_full"],
         )
         k_arr, m_sub, s_sub = _series_for_d(stats, d, "rr_subgraph")
         ax_priv.errorbar(
@@ -592,7 +646,7 @@ def _plot_dsweep_facets(
             color=_ATTACK_COLORS["subgraph"],
             capsize=3,
             linewidth=1.6,
-            label="Ataque por subgrafo",
+            label=labels["subgraph_full"],
         )
         ax_priv.set_title(f"d = {d}", fontsize=11, color=c, fontweight="bold")
         ax_priv.set_ylim(bottom=0)
@@ -608,7 +662,7 @@ def _plot_dsweep_facets(
             color=_UTILITY_COLORS["clust_var"],
             capsize=3,
             linewidth=1.6,
-            label="Variação de Clustering",
+            label=labels["clustering_full"],
         )
         k_arr, m_ks, s_ks = _series_for_d(stats, d, "ks_d")
         ax_util.errorbar(
@@ -619,7 +673,7 @@ def _plot_dsweep_facets(
             color=_UTILITY_COLORS["ks_d"],
             capsize=3,
             linewidth=1.6,
-            label="KS-D (grau)",
+            label=labels["ksd_degree"],
         )
         ax_util.set_ylim(bottom=0)
         ax_util.grid(True, linestyle="--", alpha=0.4)
@@ -627,8 +681,8 @@ def _plot_dsweep_facets(
         ax_util.set_xticks(k_ticks)
         ax_util.set_xticklabels([str(k) for k in all_k])
 
-    axes[0][0].set_ylabel("Taxa de Reidentificação (%)", fontsize=10)
-    axes[1][0].set_ylabel("Degradação de Utilidade", fontsize=10)
+    axes[0][0].set_ylabel(labels["reident_rate"], fontsize=10)
+    axes[1][0].set_ylabel(labels["utility_degr"], fontsize=10)
     axes[0][0].legend(fontsize=8, loc="upper right")
     axes[1][0].legend(fontsize=8, loc="upper right")
 
@@ -687,6 +741,12 @@ def _build_parser() -> argparse.ArgumentParser:
         default="series",
         help="d-sweep layout: 'series' (default) or 'facets'. Ignored in baseline mode.",
     )
+    p.add_argument(
+        "--lang",
+        choices=list(LANGUAGES),
+        default="pt",
+        help="Figure text language: 'pt' (default, primary) or 'en' (journal-article wording).",
+    )
     return p
 
 
@@ -730,6 +790,7 @@ def main(argv: list[str] | None = None) -> None:
             title=title,
             filename_stem=stem,
             layout=args.layout,
+            lang=args.lang,
         )
         print(f"\nSaved:\n  {pdf_path}\n  {png_path}")
         return
@@ -754,6 +815,7 @@ def main(argv: list[str] | None = None) -> None:
         output_dir=args.out,
         title=title,
         filename_stem=stem,
+        lang=args.lang,
     )
     print(f"\nSaved:\n  {pdf_path}\n  {png_path}")
 
