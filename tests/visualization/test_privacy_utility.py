@@ -412,6 +412,60 @@ class TestPlotPrivacyUtility:
         assert second_size > 0
         assert first_size == second_size  # identical data → identical output
 
+    def test_no_suptitle_still_produces_files(self, tmp_path: Path, sample_records: list[dict]):
+        """show_suptitle=False (LaTeX inclusion) must produce valid files."""
+        stats = aggregate_by_k(sample_records)
+        pdf, png = plot_privacy_utility(stats, output_dir=tmp_path, show_suptitle=False)
+        assert pdf.exists() and pdf.stat().st_size > 0
+        assert png.exists() and png.stat().st_size > 0
+
+    def _capture_subplots(self, monkeypatch) -> dict:
+        """Patch plt.subplots in the module to record the (nrows, ncols, figsize)."""
+        import src.visualization.privacy_utility as mod
+
+        captured: dict = {}
+        real_subplots = mod.plt.subplots
+
+        def spy(nrows=1, ncols=1, *args, **kwargs):
+            captured["nrows"], captured["ncols"] = nrows, ncols
+            captured["figsize"] = kwargs.get("figsize")
+            return real_subplots(nrows, ncols, *args, **kwargs)
+
+        monkeypatch.setattr(mod.plt, "subplots", spy)
+        return captured
+
+    def test_default_layout_is_stacked(
+        self, tmp_path: Path, sample_records: list[dict], monkeypatch
+    ):
+        """Default layout must be the canonical stacked geometry (2x1, portrait 7x8)."""
+        captured = self._capture_subplots(monkeypatch)
+        stats = aggregate_by_k(sample_records)
+        plot_privacy_utility(stats, output_dir=tmp_path)
+        assert (captured["nrows"], captured["ncols"]) == (2, 1)
+        assert captured["figsize"] == (7, 8)
+
+    def test_side_by_side_layout_geometry(
+        self, tmp_path: Path, sample_records: list[dict], monkeypatch
+    ):
+        """layout='side-by-side' must lay panels in a 1x2 grid sized to \\textwidth."""
+        captured = self._capture_subplots(monkeypatch)
+        stats = aggregate_by_k(sample_records)
+        plot_privacy_utility(stats, output_dir=tmp_path, layout="side-by-side")
+        assert (captured["nrows"], captured["ncols"]) == (1, 2)
+        assert captured["figsize"] == (6.1, 2.7)
+
+    def test_side_by_side_layout_produces_files(self, tmp_path: Path, sample_records: list[dict]):
+        """The opt-in side-by-side layout must produce valid files."""
+        stats = aggregate_by_k(sample_records)
+        pdf, png = plot_privacy_utility(stats, output_dir=tmp_path, layout="side-by-side")
+        assert pdf.exists() and pdf.stat().st_size > 0
+        assert png.exists() and png.stat().st_size > 0
+
+    def test_unknown_layout_raises(self, tmp_path: Path, sample_records: list[dict]):
+        stats = aggregate_by_k(sample_records)
+        with pytest.raises(ValueError, match="Unknown layout"):
+            plot_privacy_utility(stats, output_dir=tmp_path, layout="diagonal")
+
 
 # ---------------------------------------------------------------------------
 # plot_privacy_utility_dsweep (d-aware)
@@ -520,6 +574,14 @@ class TestMain:
         main(["--logs", str(logs_dir), "--out", str(out_dir), "--stem", "baseline"])
         assert (out_dir / "baseline.pdf").exists()
         assert (out_dir / "baseline.png").exists()
+
+    def test_main_no_suptitle_flag(self, tmp_path: Path, logs_dir: Path):
+        from src.visualization.privacy_utility import main
+
+        out_dir = tmp_path / "plots"
+        main(["--logs", str(logs_dir), "--out", str(out_dir), "--no-suptitle"])
+        assert (out_dir / "privacy_utility.pdf").exists()
+        assert (out_dir / "privacy_utility.png").exists()
 
     def test_main_raises_on_missing_logs_dir(self, tmp_path: Path):
         from src.visualization.privacy_utility import main

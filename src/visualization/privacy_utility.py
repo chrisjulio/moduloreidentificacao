@@ -275,21 +275,41 @@ _LABELS: dict[str, dict[str, str]] = {
 }
 
 
+#: Supported baseline layouts. ``"stacked"`` is the canonical/default geometry
+#: (two panels one above the other, 7x8 in portrait); ``"side-by-side"`` is the
+#: opt-in compact geometry (1x2, single-column \textwidth = 6.1 in) used for the
+#: LaTeX article, where the stacked figure's ~8 in height blows the page budget.
+#: Mirrors the ``LANGUAGES`` opt-in pattern: canonical default, variant on request.
+BASELINE_LAYOUTS: tuple[str, ...] = ("stacked", "side-by-side")
+
+
 def plot_privacy_utility(
     stats: dict[int, dict[str, dict[str, float]]],
     output_dir: Path,
     title: str = "Privacy vs. Utility — He et al. (2009)",
     filename_stem: str = "privacy_utility",
     lang: str = "pt",
+    show_suptitle: bool = True,
+    layout: str = "stacked",
 ) -> tuple[Path, Path]:
     """Generate a two-panel privacy-utility figure and save to *output_dir*.
 
-    The figure contains:
+    The figure has two panels:
 
     * **Panel 1 (Privacy):** reidentification rate (%) vs k for each attack
       (degree and subgraph), with ±1 std error bars across seeds.
     * **Panel 2 (Utility):** clustering variation and KS degree-distribution
       D-statistic vs k, with ±1 std error bars across seeds.
+
+    Two layouts are supported (see *layout*):
+
+    * ``"stacked"`` (default, canonical) — panels one above the other, 7x8 in
+      portrait, shared x-axis. This is the long-standing wording-agnostic output.
+    * ``"side-by-side"`` (opt-in) — panels side by side, sized for a single-column
+      LaTeX article (``\\textwidth`` = 6.1 in, KDMiLe class): natural width matches
+      ``\\textwidth`` so it is included at ``width=\\textwidth`` with scale ≈ 1
+      (fonts undistorted), and the ~2.7 in height does not eat the page budget the
+      way the 8-in-tall stacked layout does. Fonts are scaled down accordingly.
 
     Parameters
     ----------
@@ -298,19 +318,34 @@ def plot_privacy_utility(
     output_dir:
         Destination directory (created if absent).
     title:
-        Figure suptitle.
+        Figure suptitle (only drawn when *show_suptitle* is True).
     filename_stem:
         Base filename without extension (e.g. ``"privacy_utility"``).
     lang:
         Figure text language. ``"pt"`` (default, primary/canonical) or ``"en"``
         (the journal-article wording). Only display strings change; data,
         layout and colours are identical.
+    show_suptitle:
+        Draw the figure suptitle. Defaults to ``True`` (preserves the prior
+        behaviour). Pass ``False`` for LaTeX inclusion, where the ``\\caption``
+        already names the figure and the suptitle only wastes vertical space.
+    layout:
+        Panel arrangement. ``"stacked"`` (default, canonical) or ``"side-by-side"``
+        (opt-in, the compact single-column article geometry).
 
     Returns
     -------
     (pdf_path, png_path)
         Absolute paths of the saved files.
+
+    Raises
+    ------
+    ValueError
+        If *layout* is not one of :data:`BASELINE_LAYOUTS`.
     """
+    if layout not in BASELINE_LAYOUTS:
+        raise ValueError(f"Unknown layout: {layout!r}. Expected one of {BASELINE_LAYOUTS}.")
+
     output_dir.mkdir(parents=True, exist_ok=True)
     labels = _LABELS[lang]
 
@@ -327,8 +362,22 @@ def plot_privacy_utility(
     clust_m, clust_s = _extract("clust_var")
     ks_m, ks_s = _extract("ks_d")
 
-    fig, (ax_priv, ax_util) = plt.subplots(2, 1, figsize=(7, 8), sharex=True)
-    fig.suptitle(title, fontsize=13, fontweight="bold", y=0.98)
+    side = layout == "side-by-side"
+    if side:
+        # Compact single-column article geometry (\textwidth = 6.1 in, 1:1 scale).
+        fig, (ax_priv, ax_util) = plt.subplots(1, 2, figsize=(6.1, 2.7))
+        fs_label, fs_legend, fs_title, fs_tick = 9, 8, 9, 8
+        fs_suptitle, suptitle_y = 11, 1.02
+        capsize, linewidth, markersize = 3, 1.6, 4
+    else:
+        # Canonical stacked geometry — unchanged from the long-standing default.
+        fig, (ax_priv, ax_util) = plt.subplots(2, 1, figsize=(7, 8), sharex=True)
+        fs_label, fs_legend, fs_title, fs_tick = 11, 10, 10, 10
+        fs_suptitle, suptitle_y = 13, 0.98
+        capsize, linewidth, markersize = 4, 1.8, 6
+
+    if show_suptitle:
+        fig.suptitle(title, fontsize=fs_suptitle, fontweight="bold", y=suptitle_y)
 
     # ---- Panel 1: Privacy ------------------------------------------------
     ax_priv.errorbar(
@@ -338,8 +387,9 @@ def plot_privacy_utility(
         marker="o",
         color=_ATTACK_COLORS["degree"],
         label=labels["degree_full"],
-        capsize=4,
-        linewidth=1.8,
+        capsize=capsize,
+        linewidth=linewidth,
+        markersize=markersize,
     )
     ax_priv.errorbar(
         k_arr,
@@ -348,14 +398,19 @@ def plot_privacy_utility(
         marker="s",
         color=_ATTACK_COLORS["subgraph"],
         label=labels["subgraph_full"],
-        capsize=4,
-        linewidth=1.8,
+        capsize=capsize,
+        linewidth=linewidth,
+        markersize=markersize,
     )
-    ax_priv.set_ylabel(labels["reident_rate"], fontsize=11)
+    ax_priv.set_ylabel(labels["reident_rate"], fontsize=fs_label)
     ax_priv.set_ylim(bottom=0)
-    ax_priv.legend(fontsize=10)
+    ax_priv.legend(fontsize=fs_legend)
     ax_priv.grid(True, linestyle="--", alpha=0.4)
-    ax_priv.set_title(labels["privacy_panel"], fontsize=10, color="#444")
+    ax_priv.set_title(labels["privacy_panel"], fontsize=fs_title, color="#444")
+    ax_priv.tick_params(labelsize=fs_tick)
+    # Side-by-side panels each carry their own x-axis label (no sharex bottom row).
+    if side:
+        ax_priv.set_xlabel(labels["k_axis"], fontsize=fs_label)
 
     # ---- Panel 2: Utility ------------------------------------------------
     ax_util.errorbar(
@@ -365,8 +420,9 @@ def plot_privacy_utility(
         marker="^",
         color=_UTILITY_COLORS["clust_var"],
         label=labels["clustering_full"],
-        capsize=4,
-        linewidth=1.8,
+        capsize=capsize,
+        linewidth=linewidth,
+        markersize=markersize,
     )
     ax_util.errorbar(
         k_arr,
@@ -375,21 +431,29 @@ def plot_privacy_utility(
         marker="D",
         color=_UTILITY_COLORS["ks_d"],
         label=labels["ksd_degdist"],
-        capsize=4,
-        linewidth=1.8,
+        capsize=capsize,
+        linewidth=linewidth,
+        markersize=markersize,
     )
-    ax_util.set_xlabel(labels["k_axis"], fontsize=11)
-    ax_util.set_ylabel(labels["utility_degr"], fontsize=11)
+    ax_util.set_xlabel(labels["k_axis"], fontsize=fs_label)
+    ax_util.set_ylabel(labels["utility_degr"], fontsize=fs_label)
     ax_util.set_ylim(bottom=0)
-    ax_util.legend(fontsize=10)
+    ax_util.legend(fontsize=fs_legend)
     ax_util.grid(True, linestyle="--", alpha=0.4)
-    ax_util.set_title(labels["utility_panel"], fontsize=10, color="#444")
+    ax_util.set_title(labels["utility_panel"], fontsize=fs_title, color="#444")
+    ax_util.tick_params(labelsize=fs_tick)
 
-    # x-ticks only at the actual k values used
-    ax_util.set_xticks(k_arr)
-    ax_util.set_xticklabels([str(k) for k in k_values])
+    # x-ticks only at the actual k values used. In the stacked layout sharex
+    # propagates the ticks from ax_util; side-by-side panels need them set on each.
+    tick_axes = (ax_priv, ax_util) if side else (ax_util,)
+    for ax in tick_axes:
+        ax.set_xticks(k_arr)
+        ax.set_xticklabels([str(k) for k in k_values])
 
-    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    if side:
+        fig.tight_layout()
+    else:
+        fig.tight_layout(rect=[0, 0, 1, 0.96] if show_suptitle else None)
 
     pdf_path = output_dir / f"{filename_stem}.pdf"
     png_path = output_dir / f"{filename_stem}.png"
@@ -747,6 +811,24 @@ def _build_parser() -> argparse.ArgumentParser:
         default="pt",
         help="Figure text language: 'pt' (default, primary) or 'en' (journal-article wording).",
     )
+    p.add_argument(
+        "--no-suptitle",
+        action="store_true",
+        help=(
+            "Omit the figure suptitle (baseline plot only). Use for LaTeX "
+            "inclusion, where the \\caption names the figure and the suptitle "
+            "only wastes vertical space."
+        ),
+    )
+    p.add_argument(
+        "--side-by-side",
+        action="store_true",
+        help=(
+            "Use the compact side-by-side panel layout (baseline plot only), "
+            "sized for a single-column LaTeX article (\\textwidth = 6.1 in). "
+            "Default is the canonical stacked layout."
+        ),
+    )
     return p
 
 
@@ -816,6 +898,8 @@ def main(argv: list[str] | None = None) -> None:
         title=title,
         filename_stem=stem,
         lang=args.lang,
+        show_suptitle=not args.no_suptitle,
+        layout="side-by-side" if args.side_by_side else "stacked",
     )
     print(f"\nSaved:\n  {pdf_path}\n  {png_path}")
 
