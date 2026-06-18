@@ -11,7 +11,7 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-11
+**Data da última atualização:** 2026-06-18
 
 **Semana corrente:** S10 — **concluída**: relatório técnico (#174, fechada em
 2026-06-10) e artigo (#175, fechada em 2026-06-10 via PR #197/W2f — MERGED).
@@ -20,6 +20,30 @@ do README/CLAUDE/progress para refletir a conclusão da produção acadêmica
 (PR a abrir após validação do autor).
 
 **Último passo concluído:**
+- **Layout side-by-side opt-in para a figura `privacy_utility` (2026-06-18).
+  ✅ (viz, PR #207 aberto).** Manutenção de figuras a pedido do autor: a
+  figura baseline "Privacy vs. Utility — He et al. (2009)" era empilhada
+  (2×1, 7×8 in retrato) e sua altura de ~8 in estourava o orçamento de
+  páginas do artigo coluna-única (KDMiLe, `\textwidth` = 6.1 in). Adicionado
+  um layout **`side-by-side`** (1×2, `figsize=(6.1, 2.7)` = `\textwidth` em
+  escala ≈1:1, fontes reduzidas) como variante **opt-in**, espelhando o
+  padrão do `--lang`: o layout `stacked` canônico permanece o **default**
+  (saída PT em `results/plots` inalterada), o compacto é pedido
+  explicitamente. `plot_privacy_utility` ganhou os parâmetros `layout`
+  (`{stacked, side-by-side}`, validado) e `show_suptitle` (default `True`;
+  suprime o suptitle na inclusão LaTeX, onde a `\caption` nomeia a figura);
+  CLI com flags `--side-by-side` e `--no-suptitle` (baseline apenas). Figuras
+  do artigo regeneradas em side-by-side sem suptitle dos logs congelados
+  (sem reprocessamento experimental): `docs/assets/eng-privacy_utility.{pdf,png}`
+  (Facebook) e `eng-privacy_utility_enron.{pdf,png}` (Enron) — ambas usam
+  `plot_privacy_utility`. PDF resultante ~5,97×2,58 in → a `width=\textwidth`
+  escala ~1,02 (≈1:1), altura final ~2,64 in (era ~8 in). Plots d-sweep
+  (`series`/`facets`) intactos. +4 testes (geometria de cada layout via
+  captura de `figsize`, layout inválido, caminho no-suptitle); 137 testes de
+  visualização passam; ruff limpo. Branch `viz/privacy-utility-side-by-side`.
+  **Nota de degelo:** alteração em `src/` durante o congelamento de código da
+  S10-W, autorizada pelo autor como manutenção de figuras para o artigo (não
+  reabre experimentos — só geometria de plot e regeneração dos PDFs).
 - **Rodada pós-W2f de correções do artigo (2026-06-11). ✅ (docs, PR a
   abrir).** Aplicação das decisões consolidadas do autor sobre a versão
   compilada de 11/06 e o fonte privado: (i) claim de disponibilidade da
@@ -1116,9 +1140,14 @@ do README/CLAUDE/progress para refletir a conclusão da produção acadêmica
   Código congelado na fase S10-W.
 
 **Bloqueios ativos:**
-- **Nenhum.** PR **#197** (W2f, `Closes #175`) **MERGED** em 2026-06-10
+- **PR #207 aberto** (`viz/privacy-utility-side-by-side`, 2026-06-18) —
+  layout side-by-side opt-in da figura `privacy_utility`; aguarda revisão
+  humana e merge (Claude Code não faz merge). CI (ruff + pytest) deve rodar
+  automaticamente. Não bloqueia outras frentes.
+- PR **#197** (W2f, `Closes #175`) **MERGED** em 2026-06-10
   (`22:53Z`); **#175 CLOSED** — desdobramento S10-W2a..f integralmente em
-  `main`; nenhum PR aberto (verificado via `gh` em 2026-06-10).
+  `main`; nenhum PR de produção acadêmica aberto (verificado via `gh` em
+  2026-06-10).
 - PR **#196** (W2e) **MERGED** em 2026-06-10 (`22:17:13Z`) — Seções 5–6 +
   abstract final e rastreabilidade em `main`; bloqueio anterior da W2f
   resolvido.
@@ -1177,6 +1206,29 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-18 — Layout side-by-side opt-in para a figura privacy_utility
+
+- **Concluído:** A pedido do autor (manutenção de figuras para o artigo
+  LaTeX/Overleaf), a figura baseline "Privacy vs. Utility — He et al. (2009)"
+  ganhou um layout **`side-by-side`** opt-in para não estourar o orçamento de
+  páginas do artigo coluna-única (KDMiLe, `\textwidth` = 6.1 in): a versão
+  empilhada (2×1, 7×8 in) tinha ~8 in de altura. `plot_privacy_utility` agora
+  aceita `layout` (`{stacked, side-by-side}`, default `stacked` canônico,
+  validado) e `show_suptitle` (default `True`); CLI com `--side-by-side` e
+  `--no-suptitle` (baseline apenas), espelhando o padrão opt-in do `--lang`.
+  Figuras do artigo regeneradas em side-by-side sem suptitle dos logs
+  congelados (sem reprocessamento): `docs/assets/eng-privacy_utility.{pdf,png}`
+  (Facebook) e `eng-privacy_utility_enron.{pdf,png}` (Enron). PDF ~5,97×2,58 in
+  → a `width=\textwidth` escala ~1,02 (≈1:1), altura final ~2,64 in. Default PT
+  (`results/plots`) e plots d-sweep intactos. +4 testes; 137 testes de
+  visualização passam; ruff limpo. Branch `viz/privacy-utility-side-by-side`,
+  PR #207. Degelo de código pontual autorizado pelo autor (geometria de plot +
+  regeneração de PDFs; não reabre experimentos).
+- **Próximo:** merge humano do PR #207 (após CI verde); validar os PDFs no
+  Overleaf e medir o ganho de páginas.
+- **Bloqueios:** PR #207 aguardando revisão/merge humano. Nenhum outro.
+- **Decisões pendentes:** Nenhuma para esta frente.
 
 ### 2026-06-11 — Rodada pós-W2f: correções do artigo decididas pelo autor
 
