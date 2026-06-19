@@ -11,6 +11,32 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "& \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\session-register.ps1\"",
+            "timeout": 15,
+            "statusMessage": "Registrando sessao..."
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "& \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\precompact-warn.ps1\"",
+            "timeout": 15,
+            "statusMessage": "Sinalizando sobrecarga..."
+          }
+        ]
+      }
     ]
   }
 }

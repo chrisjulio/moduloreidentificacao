@@ -128,3 +128,11 @@ desktop.ini
 /references/*
 !/references/.gitkeep
 !/references/README.md
+
+# ------------------------------------------------------------
+# Registro de sessoes do Claude Code (leitura humana, local)
+# O log e os flags de sobrecarga sao gerados pelos hooks
+# UserPromptSubmit/PreCompact; nao versionar.
+# ------------------------------------------------------------
+/.claude/session-log.md
+/.claude/.overload-*
