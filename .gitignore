@@ -130,6 +130,15 @@ desktop.ini
 !/references/README.md
 
 # ------------------------------------------------------------
+# Publicações relacionadas (PDFs / artigos) — análogos às referências bibliográficas.
+# Conteúdo potencialmente protegido por copyright; uso acadêmico individual permitido.
+# Versiona-se apenas a estrutura (.gitkeep) e o catálogo (README.md).
+# ------------------------------------------------------------
+/publications/*
+!/publications/.gitkeep
+!/publications/README.md
+
+# ------------------------------------------------------------
 # Registro de sessoes do Claude Code (leitura humana, local)
 # O log e os flags de sobrecarga sao gerados pelos hooks
 # UserPromptSubmit/PreCompact; nao versionar.
