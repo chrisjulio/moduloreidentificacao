@@ -11,7 +11,7 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-18
+**Data da última atualização:** 2026-06-21
 
 **Semana corrente:** S10 — **concluída**: relatório técnico (#174, fechada em
 2026-06-10) e artigo (#175, fechada em 2026-06-10 via PR #197/W2f — MERGED).
@@ -20,6 +20,46 @@ do README/CLAUDE/progress para refletir a conclusão da produção acadêmica
 (PR a abrir após validação do autor).
 
 **Último passo concluído:**
+- **Figuras do artigo (KDMiLe) regeneradas com tipografia/estilo dedicados +
+  B&W opt-in (2026-06-21). ✅ (viz, branch `viz/article-figures-typography`).**
+  A pedido do autor, regeração das duas figuras do artigo LaTeX (classe
+  KDMiLe, duas colunas A4; `\textwidth` = 6.1 in, `\columnwidth` ≈ 2.98 in;
+  corpo das figuras a 8 pt na página final). **Sem dados novos** — fontes
+  congeladas: Figura 4.1 dos logs `he2009_facebook_baseline` (via
+  `aggregate_by_k`); Figura 4.3 do CSV congelado `comparison_fb_enron.csv`
+  (colunas `bound_fraction`/`relative_decay`). Implementado como script
+  dedicado `scripts/article_figures.py` que **reaproveita a camada de dados**
+  dos geradores canônicos sem alterá-los (preserva figuras PT/EN canônicas e
+  seus testes). Tipografia do artigo: fonte-base compensando o reescalonamento
+  do LaTeX (≈19 pt fig 4.1 / ≈16 pt fig 4.3), linhas finas (~0.6 pt na página),
+  sem suptitle/títulos de painel, rótulos `(a)`/`(b)`, uma legenda por figura,
+  eixo x de k em **escala log** com ticks explícitos {2,5,10,20}, export PDF
+  vetorial (`bbox_inches=tight`, `pad_inches=0.01`, `pdf.fonttype=42`).
+  **Cor é o default; preto-e-branco (séries diferenciadas por padrão de linha
+  + marcador) é opt-in via `--bw`** — espelha o padrão opt-in do repo. **Ambas
+  as figuras** são lado a lado 1×2, dimensionadas para `\textwidth` (inclusão
+  via `figure*`): Figura 4.1 — (a) privacy / (b) utility, com barras de erro
+  ±1 dp; Figura 4.3 — (a) `bound_fraction` com linha de referência pontilhada
+  em 1.0 / (b) `relative_decay`. A Figura 4.1 começou a sessão empilhada 2×1
+  7×8, mas o autor pediu lado a lado por estourar o orçamento de páginas
+  (altura ~8 in) — decisão final: lado a lado, encerrando de vez a variante
+  side-by-side compacta de 2026-06-18 e a tentativa empilhada. **Calibração de
+  proporção (último ajuste):** a 4.1 saía com largura nativa 13.7 in (legenda
+  de 4 colunas em linha única transbordava o canvas e inflava o `bbox tight`),
+  contra 11.55 in da 4.3 — downscale maior em `\textwidth` deixava sua fonte
+  ~16% menor. Corrigido: `figsize=(12.0, 5.19)`, legenda em **2 colunas/2
+  linhas** (cabe no canvas), e rótulos `(a)`/`(b)` movidos para título à
+  esquerda (fora da área de plotagem, sem colidir com dados). Resultado: largura
+  nativa **11.554 in idêntica** à 4.3 (alturas 4.963 vs 4.969) → tipografia
+  idêntica nas duas em `\textwidth`. Fonte-base 16 pt e linewidth 1.2 iguais nas
+  duas.
+  PDFs gerados em `--bw` (o artigo declara expressamente "sem cores"):
+  `docs/assets/eng-privacy_utility.pdf` e `eng-comparison_fb_enron.pdf`. Nomes
+  canônicos confirmados com o autor para uso espelhado no Overleaf
+  (`eng-privacy_utility.pdf`, `eng-comparison_fb_enron.pdf`). 621 testes passam;
+  ruff limpo. **Nota de degelo:** novo script utilitário em `scripts/` durante o
+  congelamento — só regeneração de figuras a partir de dados congelados, sem
+  reabrir experimentos.
 - **Layout side-by-side opt-in para a figura `privacy_utility` (2026-06-18).
   ✅ (viz, PR #207 aberto).** Manutenção de figuras a pedido do autor: a
   figura baseline "Privacy vs. Utility — He et al. (2009)" era empilhada
