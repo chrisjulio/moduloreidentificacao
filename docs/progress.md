@@ -11,15 +11,34 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-21
+**Data da última atualização:** 2026-06-25
 
 **Semana corrente:** S10 — **concluída**: relatório técnico (#174, fechada em
 2026-06-10) e artigo (#175, fechada em 2026-06-10 via PR #197/W2f — MERGED).
-Código **congelado** — somente análise e documentação. Em curso: atualização
-do README/CLAUDE/progress para refletir a conclusão da produção acadêmica
-(PR a abrir após validação do autor).
+Código **congelado** — somente análise e documentação. Issues de visualização
+Desejável (#214 e #215) concluídas em 2026-06-25.
 
 **Último passo concluído:**
+- **Issue #215 (V2) — figuras Enron d-sweep em `docs/assets/` (2026-06-25).
+  ✅ (viz, PR #224 MERGED).** Geração dos 4 assets canônicos do d-sweep Enron:
+  `enron_dsweep_series.{pdf,png}` (layout `series`, cor por d) e
+  `enron_dsweep_facets.{pdf,png}` (layout `facets`, grade 2×d). Convenção
+  canônica: `plot_privacy_utility_dsweep` com defaults (`pt`, sem modificadores
+  de artigo). Dados: 48 registros, combinando `he2009_enron_secondary` (d=1,
+  âncora) + `he2009_enron_dsweep` (d∈{2,5,10}) via nova função
+  `load_jsonl_records_combined(logs_dirs)` e flag CLI `--anchor-logs DIR`
+  adicionadas a `src/visualization/privacy_utility.py`. Testes: 11 novos
+  (`TestLoadJsonlRecordsCombined` 5 + `TestEnronDSweepPlot` 5 +
+  `TestMain.test_main_anchor_logs_combined_with_dsweep_dir` 1); total 80
+  testes passando; ruff limpo.
+- **Issue #214 (V1) — tabela de resultados Enron d-sweep (2026-06-25).
+  ✅ (experiments, PR #223 MERGED).** Script
+  `experiments/make_enron_dsweep_table.py` criado: parseia
+  `he2009_enron_dsweep.jsonl` (d∈{2,5,10}) e mescla opcionalmente
+  `he2009_enron_secondary.jsonl` como âncora d=1; gera
+  `docs/results_enron_dsweep.md` com 48 runs agregados (média±dp por célula
+  (k,d), grid de cobertura, tabela bruta, análise de tendências). 16 testes
+  em `tests/experiments/test_make_enron_dsweep_table.py`; ruff limpo.
 - **Figuras do artigo (KDMiLe) regeneradas com tipografia/estilo dedicados +
   B&W opt-in (2026-06-21). ✅ (viz, branch `viz/article-figures-typography`).**
   A pedido do autor, regeração das duas figuras do artigo LaTeX (classe
