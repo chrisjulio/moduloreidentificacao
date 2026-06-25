@@ -16,9 +16,19 @@
 **Semana corrente:** S10 — **concluída**: relatório técnico (#174, fechada em
 2026-06-10) e artigo (#175, fechada em 2026-06-10 via PR #197/W2f — MERGED).
 Código **congelado** — somente análise e documentação. Issues de visualização
-Desejável (#214 e #215) concluídas em 2026-06-25.
+Desejável (#214 e #215) concluídas em 2026-06-25. Issue E1 (#211) concluída em
+2026-06-25 (reexecução baseline Facebook com pymetis).
 
 **Último passo concluído:**
+- **Issue #211 (E1) — reexecução baseline Facebook com pymetis (2026-06-25).
+  ✅ (experiment, PR #225 aberto).** Config
+  `he2009_facebook_baseline_pymetis.yml` criado com `allow_kl_fallback: false`.
+  12 runs concluídas: pymetis 12/12, sem crashes; k=2/5 SUCCESS_PARTIAL, k=10/20
+  FAILURE_LOW_COVERAGE (cobertura 86,5%). **Achado:** motor afeta resultados mesmo
+  em d=1 — rr_subgrafo k=2 cai de 0.7914 (KL) para 0.1454 (pymetis); gap ~6×
+  (era ~30× KL). `docs/results_baseline.md` atualizado com tabelas pymetis e seção
+  histórica KL; D-19 adicionado ao `decision_log.md`;
+  `docs/assets/eng-privacy_utility.pdf` regenerado. 648 testes passando; ruff limpo.
 - **Issue #215 (V2) — figuras Enron d-sweep em `docs/assets/` (2026-06-25).
   ✅ (viz, PR #224 MERGED).** Geração dos 4 assets canônicos do d-sweep Enron:
   `enron_dsweep_series.{pdf,png}` (layout `series`, cor por d) e

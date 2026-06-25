@@ -1810,3 +1810,71 @@ Esse perfil é consistente com o baseline Enron (d=1, ~404 s/run para grau).
 O ataque por grau permanece habilitado para manter metodologia consistente com todos
 os outros experimentos (Facebook baseline, Facebook d-sweep, Enron baseline).
 
+---
+
+## D-19 — Reexecução do baseline Facebook com pymetis (issue #211)
+
+**Data:** 2026-06-25
+**Issue relacionada:** #211 (E1)
+**Decisão sobre:** qual run do baseline Facebook é canônico para comparação inter-dataset no artigo
+
+### Problema
+
+O baseline Facebook original (issue #23, 2026-05-23) usou o motor de
+particionamento **Kernighan-Lin** (fallback NetworkX), porque pymetis estava
+ausente no ambiente local à época (confirmado pela auditoria #74, 2026-05-30).
+O Enron foi executado com **pymetis** (#126, 2026-06-03). Essa divergência de
+motor é uma ameaça à validade interna: ao comparar Facebook×Enron no artigo, os
+números vêm de algoritmos de particionamento diferentes.
+
+### Decisão: reexecutar com pymetis e substituir
+
+Config criada: `experiments/configs/he2009_facebook_baseline_pymetis.yml`
+com `allow_kl_fallback: false`, garantindo pymetis em 12/12 runs.
+Os resultados pymetis tornam-se o dado **canônico para o artigo**; os
+resultados KL ficam arquivados como referência histórica em
+`docs/results_baseline.md` (seção "Resultados históricos KL").
+
+### Resultados observados (resumo dos agregados)
+
+| k | Veredito | coverage | rr_degree | rr_subgraph |
+|---|----------|----------|-----------|-------------|
+| 2 | SUCCESS_PARTIAL | 0.9850 | 0.0232±0.0157 | 0.1454±0.0193 |
+| 5 | SUCCESS_PARTIAL | 0.9398 | 0.0094±0.0019 | 0.0307±0.0022 |
+| 10 | FAILURE_LOW_COVERAGE | 0.8647 | 0.2851±0.0711 | 0.0370±0.0324 |
+| 20 | FAILURE_LOW_COVERAGE | 0.8647 | 0.0883±0.0802 | 0.0000±0.0000 |
+
+### Diferença em relação ao KL (run original)
+
+| k | rr_sub (KL) | rr_sub (pymetis) | coverage (KL) | coverage (pymetis) |
+|---|-------------|-----------------|---------------|--------------------|
+| 2 | 0.7914 (SUCCESS_FULL) | 0.1454 (SUCCESS_PARTIAL) | 1.0000 | 0.9850 |
+| 5 | 0.4060 (SUCCESS_PARTIAL) | 0.0307 (SUCCESS_PARTIAL) | 0.9962 | 0.9398 |
+| 10 | 0.1397 (SUCCESS_PARTIAL) | 0.0370 (FAILURE_LOW_COVERAGE) | 0.9962 | 0.8647 |
+| 20 | 0.0000 (SUCCESS_PARTIAL) | 0.0000 (FAILURE_LOW_COVERAGE) | 0.9774 | 0.8647 |
+
+A diferença mais relevante para o artigo é k=2: rr_sub cai de 0.79 para 0.15.
+O gap rr_sub vs rr_deg em k=2 passa de ~30× (KL) para ~6× (pymetis).
+O achado B1 (d=1 como k-anonimato de grau) e o sinal qualitativo rr_sub ≫ rr_deg
+permanecem válidos; as magnitudes mudam.
+
+### Por que o motor afeta d=1
+
+Embora com d=1 cada local structure degenere em um único nó (o próprio nó com
+sua vizinhança de grau), o motor de particionamento afeta como os nós são
+**agrupados** na etapa de FSM/matching: pymetis e KL produzem partições iniciais
+diferentes, gerando grupos de equivalência distintos. KL produziu cobertura
+perfeita (1.0) em k=2, enquanto pymetis deixou 8 nós residuais (0.985).
+
+### Validade do marco 29/05
+
+A validação formal de k-anonimato (DL-01, marco 29/05) foi executada sobre o
+run KL e permanece válida para aquele experimento — o marco não é retificado.
+
+### Log e config
+
+- Config: `experiments/configs/he2009_facebook_baseline_pymetis.yml`
+- Log: `experiments/logs/he2009_facebook_baseline_pymetis/`
+- summary.json: `partition_backends: ["pymetis"]`, `n_runs: 12`, `any_failure: true`
+  (failures = FAILURE_LOW_COVERAGE em k=10/20, sem crashes)
+

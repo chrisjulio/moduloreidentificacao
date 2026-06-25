@@ -1,0 +1,92 @@
+# ============================================================
+# Experimento baseline PYMETIS: He et al. (2009) + Facebook Ego-Net 3437
+# Issue #211 (E1) — reexecução com motor pymetis unificado ao Enron
+# Substitui he2009_facebook_baseline.yml para fins de comparação no artigo
+# ============================================================
+#
+# Uso:
+#   conda run -n moduloreidentificacao python -m experiments.run \
+#     --config experiments/configs/he2009_facebook_baseline_pymetis.yml
+#
+# Saída:
+#   experiments/logs/he2009_facebook_baseline_pymetis/he2009_facebook_baseline_pymetis.jsonl
+#   experiments/logs/he2009_facebook_baseline_pymetis/summary.json
+#
+# Motivação (issue #211 / decisão D-19):
+#   A execução original (he2009_facebook_baseline.yml) usou o fallback
+#   Kernighan-Lin (networkx-kl) por ausência de pymetis à época (#23, 2026-05-23).
+#   O Enron foi executado com pymetis (#126, 2026-06-03). A diferença de motor
+#   é uma ameaça à validade interna — esta reexecução elimina-a ao alinhar o
+#   Facebook com o motor pymetis (multilevel k-way, Karypis & Kumar), fiel a
+#   He et al. (2009). Para d=1, o motor não afeta o resultado (partições
+#   triviais de 1 nó; ressalva A1 em results_baseline.md), mas a uniformidade
+#   do motor é necessária para a comparação inter-dataset do artigo.
+#
+# Diferenças em relação a he2009_facebook_baseline.yml:
+#   - allow_kl_fallback: false  — aborta se pymetis não disponível
+#   - s_max: 4                  — explícito (default do runner; igual ao Enron)
+#   - isomorphism_mode: add_or_delete  — explícito (default; igual ao Enron)
+#   - name: he2009_facebook_baseline_pymetis  — logs separados do run KL
+
+experiment:
+  name: he2009_facebook_baseline_pymetis
+  description: >
+    Reexecução do baseline completo (issue #211 / D-19): anonimização
+    He et al. (2009) + ataque por grau + ataque por subgrafo + métricas
+    (reidentification_rate, equivalence_group_size, ks_test_degree,
+    clustering_variation), sobre a ego-rede 3437 do Facebook Ego-Nets
+    (n_lcc=532, m_lcc=4812), para k ∈ {2, 5, 10, 20} e 3 sementes.
+    Motor: pymetis (multilevel k-way, Karypis & Kumar), fiel a He et al.
+    (2009). Substitui o run KL original para comparação inter-dataset no artigo.
+
+# ------------------------------------------------------------
+# Sementes — mínimo 3 por .claude/rules/seeds.md
+# Nunca hardcoded no código de produção; sempre lidas deste YAML.
+# ------------------------------------------------------------
+seeds: [42, 1337, 2718]
+
+# ------------------------------------------------------------
+# Dataset
+# ------------------------------------------------------------
+dataset:
+  name: facebook_ego_nets
+  source: snap
+  data_path: data/raw/facebook/
+  preprocessing_mode: single_egonet
+  egonet_id: 3437       # n_lcc=532, m_lcc=4812, density=0.034068 (issue #40)
+  include_ego: false    # nó ego excluído (decisão Seção 3.1)
+  component: lcc        # reter maior componente conexo (decisão Seção 3.2)
+  min_nodes: 200        # 10 * k_max = 10 * 20 = 200
+
+# ------------------------------------------------------------
+# Anonimização
+# k: lista de inteiros — o runner itera sobre todos os valores.
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k: [2, 5, 10, 20]    # escopo Mínimo completo
+  d: 1
+  sigma: 0.5            # suporte mínimo do FSM simplificado (D-01)
+  s_max: 4              # tamanho máx. de subgrafo do FSM simplificado (D-01/A2; explícito para paridade com Enron)
+  isomorphism_mode: add_or_delete  # variante da Fase 2 (B6/#105); explícito para paridade com Enron
+  allow_kl_fallback: false  # D-19: requer pymetis; aborta se indisponível
+
+# ------------------------------------------------------------
+# Ataques
+# Mesmas configurações do he2009_facebook_baseline.yml.
+# ------------------------------------------------------------
+attacks:
+  degree:
+    enabled: true
+    tolerance: 0        # correspondência exata de grau (baseline)
+  subgraph:
+    enabled: true
+    hop: 1
+    timeout: 60         # segundos por nó alvo; safety margin para VF2
+
+# ------------------------------------------------------------
+# Execução
+# ------------------------------------------------------------
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/
