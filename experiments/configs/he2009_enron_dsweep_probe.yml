@@ -1,0 +1,97 @@
+# ============================================================
+# PROBE — d-sweep Enron: viabilidade de d > 1 em escala
+# Issue E2 (revisao-pos-prazo) — go/no-go para E3 (d-sweep completo)
+# ============================================================
+#
+# Objetivo: medir o tempo de execucao de UMA run (d=5, k=2, seed=42)
+# no Enron (n=33.696, m=180.811) para decidir o escopo do d-sweep completo.
+#
+# Uso:
+#   python -m experiments.run --config experiments/configs/he2009_enron_dsweep_probe.yml
+#
+# Saida:
+#   experiments/logs/he2009_enron_dsweep_probe/he2009_enron_dsweep_probe.jsonl
+#   experiments/logs/he2009_enron_dsweep_probe/summary.json
+#
+# Criterio de decisao (registrar no PR / decision_log.md apos a execucao):
+#   < 5 min/run  → E3 com d ∈ {1, 2, 5, 10} viavel (~48 runs × t ≈ horas)
+#   5–15 min/run → avaliar reduzir para d ∈ {1, 2, 5} ou {1, 5} (24/12 runs)
+#   > 15 min/run → reduzir para d ∈ {1, 5} no maximo (ou d ∈ {1, 2})
+#
+# Contexto de escala:
+#   d=1  → ck = 33.696 / 1 = 33.696 particoes de 1 no (degenerate, baseline)
+#   d=2  → ck = 33.696 / 2 = 16.848 particoes de 2 nos
+#   d=5  → ck = 33.696 / 5 =  6.739 particoes de 5 nos  ← ESTE PROBE
+#   d=10 → ck = 33.696 / 10 = 3.369 particoes de 10 nos
+#
+# Nota: d e o TAMANHO da Local Structure (nos por particao), nao
+# profundidade de vizinhanca. Com d maior, ha MENOS particoes, cada
+# uma ligeiramente maior. Ver docs/algorithm_notes.md e docstring de
+# _partition_neighborhoods em src/anonymization/he2009.py.
+#
+# Diferenca em relacao a he2009_enron_secondary.yml:
+#   - d: 5 (nao-degenerate primario; d=1 ja esta no baseline)
+#   - k: [2]   (unico k, mais permissivo → anonimizacao mais rapida)
+#   - seeds: [42]  (unica semente → 1 run total)
+#   - allow_kl_fallback: false  (exige pymetis; falha rapida se ausente)
+#   - nome distinto para log separado
+
+experiment:
+  name: he2009_enron_dsweep_probe
+  description: >
+    Probe de viabilidade para o d-sweep completo no Enron: executa
+    uma unica combinacao (d=5, k=2, seed=42) para medir o tempo de
+    anonimizacao (He et al. 2009) + ataque por subgrafo (WL-bucketing)
+    na escala do Enron (n=33.696, m=180.811). Resultado orienta o
+    escopo de E3 (issue de continuacao).
+
+# ------------------------------------------------------------
+# Sementes — 1 semente (probe; nao e resultado final)
+# ------------------------------------------------------------
+seeds: [42]
+
+# ------------------------------------------------------------
+# Dataset — identico ao secundario Enron
+# ------------------------------------------------------------
+dataset:
+  name: enron
+  source: snap
+  data_path: data/raw/enron/
+  component: lcc
+  min_nodes: 200
+
+# ------------------------------------------------------------
+# Anonimizacao
+# d=5: ck = floor(33.696 / 5) = 6.739 particoes de 5 nos cada.
+# k=2: grupo minimo de 2 LSs isomorfas; anonimizacao mais permissiva
+#      e, portanto, mais rapida que k maiores.
+# allow_kl_fallback: false — exige pymetis (consistente com o Enron
+# secundario, que usou pymetis em 12/12 runs). Falha rapida se ausente.
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k: [2]
+  d: 5
+  sigma: 0.5
+  s_max: 4
+  isomorphism_mode: add_or_delete
+  allow_kl_fallback: false
+
+# ------------------------------------------------------------
+# Ataques — identicos ao secundario Enron (WL-bucketing para subgrafo)
+# ------------------------------------------------------------
+attacks:
+  degree:
+    enabled: true
+    tolerance: 0
+  subgraph:
+    enabled: true
+    hop: 1
+    timeout: 120
+
+# ------------------------------------------------------------
+# Execucao
+# ------------------------------------------------------------
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/

@@ -47,6 +47,7 @@
 | [D-16](#d-16) | 2026-06-05 | Implementação | Caminho rápido por bucketing de WL-hash torna o subgrafo full viável no Enron (resolve D-15) |
 | [D-17](#d-17) | 2026-06-06 | Implementação / escopo | Ataque por entropia (#30): formulação ancorada na literatura de entropia-como-anonimato; classificado como **métrica** (com leitura de ataque); D-E2/D-E3 resolvidas |
 | [D-18](#d-18) | 2026-05-21 *(registro retroativo: 2026-06-11)* | Implementação | `sigma = 0.5` como default do suporte do FSM — escolha de implementação sem ancoragem registrada na literatura; não afeta a garantia de k-anonimato |
+| [DL-07](#dl-07) | 2026-06-25 | Escopo experimental | d-sweep Enron: Opção B (d ∈ {2,5,10}, 36 runs) com base no probe E2 (11,5 min/run) |
 
 ---
 
@@ -1763,4 +1764,49 @@ contemporâneo à decisão.
 - `src/anonymization/he2009.py` — docstring de `anonymize()` ("valor conservador") e de `_group_isomorphic()` ("ex.: 0.20 para 20%")
 - Commits `a30ad7f` (issue #33, docstrings conforme artigo) e `90dd035` (issue #14, `sigma=0.5` fixado)
 - `docs/algorithm_notes.md` §5.1 (mapeamento `σ` → `anonymization.sigma`)
+
+---
+
+## DL-07 — d-sweep Enron: Opção B (d ∈ {2,5,10}, 36 runs)
+
+**Data:** 2026-06-25
+**Issue relacionada:** E3 (revisao-pos-prazo)
+**Decisão sobre:** escopo do d-sweep completo no Enron, condicionado ao resultado do probe E2
+
+### Probe E2 — resultado
+
+| Parâmetro | Valor |
+|---|---|
+| Configuração | d=5, k=2, seed=42, Enron LCC (n=33.696, m=180.811) |
+| Backend | pymetis (6.739 partições) |
+| Tempo total | **689 s ≈ 11,5 min** |
+| Anonymization (partition + group + modify) | ~13 s |
+| Degree attack (gargalo, O(n²)) | ~589 s |
+| Subgraph attack (WL-bucketing) | ~61 s |
+| Resultado | SUCCESS_PARTIAL, coverage=0.9997, rr_subgrafo=0.0799, rr_grau=0.0038 |
+
+### Critério de decisão (conforme probe config)
+
+- < 5 min/run → 48 runs viável
+- **5–15 min/run → avaliar reduzir** ← **encaixou aqui (11,5 min)**
+- > 15 min/run → máximo d ∈ {1,5}
+
+### Decisão: Opção B
+
+d ∈ {2, 5, 10} × k ∈ {2, 5, 10, 20} × 3 seeds = **36 runs**.
+
+Justificativa de excluir d=1: já coberto em `he2009_enron_secondary.yml` (12 runs, pymetis 12/12).
+Incluir d=1 novamente seria redundância sem ganho científico e acrescentaria ~1,5 horas de execução.
+
+Tempo estimado: 36 × ~11,5 min ≈ **6,9 horas** (execução overnight).
+
+Config: `experiments/configs/he2009_enron_dsweep.yml`.
+
+### Gargalo identificado
+
+O ataque por grau (O(n²) sobre n=33.696) domina ~85% do tempo de cada run.
+O WL-bucketing de subgrafo e a anonimização em si são rápidos (~1–2 min combinados).
+Esse perfil é consistente com o baseline Enron (d=1, ~404 s/run para grau).
+O ataque por grau permanece habilitado para manter metodologia consistente com todos
+os outros experimentos (Facebook baseline, Facebook d-sweep, Enron baseline).
 
