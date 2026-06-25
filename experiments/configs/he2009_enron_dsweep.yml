@@ -1,0 +1,102 @@
+# ============================================================
+# Experimento d-sweep ENRON: He et al. (2009) + Email-Enron (SNAP)
+# Issue E3 (revisao-pos-prazo) — d-sweep completo no Enron
+# Escopo OPÇÃO B: d ∈ {2, 5, 10} × k ∈ {2, 5, 10, 20} × 3 sementes = 36 execuções
+# ============================================================
+#
+# Uso:
+#   python -m experiments.run --config experiments/configs/he2009_enron_dsweep.yml
+#
+# Saída:
+#   experiments/logs/he2009_enron_dsweep/he2009_enron_dsweep.jsonl
+#   experiments/logs/he2009_enron_dsweep/summary.json
+#
+# Justificativa de escopo (DL-07):
+#   d=1 já existe em he2009_enron_secondary.yml (12 runs, pymetis 12/12).
+#   Probe E2 (he2009_enron_dsweep_probe.yml) mediu d=5, k=2: 689 s ≈ 11,5 min/run.
+#   Critério "5–15 min/run" → Opção B: d ∈ {2, 5, 10} sem redundar d=1 (36 runs).
+#   Tempo estimado: 36 × ~11,5 min ≈ 6,9 horas (execução overnight).
+#
+# Razão de excluir d=1:
+#   d=1 → 33.696 partições de 1 nó = configuração trivial/degenerada (equivalente
+#   a k-anonimato de grau). Já coberta pelo baseline Enron (he2009_enron_secondary);
+#   incluir aqui seria redundância sem ganho científico.
+#
+# Avisos de combos potencialmente degenerados (ver D-10 para política):
+#   d=2 → 16.848 partições de 2 nós. Comportamento depende da estrutura da LCC do
+#   Enron; pode gerar grupos com alta concentração. Anotar no JSONL se degenerate.
+#   d=10, k=20 → c_k = floor(33.696/10) = 3.369; k=20 exige ≥20 grupos isomorfos
+#   de 10 nós — potencialmente inviável (SUCCESS_PARTIAL esperado). Documentar.
+#
+# Contexto de escala (Enron LCC: n=33.696, m=180.811):
+#   d=2  → ck = 33.696 / 2 = 16.848 partições de 2 nós
+#   d=5  → ck = 33.696 / 5 =  6.739 partições de 5 nós  ← probe mediu 11,5 min
+#   d=10 → ck = 33.696 / 10 = 3.369 partições de 10 nós
+#
+# Contraste com he2009_facebook_dsweep.yml:
+#   Facebook (n=532) inclui d ∈ {1, 2, 5, 10}; Enron (n=33.696) exclui d=1
+#   porque já está no secundário e o custo computacional justifica evitar
+#   redundância. Demais valores (d ∈ {2, 5, 10}) espelham o Facebook d-sweep.
+#
+# Referências: DL-07, D-04, D-10, D-16; probe: he2009_enron_dsweep_probe.yml.
+
+experiment:
+  name: he2009_enron_dsweep
+  description: >
+    d-sweep no Email-Enron (SNAP): anonimização He et al. (2009) + ataque por grau
+    + ataque por subgrafo (WL-bucketing, hop=1) + métricas, varrendo
+    d ∈ {2, 5, 10} e k ∈ {2, 5, 10, 20} com 3 sementes. d=1 excluído
+    (já coberto em he2009_enron_secondary.yml). Opção B conforme DL-07:
+    probe E2 mediu 11,5 min/run → 36 runs ≈ 6,9 h (overnight).
+    Complementa o Facebook d-sweep (he2009_facebook_dsweep.yml) na escala do Enron.
+
+# ------------------------------------------------------------
+# Sementes — mínimo 3 por .claude/rules/seeds.md
+# Nunca hardcoded no código de produção; sempre lidas deste YAML.
+# ------------------------------------------------------------
+seeds: [42, 1337, 2718]
+
+# ------------------------------------------------------------
+# Dataset — idêntico ao secundário Enron (he2009_enron_secondary.yml)
+# ------------------------------------------------------------
+dataset:
+  name: enron
+  source: snap
+  data_path: data/raw/enron/
+  component: lcc
+  min_nodes: 200
+
+# ------------------------------------------------------------
+# Anonimização
+# d: [2, 5, 10] — sem d=1 (coberto pelo secundário Enron).
+# k: lista de inteiros — runner varre produto cartesiano k × d × seed.
+# allow_kl_fallback: false — pymetis obrigatório (probe E2 confirmou
+#   disponibilidade; baseline Enron usou pymetis 12/12).
+# ------------------------------------------------------------
+anonymization:
+  algorithm: he_2009
+  k: [2, 5, 10, 20]
+  d: [2, 5, 10]
+  sigma: 0.5
+  s_max: 4
+  isomorphism_mode: add_or_delete
+  allow_kl_fallback: false
+
+# ------------------------------------------------------------
+# Ataques — idênticos ao secundário Enron (D-16: WL-bucketing para subgrafo)
+# ------------------------------------------------------------
+attacks:
+  degree:
+    enabled: true
+    tolerance: 0
+  subgraph:
+    enabled: true
+    hop: 1
+    timeout: 120    # vestigial sob WL-bucketing (D-16); mantido por compatibilidade
+
+# ------------------------------------------------------------
+# Execução
+# ------------------------------------------------------------
+runtime:
+  log_level: INFO
+  log_dir: experiments/logs/
