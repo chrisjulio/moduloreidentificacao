@@ -16,6 +16,7 @@ from src.visualization.privacy_utility import (
     aggregate_by_k,
     aggregate_by_k_d,
     load_jsonl_records,
+    load_jsonl_records_combined,
     plot_privacy_utility,
     plot_privacy_utility_dsweep,
 )
@@ -621,3 +622,153 @@ class TestMain:
         main(["--logs", str(logs_dir), "--out", str(out_dir)])
         assert (out_dir / "privacy_utility.pdf").exists()
         assert not (out_dir / "privacy_utility_dsweep.pdf").exists()
+
+    def test_main_anchor_logs_combined_with_dsweep_dir(self, tmp_path: Path) -> None:
+        from src.visualization.privacy_utility import main
+
+        anchor_dir = tmp_path / "anchor"
+        anchor_dir.mkdir()
+        dsweep_dir = tmp_path / "dsweep"
+        dsweep_dir.mkdir()
+        out_dir = tmp_path / "plots"
+
+        anchor_records = [_make_record(k=k, seed=s, d=1) for k in [2, 5] for s in [1, 2, 3]]
+        dsweep_records_local = [
+            _make_record(k=k, seed=s, d=d) for k in [2, 5] for d in [2, 5] for s in [1, 2, 3]
+        ]
+        _write_jsonl(anchor_dir / "anchor.jsonl", anchor_records)
+        _write_jsonl(dsweep_dir / "dsweep.jsonl", dsweep_records_local)
+
+        main(
+            [
+                "--logs",
+                str(dsweep_dir),
+                "--anchor-logs",
+                str(anchor_dir),
+                "--out",
+                str(out_dir),
+            ]
+        )
+        assert (out_dir / "privacy_utility_dsweep.pdf").exists()
+
+
+# ---------------------------------------------------------------------------
+# load_jsonl_records_combined
+# ---------------------------------------------------------------------------
+
+
+class TestLoadJsonlRecordsCombined:
+    def test_combines_records_from_two_dirs(self, tmp_path: Path) -> None:
+        dir_a = tmp_path / "a"
+        dir_a.mkdir()
+        dir_b = tmp_path / "b"
+        dir_b.mkdir()
+        _write_jsonl(dir_a / "a.jsonl", [_make_record(k=2, seed=1, d=1)])
+        _write_jsonl(dir_b / "b.jsonl", [_make_record(k=2, seed=1, d=2)])
+        records = load_jsonl_records_combined([dir_a, dir_b])
+        assert len(records) == 2
+
+    def test_preserves_directory_order(self, tmp_path: Path) -> None:
+        dir_a = tmp_path / "a"
+        dir_a.mkdir()
+        dir_b = tmp_path / "b"
+        dir_b.mkdir()
+        _write_jsonl(dir_a / "a.jsonl", [_make_record(k=2, seed=1, d=1)])
+        _write_jsonl(dir_b / "b.jsonl", [_make_record(k=5, seed=1, d=2)])
+        records = load_jsonl_records_combined([dir_a, dir_b])
+        assert records[0]["k"] == 2
+        assert records[1]["k"] == 5
+
+    def test_skips_missing_dir_silently(self, tmp_path: Path) -> None:
+        existing = tmp_path / "existing"
+        existing.mkdir()
+        _write_jsonl(existing / "run.jsonl", [_make_record(k=5, seed=1)])
+        records = load_jsonl_records_combined([tmp_path / "nonexistent", existing])
+        assert len(records) == 1
+
+    def test_empty_list_returns_empty(self) -> None:
+        assert load_jsonl_records_combined([]) == []
+
+    def test_single_dir_behaves_like_load_jsonl_records(self, tmp_path: Path) -> None:
+        _write_jsonl(tmp_path / "run.jsonl", [_make_record(k=2, seed=42)])
+        assert load_jsonl_records_combined([tmp_path]) == load_jsonl_records(tmp_path)
+
+
+# ---------------------------------------------------------------------------
+# Enron d-sweep geometry (d∈{2,5,10}, with and without d=1 anchor)
+# ---------------------------------------------------------------------------
+
+
+class TestEnronDSweepPlot:
+    @pytest.fixture
+    def enron_dsweep_records(self) -> list[dict]:
+        """36 records: k in {2,5,10,20} x d in {2,5,10} x 3 seeds (no d=1 anchor)."""
+        return [
+            _make_record(k=k, seed=s, d=d)
+            for k in [2, 5, 10, 20]
+            for d in [2, 5, 10]
+            for s in [42, 1337, 2718]
+        ]
+
+    @pytest.fixture
+    def enron_combined_records(self) -> list[dict]:
+        """48 records: d=1 anchor from secondary + d∈{2,5,10} from dsweep."""
+        anchor = [_make_record(k=k, seed=s, d=1) for k in [2, 5, 10, 20] for s in [42, 1337, 2718]]
+        dsweep = [
+            _make_record(k=k, seed=s, d=d)
+            for k in [2, 5, 10, 20]
+            for d in [2, 5, 10]
+            for s in [42, 1337, 2718]
+        ]
+        return anchor + dsweep
+
+    def test_dsweep_without_anchor_series_produces_files(
+        self, tmp_path: Path, enron_dsweep_records: list[dict]
+    ) -> None:
+        stats = aggregate_by_k_d(enron_dsweep_records)
+        pdf, png = plot_privacy_utility_dsweep(
+            stats,
+            output_dir=tmp_path,
+            layout="series",
+            filename_stem="enron_dsweep_series",
+        )
+        assert pdf.exists() and pdf.stat().st_size > 0
+        assert png.exists() and png.stat().st_size > 0
+        assert pdf.name == "enron_dsweep_series.pdf"
+
+    def test_dsweep_without_anchor_facets_produces_files(
+        self, tmp_path: Path, enron_dsweep_records: list[dict]
+    ) -> None:
+        stats = aggregate_by_k_d(enron_dsweep_records)
+        pdf, _png = plot_privacy_utility_dsweep(
+            stats,
+            output_dir=tmp_path,
+            layout="facets",
+            filename_stem="enron_dsweep_facets",
+        )
+        assert pdf.exists() and pdf.stat().st_size > 0
+        assert pdf.name == "enron_dsweep_facets.pdf"
+
+    def test_dsweep_no_d1_in_stats(self, enron_dsweep_records: list[dict]) -> None:
+        stats = aggregate_by_k_d(enron_dsweep_records)
+        d_values = {d for (_k, d) in stats}
+        assert 1 not in d_values
+        assert d_values == {2, 5, 10}
+
+    def test_combined_includes_d1_anchor(self, enron_combined_records: list[dict]) -> None:
+        stats = aggregate_by_k_d(enron_combined_records)
+        d_values = {d for (_k, d) in stats}
+        assert d_values == {1, 2, 5, 10}
+
+    def test_combined_series_produces_files(
+        self, tmp_path: Path, enron_combined_records: list[dict]
+    ) -> None:
+        stats = aggregate_by_k_d(enron_combined_records)
+        pdf, png = plot_privacy_utility_dsweep(
+            stats,
+            output_dir=tmp_path,
+            layout="series",
+            filename_stem="enron_dsweep_combined_series",
+        )
+        assert pdf.exists() and pdf.stat().st_size > 0
+        assert png.exists() and png.stat().st_size > 0

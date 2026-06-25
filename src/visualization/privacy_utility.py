@@ -81,6 +81,33 @@ def load_jsonl_records(logs_dir: Path) -> list[dict[str, Any]]:
     return records
 
 
+def load_jsonl_records_combined(logs_dirs: list[Path]) -> list[dict[str, Any]]:
+    """Load and concatenate records from multiple log directories.
+
+    Convenience wrapper around :func:`load_jsonl_records` for experiments whose
+    runs are spread across more than one directory — for example, the Enron
+    d-sweep where ``d=1`` lives in ``he2009_enron_secondary`` and ``d∈{2,5,10}``
+    in ``he2009_enron_dsweep``.
+
+    Parameters
+    ----------
+    logs_dirs:
+        Ordered list of directories to load.  Directories that do not exist are
+        silently skipped, so callers can pass optional anchor directories
+        without pre-checking their presence.
+
+    Returns
+    -------
+    list[dict]
+        All valid records from all directories, in directory order.
+    """
+    records: list[dict[str, Any]] = []
+    for d in logs_dirs:
+        if d.exists():
+            records.extend(load_jsonl_records(d))
+    return records
+
+
 # ---------------------------------------------------------------------------
 # Aggregation
 # ---------------------------------------------------------------------------
@@ -771,6 +798,17 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Root directory containing JSONL log files (default: experiments/logs).",
     )
     p.add_argument(
+        "--anchor-logs",
+        type=Path,
+        default=None,
+        metavar="DIR",
+        help=(
+            "Optional additional log directory loaded before --logs and combined "
+            "with it.  Use to include an anchor d value from a separate experiment "
+            "(e.g. d=1 from he2009_enron_secondary when plotting he2009_enron_dsweep)."
+        ),
+    )
+    p.add_argument(
         "--out",
         type=Path,
         default=Path("results/plots"),
@@ -841,8 +879,12 @@ def main(argv: list[str] | None = None) -> None:
     """Entry point for ``python -m src.visualization.privacy_utility``."""
     args = _build_parser().parse_args(argv)
 
-    print(f"Loading records from: {args.logs}")
-    records = load_jsonl_records(args.logs)
+    if args.anchor_logs is not None:
+        print(f"Loading records from: {args.anchor_logs} (anchor) + {args.logs}")
+        records = load_jsonl_records_combined([args.anchor_logs, args.logs])
+    else:
+        print(f"Loading records from: {args.logs}")
+        records = load_jsonl_records(args.logs)
     print(f"  {len(records)} records loaded.")
 
     d_values = _distinct_d(records)
