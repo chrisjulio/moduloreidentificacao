@@ -62,7 +62,7 @@ relatório — ver [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md
 §Inventário (não duplicado aqui).
 
 > **Nota de assimetria intencional (W2f) — Narayanan & Shmatikov 2009
-> (README §12 [11]; adendo [15] do Apêndice B do relatório).** O **artigo**
+> (README §12 [13]; adendo [15] do Apêndice B do relatório).** O **artigo**
 > cita o paper de 2009 no corpo (Seção 2, trabalhos relacionados); o
 > **relatório** o registra apenas como adendo pós-fechamento ao Apêndice B,
 > **sem citação no corpo** — a #174 estava fechada quando a decisão A+B do
@@ -168,7 +168,7 @@ sem alteração de código.
 
 ---
 
-## Revisões D1–D2 — reposicionamento como baseline (2026-06-26)
+## Revisões D1–D3 — reposicionamento como baseline + atualização bibliográfica (2026-06-26)
 
 Rodada de revisão orientada pelo retorno dos professores André Vignatti e
 Sidgley, executada **somente no texto** (academic/, privado) com os reflexos
@@ -192,11 +192,27 @@ públicos abaixo. Sem alteração de números, tabelas, figuras ou código.
   baixados:
   - **[2]** Brito & Machado (2024) — *Differentially Private Release of
     Count-Weighted Graphs* (SBBD 2024).
-  - **[9]** Mendonça, Brito & Machado (2023) — *Privacy-Preserving Techniques
-    for Social Network Analysis* (SBBD 2023, survey).
-  A §12 passou de 15 para **17** entradas e foi **renumerada** (ordem
-  alfabética preservada): a referência cruzada de Narayanan & Shmatikov 2009
-  migrou de **[9] para [11]** (atualizada na nota de assimetria desta matriz).
-  Material de DP adicional (não citado / de Jong et al. 2024 retido por
-  decisão do autor) permanece em catálogo **local gitignored**, pendente de
-  deliberação com os orientadores.
+  - **[10]** Mendonça, Brito & Machado (2023) — *Privacy-Preserving Techniques
+    for Social Network Analysis* (SBBD 2023, survey). *(Entrou como [9] no D2;
+    renumerada para [10] pelo D3 — ver abaixo.)*
+  A §12 passou de 15 para 17 entradas no D2 (e a **20** no D3) e foi
+  **renumerada** (ordem alfabética preservada).
+- **D3 (issue #218) — atualização bibliográfica > 2020 (§2 do artigo e §2.1 do
+  relatório):** três referências recentes verificadas (metadados via
+  DBLP/arXiv), uma por subárea, citadas inline no §2 e incorporadas à
+  `README.md` §12 + catálogo `references/README.md`:
+  - **[5]** Hao, Li, Chang & Gu (2024) — *MLDA: a multi-level k-degree
+    anonymity scheme on directed social network graphs* (Frontiers of Computer
+    Science) — anonimização estrutural, **2024** (> 2023).
+  - **[11]** Mueller, Usynin, Paetzold, Rueckert & Kaissis (2022) — *SoK:
+    Differential Privacy on Graph-Structured Data* (arXiv) — taxonomia DP em
+    grafos.
+  - **[19]** Yuan, Zhang, Du, Chen, Cheng & Sun (2023) — *PrivGraph:
+    Differentially Private Graph Data Publication...* (USENIX Security) —
+    publicação de grafo sob DP.
+  A §12 passou de 17 para **20** entradas (renumerada): Mendonça migrou
+  **[9]→[10]** e Narayanan & Shmatikov 2009 **[11]→[13]** (atualizada na nota
+  de assimetria desta matriz). **Apenas BibTeX e links** versionados — os PDFs
+  foram obtidos **localmente pelo autor** (gitignored, não commitados). de Jong
+  et al. (2024, arXiv) **descartado** — mesmo grupo retido para deliberação com
+  os orientadores. Meta da issue cumprida: ≥3 refs > 2020; ≥1 > 2023 (Hao 2024).
