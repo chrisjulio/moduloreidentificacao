@@ -33,9 +33,12 @@ Estrutura mínima fixada pela #175:
 6. Conclusão e trabalhos futuros (Fase 2 temporal; sem comprometer enquadramento)
 
 Tese central: **frase-síntese B1 generalizável (W-04)** — em `d=1`,
-`rr_subgrafo ≫ rr_grau` nos dois datasets (~30–38× em k=2); contribuição =
-módulo como **aferidor formal** + curva privacidade-utilidade (DL-06 como
-premissa fundadora).
+`rr_subgrafo ≫ rr_grau` nos dois datasets (**~6× no Facebook e ~38× no
+Enron** em k=2, sob **motor de particionamento unificado (pymetis)** — ver
+Revisão D4 abaixo; os valores anteriores ~30–38× referiam-se ao run
+Kernighan-Lin do Facebook, substituído por pymetis em E1/#211, D-19);
+contribuição = módulo como **aferidor formal** + curva privacidade-utilidade
+(DL-06 como premissa fundadora).
 
 Seções do relatório que **não** viram seção no artigo: §7 (reprodutibilidade
 → 1 parágrafo no método), §8 (ética → 2–3 frases na introdução), Apêndice A
@@ -50,7 +53,7 @@ Seções do relatório que **não** viram seção no artigo: §7 (reprodutibilid
 | 1. Resumo + Introdução | §1.1–§1.4 | [`scope.md`](scope.md) §4/§5/§6 | **DL-06** | — | — | W2b ✅ (abstract final reescrito na W2e ✅) |
 | 2. Trabalhos relacionados | §1.3/§2.1; Apêndice B | `README.md` §12 (subconjunto de 7 refs) | — | — | — | W2b ✅ |
 | 3. Método condensado | §3–§4 | [`pipeline.md`](pipeline.md); [`metrics_definitions.md`](metrics_definitions.md) | DL-05; D-16; D-11; DL-01 | W-01; W-02; W-03; W-05 | diagrama do pipeline; tabela de parâmetros | W2c ✅ |
-| 4. Resultados | §5.1–§5.7 | [`results_baseline.md`](results_baseline.md); [`results_enron.md`](results_enron.md); [`results_dsweep.md`](results_dsweep.md) | DL-04; D-17 (menção) | **W-04**; W-06 | curvas por dataset (Fig. 2–3, regeneráveis); painel normalizado (Fig. 4, [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png)); Tabelas 2–4 (agregados por k; gap k=2) | W2d ✅ |
+| 4. Resultados | §5.1–§5.7 | [`results_baseline.md`](results_baseline.md); [`results_enron.md`](results_enron.md); [`results_dsweep.md`](results_dsweep.md) | DL-04; D-17 (menção); **D-19** (motor pymetis) | **W-04**; W-06 | curvas por dataset (Fig. 2–3, regeneráveis); painel normalizado (Fig. 4, [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png) — **asset ainda em KL, regen pendente, D4**); Tabelas 2–4 (agregados por k, **Facebook em pymetis após D4**; gap k=2) | W2d ✅; **D4 ✅** |
 | 5. Discussão | §6.1–§6.3 + §2.3 | [`limitations.md`](limitations.md) §1/§3/§4; [`scope.md`](scope.md) §8 | B2; C2/A1; D-17 (substância, sem codinome) | W-04 (leitura); W-05 | — | W2e ✅ |
 | 6. Conclusão + futuros | §2.3/§6.1 | [`scope.md`](scope.md) §8; [`limitations.md`](limitations.md) §4 | DL-06 (fecho) | — | — | W2e ✅ |
 | Revisão integrada | relatório completo | [`progress.md`](progress.md) | todas | coerência W-04/W-05 | conferência | W2f ✅ |
@@ -216,3 +219,57 @@ públicos abaixo. Sem alteração de números, tabelas, figuras ou código.
   foram obtidos **localmente pelo autor** (gitignored, não commitados). de Jong
   et al. (2024, arXiv) **descartado** — mesmo grupo retido para deliberação com
   os orientadores. Meta da issue cumprida: ≥3 refs > 2020; ≥1 > 2023 (Hao 2024).
+
+---
+
+## Revisão metodológica D4 (#219) — migração KL → pymetis e reenquadramento (2026-06-26)
+
+Rodada orientada pelo retorno dos avaliadores externos (Profs. André Vignatti
+e Sidgley), respondendo a limitações percebidas que pediam
+**recontextualização metodológica**. **Diferentemente das rodadas D1–D3,
+esta altera números e tabelas** — incorpora o dado canônico inter-dataset
+fixado em E1 ([#211](https://github.com/chrisjulio/moduloreidentificacao/issues/211),
+decisão **D-19** em [`decision_log.md`](decision_log.md)): o run **pymetis**
+do baseline Facebook substitui o run **Kernighan-Lin**. Os números do Enron
+**não** mudam (já corria em pymetis, #126).
+
+Escopo: **apenas este repositório** — texto privado (`academic/artigo.md`,
+gitignored, fora do diff) + esta rastreabilidade pública. As versões
+compiladas (Overleaf) são portadas pelo autor, cada uma no seu contexto.
+
+**Ajustes no texto do artigo (privado):**
+
+- **§3.2 — baseline canônico + motor unificado.** He et al. (2009) e a técnica
+  única reenquadrados como **escolha deliberada de baseline canônico** (régua
+  reprodutível, não esgotamento do espaço de técnicas); particionamento
+  reescrito de "METIS com fallback Kernighan-Lin" para **pymetis unificado nos
+  dois datasets**, com fallback KL desabilitado (`allow_kl_fallback: false`).
+- **§3.5 / §4.3 — escala do Enron explícita.** Razão **~63×** tornada explícita
+  (n=33.696 vs n=532), evidenciando o Enron como dataset secundário **já no
+  pipeline**.
+- **§4 — propagação total KL → pymetis.** Tabela 2 e todos os números
+  dependentes (abstract, §1, §4.2, §4.4/Tabela 4, §6, tese central) migrados
+  para pymetis. **Gap Facebook k=2: ~30× → ~6×** (0,1454 vs 0,0232); headline
+  passa a **"~6× Facebook / ~38× Enron"**.
+- **§5 — reenquadramento metodológico.** O "motor não-pareado KL×METIS",
+  antes ameaça à validade com argumento interpretativo de inocuidade em d=1,
+  passa a **motor unificado (pymetis)** — decisão metodológica, não correção;
+  o confundidor é eliminado (§4.5 cai de 3 para 2 confundidores). Técnica
+  única reafirmada como escolha de baseline, não limitação acidental.
+
+**Consequências narrativas registradas (fidelidade ao dado canônico, sem
+suavização):** sob pymetis o Facebook **não** atinge k-anonimato em k=10/20
+(FAILURE_LOW_COVERAGE, cobertura 0,8647 — só k=2/5 passam; o marco 29/05
+permanece válido sobre o run KL, D-19); a punch "quatro em cada cinco" (0,7914)
+vira leitura de gap (~6×); o Facebook **não** viola mais a cota 1/k (a violação
+empírica de d=1 sobrevive só em Enron/k=20); a taxa por subgrafo do Facebook
+deixa de ser estritamente monótona.
+
+**Figura 4 (painel normalizado) — pendência sinalizada.** A prosa do §4.5 já
+usa valores pymetis; o **asset versionado**
+[`assets/comparison_fb_enron.{png,pdf,csv}`](assets/comparison_fb_enron.png)
+ainda reflete o Facebook em KL. Por decisão do autor (D4), a regeneração do
+asset para pymetis fica como **follow-up sinalizado** — este PR é **docs-only**
+(não toca assets versionados nem o código congelado). Os checklists de
+cobertura W2b..e do texto privado permanecem como rastro histórico do estado
+pré-D4.
