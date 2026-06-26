@@ -20,9 +20,36 @@ Desejável (#214 e #215) concluídas em 2026-06-25. Issue E1 (#211) concluída e
 2026-06-25 (reexecução baseline Facebook com pymetis). **Rodada D1–D3
 (#216/#217/#218)** — revisão pós-entrega do conteúdo acadêmico — concluída em
 2026-06-26 (reposicionamento como baseline + defesa frente à DP + atualização
-bibliográfica > 2020).
+bibliográfica > 2020). **Rodada D4 (#219)** — revisão metodológica do artigo
+(migração KL → pymetis + motor unificado + baseline canônico + escala Enron) —
+concluída em 2026-06-26 (PR `docs/artigo-revisao-metodologia`).
 
 **Último passo concluído:**
+- **Rodada D4 (#219) — revisão metodológica do artigo (2026-06-26). ✅ (docs,
+  PR `docs/artigo-revisao-metodologia`).** Resposta a três limitações
+  percebidas pelos avaliadores (André/Sidgley), com **recontextualização
+  metodológica**. **Diferente de D1–D3, altera números e tabelas:** incorpora
+  o dado canônico inter-dataset de E1 (#211, D-19) — o run **pymetis** do
+  baseline Facebook substitui o **Kernighan-Lin**. **No texto privado
+  (`academic/artigo.md`, gitignored):** (i) Tabela 2 + propagação total
+  (abstract, §1, §4.2, §4.4/Tabela 4, §6, tese central) KL → pymetis — **gap
+  Facebook k=2 cai de ~30× para ~6×** (0,1454 vs 0,0232); headline passa a
+  "~6× Facebook / ~38× Enron" (Enron inalterado, já era pymetis); (ii) **motor
+  unificado pymetis** nos dois datasets como decisão metodológica (§3.2, §4.1,
+  §5.1) — confundidor "motor não-pareado KL×METIS" eliminado (§4.5: 3 → 2
+  confundidores); (iii) He et al. (2009)/algoritmo único reenquadrados como
+  **baseline canônico deliberado** (§3.2, §5.1); (iv) escala do Enron ~63×
+  explícita (§3.5, §4.3). **Consequências narrativas registradas com
+  fidelidade:** sob pymetis o Facebook **não** atinge k-anonimato em k=10/20
+  (FAILURE_LOW_COVERAGE, cob. 0,8647; marco 29/05 permanece válido sobre o run
+  KL); punch "quatro em cada cinco" vira leitura de gap; Facebook não viola
+  mais a cota 1/k (sobrevive só em Enron/k=20); taxa por subgrafo do FB deixa
+  de ser estritamente monótona. **Figura 4 (painel `comparison_fb_enron`):**
+  prosa atualizada para pymetis, **regeneração do asset = follow-up sinalizado**
+  (PR docs-only, sem tocar assets nem código congelado). **Reflexo público:**
+  seção D4 + sumário/matriz em `docs/artigo_rastreabilidade.md`. Escopo limitado
+  a este repo (local + GitHub); portabilidade às versões Overleaf a cargo do
+  autor.
 - **Rodada D1–D3 (#216, #217, #218) — revisão pós-entrega do conteúdo
   acadêmico (2026-06-26). ✅ (docs, PRs #227/#229).** Revisão orientada pelo
   retorno dos avaliadores externos (Profs. André Vignatti e Sidgley), no texto
