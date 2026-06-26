@@ -56,7 +56,7 @@ Seções do relatório que **não** viram seção no artigo: §7 (reprodutibilid
 | 4. Resultados | §5.1–§5.7 | [`results_baseline.md`](results_baseline.md); [`results_enron.md`](results_enron.md); [`results_dsweep.md`](results_dsweep.md) | DL-04; D-17 (menção); **D-19** (motor pymetis) | **W-04**; W-06 | curvas por dataset (Fig. 2–3, regeneráveis); painel normalizado (Fig. 4, [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png) — **asset ainda em KL, regen pendente, D4**); **d-sweep Enron (Fig. 5, [`assets/enron_dsweep_series.png`](assets/enron_dsweep_series.png), V2/#215; tabela [`results_enron_dsweep.md`](results_enron_dsweep.md), V1/#214 — §4.6 expandida em D5)**; Tabelas 2–4 (agregados por k, **Facebook em pymetis após D4**; gap k=2) | W2d ✅; **D4 ✅**; **D5 ✅** |
 | 5. Discussão | §6.1–§6.3 + §2.3 | [`limitations.md`](limitations.md) §1/§3/§4; [`scope.md`](scope.md) §8 | B2; C2/A1; D-17 (substância, sem codinome) | W-04 (leitura); W-05 | — | W2e ✅ |
 | 6. Conclusão + futuros | §2.3/§6.1 | [`scope.md`](scope.md) §8; [`limitations.md`](limitations.md) §4 | DL-06 (fecho) | — | — | W2e ✅ |
-| Revisão integrada | relatório completo | [`progress.md`](progress.md) | todas | coerência W-04/W-05 | conferência | W2f ✅ |
+| Revisão integrada | relatório completo | [`progress.md`](progress.md) | todas | coerência W-04/W-05 | conferência | W2f ✅; **revisão final D6 ✅** |
 
 Todos os `W-NN` referenciados estão **resolvidos** no
 [`artifact_writing_checklist.md`](artifact_writing_checklist.md); a redação
@@ -89,6 +89,18 @@ relatório — ver [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md
 > 2026, fechando a lista compilada em **15 entradas** (citação↔lista nos
 > dois sentidos). **Wörlein 2005 permanece como a única omissão
 > intencional.**
+>
+> **Atualização (D6/#221, 2026-06-26):** a revisão integrada final **fechou a
+> lacuna citação↔lista** que D2/D3 haviam aberto no fonte Markdown
+> (`academic/artigo.md`): as 5 referências de D2/D3 (Brito & Machado 2024;
+> Hao et al. 2024; Mendonça et al. 2023; Mueller et al. 2022; Yuan et al.
+> 2023) estavam citadas na §2 mas **ausentes** da lista de Referências do
+> artigo (que fechara em 12 na W2f). Foram adicionadas em ordem alfabética,
+> com metadados conferidos contra o README §12 de `main`. A lista do artigo
+> passa a **18 entradas** (17 da literatura + autorreferência Brito 2026). As
+> omissões intencionais reduzem-se a **três** — Wörlein 2005, Díaz 2003 e
+> Serjantov & Danezis 2003 —, as únicas ausências mesmo com o README §12 já em
+> 20 entradas.
 
 ---
 
@@ -320,3 +332,75 @@ Enron, apenas o regime d=1 foi medido") e §6 (d-sweep Enron listado como
 trabalho futuro) ficaram **superadas** por D5 e devem ser reconciliadas na
 revisão integrada — fora do escopo de D5, sinalizadas aqui e na nota D5 do
 texto privado.
+
+---
+
+## Revisão integrada final D6 (#221) — conferência de consistência (2026-06-26)
+
+Issue [D6](https://github.com/chrisjulio/moduloreidentificacao/issues/221) —
+passagem final de consistência do artigo após a rodada D1–D5. **Bloqueada por
+D1–D5** (#216–#220): todas verificadas **CLOSED e mergeadas em `main`** via
+`gh` antes de iniciar (#231 — D5 — é o último merge); nenhum PR aberto.
+
+**Escopo:** apenas este repositório — texto privado (`academic/artigo.md`,
+gitignorado, fora do diff) + esta rastreabilidade pública. Sem código
+(congelado), sem novos experimentos. PR **docs-only**.
+
+### Consistência numérica — conferida, nenhuma divergência
+
+Reconferência de todos os números do artigo contra os relatórios versionados
+em `main` (regeneráveis dos logs JSONL): **Tabela 2** = `results_baseline.md`
+(run pymetis E1/#211, exata); **Tabela 3** = `results_enron.md` (exata);
+**Tabela 4 + tese central** = k=2 dos dois datasets (FB 0,1454/0,0232 → 6,3×;
+Enron 0,1241/0,0033 → 37,6×; razões ~6×/~38×); **§4.6 d-sweep Enron** =
+`results_enron_dsweep.md` (subgrafo, EGS 19,99 / 198,21, KS-D, cobertura
+≥ 0,9877, piso de grau — exatos); **§4.6 d-sweep Facebook** =
+`results_dsweep.md` (EGS 19,70 / 133,0; cobertura mínima 0,752; zero
+timeouts). A divergência **intencional** da §4.6 em relação à prosa de
+`results_enron_dsweep.md` §4.1 (que afirma que o deslocamento "se confirma")
+foi mantida — o artigo segue o dado da tabela (só a metade estrutural
+replica), já assinalada em D5.
+
+### Reconciliação de coerência pós-D5 (pendência herdada)
+
+As duas passagens **superadas** por D5 foram reconciliadas no texto privado:
+
+- **§3.5** — a varredura `d ∈ {1,2,5,10}` (48 execuções por dataset) passou de
+  "sobre o Facebook" para **"sobre os dois datasets"**, coerente com a §4.6.
+- **§5.1 ¶1** — removida a frase "no Enron, apenas o regime `d=1` foi medido";
+  o parágrafo incorpora o achado do d-sweep Enron (metade estrutural robusta à
+  escala; deslocamento dependente de escala pequena) e **resta um único
+  resíduo** (múltiplas ego-redes).
+- **§6 ¶2** — a "replicação da varredura de profundidade no segundo dataset"
+  saiu da enumeração de futuros (já executada, D5) e foi registrada como
+  verificação **já realizada**; futuros renumerados (i)–(iv).
+
+### Terminologia — uniforme
+
+Baseline de avaliação de risco (D1) consistente do abstract à discussão;
+distinção DP vs. anonimização estrutural (D2) coerente em todas as ocorrências
+(§2, abstract, §1, §5.4), sempre como diferença de premissas; "cota inferior"
+uniforme (abstract, §4.3, §5.2, §6).
+
+### Referências — completude citação↔lista fechada
+
+**Achado central de D6:** as 5 referências de D2/D3 (Brito & Machado 2024; Hao
+et al. 2024; Mendonça et al. 2023; Mueller et al. 2022; Yuan et al. 2023)
+estavam **citadas na §2 mas ausentes da lista de Referências** do artigo (que
+fechara em 12 na W2f, antes de D2/D3). Foram **adicionadas em ordem
+alfabética**, metadados conferidos contra o README §12 de `main`; a lista do
+artigo passa a **18 entradas** (17 da literatura + autorreferência Brito
+2026). Verificação bidirecional refeita: toda entrada citada no corpo; nenhuma
+citação fora da lista. As 3 omissões intencionais (Wörlein 2005; Díaz 2003;
+Serjantov & Danezis 2003) seguem como as únicas ausências.
+
+### Pendências herdadas, não resolvidas em D6 (decisão do autor)
+
+- Regeneração do asset `docs/assets/comparison_fb_enron.{png,pdf,csv}` para
+  pymetis (follow-up sinalizado em D4) — a prosa do §4.5 já usa pymetis.
+- Identificador estável (tag/release ou DOI) da autorreferência Brito (2026).
+
+**Definição de pronto (#221):** números conferidos e consistentes ✅;
+terminologia uniforme ✅; referências completas e citadas ✅;
+`artigo_rastreabilidade.md` atualizado ✅; PR em `docs/artigo-revisao-final`
+✅.
