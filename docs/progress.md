@@ -11,15 +11,44 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-25
+**Data da última atualização:** 2026-06-26
 
 **Semana corrente:** S10 — **concluída**: relatório técnico (#174, fechada em
 2026-06-10) e artigo (#175, fechada em 2026-06-10 via PR #197/W2f — MERGED).
 Código **congelado** — somente análise e documentação. Issues de visualização
 Desejável (#214 e #215) concluídas em 2026-06-25. Issue E1 (#211) concluída em
-2026-06-25 (reexecução baseline Facebook com pymetis).
+2026-06-25 (reexecução baseline Facebook com pymetis). **Rodada D1–D3
+(#216/#217/#218)** — revisão pós-entrega do conteúdo acadêmico — concluída em
+2026-06-26 (reposicionamento como baseline + defesa frente à DP + atualização
+bibliográfica > 2020).
 
 **Último passo concluído:**
+- **Rodada D1–D3 (#216, #217, #218) — revisão pós-entrega do conteúdo
+  acadêmico (2026-06-26). ✅ (docs, PRs #227/#229).** Revisão orientada pelo
+  retorno dos avaliadores externos (Profs. André Vignatti e Sidgley), no texto
+  privado (`academic/`, gitignored — Overleaf captura daqui) com reflexos
+  públicos. **D1 (#216):** abstract + §1 do artigo e §1.1 do relatório
+  reposicionam o trabalho como **baseline de avaliação de risco** para
+  k-anonimato estrutural, com lacuna metodológica (vs. Privacidade Diferencial)
+  no 1º parágrafo. **D2 (#217):** §2/§2.1 ganham parágrafo diferenciando DP
+  (consultas/estatísticas agregadas; *query release*; garantia semântica/ε) de
+  anonimização estrutural (publicação do grafo completo p/ *graph mining*;
+  garantia sintática) — tom de diferença de premissas. **D3 (#218):**
+  atualização bibliográfica > 2020 — 3 refs recentes verificadas (DBLP/arXiv)
+  citadas no §2: Hao et al. (2024, MLDA k-degree multinível — **> 2023**),
+  Yuan et al. (2023, PrivGraph — *graph release* sob DP, USENIX Sec) e Mueller
+  et al. (2022, SoK — taxonomia DP em grafos). **Reflexo público:** `README.md`
+  §12 de **15 → 20** entradas (D2 +Mendonça/Brito; D3 +Hao/Mueller/Yuan;
+  renumerada — Narayanan 2009 [9]→[13]); catálogo `references/README.md` +
+  BibTeX (PDFs locais do autor, gitignored, **não commitados**);
+  `docs/{artigo,relatorio}_rastreabilidade.md` com seção D1–D3. **Material DP
+  retido:** catálogo `references/DP_GRAPH_REFERENCES.md` **destrackeado** (PR
+  #227, local-only) e de Jong et al. (2024) fora do registro — pendentes de
+  deliberação com os orientadores. **Incidente de PR empilhado:** a #228
+  (incorporação D2) foi mergeada na base intermediária e **não chegou a
+  `main`** (padrão #192/#193); re-roteada por cherry-pick → **PR #229** (base
+  `main`). PR #229 leva D2+D3 + coerência.
+- **Issue #211 (E1) — reexecução baseline Facebook com pymetis (2026-06-25).
 - **Issue #211 (E1) — reexecução baseline Facebook com pymetis (2026-06-25).
   ✅ (experiment, PR #225 aberto).** Config
   `he2009_facebook_baseline_pymetis.yml` criado com `allow_kl_fallback: false`.

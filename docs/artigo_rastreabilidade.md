@@ -62,7 +62,7 @@ relatório — ver [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md
 §Inventário (não duplicado aqui).
 
 > **Nota de assimetria intencional (W2f) — Narayanan & Shmatikov 2009
-> (README §12 [9]; adendo [15] do Apêndice B do relatório).** O **artigo**
+> (README §12 [13]; adendo [15] do Apêndice B do relatório).** O **artigo**
 > cita o paper de 2009 no corpo (Seção 2, trabalhos relacionados); o
 > **relatório** o registra apenas como adendo pós-fechamento ao Apêndice B,
 > **sem citação no corpo** — a #174 estava fechada quando a decisão A+B do
@@ -165,3 +165,54 @@ sem alteração de código.
    Fica registrado o alinhamento — relatório e artigo apontam para o mesmo
    repositório. *(Verificação de 2026-06-11: o endereço público ainda não
    estava ativo; pendência associada ao identificador do item 2.)*
+
+---
+
+## Revisões D1–D3 — reposicionamento como baseline + atualização bibliográfica (2026-06-26)
+
+Rodada de revisão orientada pelo retorno dos professores André Vignatti e
+Sidgley, executada **somente no texto** (academic/, privado) com os reflexos
+públicos abaixo. Sem alteração de números, tabelas, figuras ou código.
+
+- **D1 (issue #216) — abstract + §1 do artigo e §1.1 do relatório:**
+  reposicionamento explícito do trabalho como **baseline de avaliação de
+  risco** para k-anonimato estrutural de grafos, com a **lacuna metodológica**
+  (ausência de baselines padronizados na subárea, mesmo diante do avanço da
+  Privacidade Diferencial) declarada desde o primeiro parágrafo. Reflexo
+  público: nenhum (texto em `academic/`).
+- **D2 (issue #217) — §2 do artigo (trabalhos relacionados) e §2.1 do
+  relatório:** parágrafo diferenciando **Privacidade Diferencial** (proteção
+  de consultas/estatísticas agregadas; *query release*; garantia
+  semântica/ε) de **anonimização estrutural por k-anonimato** (publicação do
+  grafo completo para *graph mining*; garantia sintática). Tom: diferença de
+  premissas e casos de uso, não detrimento da DP.
+- **Incorporação formal de referências (público):** duas referências de DP em
+  grafos citadas no texto foram adicionadas à lista canônica `README.md` §12 e
+  ao catálogo `references/README.md`, com PDFs de acesso aberto (SOL/SBC)
+  baixados:
+  - **[2]** Brito & Machado (2024) — *Differentially Private Release of
+    Count-Weighted Graphs* (SBBD 2024).
+  - **[10]** Mendonça, Brito & Machado (2023) — *Privacy-Preserving Techniques
+    for Social Network Analysis* (SBBD 2023, survey). *(Entrou como [9] no D2;
+    renumerada para [10] pelo D3 — ver abaixo.)*
+  A §12 passou de 15 para 17 entradas no D2 (e a **20** no D3) e foi
+  **renumerada** (ordem alfabética preservada).
+- **D3 (issue #218) — atualização bibliográfica > 2020 (§2 do artigo e §2.1 do
+  relatório):** três referências recentes verificadas (metadados via
+  DBLP/arXiv), uma por subárea, citadas inline no §2 e incorporadas à
+  `README.md` §12 + catálogo `references/README.md`:
+  - **[5]** Hao, Li, Chang & Gu (2024) — *MLDA: a multi-level k-degree
+    anonymity scheme on directed social network graphs* (Frontiers of Computer
+    Science) — anonimização estrutural, **2024** (> 2023).
+  - **[11]** Mueller, Usynin, Paetzold, Rueckert & Kaissis (2022) — *SoK:
+    Differential Privacy on Graph-Structured Data* (arXiv) — taxonomia DP em
+    grafos.
+  - **[19]** Yuan, Zhang, Du, Chen, Cheng & Sun (2023) — *PrivGraph:
+    Differentially Private Graph Data Publication...* (USENIX Security) —
+    publicação de grafo sob DP.
+  A §12 passou de 17 para **20** entradas (renumerada): Mendonça migrou
+  **[9]→[10]** e Narayanan & Shmatikov 2009 **[11]→[13]** (atualizada na nota
+  de assimetria desta matriz). **Apenas BibTeX e links** versionados — os PDFs
+  foram obtidos **localmente pelo autor** (gitignored, não commitados). de Jong
+  et al. (2024, arXiv) **descartado** — mesmo grupo retido para deliberação com
+  os orientadores. Meta da issue cumprida: ≥3 refs > 2020; ≥1 > 2023 (Hao 2024).

@@ -100,3 +100,32 @@ reabre.
 > é registrada por comentário na #174 e em
 > [`relatorio_execucoes.md`](relatorio_execucoes.md) (contabilização e
 > registro detalhado por etapa).
+
+---
+
+## Revisões D1–D3 — reposicionamento como baseline + atualização bibliográfica (2026-06-26)
+
+Rodada de revisão pós-entrega orientada pelo retorno dos avaliadores externos
+(Profs. André Vignatti e Sidgley), executada **somente no texto** do relatório
+(`academic/relatorio_tecnico.md`, privado), com reflexos públicos em
+`README.md` §12 e nas matrizes de rastreabilidade. Sem alteração de números,
+tabelas, figuras ou código.
+
+- **D1 (#216) — §1.1:** o trabalho passa a ser declarado explicitamente como
+  **baseline de avaliação de risco** para k-anonimato estrutural de grafos, com
+  a lacuna metodológica (ausência de baselines padronizados, mesmo diante da
+  Privacidade Diferencial) no primeiro parágrafo.
+- **D2 (#217) — §2.1:** parágrafo diferenciando DP (consultas/estatísticas
+  agregadas; *query release*; garantia semântica/ε) de anonimização estrutural
+  por k-anonimato (publicação do grafo completo para *graph mining*; garantia
+  sintática). Tom: diferença de premissas, não detrimento da DP.
+- **D3 (#218) — §2.1:** atualização bibliográfica > 2020, três referências
+  recentes verificadas (DBLP/arXiv) tecidas ao texto — Hao et al. (2024,
+  k-degree multinível, **> 2023**), Yuan et al. (2023, PrivGraph, *graph
+  release* sob DP) e Mueller et al. (2022, SoK, taxonomia de DP em grafos).
+
+**Reflexo público:** `README.md` §12 passou de 15 → 17 (D2) → **20** (D3)
+entradas, renumerada. **BibTeX + links** versionados em `references/README.md`;
+PDFs locais do autor (gitignored). Detalhamento espelhado em
+[`artigo_rastreabilidade.md`](artigo_rastreabilidade.md) (§Revisões D1–D3).
+de Jong et al. (2024) retido para deliberação com os orientadores.
