@@ -24,9 +24,38 @@ bibliográfica > 2020). **Rodada D4 (#219)** — revisão metodológica do artig
 (migração KL → pymetis + motor unificado + baseline canônico + escala Enron) —
 concluída em 2026-06-26 (PR `docs/artigo-revisao-metodologia`). **Rodada D5
 (#220)** — §4.6 do artigo expandida com o d-sweep Enron — concluída em
-2026-06-26 (PR `docs/artigo-revisao-dsweep-enron`).
+2026-06-26 (PR `docs/artigo-revisao-dsweep-enron`). **Rodada D6 (#221)** —
+revisão integrada final do artigo (consistência numérica + terminologia +
+referências + reconciliação de coerência pós-D5) — concluída em 2026-06-26
+(PR #232, `docs/artigo-revisao-final`).
 
 **Último passo concluído:**
+- **Rodada D6 (#221) — revisão integrada final do artigo (2026-06-26). ✅
+  (docs, PR #232 `docs/artigo-revisao-final`).** Bloqueios D1–D5 (#216–#220)
+  verificados **MERGED** via `gh`; nenhum PR aberto. Passagem final de
+  consistência sobre `academic/artigo.md` (privado, gitignored) com reflexo
+  público na rastreabilidade. **(1) Números** reconferidos contra os
+  relatórios versionados — Tabela 2 (`results_baseline.md` pymetis), Tabela 3
+  (`results_enron.md`), Tabela 4/tese central (k=2: 6,3×/37,6× → ~6×/~38×),
+  §4.6 d-sweep Enron (`results_enron_dsweep.md`: EGS 19,99/198,21, cobertura
+  ≥ 0,9877) e Facebook (`results_dsweep.md`: EGS 19,70/133,0, cobertura mínima
+  0,752): **nenhuma divergência**; mantida a divergência **intencional** da
+  §4.6 vs. prosa de `results_enron_dsweep.md` §4.1 (o artigo segue o dado: só
+  a metade estrutural replica). **(2) Coerência pós-D5** (pendência herdada de
+  D5): §3.5 — d-sweep agora "sobre os dois datasets"; §5.1 ¶1 — removida "no
+  Enron, apenas d=1 foi medido" (resta 1 resíduo: múltiplas ego-redes); §6 ¶2
+  — replicação do d-sweep no 2º dataset sai dos futuros (feita em D5), futuros
+  renumerados (i)–(iv). **(3) Terminologia** uniforme (baseline D1; DP vs.
+  anonimização estrutural D2; cota inferior). **(4) Referências — achado
+  central:** as 5 refs de D2/D3 (Brito & Machado 2024; Hao 2024; Mendonça
+  2023; Mueller 2022; Yuan 2023) estavam **citadas na §2 mas ausentes da
+  lista** do artigo (fechara em 12 na W2f); adicionadas em ordem alfabética
+  (metadados conferidos contra README §12) → lista do artigo **18 entradas**;
+  citação↔lista fechada nos dois sentidos; 3 omissões intencionais (Wörlein,
+  Díaz, Serjantov) permanecem. PR **docs-only**; código/assets congelados
+  intactos. **Pendências herdadas, não resolvidas (autor):** regen do asset
+  `comparison_fb_enron` para pymetis (follow-up D4); identificador estável da
+  ref Brito (2026).
 - **Rodada D5 (#220) — §4.6 do artigo expandida com o d-sweep Enron
   (2026-06-26). ✅ (docs, PR `docs/artigo-revisao-dsweep-enron`).**
   Desbloqueada por E3 (#213), V1 (#214) e V2 (#215) — todas CLOSED,
