@@ -29,7 +29,7 @@ Exemplos:
 
 ## Catálogo
 
-Cobre as 15 referências da seção 12 do [`README.md`](../README.md) raiz.
+Cobre as 17 referências da seção 12 do [`README.md`](../README.md) raiz.
 Estado do download em 2026-06-10: **15/15 baixadas** — 12 de fontes de acesso
 aberto legítimas (arXiv, páginas de autor, repositórios institucionais, JMLR)
 e 3 obtidas manualmente pelo autor (He 2009 e Cordella 2004 via acesso
@@ -38,15 +38,26 @@ baixado em navegador). A 15ª (Narayanan & Shmatikov 2009) foi adicionada em
 2026-06-10 por decisão do autor na issue #175 (discussão W2b — paper distinto
 do Narayanan & Shmatikov 2008, complementar a ele).
 
+**Atualização 2026-06-26 (issues #216/#217, defesa conceitual contra DP):**
+duas referências de Privacidade Diferencial em grafos formalmente
+incorporadas à §12 do README e citadas no artigo — Mendonça et al. (2023,
+survey de DP em grafos) e Brito & Machado (2024, *graph release* sob DP),
+ambas SBC/SOL de acesso aberto, **17/17 baixadas**. Material de apoio
+adicional (não citado / não incorporado) permanece em catálogo local
+gitignored (`DP_GRAPH_REFERENCES.md`), pendente de deliberação com os
+orientadores.
+
 | Arquivo | Referência | DOI / Link | Acesso |
 |---|---|---|---|
 | `Backstrom_2007_WhereforeArtThouR3579X.pdf` | Backstrom, L.; Dwork, C.; Kleinberg, J. *Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography.* WWW 2007. | https://doi.org/10.1145/1242572.1242598 — cópia de autor: https://www.cs.cornell.edu/home/kleinber/www07-anon.pdf | ✅ baixado (cópia de autor, Cornell) |
+| `Brito_2024_DifferentiallyPrivateReleaseCountWeightedGraphs.pdf` | Brito, F. T.; Machado, J. C. *Differentially Private Release of Count-Weighted Graphs.* SBBD 2024 (Companion), p. 183–189. | https://sol.sbc.org.br/index.php/sbbd_estendido/article/view/30791 | ✅ baixado (SOL/SBC, acesso aberto) |
 | `Cordella_2004_SubgraphIsomorphismVF2.pdf` | Cordella, L.P.; Foggia, P.; Sansone, C.; Vento, M. *A (sub)graph isomorphism algorithm for matching large graphs.* IEEE TPAMI 26(10), 2004. | https://doi.org/10.1109/TPAMI.2004.75 | ✅ baixado manualmente (IEEE Xplore, VoR, acesso institucional) |
 | `Diaz_2003_TowardsMeasuringAnonymity.pdf` | Díaz, C.; Seys, S.; Claessens, J.; Preneel, B. *Towards measuring anonymity.* PET 2002, LNCS 2482. | https://doi.org/10.1007/3-540-36467-6_5 — cópia: https://www.freehaven.net/anonbib/cache/Diaz02.pdf | ✅ baixado (anonbib/freehaven, pré-print) |
 | `He_2009_PrivacyPreservingStructureAware.pdf` | He, X.; Vaidya, J.; Shafiq, B.; Adam, N.; Atluri, V. *Preserving Privacy in Social Networks: A Structure-Aware Approach.* WI-IAT 2009. | https://doi.org/10.1109/WI-IAT.2009.108 | ✅ baixado manualmente (IEEE Xplore, VoR, acesso institucional) |
 | `Karypis_1998_MultilevelGraphPartitioning.pdf` | Karypis, G.; Kumar, V. *A fast and high quality multilevel scheme for partitioning irregular graphs.* SIAM J. Sci. Comput. 20(1), 1998. | https://doi.org/10.1137/S1064827595287997 — cópia: https://www.cs.utexas.edu/~pingali/CS395T/2009fa/papers/metis.pdf | ✅ baixado (espelho de curso, UT Austin) |
 | `Leskovec_2012_SocialCirclesEgoNetworks.pdf` | Leskovec, J.; McAuley, J.J. *Learning to discover social circles in ego networks.* NIPS 2012. | https://dl.acm.org/doi/10.5555/2999134.2999195 — cópia de autor: https://cs.stanford.edu/people/jure/pubs/circles-nips12.pdf | ✅ baixado (cópia de autor, Stanford) |
 | `Liu_2008_IdentityAnonymizationGraphs.pdf` | Liu, K.; Terzi, E. *Towards identity anonymization on graphs.* SIGMOD 2008. | https://doi.org/10.1145/1376616.1376629 — cópia de autora: https://cs-people.bu.edu/evimaria/cs591/sigmod_privacy_graph.pdf | ✅ baixado (cópia de autora, BU) |
+| `Mendonca_2023_PrivacyPreservingTechniquesSocialNetworkAnalysis.pdf` | Mendonça, A. L. C.; Brito, F. T.; Machado, J. C. *Privacy-Preserving Techniques for Social Network Analysis.* SBBD 2023 (Estendido), p. 174–178. | https://sol.sbc.org.br/index.php/sbbd_estendido/article/view/25632 | ✅ baixado (SOL/SBC, acesso aberto) |
 | `Narayanan_2008_RobustDeanonymization.pdf` | Narayanan, A.; Shmatikov, V. *Robust de-anonymization of large sparse datasets.* IEEE S&P 2008. | https://doi.org/10.1109/SP.2008.33 — preprint: https://arxiv.org/abs/cs/0610105 | ✅ baixado (arXiv, preprint) |
 | `Narayanan_2009_DeanonymizingSocialNetworks.pdf` | Narayanan, A.; Shmatikov, V. *De-anonymizing social networks.* IEEE S&P 2009, p. 173–187. | https://doi.org/10.1109/SP.2009.22 — preprint: https://arxiv.org/abs/0903.3276 | ✅ baixado (arXiv, preprint) |
 | `Nettleton_2016_DataDrivenAnonymizationOSN.pdf` | Nettleton, D.F.; Salas, J. *A data driven anonymization system for information rich online social network graphs.* Expert Systems with Applications, 55, 87–105, 2016. | https://doi.org/10.1016/j.eswa.2016.02.004 — manuscrito aceito (AAM): http://hdl.handle.net/10609/150625 (CC BY-NC-ND) | ✅ baixado manualmente (AAM, O2/UOC, via navegador) |
