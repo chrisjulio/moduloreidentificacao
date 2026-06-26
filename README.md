@@ -838,33 +838,37 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 ## 12. Referências
 [1] [BACKSTROM, L.; DWORK, C.; KLEINBERG, J.](https://doi.org/10.1145/1242572.1242598) Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography. In: *Proceedings of the 16th International Conference on World Wide Web (WWW 2007)*. New York: ACM, 2007. p. 181–190.
 
-[2] [CORDELLA, L. P.; FOGGIA, P.; SANSONE, C.; VENTO, M.](https://doi.org/10.1109/TPAMI.2004.75) A (sub)graph isomorphism algorithm for matching large graphs. *IEEE Transactions on Pattern Analysis and Machine Intelligence*, v. 26, n. 10, p. 1367–1372, 2004.
+[2] [BRITO, F. T.; MACHADO, J. C.](https://sol.sbc.org.br/index.php/sbbd_estendido/article/view/30791) Differentially private release of count-weighted graphs. In: *Anais Estendidos do XXXIX Simpósio Brasileiro de Bancos de Dados (SBBD 2024)*. Porto Alegre: SBC, 2024. p. 183–189.
 
-[3] [DÍAZ, C.; SEYS, S.; CLAESSENS, J.; PRENEEL, B.](https://doi.org/10.1007/3-540-36467-6_5) Towards measuring anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 54–68. (Lecture Notes in Computer Science, v. 2482).
+[3] [CORDELLA, L. P.; FOGGIA, P.; SANSONE, C.; VENTO, M.](https://doi.org/10.1109/TPAMI.2004.75) A (sub)graph isomorphism algorithm for matching large graphs. *IEEE Transactions on Pattern Analysis and Machine Intelligence*, v. 26, n. 10, p. 1367–1372, 2004.
 
-[4] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
+[4] [DÍAZ, C.; SEYS, S.; CLAESSENS, J.; PRENEEL, B.](https://doi.org/10.1007/3-540-36467-6_5) Towards measuring anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 54–68. (Lecture Notes in Computer Science, v. 2482).
 
-[5] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
+[5] [HE, X. et al.](https://doi.org/10.1109/WI-IAT.2009.108) Preserving privacy in social networks: A structure-aware approach. In: *IEEE/WIC/ACM International Joint Conference on Web Intelligence and Intelligent Agent Technology (WI-IAT 2009)*. [S. l.]: IEEE, 2009. p. 647–654.
 
-[6] [LESKOVEC, J.; MCAULEY, J. J.](https://dl.acm.org/doi/10.5555/2999134.2999195) Learning to discover social circles in ego networks. In: *Advances in Neural Information Processing Systems (NIPS 2012)*. [S. l.]: Curran Associates, 2012. p. 539–547.
+[6] [KARYPIS, G.; KUMAR, V.](https://doi.org/10.1137/S1064827595287997) A fast and high quality multilevel scheme for partitioning irregular graphs. *SIAM Journal on Scientific Computing*, v. 20, n. 1, p. 359–392, 1998.
 
-[7] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
+[7] [LESKOVEC, J.; MCAULEY, J. J.](https://dl.acm.org/doi/10.5555/2999134.2999195) Learning to discover social circles in ego networks. In: *Advances in Neural Information Processing Systems (NIPS 2012)*. [S. l.]: Curran Associates, 2012. p. 539–547.
 
-[8] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
+[8] [LIU, K.; TERZI, E.](https://doi.org/10.1145/1376616.1376629) Towards identity anonymization on graphs. In: *Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data (SIGMOD 2008)*. New York: ACM, 2008. p. 93–106.
 
-[9] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2009.22) De-anonymizing social networks. In: *2009 30th IEEE Symposium on Security and Privacy (S&P 2009)*. [S. l.]: IEEE, 2009. p. 173–187.
+[9] [MENDONÇA, A. L. C.; BRITO, F. T.; MACHADO, J. C.](https://sol.sbc.org.br/index.php/sbbd_estendido/article/view/25632) Privacy-preserving techniques for social network analysis. In: *Anais Estendidos do XXXVIII Simpósio Brasileiro de Bancos de Dados (SBBD 2023)*. Porto Alegre: SBC, 2023. p. 174–178.
 
-[10] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
+[10] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2008.33) Robust de-anonymization of large sparse datasets. In: *IEEE Symposium on Security and Privacy (S&P 2008)*. [S. l.]: IEEE, 2008. p. 111–125.
 
-[11] [SERJANTOV, A.; DANEZIS, G.](https://doi.org/10.1007/3-540-36467-6_4) Towards an information theoretic metric for anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 41–53. (Lecture Notes in Computer Science, v. 2482).
+[11] [NARAYANAN, A.; SHMATIKOV, V.](https://doi.org/10.1109/SP.2009.22) De-anonymizing social networks. In: *2009 30th IEEE Symposium on Security and Privacy (S&P 2009)*. [S. l.]: IEEE, 2009. p. 173–187.
 
-[12] [SHERVASHIDZE, N.; SCHWEITZER, P.; VAN LEEUWEN, E. J.; MEHLHORN, K.; BORGWARDT, K. M.](https://www.jmlr.org/papers/v12/shervashidze11a.html) Weisfeiler-Lehman graph kernels. *Journal of Machine Learning Research*, v. 12, p. 2539–2561, 2011.
+[12] [NETTLETON, D. F.; SALAS, J.](https://doi.org/10.1016/j.eswa.2016.02.004) A data driven anonymization system for information rich online social network graphs. *Expert Systems with Applications*, v. 55, p. 87–105, 2016.
 
-[13] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+[13] [SERJANTOV, A.; DANEZIS, G.](https://doi.org/10.1007/3-540-36467-6_4) Towards an information theoretic metric for anonymity. In: *Privacy Enhancing Technologies (PET 2002)*. Berlin: Springer, 2003. p. 41–53. (Lecture Notes in Computer Science, v. 2482).
 
-[14] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_39) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+[14] [SHERVASHIDZE, N.; SCHWEITZER, P.; VAN LEEUWEN, E. J.; MEHLHORN, K.; BORGWARDT, K. M.](https://www.jmlr.org/papers/v12/shervashidze11a.html) Weisfeiler-Lehman graph kernels. *Journal of Machine Learning Research*, v. 12, p. 2539–2561, 2011.
 
-[15] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
+[15] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
+
+[16] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_39) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+
+[17] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
 
 ---
 
