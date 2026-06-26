@@ -15,7 +15,7 @@
 > Frentes não executadas (entropia não uniforme, otimização do subgrafo em escala,
 > Nettleton & Salas) permanecem registradas como **trabalho futuro**.
 > Repositório em condições de entrega acadêmica.
-> Última revisão: 10/06/2026.
+> Última revisão: 25/06/2026.
 
 ![CI](https://github.com/chrisjulio/moduloreidentificacao/actions/workflows/ci.yml/badge.svg)
 
@@ -194,11 +194,12 @@ Ver [`docs/reproducibility.md`](docs/reproducibility.md) §8.
 
 ## 4. Status do projeto
 
-**Atualizado em 10/06/2026.** Escopo Mínimo (S1–S5) concluído e escopo Desejável
+**Atualizado em 25/06/2026.** Escopo Mínimo (S1–S5) concluído e escopo Desejável
 integralmente concluído (dataset secundário Email-Enron + métrica/ataque por entropia).
-Processamento experimental **congelado** — sem novas execuções ou frentes em aberto.
 A consolidação documental (S10) está **concluída**, incluindo a redação e revisão
 do relatório técnico (#174) e do artigo (#175) — ver o bloco **S10** abaixo.
+Após S10: resultados complementares do d-sweep Enron (issues #214/#215) e reexecução
+do baseline Facebook com pymetis (issue #211) — ver blocos abaixo.
 
 | Fase | Período planejado | Status |
 |---|---|---|
@@ -302,6 +303,24 @@ seção → fontes → `W-NN` → figuras
 registros de execução etapa a etapa
 ([`docs/relatorio_execucoes.md`](docs/relatorio_execucoes.md),
 [`docs/artigo_execucoes.md`](docs/artigo_execucoes.md)).
+
+**Enron d-sweep — visualização e resultados (issues #214/#215): CONCLUÍDO em 25/06/2026.**
+Tabela consolidada e figuras canônicas do d-sweep Enron (k ∈ {2,5,10,20} × d ∈ {1,2,5,10}
+× 3 sementes = 48 runs, todos `SUCCESS_PARTIAL`). Script `experiments/make_enron_dsweep_table.py`
+gera [`docs/results_enron_dsweep.md`](docs/results_enron_dsweep.md) com médias ± dp por célula
+`(k, d)`, grid de cobertura, tabela bruta e análise de tendências. Figuras canônicas
+adicionadas a `docs/assets/`: `enron_dsweep_series.{pdf,png}` (layout `series`, cor por d)
+e `enron_dsweep_facets.{pdf,png}` (grade 2×d, via `--anchor-logs`). Contraste com o
+Facebook d-sweep: a escala do Enron (n=33.696) não produz `FAILURE_LOW_COVERAGE` em nenhum
+dos 48 runs.
+
+**Baseline Facebook com pymetis — reexecução E1 (issue #211): CONCLUÍDO em 25/06/2026.**
+Reexecução do baseline Facebook com `allow_kl_fallback: false` (backend pymetis exclusivo,
+config `he2009_facebook_baseline_pymetis.yml`). 12/12 runs pymetis; k=2/5 `SUCCESS_PARTIAL`;
+k=10/20 `FAILURE_LOW_COVERAGE` (cobertura 86,5%). **Achado D-19:** motor afeta resultados
+mesmo em `d=1` — `rr_subgrafo` k=2 cai de 0,7914 (KL) para 0,1454 (pymetis); gap ~6× vs.
+~30× original. `docs/results_baseline.md` atualizado com tabelas pymetis e seção histórica
+KL. Decisão registrada como D-19 em [`docs/decision_log.md`](docs/decision_log.md).
 
 ### Componentes implementados
 
@@ -435,6 +454,21 @@ registros de execução etapa a etapa
 - `academic/` — textos do relatório e do artigo (conteúdo privado; só
   `academic/README.md` é versionado — ver §7).
 
+**Enron d-sweep e baseline pymetis (issues #211, #214/#215)**
+- `experiments/configs/he2009_enron_dsweep.yml` — config do d-sweep Enron
+  (k ∈ {2,5,10,20} × d ∈ {2,5,10} × 3 sementes; pymetis obrigatório).
+- `experiments/make_enron_dsweep_table.py` — gera `docs/results_enron_dsweep.md`
+  a partir do log JSONL, com âncora d=1 do secundário (`--anchor-logs`).
+- `experiments/configs/he2009_facebook_baseline_pymetis.yml` — reexecução do
+  baseline Facebook com `allow_kl_fallback: false` (E1 / issue #211).
+- `docs/results_enron_dsweep.md` — relatório consolidado d-sweep Enron: 48 runs,
+  tabelas por k, tendências e grid de cobertura.
+- `docs/assets/enron_dsweep_{series,facets}.{pdf,png}` — figuras canônicas do
+  d-sweep Enron (layouts `series` e `facets`).
+- `scripts/article_figures.py` — regenera as figuras do artigo (KDMiLe) a partir
+  de dados congelados; tipografia 16 pt, linhas ~1,2 pt, export PDF vetorial.
+  Opt-in `--bw` para preto-e-branco. Saída em `docs/assets/eng-*.{pdf,png}`.
+
 ---
 
 ## 5. Resultados
@@ -482,6 +516,15 @@ Definições operacionais formais em [`docs/metrics_definitions.md`](docs/metric
 </details>
 
 Análise completa e tabela bruta em [`docs/results_baseline.md`](docs/results_baseline.md).
+
+> **Nota do motor (D-19).** A tabela acima usa o backend KL (fallback D-04 ativo, por
+> ausência de `pymetis` no ambiente original). A reexecução E1 com pymetis exclusivo
+> (config `he2009_facebook_baseline_pymetis.yml`) mostra que o motor afeta os resultados
+> mesmo em `d=1`: `rr_subgrafo` k=2 cai de 0,7914 → 0,1454 (gap ~6× vs. ~30× no KL);
+> k=10/20 retorna `FAILURE_LOW_COVERAGE` (86,5% de cobertura). A tabela KL permanece a
+> referência canônica para o comparativo com o Enron (que usa pymetis); os números pymetis
+> e o histórico KL estão em `docs/results_baseline.md` §pymetis. Ver D-19 em
+> [`docs/decision_log.md`](docs/decision_log.md).
 
 ### 5.2 d-sweep — `d ∈ {1, 2, 5, 10}` (48 runs, backend pymetis)
 
@@ -580,6 +623,40 @@ o que é esperado, não um bug.
 Análise completa, tabela bruta por semente, comparativo e painel normalizado em
 [`docs/results_enron.md`](docs/results_enron.md).
 
+### 5.4 Enron d-sweep — `d ∈ {1, 2, 5, 10}` (48 runs, backend pymetis)
+
+**Dataset:** Email-Enron (SNAP), projeção OR/D-11, LCC (n=33.696, m=180.811).
+**Parâmetros:** He et al. (2009), `sigma=0.5`, `k ∈ {2, 5, 10, 20}`,
+`d ∈ {1, 2, 5, 10}`, 3 sementes. **Âncora d=1:** logs do experimento secundário
+(`he2009_enron_secondary.yml`). Backend pymetis em 48/48 runs.
+
+**Coluna `d=5` — médias ± dp sobre 3 sementes:**
+
+| k | coverage_fraction | rr_subgrafo | rr_grau | KS-D | clustering_var | veredito |
+|---|---|---|---|---|---|---|
+| 2 | 0.9997 | 0.080±0.001 | 0.004±0.000 | 0.069±0.001 | 0.018±0.002 | SUCCESS_PARTIAL |
+| 5 | 0.9992 | 0.049±0.000 | 0.002±0.000 | 0.045±0.001 | 0.124±0.002 | SUCCESS_PARTIAL |
+| 10 | 0.9983 | 0.035±0.000 | 0.002±0.000 | 0.052±0.002 | 0.148±0.004 | SUCCESS_PARTIAL |
+| 20 | 0.9954 | 0.027±0.001 | 0.002±0.000 | 0.184±0.003 | 0.148±0.003 | SUCCESS_PARTIAL |
+
+**Achados principais:**
+
+- **Nenhum `FAILURE_LOW_COVERAGE` em 48 runs.** Contraste direto com o Facebook d-sweep
+  (§5.2), onde `d ∈ {5, 10}` provoca falhas em k≥10. A escala do Enron (n=33.696) acomoda
+  grupos de equivalência grandes sem esgotamento topológico.
+- **`rr_subgrafo` cai monotonicamente com k e com d.** Cada incremento de d reduz
+  a taxa ~20–40% (k=2: 0,124 → 0,098 → 0,080 → 0,053); padrão uniforme em todos os k,
+  sem inversão — contraste com o Facebook, onde `rr_grau` sobe com k.
+- **`rr_grau` estável e muito baixo (~0,002–0,004).** Não cresce com k como no Facebook
+  (0,099 em k=20), pois o Enron denso não distorce graus de forma singular.
+- **EGS ≈ k·d** confirmado: k=10 d=10 → EGS ≈ 99,4; k=20 d=10 → EGS ≈ 198,2.
+- **B1 generaliza para o d-sweep Enron:** `rr_subgrafo ≫ rr_grau` em todo o grid —
+  a estrutura 1-hop é o vetor adversarial dominante também em escala real.
+
+Matriz completa k × d (todas as métricas, tendências) em
+[`docs/results_enron_dsweep.md`](docs/results_enron_dsweep.md). Gráficos canônicos
+em `docs/assets/enron_dsweep_{series,facets}.{pdf,png}`.
+
 ---
 
 ## 6. Entregáveis
@@ -623,18 +700,20 @@ documentos de circulação restrita.
   /loaders/                  # carregadores Facebook Ego-Nets e Email-Enron + scripts de download
   /visualization/            # gráfico privacy-vs-utility, tabelas CSV e comparativo FB × Enron
 /experiments/
-  /configs/                  # arquivos de configuração (YAML); inclui baseline, full, d-sweep, diagnóstico k=20, k-sweep, validação e Enron secundário
+  /configs/                  # arquivos de configuração (YAML); inclui baseline, full, d-sweep, diagnóstico k=20, k-sweep, validação, Enron secundário, Enron d-sweep e baseline Facebook pymetis
   /logs/                     # logs estruturados JSONL das execuções (não versionados)
   run.py                     # runner orquestrador CLI
   run_k_sweep.py             # k-sweep k ∈ {2,5,10,20} (issue #17)
   run_validacao_k_anonimato.py  # validação k-anonimato marco 21/05 (issue #16)
   make_baseline_table.py     # gera docs/results_baseline.md a partir do log do baseline
   make_enron_table.py        # gera docs/results_enron.md a partir do log do Enron
+  make_enron_dsweep_table.py # gera docs/results_enron_dsweep.md (d-sweep Enron, âncora d=1 via --anchor-logs)
 /results/
   /tables/                   # tabelas em CSV (não versionadas; regeneráveis)
   /plots/                    # gráficos em PDF/PNG (não versionados; regeneráveis)
 /tests/                      # suíte de testes (espelha a estrutura de src/)
-/scripts/                    # setup de ambiente (Conda/Windows, VS Code) e medição de ego-nets
+/scripts/                    # utilitários: setup de ambiente (Conda/Windows, VS Code), medição de ego-nets e figuras do artigo
+  article_figures.py         # regenera figuras do artigo (KDMiLe) com tipografia dedicada; opt-in --bw
 /bugs/                       # registro acumulativo de bugs (execução + explicação + decisão)
 /academic/                   # documentos acadêmicos (relatório técnico, artigo) — conteúdo NÃO versionado; só o README.md da pasta é público (ver academic/README.md)
 /references/                 # PDFs da bibliografia (não versionados); catálogo público em references/README.md
@@ -643,7 +722,7 @@ documentos de circulação restrita.
   algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep e d>1)
   metrics_definitions.md     # definições operacionais das métricas
   data_dictionary.md         # dicionário de parâmetros, datasets (§1.1) e métricas
-  decision_log.md            # registro formal de decisões técnicas (DL-01 a DL-05, D-04 a D-17)
+  decision_log.md            # registro formal de decisões técnicas (DL-01 a DL-07, D-04 a D-19)
   achados_divergencias.md    # síntese de divergências proposto × executado (insumo para os artefatos acadêmicos)
   artifact_writing_checklist.md  # fila prospectiva de verificações pré-redação dos artefatos (S10)
   mapa_estrutural.md         # mapa de rastreabilidade A01–A06 → produto documental (S10)
@@ -656,6 +735,7 @@ documentos de circulação restrita.
   results_baseline.md        # tabela bruta + agregações do experimento baseline (d=1)
   results_dsweep.md          # relatório consolidado do d-sweep — matriz k×d, análise, ameaças
   results_enron.md           # relatório do dataset secundário Email-Enron + comparativo FB × Enron
+  results_enron_dsweep.md    # relatório d-sweep Enron: 48 runs k×d, tendências e grid de cobertura (issue #214)
   dsweep_previa_garantia_dados.md  # snapshot histórico intermediário do d-sweep (não canônico)
   milestones_moduloreidentificacao.md  # acompanhamento de issues por milestone
   pipeline.md                # documentação técnica do pipeline com diagramas Mermaid
@@ -663,7 +743,7 @@ documentos de circulação restrita.
   reproducibility.md         # guia de reprodução end-to-end
   preprocessing_decision.md  # decisões de pré-processamento dos datasets
   entregaveis.md             # entregáveis consolidados por nível
-  assets/                    # snapshots versionados (ex.: comparison_fb_enron.{png,pdf,csv})
+  assets/                    # snapshots versionados: comparison_fb_enron.{png,pdf,csv}; enron_dsweep_{series,facets}.{pdf,png}; eng-*.{pdf,png}
   img/                       # figuras versionadas (fluxogramas de reprodutibilidade)
 README.md                    # este arquivo — visão operacional canônica
 CLAUDE.md                    # instruções de desenvolvimento para sessões de agente
