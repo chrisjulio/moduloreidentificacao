@@ -22,9 +22,33 @@ Desejável (#214 e #215) concluídas em 2026-06-25. Issue E1 (#211) concluída e
 2026-06-26 (reposicionamento como baseline + defesa frente à DP + atualização
 bibliográfica > 2020). **Rodada D4 (#219)** — revisão metodológica do artigo
 (migração KL → pymetis + motor unificado + baseline canônico + escala Enron) —
-concluída em 2026-06-26 (PR `docs/artigo-revisao-metodologia`).
+concluída em 2026-06-26 (PR `docs/artigo-revisao-metodologia`). **Rodada D5
+(#220)** — §4.6 do artigo expandida com o d-sweep Enron — concluída em
+2026-06-26 (PR `docs/artigo-revisao-dsweep-enron`).
 
 **Último passo concluído:**
+- **Rodada D5 (#220) — §4.6 do artigo expandida com o d-sweep Enron
+  (2026-06-26). ✅ (docs, PR `docs/artigo-revisao-dsweep-enron`).**
+  Desbloqueada por E3 (#213), V1 (#214) e V2 (#215) — todas CLOSED,
+  verificadas via `gh`; nenhum PR aberto. A §4.6 (que cobria só o Facebook)
+  foi estendida no texto privado (`academic/artigo.md`, gitignored) com o
+  d-sweep do Enron, respondendo à **questão de pesquisa central**: o
+  deslocamento do vetor de ataque com `d` crescente se replica numa rede ~63×
+  maior? **Resposta parcial, registrada com fidelidade ao dado** (divergindo
+  da prosa de `results_enron_dsweep.md` §4.1, que afirma que "se confirma"):
+  só a **metade estrutural** se replica. (i) EGS ≈ k·d vale quase exatamente
+  no Enron (k=20/d=10 → 198,21 vs 133,0 no FB), sem `FAILURE_LOW_COVERAGE` na
+  grade; (ii) o ataque por subgrafo enfraquece monotonicamente com d em todo k
+  (k=2: 0,124→0,053; k=20: 0,057→0,017), ao custo de utilidade (KS-D até
+  0,304); (iii) **o ataque por grau não se fortalece** — colado ao piso
+  (~0,002–0,003) em toda a grade —, logo **não há cruzamento** e o subgrafo
+  permanece dominante nas 16 células: o deslocamento é **dependente de
+  escala**. **Figura 5** inserida (V2/#215, `docs/assets/enron_dsweep_series`)
+  e `docs/results_enron_dsweep.md` (V1/#214) referenciada. Reflexo público:
+  seção D5 + linha da matriz em `docs/artigo_rastreabilidade.md`. PR docs-only
+  (assets e código congelados intactos). **Coerência pendente p/ D6 (#221):**
+  §5.1 ("Enron só d=1") e §6 (d-sweep Enron como futuro) ficaram superadas —
+  reconciliação na revisão integrada final.
 - **Rodada D4 (#219) — revisão metodológica do artigo (2026-06-26). ✅ (docs,
   PR `docs/artigo-revisao-metodologia`).** Resposta a três limitações
   percebidas pelos avaliadores (André/Sidgley), com **recontextualização
