@@ -53,7 +53,7 @@ Seções do relatório que **não** viram seção no artigo: §7 (reprodutibilid
 | 1. Resumo + Introdução | §1.1–§1.4 | [`scope.md`](scope.md) §4/§5/§6 | **DL-06** | — | — | W2b ✅ (abstract final reescrito na W2e ✅) |
 | 2. Trabalhos relacionados | §1.3/§2.1; Apêndice B | `README.md` §12 (subconjunto de 7 refs) | — | — | — | W2b ✅ |
 | 3. Método condensado | §3–§4 | [`pipeline.md`](pipeline.md); [`metrics_definitions.md`](metrics_definitions.md) | DL-05; D-16; D-11; DL-01 | W-01; W-02; W-03; W-05 | diagrama do pipeline; tabela de parâmetros | W2c ✅ |
-| 4. Resultados | §5.1–§5.7 | [`results_baseline.md`](results_baseline.md); [`results_enron.md`](results_enron.md); [`results_dsweep.md`](results_dsweep.md) | DL-04; D-17 (menção); **D-19** (motor pymetis) | **W-04**; W-06 | curvas por dataset (Fig. 2–3, regeneráveis); painel normalizado (Fig. 4, [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png) — **asset ainda em KL, regen pendente, D4**); Tabelas 2–4 (agregados por k, **Facebook em pymetis após D4**; gap k=2) | W2d ✅; **D4 ✅** |
+| 4. Resultados | §5.1–§5.7 | [`results_baseline.md`](results_baseline.md); [`results_enron.md`](results_enron.md); [`results_dsweep.md`](results_dsweep.md) | DL-04; D-17 (menção); **D-19** (motor pymetis) | **W-04**; W-06 | curvas por dataset (Fig. 2–3, regeneráveis); painel normalizado (Fig. 4, [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png) — **asset ainda em KL, regen pendente, D4**); **d-sweep Enron (Fig. 5, [`assets/enron_dsweep_series.png`](assets/enron_dsweep_series.png), V2/#215; tabela [`results_enron_dsweep.md`](results_enron_dsweep.md), V1/#214 — §4.6 expandida em D5)**; Tabelas 2–4 (agregados por k, **Facebook em pymetis após D4**; gap k=2) | W2d ✅; **D4 ✅**; **D5 ✅** |
 | 5. Discussão | §6.1–§6.3 + §2.3 | [`limitations.md`](limitations.md) §1/§3/§4; [`scope.md`](scope.md) §8 | B2; C2/A1; D-17 (substância, sem codinome) | W-04 (leitura); W-05 | — | W2e ✅ |
 | 6. Conclusão + futuros | §2.3/§6.1 | [`scope.md`](scope.md) §8; [`limitations.md`](limitations.md) §4 | DL-06 (fecho) | — | — | W2e ✅ |
 | Revisão integrada | relatório completo | [`progress.md`](progress.md) | todas | coerência W-04/W-05 | conferência | W2f ✅ |
@@ -273,3 +273,50 @@ asset para pymetis fica como **follow-up sinalizado** — este PR é **docs-only
 (não toca assets versionados nem o código congelado). Os checklists de
 cobertura W2b..e do texto privado permanecem como rastro histórico do estado
 pré-D4.
+
+---
+
+## Revisão D5 (#220) — §4.6 expandida com o d-sweep Enron (2026-06-26)
+
+Issue [D5](https://github.com/chrisjulio/moduloreidentificacao/issues/220).
+Desbloqueada por **E3** (#213, d-sweep Enron concluído), **V1** (#214, tabela
+[`results_enron_dsweep.md`](results_enron_dsweep.md)) e **V2** (#215, figuras
+[`assets/enron_dsweep_series.{pdf,png}`](assets/enron_dsweep_series.png) e
+`enron_dsweep_facets.{pdf,png}`) — as três **CLOSED**, verificadas antes de
+iniciar; nenhum PR aberto.
+
+**Escopo:** §4.6 do artigo (texto privado `academic/artigo.md`, gitignorado,
+fora do diff). Até D4 a §4.6 cobria **apenas o Facebook**; D5 a estende com o
+d-sweep do Enron, respondendo à **questão de pesquisa central** do
+experimento: o deslocamento do vetor de ataque com `d` crescente se replica
+numa rede ~63× maior?
+
+**Resposta registrada (fidelidade ao dado):** **parcial**. A §4.6 agora
+contrasta os dois datasets e **diverge explicitamente da prosa de
+[`results_enron_dsweep.md`](results_enron_dsweep.md) §4.1** (que afirma que o
+deslocamento "se confirma"): a tabela consolidada mostra que **apenas a
+metade estrutural se replica**.
+
+- **Replica (robusto à escala):** EGS ≈ k·d vale quase exatamente no Enron
+  (k=2/d=10 → 19,99; k=20/d=10 → 198,21), mais limpo que no Facebook (133,0)
+  e **sem `FAILURE_LOW_COVERAGE`** na grade (48/48 `SUCCESS_PARTIAL`,
+  cobertura ≥ 0,987); o ataque por subgrafo **enfraquece monotonicamente com
+  d em todo k** (k=2: 0,124→0,053; k=20: 0,057→0,017), ao custo de utilidade
+  crescente (KS-D até 0,304).
+- **Não replica (efeito de rede pequena):** o ataque por grau **não se
+  fortalece** — fica colado ao piso (~0,002–0,003) em toda a grade,
+  declinando levemente em k alto, mesmo sob forte distorção de graus. Logo
+  **não há cruzamento**: o subgrafo permanece o vetor dominante nas 16
+  células (k=20/d=10: 0,017 subgrafo vs. 0,001 grau). O *deslocamento* é
+  **dependente de escala**.
+
+**Figuras/tabelas:** **Figura 5** inserida e referenciada (V2/#215, snapshot
+versionado `docs/assets/enron_dsweep_series.{pdf,png}`); tabela completa em
+`docs/results_enron_dsweep.md` (V1/#214) referenciada. PR **docs-only** —
+não toca assets versionados nem o código/experimentos congelados.
+
+**Coerência pendente para D6 (#221, revisão integrada final):** §5.1 ("no
+Enron, apenas o regime d=1 foi medido") e §6 (d-sweep Enron listado como
+trabalho futuro) ficaram **superadas** por D5 e devem ser reconciliadas na
+revisão integrada — fora do escopo de D5, sinalizadas aqui e na nota D5 do
+texto privado.
