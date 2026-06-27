@@ -33,17 +33,21 @@ referências + reconciliação de coerência pós-D5) — concluída em 2026-06-
 - **Release `v1.0.0` publicado + terminologia baseline (ponto A) — 2026-06-27.
   ✅ (GitHub + academic).** PR #233 mergeado em `main` (`cd0c4cb`); **release
   [`v1.0.0`](https://github.com/chrisjulio/moduloreidentificacao/releases/tag/v1.0.0)**
-  publicado a partir de `main`, disparando o arquivamento Zenodo — **concept
-  DOI a obter** (será embutido em `CITATION.cff` + ref Brito 2026 num `v1.0.1`,
-  junto com as notas de rastreabilidade). **Ponto A da orientação aplicado:**
+  publicado a partir de `main`. **Nota de execução:** o 1º release **não
+  arquivou** (toggle do repo no Zenodo estava OFF; vincular o login ≠ ligar o
+  repo); após ligar o toggle, o `v1.0.0` foi **apagado e recriado** (autorizado)
+  e o Zenodo arquivou, cunhando o **concept DOI `10.5281/zenodo.20973364`**
+  (todas as versões). Embutido em `CITATION.cff`, no badge do `README.md` e na
+  ref Brito (2026). **Ponto A da orientação aplicado:**
   "benchmark" → "baseline" nos entregáveis (conclusão do artigo §6; cabeçalho +
   checklist da §2.3 do relatório). **Mantidos por decisão do autor:** o título
   do paper Liu et al. (2025, *PGB: Benchmarking…*, citação direta) e 3 menções
   em logs históricos (`relatorio_execucoes.md`, `progress.md`) ao antigo título
   da §2.3 (regra de não reescrever histórico). Mudança nos entregáveis vive em
   `academic/` (gitignored); reflexo público na §Revisão D7 de
-  `artigo_rastreabilidade.md`. **Pendência única (autor):** obter o concept DOI
-  no Zenodo e me passar (ou eu busco) para fechar o `v1.0.1`.
+  `artigo_rastreabilidade.md`. **Próximo passo:** PR da branch
+  `docs/v1.0.1-baseline-and-doi` (DOI embutido + notas) → merge (autor) →
+  release `v1.0.1` (snapshot arquivado já contendo o próprio DOI).
 - **Preparação para citação Zenodo+GitHub do software (Brito 2026) — D7,
   2026-06-27. ✅ (raiz + docs).** Ajustes possíveis **antes** do passo Zenodo,
   para o snapshot arquivado nascer auto-consistente. **(1) URL canônica

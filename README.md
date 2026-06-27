@@ -1,5 +1,11 @@
 # Módulo de Avaliação de Risco de Reidentificação em Redes Sociais Anonimizadas
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20973364.svg)](https://doi.org/10.5281/zenodo.20973364)
+
+> Para citar este software, use o **concept DOI** `10.5281/zenodo.20973364`
+> (todas as versões) ou o widget "Cite this repository" do GitHub
+> ([`CITATION.cff`](CITATION.cff)).
+
 > Aferidor experimental para medir, de forma agregada e reprodutível, a resistência
 > efetiva de técnicas de anonimização estrutural de redes sociais a cenários formais
 > de reidentificação. Componente preparatório da tese de doutorado em geração de
