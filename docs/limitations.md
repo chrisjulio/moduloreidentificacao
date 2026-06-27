@@ -324,16 +324,19 @@ para o relatório técnico:
 | Taxa de reidentificação efetiva pode ser subestimada (ataques incompletos) | Validade de construto | 1.4 |
 | `G'` pode não ser k-anônimo para particionamentos alternativos de `G'` | Validade interna | 2.4 |
 | Determinismo dependente de critério de desempate não especificado no artigo | Reprodutibilidade | 2.6 |
-| Comparativo Facebook × Enron cruza motores de partição distintos (KL × pymetis), não pareados | Validade interna *(baixa magnitude)* | 2.2 |
+| ~~Comparativo Facebook × Enron cruza motores de partição distintos (KL × pymetis), não pareados~~ **RESOLVIDA (E1/#211, D-19)** | Validade interna — eliminada | 2.2 |
 | Cota `rr_subgrafo ≤ 1/k` não vale em `d=1` (só grau anonimizado) — pode confundir leitura de `k` alto | Validade de construto | 1.4 |
 
-> **Detalhe — motor não-pareado no comparativo Facebook × Enron.** O comparativo de
-> [`results_enron.md`](results_enron.md) cruza o baseline Facebook `d=1` (executado em
-> Kernighan-Lin, achado A1) com o Enron (pymetis, 12/12). O argumento de inocuidade em
-> `d=1` é sólido (partições triviais de 1 nó tornam o desbalanceamento do KL para
-> `ck>2`, D-04, inoperante), mas **interpretativo** — não há nesta entrega um experimento
-> que isole o efeito do motor. Ameaça de **baixa magnitude**; o pareamento estrito
-> (Facebook reexecutado em pymetis) fica como trabalho futuro.
+> **Detalhe — motor não-pareado no comparativo Facebook × Enron (RESOLVIDA).** Na entrega
+> original o comparativo de [`results_enron.md`](results_enron.md) cruzava o baseline
+> Facebook `d=1` (Kernighan-Lin, achado A1) com o Enron (pymetis, 12/12); o argumento de
+> inocuidade em `d=1` era sólido mas interpretativo. Atendendo ao apontamento dos
+> avaliadores sobre a incongruência de motores, o baseline Facebook foi **reexecutado em
+> pymetis** (E1/#211, D-19), unificando o motor entre todos os experimentos — o
+> confundidor deixa de existir. **Custo aceito:** sob pymetis o Facebook não atinge
+> cobertura plena em k=10/20 (`FAILURE_LOW_COVERAGE`), enfraquecendo parcialmente o marco
+> de cobertura; o marco 29/05 fica certificado sobre o run KL (histórico, não retificado)
+> e o run KL é arquivado em [`results_baseline.md`](results_baseline.md).
 
 ---
 
@@ -348,7 +351,7 @@ para o relatório técnico:
 | Validação empírica com `d > 1` e outros datasets | Versão 2 | Alto |
 | Ataques por entropia e background knowledge combinado | Versão 2 | Alto |
 | Comparação com outros algoritmos de anonimização | Versão 2 | Alto |
-| Pareamento estrito do comparativo FB × Enron (Facebook reexecutado em pymetis) | Pós-entrega | Baixo |
+| ~~Pareamento estrito do comparativo FB × Enron (Facebook reexecutado em pymetis)~~ **CONCLUÍDO (E1/#211, D-19)** | Pós-entrega | Baixo — feito |
 
 ---
 

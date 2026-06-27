@@ -158,3 +158,33 @@ Detalhamento espelhado em
 [`artigo_rastreabilidade.md`](artigo_rastreabilidade.md) (§Revisão D7).
 Selecionado **apenas Wang et al. (2023)** entre os candidatos (Wang 2023; Yuan
 2024; Liu 2025).
+
+---
+
+## Revisão D8 — consolidação de motor: baseline Facebook migrado para pymetis (2026-06-27)
+
+Rodada de **consolidação de motor de particionamento**, **sem issue vinculada**
+(fecha o follow-up de D4/D6). **Origem:** apontamento dos avaliadores
+(orientador/coorientador) sobre a **incongruência** de o baseline Facebook rodar
+em Kernighan-Lin enquanto Enron e d-sweep rodavam em pymetis. A consolidação num
+**motor único (pymetis)** foi tratada como **mandatória**, ainda que ao custo de
+enfraquecer parcialmente um achado.
+
+- **Texto do relatório (`academic/relatorio_tecnico.md`, privado):** §5.1
+  (tabela agregada + leitura da curva + nota do motor "achado A1 → resolvido"),
+  §5.2 (leitura B1: 0,79/0,026 → 0,1454/0,0232), §5.5 (tabela B1: ~30× → ~6×),
+  §5.6 (painel: faixas, cruzamentos e decaimento em pymetis; degrau ~6× → ~1,2×),
+  §6.2 (ameaça C2 "motor não-pareado" → **RESOLVIDA**) e Apêndice A.1 (tabela
+  bruta do FB em pymetis) migrados do run KL para o run pymetis (E1/#211, D-19).
+- **Marco 29/05 (achado enfraquecido, registrado com fidelidade):** sob pymetis
+  o Facebook só atinge cobertura plena em k=2/5; k=10/20 caem a
+  `FAILURE_LOW_COVERAGE` (0,8647). O marco fica **certificado sobre o run KL**
+  (validação DL-01, fato histórico não retificado), retido como registro
+  histórico, **não** como baseline canônico — trade-off aceito pela consistência
+  inter-dataset.
+- **Figura:** painel `comparison_fb_enron` (canônico + variante `eng-`)
+  regenerado em pymetis (D8); ver `artigo_rastreabilidade.md` §Revisão D8.
+- **Reflexo público:** `docs/results_baseline.md` (já pymetis, E1),
+  `docs/results_enron.md` (migrado), `docs/limitations.md` (C2 + trabalho futuro
+  marcados resolvidos), esta seção. **Artigo já consistente** (migrado em D4); o
+  relatório agora o acompanha — o artigo é derivado do relatório.
