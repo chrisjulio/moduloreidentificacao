@@ -53,7 +53,7 @@ Seções do relatório que **não** viram seção no artigo: §7 (reprodutibilid
 | 1. Resumo + Introdução | §1.1–§1.4 | [`scope.md`](scope.md) §4/§5/§6 | **DL-06** | — | — | W2b ✅ (abstract final reescrito na W2e ✅) |
 | 2. Trabalhos relacionados | §1.3/§2.1; Apêndice B | `README.md` §12 (subconjunto de 7 refs) | — | — | — | W2b ✅ |
 | 3. Método condensado | §3–§4 | [`pipeline.md`](pipeline.md); [`metrics_definitions.md`](metrics_definitions.md) | DL-05; D-16; D-11; DL-01 | W-01; W-02; W-03; W-05 | diagrama do pipeline; tabela de parâmetros | W2c ✅ |
-| 4. Resultados | §5.1–§5.7 | [`results_baseline.md`](results_baseline.md); [`results_enron.md`](results_enron.md); [`results_dsweep.md`](results_dsweep.md) | DL-04; D-17 (menção); **D-19** (motor pymetis) | **W-04**; W-06 | curvas por dataset (Fig. 2–3, regeneráveis); painel normalizado (Fig. 4, [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png) — **asset ainda em KL, regen pendente, D4**); **d-sweep Enron (Fig. 5, [`assets/enron_dsweep_series.png`](assets/enron_dsweep_series.png), V2/#215; tabela [`results_enron_dsweep.md`](results_enron_dsweep.md), V1/#214 — §4.6 expandida em D5)**; Tabelas 2–4 (agregados por k, **Facebook em pymetis após D4**; gap k=2) | W2d ✅; **D4 ✅**; **D5 ✅** |
+| 4. Resultados | §5.1–§5.7 | [`results_baseline.md`](results_baseline.md); [`results_enron.md`](results_enron.md); [`results_dsweep.md`](results_dsweep.md) | DL-04; D-17 (menção); **D-19** (motor pymetis) | **W-04**; W-06 | curvas por dataset (Fig. 2–3, regeneráveis); painel normalizado (Fig. 4, [`assets/comparison_fb_enron.png`](assets/comparison_fb_enron.png) — **regenerado em pymetis 2026-06-27, ver Revisão D8 abaixo**); **d-sweep Enron (Fig. 5, [`assets/enron_dsweep_series.png`](assets/enron_dsweep_series.png), V2/#215; tabela [`results_enron_dsweep.md`](results_enron_dsweep.md), V1/#214 — §4.6 expandida em D5)**; Tabelas 2–4 (agregados por k, **Facebook em pymetis após D4**; gap k=2) | W2d ✅; **D4 ✅**; **D5 ✅** |
 | 5. Discussão | §6.1–§6.3 + §2.3 | [`limitations.md`](limitations.md) §1/§3/§4; [`scope.md`](scope.md) §8 | B2; C2/A1; D-17 (substância, sem codinome) | W-04 (leitura); W-05 | — | W2e ✅ |
 | 6. Conclusão + futuros | §2.3/§6.1 | [`scope.md`](scope.md) §8; [`limitations.md`](limitations.md) §4 | DL-06 (fecho) | — | — | W2e ✅ |
 | Revisão integrada | relatório completo | [`progress.md`](progress.md) | todas | coerência W-04/W-05 | conferência | W2f ✅; **revisão final D6 ✅** |
@@ -401,9 +401,12 @@ Serjantov & Danezis 2003) seguem como as únicas ausências.
 
 ### Pendências herdadas, não resolvidas em D6 (decisão do autor)
 
-- Regeneração do asset `docs/assets/comparison_fb_enron.{png,pdf,csv}` para
-  pymetis (follow-up sinalizado em D4) — a prosa do §4.5 já usa pymetis.
-- Identificador estável (tag/release ou DOI) da autorreferência Brito (2026).
+- ~~Regeneração do asset `docs/assets/comparison_fb_enron.{png,pdf,csv}` para
+  pymetis (follow-up sinalizado em D4) — a prosa do §4.5 já usa pymetis.~~
+  **Resolvida em 2026-06-27 (Revisão D8 abaixo).**
+- ~~Identificador estável (tag/release ou DOI) da autorreferência Brito (2026).~~
+  **Resolvida em 2026-06-27 — concept DOI Zenodo `10.5281/zenodo.20973364`
+  (releases v1.0.0/v1.0.1).**
 
 **Definição de pronto (#221):** números conferidos e consistentes ✅;
 terminologia uniforme ✅; referências completas e citadas ✅;
@@ -462,3 +465,60 @@ homônimo registrada na regra de nomenclatura de `references/README.md`.
 [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md). Texto privado
 em `academic/` (não versionado). Portabilidade às versões Overleaf a cargo do
 autor.
+
+---
+
+## Revisão D8 — painel comparativo regenerado em pymetis + migração do `results_enron.md` (2026-06-27)
+
+Rodada de **manutenção de figura sobre dado congelado**, **sem issue vinculada**
+(fecha o follow-up sinalizado em D4/D6). Fonte da verdade: os logs **já
+existentes** de E1/#211 (`he2009_facebook_baseline_pymetis`, 12 runs) — **nenhum
+experimento foi reaberto**. Resolve a divergência prosa × figura: o §4.5 do
+artigo já estava em pymetis (D4), mas o asset versionado seguia em Kernighan-Lin.
+
+**(1) Painel comparativo regenerado (motor unificado pymetis).** O painel
+canônico `docs/assets/comparison_fb_enron.{png,pdf,csv}` (gerador
+`src/visualization/comparison.py`, estilo PT padrão) e a variante do artigo
+`eng-comparison_fb_enron.pdf` (script dedicado `scripts/article_figures.py`,
+estilo KDMiLe B&W, que **deriva do CSV canônico**) foram regenerados a partir do
+baseline Facebook pymetis. `eng-privacy_utility.pdf` (já pymetis em E1) não foi
+tocado. Cada figura mantém seu estilo definido (canônica = PT/cor; `eng-` =
+EN/B&W). Conferência contra o §4.5: FB k=2 `rr_subgrafo` = 0,1454; todas as
+`bound_fraction` do FB **< 1** (deixa de violar a cota 1/k); subgrafo do FB
+**não-monótono** — consistente com D4.
+
+**(2) `results_enron.md` migrado para pymetis (decisão do autor, 2026-06-27).**
+O mesmo asset ancorava o `results_enron.md` (#128), cuja narrativa — tabela
+comparativa, prosa interpretativa e a seção **C2 (motor não-pareado)** — fora
+escrita sobre o baseline **KL**. Para não recriar a divergência prosa × figura
+dentro desse doc, o autor decidiu **consolidar** (mesmos motores): o gerador
+`experiments/make_enron_table.py` passou a ler os logs pymetis (`FACEBOOK_LOG` +
+`_FACEBOOK_FALLBACK` atualizados) e o doc foi regenerado. **Inversões narrativas
+registradas com fidelidade ao dado** (não cosméticas): (i) o gap de magnitude
+FB×Enron em k=2 some — de ~6× (KL) para ~1,2× (pymetis), redes comparáveis no
+eixo de risco; (ii) o Facebook **deixa de violar** a cota 1/k (todas as
+`bound_fraction` < 1); só o Enron cruza, em k=20; (iii) sob pymetis o FB **não
+atinge** cobertura plena em k∈{10,20} (`FAILURE_LOW_COVERAGE`, cob. ≈0,865) — o
+marco de k-anonimato de 29/05 permanece ancorado no run KL; (iv) "subgrafo ≫
+grau" e a monotonicidade do subgrafo passam a valer **limpos só no Enron** (no FB
+invertem nas células de baixa cobertura). A seção **C2 passa a "RESOLVIDA"** — o
+confundidor de motor não-pareado deixa de se aplicar.
+
+**(3) Consolidação de motor no relatório (mandato dos avaliadores).** Os
+avaliadores apontaram a **incongruência** de o baseline Facebook rodar em
+Kernighan-Lin enquanto Enron e d-sweep rodavam em pymetis; a consolidação num
+motor único (pymetis) foi tratada como **mandatória**. Como o artigo é derivado
+do relatório, o relatório técnico (`academic/relatorio_tecnico.md`, privado) foi
+migrado para pymetis nesta mesma rodada — §5.1/§5.2/§5.5/§5.6/§6.2/Apêndice A.1,
+ameaça C2 → resolvida (ver `relatorio_rastreabilidade.md` §Revisão D8). O artigo
+já estava em pymetis (D4) e permanece consistente; a nota de pendência do §4.5
+do artigo foi marcada **resolvida**. **Achado enfraquecido, registrado com
+fidelidade:** sob pymetis o Facebook só atinge cobertura plena em k=2/5 (k=10/20
+= `FAILURE_LOW_COVERAGE`); o marco 29/05 fica certificado sobre o run KL
+(histórico, não retificado), trade-off aceito pela consistência inter-dataset.
+
+**Escopo:** PR docs-only com nota de degelo (figuras + docs/relatórios + gerador
+de tabela; sem tocar código de produção congelado). Reflexo público nesta seção,
+na matriz (linha "4. Resultados"), em `relatorio_rastreabilidade.md` §Revisão D8
+e em `limitations.md` (C2 resolvida). Portabilidade às versões Overleaf (PT/EN)
+a cargo do autor.

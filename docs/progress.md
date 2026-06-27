@@ -39,7 +39,10 @@ concluída em 2026-06-26 (PR `docs/artigo-revisao-metodologia`). **Rodada D5
 2026-06-26 (PR `docs/artigo-revisao-dsweep-enron`). **Rodada D6 (#221)** —
 revisão integrada final do artigo (consistência numérica + terminologia +
 referências + reconciliação de coerência pós-D5) — concluída em 2026-06-26
-(PR #232, `docs/artigo-revisao-final`).
+(PR #232, `docs/artigo-revisao-final`). **Rodada D8 (sem issue)** — painel
+comparativo `comparison_fb_enron` regenerado em pymetis (canônica + `eng-`) e
+`results_enron.md` migrado para pymetis (mesmos motores), fechando o follow-up
+de D4/D6 — concluída em 2026-06-27 (branch `viz/comparison-fb-enron-pymetis`).
 
 **Último passo concluído:**
 - **Release `v1.0.0` publicado + terminologia baseline (ponto A) — 2026-06-27.
@@ -61,19 +64,42 @@ referências + reconciliação de coerência pós-D5) — concluída em 2026-06-
   `docs/v1.0.1-baseline-and-doi` mergeado (`0401a68`), DOI embutido (`7fe0176`)
   e Zenodo arquivado — a pendência do identificador estável da ref Brito (2026)
   está **fechada**.
-- **Próximo passo (sessão dedicada) — regenerar o painel comparativo para
-  pymetis.** Fecha o follow-up sinalizado em D4/D6: o asset versionado
-  `docs/assets/comparison_fb_enron.{png,pdf,csv}` ainda reflete o Facebook em
-  **Kernighan-Lin**, enquanto a prosa do §4.5 do artigo já está em **pymetis** —
-  prosa e figura divergem. **Diagnóstico confirmado via git:** o painel canônico
-  está intocado desde antes de 21/06 (`4f5668b`/`c3a72fa`, KL); a variante
-  `eng-comparison_fb_enron.pdf` foi mexida em E1/#211 (`14097e5`, 25/06) — logo
-  as duas figuras podem estar em motores diferentes e **ambas precisam ser
-  verificadas**. **Plano:** confirmar que os logs pymetis do baseline Facebook
-  (E1) existem/são regeneráveis; regenerar CSV + PNG + PDF do painel canônico e
-  reconciliar a variante `eng-`; conferir contra o §4.5 (pymetis). Branch
-  `viz/comparison-fb-enron-pymetis`, PR dedicado com **nota de degelo**
-  (manutenção de figura sobre dado congelado — não reabre experimentos).
+- **Rodada D8 — painel comparativo regenerado em pymetis + `results_enron.md`
+  migrado (2026-06-27). ✅ (docs, branch `viz/comparison-fb-enron-pymetis`).**
+  Fecha o follow-up de D4/D6. **Diagnóstico (git):** o painel canônico
+  `comparison_fb_enron.{png,pdf,csv}` estava intocado desde antes de 21/06
+  (`4f5668b`/`c3a72fa`, **KL**); a variante `eng-comparison_fb_enron.pdf`
+  **deriva do CSV canônico** (a re-gravação de E1 `14097e5` foi no-op,
+  12545→12545 bytes) — logo **ambas estavam em KL**. Logs pymetis de E1/#211
+  (`he2009_facebook_baseline_pymetis`, 12 runs) confirmados — **sem reabrir
+  experimentos**. **(1)** As duas figuras regeneradas em pymetis, cada uma no seu
+  estilo (canônica PT/cor via `comparison.py`; `eng-` EN/B&W via
+  `scripts/article_figures.py`); `eng-privacy_utility.pdf` (já pymetis) não
+  tocado. Conferidas contra o §4.5 (FB k=2 rr_subgrafo 0,1454; `bound_fraction`
+  do FB toda < 1; subgrafo não-monótono). **(2)** O mesmo asset ancorava o
+  `results_enron.md` (#128), de narrativa **KL** (tabela + prosa + seção C2 do
+  motor não-pareado). Por decisão do autor (consolidação, mesmos motores), o
+  gerador `experiments/make_enron_table.py` passou a ler os logs pymetis e o doc
+  foi regenerado. **Inversões registradas com fidelidade:** gap FB×Enron k=2
+  ~6×→~1,2×; FB deixa de violar a cota 1/k (só Enron cruza, k=20); FB
+  `FAILURE_LOW_COVERAGE` em k∈{10,20} (marco 29/05 segue ancorado no run KL);
+  "subgrafo ≫ grau"/monotonicidade limpos só no Enron; **seção C2 → RESOLVIDA**.
+  **(3) Consolidação de motor no relatório técnico (mandato dos avaliadores).**
+  Os avaliadores apontaram a incongruência KL×pymetis; a consolidação num motor
+  único (pymetis) foi tratada como **mandatória**, mesmo enfraquecendo o marco.
+  Como o artigo é derivado do relatório, o relatório técnico
+  (`academic/relatorio_tecnico.md`) foi migrado para pymetis —
+  §5.1/§5.2/§5.5/§5.6/§6.2/Apêndice A.1, ameaça C2 → resolvida — espelhando
+  `results_baseline.md` (E1): **marco 29/05 certificado sobre o run KL**
+  (histórico, não retificado), run KL arquivado; sob pymetis o FB só atinge
+  cobertura plena em k=2/5 — achado parcialmente enfraquecido, trade-off aceito.
+  Artigo já estava em pymetis (D4) e segue consistente; nota de pendência do
+  §4.5 marcada resolvida. Reflexo público: §Revisão D8 de
+  `artigo_rastreabilidade.md` e `relatorio_rastreabilidade.md`; `limitations.md`
+  (C2 + trabalho futuro resolvidos); pendência do identificador Brito (2026)
+  também resolvida (Zenodo DOI). PR docs-only com **nota de degelo** (figuras +
+  docs/relatórios + gerador de tabela; código de produção congelado intacto).
+  648 testes passam; ruff limpo.
 - **Preparação para citação Zenodo+GitHub do software (Brito 2026) — D7,
   2026-06-27. ✅ (raiz + docs).** Ajustes possíveis **antes** do passo Zenodo,
   para o snapshot arquivado nascer auto-consistente. **(1) URL canônica
@@ -429,6 +455,37 @@ adicione uma entrada no Histórico abaixo seguindo o modelo:
 ---
 
 ## Histórico de sessões
+
+### 2026-06-27 — D8: painel comparativo em pymetis + migração do results_enron.md
+
+- **Concluído:** Fechado o follow-up de D4/D6 (asset `comparison_fb_enron` em KL
+  contra prosa pymetis do §4.5). Diagnóstico via git confirmou que **ambas** as
+  figuras comparativas estavam em KL (a `eng-` deriva do CSV canônico; a
+  re-gravação de E1 fora no-op). As duas regeneradas em pymetis a partir dos logs
+  **já existentes** de E1/#211 — sem reabrir experimentos —, cada uma no seu
+  estilo (canônica PT/cor; `eng-` EN/B&W). Como o mesmo asset ancorava o
+  `results_enron.md` (#128, narrativa KL com seção C2 do motor não-pareado), o
+  autor decidiu **consolidar**: `make_enron_table.py` migrado para os logs pymetis
+  e o doc regenerado. Inversões narrativas registradas com fidelidade (gap k=2
+  ~6×→~1,2×; FB deixa de violar a cota 1/k; FB `FAILURE_LOW_COVERAGE` em
+  k∈{10,20}; dominância subgrafo/monotonicidade limpas só no Enron; C2
+  → RESOLVIDA). **Consolidação de motor no relatório (mandato dos avaliadores):**
+  apontada por eles a incongruência KL×pymetis, a consolidação em motor único
+  (pymetis) foi tratada como mandatória; o relatório técnico
+  (`academic/relatorio_tecnico.md`) foi migrado para pymetis
+  (§5.1/§5.2/§5.5/§5.6/§6.2/Apêndice A.1; C2 resolvida), com o marco 29/05 retido
+  como registro histórico no run KL (achado parcialmente enfraquecido — trade-off
+  aceito). Artigo já em pymetis (D4), consistente. Reflexo público: §Revisão D8
+  de `artigo_rastreabilidade.md` e `relatorio_rastreabilidade.md`;
+  `limitations.md` (C2 + trabalho futuro resolvidos); pendência do identificador
+  Brito (2026) marcada resolvida (Zenodo DOI). Checklist privado
+  `academic/propagacao.md` atualizado.
+  648 testes passam; ruff limpo. Branch `viz/comparison-fb-enron-pymetis`.
+- **Próximo:** revisão humana + merge do PR docs-only (Claude não faz merge);
+  propagar as duas figuras pymetis e o `results_enron.md` consolidado às versões
+  Overleaf PT/EN (a cargo do autor).
+- **Bloqueios:** Nenhum novo (PR a abrir; PR #207 segue aguardando merge humano).
+- **Decisões pendentes:** Nenhuma nova.
 
 ### 2026-06-18 — Layout side-by-side opt-in para a figura privacy_utility
 
