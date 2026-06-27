@@ -422,8 +422,15 @@ de números, tabelas, figuras ou código.
 **Origem:** orientação A/B/C do autor (deliberação estratégica). Aplicado o
 ponto **B** — inserção da referência de de-anonimização baseada em aprendizado
 de máquina (o "paper GNN"); selecionado **apenas Wang et al. (2023)** entre os
-candidatos avaliados (Wang 2023; Yuan 2024, KDD; Liu 2025, ICDE). O ponto A
-(baseline, terminologia) e o ponto C (já cobertos nos textos) não exigiram ação.
+candidatos avaliados (Wang 2023; Yuan 2024, KDD; Liu 2025, ICDE). O ponto **A**
+(terminologia: **baseline**, não *benchmark*) foi **aplicado em 2026-06-27**:
+as 3 ocorrências de "benchmark" nos entregáveis — conclusão do artigo (§6) e
+cabeçalho + checklist da §2.3 do relatório — viraram "baseline"/"baseline e
+instrumento de auditoria". **Preservados por decisão do autor:** o título do
+paper Liu et al. (2025, *PGB: Benchmarking…*) — citação direta, não nosso
+framing — e as 3 menções em logs históricos (`relatorio_execucoes.md`,
+`progress.md`) ao antigo título da §2.3 (regra de não reescrever histórico). O
+ponto C (já coberto nos textos) não exigiu ação.
 
 - **B1 — §1 do artigo / §1.1 do relatório:** o enquadramento da lacuna passa a
   incluir a **de-anonimização baseada em aprendizado de máquina** ao lado da

@@ -2,11 +2,9 @@
 # GitHub lê este arquivo e exibe o widget "Cite this repository" (+ export BibTeX/APA).
 # O Zenodo também o consome ao arquivar um release.
 #
-# >>> PENDÊNCIA ÚNICA antes da citação final: o concept DOI do Zenodo. <<<
-# Fluxo: ligar Zenodo↔GitHub -> publicar um release -> o Zenodo cunha o
-# concept DOI (estável, "todas as versões") -> descomentar o bloco
-# `identifiers` abaixo com esse DOI -> commitar -> (re)publicar o release.
-# O concept DOI é o que se cita no artigo (ref. Brito, 2026).
+# Concept DOI do Zenodo definido no campo `identifiers` abaixo:
+# 10.5281/zenodo.20973364 — estável, "todas as versões", resolve sempre para a
+# mais recente. É o identificador citado no artigo (ref. Brito, 2026).
 
 cff-version: 1.2.0
 message: "Se você usar este software, cite-o conforme os metadados abaixo."
@@ -28,7 +26,7 @@ authors:
 license: MIT
 repository-code: "https://github.com/chrisjulio/moduloreidentificacao"
 url: "https://github.com/chrisjulio/moduloreidentificacao"
-version: "v1.0.0"
+version: "v1.0.1"
 date-released: "2026-06-27"
 keywords:
   - "k-anonymity"
@@ -38,7 +36,7 @@ keywords:
   - "social networks"
   - "reproducibility"
   - "differential privacy (comparison)"
-# identifiers:
-#   - type: doi
-#     value: "10.5281/zenodo.XXXXXXX"      # concept DOI (todas as versões) — preencher
-#     description: "Concept DOI do Zenodo (resolve para a versão mais recente)"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.20973364"
+    description: "Concept DOI do Zenodo (todas as versões; resolve para a mais recente)"
