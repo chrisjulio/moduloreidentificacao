@@ -179,6 +179,12 @@ sem alteração de código.
    Fica registrado o alinhamento — relatório e artigo apontam para o mesmo
    repositório. *(Verificação de 2026-06-11: o endereço público ainda não
    estava ativo; pendência associada ao identificador do item 2.)*
+   *(**Atualização D7, 2026-06-27 — resolvido:** URL canônica decidida pelo
+   autor = `chrisjulio/moduloreidentificacao`; o nome `reidentificacao` foi
+   **descartado**. A ref Brito (2026) no artigo foi corrigida para essa URL e o
+   placeholder passou a "concept DOI Zenodo — pendente". `CITATION.cff` e
+   `.zenodo.json` adicionados à raiz, prontos para receber o concept DOI. Resta
+   apenas o passo Zenodo+GitHub, a cargo do autor.)*
 
 ---
 
@@ -403,3 +409,49 @@ Serjantov & Danezis 2003) seguem como as únicas ausências.
 terminologia uniforme ✅; referências completas e citadas ✅;
 `artigo_rastreabilidade.md` atualizado ✅; PR em `docs/artigo-revisao-final`
 ✅.
+
+---
+
+## Revisão D7 — adversário aprendido (ML/GNN): Wang et al. (2023) (2026-06-27)
+
+Rodada de aderência bibliográfica, **sem issue vinculada** (rótulo descritivo;
+as rodadas anteriores foram D1–D6 / #216–#221). Executada **somente no texto**
+privado (`academic/`, gitignorado) com reflexos públicos abaixo. Sem alteração
+de números, tabelas, figuras ou código.
+
+**Origem:** orientação A/B/C do autor (deliberação estratégica). Aplicado o
+ponto **B** — inserção da referência de de-anonimização baseada em aprendizado
+de máquina (o "paper GNN"); selecionado **apenas Wang et al. (2023)** entre os
+candidatos avaliados (Wang 2023; Yuan 2024, KDD; Liu 2025, ICDE). O ponto A
+(baseline, terminologia) e o ponto C (já cobertos nos textos) não exigiram ação.
+
+- **B1 — §1 do artigo / §1.1 do relatório:** o enquadramento da lacuna passa a
+  incluir a **de-anonimização baseada em aprendizado de máquina** ao lado da
+  Privacidade Diferencial, como avanços do campo diante dos quais o baseline de
+  k-anonimato estrutural ainda falta (sem citação no parágrafo; a referência
+  entra na §2 / §1.3).
+- **B2 — §2 do artigo (após Narayanan) / §1.3 do relatório:** parágrafo
+  situando o adversário aprendido — *embeddings* de grafo que reassociam nós
+  por similaridade, tolerando o ruído da anonimização e a variação entre redes —
+  como **estritamente mais forte** que os cenários estruturais básicos (grau e
+  subgrafo 1-hop), o que reforça a leitura das taxas como **cota inferior**
+  (§5.2 / §6.1).
+
+**Incorporação formal de referência (público):** Wang, Yang, Man, Wang & Lv
+(2023) — *Anchor Link Prediction for Privacy Leakage via De-Anonymization in
+Multiple Social Networks* (IEEE TDSC, v. 20, n. 6, p. 5197–5213) — adicionada à
+lista canônica `README.md` §12 como **[18]**, renumerando **Wörlein [18]→[19]**,
+**Yuan [19]→[20]** e **Zhou [20]→[21]**; a §12 passa de 20 para **21** entradas.
+Lista de Referências do artigo: **18 → 19** entradas (entre Sweeney e Yuan).
+Apêndice B do relatório: **reconciliado à §12** nesta rodada — de 14 entradas +
+2 adendos para a lista alfabética completa de **21** (Wang = [18]); detalhe na
+§Revisão D7 de [`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md).
+Catálogo `references/README.md`: linha + BibTeX (`Wang2023AnchorLink`) — **apenas
+BibTeX e link** versionados, PDF local do autor (gitignored). Desambiguação de
+homônimo registrada na regra de nomenclatura de `references/README.md`.
+
+**Reflexo público:** `README.md` §12 (21 entradas); `references/README.md`
+(catálogo + BibTeX + nota D7); esta seção e a §Revisão D7 de
+[`relatorio_rastreabilidade.md`](relatorio_rastreabilidade.md). Texto privado
+em `academic/` (não versionado). Portabilidade às versões Overleaf a cargo do
+autor.

@@ -11,7 +11,7 @@
 
 ## Estado atual
 
-**Data da última atualização:** 2026-06-26
+**Data da última atualização:** 2026-06-27
 
 **Semana corrente:** S10 — **concluída**: relatório técnico (#174, fechada em
 2026-06-10) e artigo (#175, fechada em 2026-06-10 via PR #197/W2f — MERGED).
@@ -30,6 +30,48 @@ referências + reconciliação de coerência pós-D5) — concluída em 2026-06-
 (PR #232, `docs/artigo-revisao-final`).
 
 **Último passo concluído:**
+- **Preparação para citação Zenodo+GitHub do software (Brito 2026) — D7,
+  2026-06-27. ✅ (raiz + docs).** Ajustes possíveis **antes** do passo Zenodo,
+  para o snapshot arquivado nascer auto-consistente. **(1) URL canônica
+  decidida:** o repositório citado é `chrisjulio/moduloreidentificacao` (o nome
+  `reidentificacao`, antes cogitado, foi **descartado**) — corrigida a ref
+  Brito (2026) em `academic/artigo.md` e a nota em
+  `docs/artigo_rastreabilidade.md` (item 8). **(2) Metadados de citação:**
+  criados `CITATION.cff` (widget "Cite this repository" + export BibTeX) e
+  `.zenodo.json` (autor, título, licença MIT, keywords), ambos com o **concept
+  DOI** como única pendência (slot comentado/marcado). **(3) Papéis das pastas**
+  publicados na §7 do README (`/publications/` inserido; `/references/`
+  reescrito como bibliografia **citada**) + nota das "duas prateleiras
+  bibliográficas". **Modelo de atualização registrado:** a versão estática do
+  Zenodo é imutável, mas o **concept DOI** (o que se cita no paper) sempre
+  resolve para a versão mais recente — qualquer esquecimento pós-arquivamento se
+  resolve com um **novo release**, não com retrabalho do estático; metadados
+  (autor/título/descrição) são editáveis no Zenodo sem nova versão. **Pendência
+  única, a cargo do autor:** ligar Zenodo↔GitHub, publicar release, reservar o
+  concept DOI e preencher o slot em `CITATION.cff` + ref Brito (2026).
+- **Rodada D7 (sem issue) — aderência ML/GNN: Wang et al. (2023) citado
+  (2026-06-27). ✅ (docs + academic).** Aplicado o ponto **B** da orientação
+  A/B/C do autor: inserção da referência de de-anonimização baseada em
+  aprendizado de máquina (o "paper GNN"). Entre os candidatos avaliados (Wang
+  2023, IEEE TDSC; Yuan 2024, KDD; Liu 2025, ICDE), **só Wang 2023** foi
+  citado — *anchor link prediction* via *graph embedding* + aprendizado
+  adversarial federado, o adversário aprendido que reassocia nós por
+  similaridade tolerando o ruído da anonimização. **B1** (§1 artigo / §1.1
+  relatório): enquadramento da lacuna estendido (ML ao lado da DP). **B2**
+  (§2 artigo, após Narayanan / §1.3 relatório): parágrafo do adversário
+  aprendido **estritamente mais forte** que grau+subgrafo → reforça **cota
+  inferior** (§5.2/§6.1). **Referência canônica:** `README.md` §12 **20 →
+  21** (Wang **[18]**; Wörlein→[19], Yuan→[20], Zhou→[21]); lista do artigo
+  18 → 19; catálogo `references/README.md` linha + BibTeX
+  (`Wang2023AnchorLink`). **Apêndice B do relatório reconciliado à §12** na
+  mesma rodada: de 14 entradas + 2 adendos ([15] Narayanan 2009, [16] Wang)
+  para a lista alfabética completa de **21** — incorpora também as 5 refs de
+  D2/D3 que estavam citadas na §2.1 mas ausentes do apêndice. Também
+  normalizada a nomenclatura dos 3 PDFs novos em `references/` (Yuan 2024,
+  Liu 2025, Wang 2023) e a regra de nomenclatura+inserção embutida no
+  `references/README.md` (versionado). PDFs **não commitados** (gitignored).
+  Sem alteração de números, tabelas, figuras ou código. Portabilidade às
+  versões Overleaf a cargo do autor.
 - **Rodada D6 (#221) — revisão integrada final do artigo (2026-06-26). ✅
   (docs, PR #232 `docs/artigo-revisao-final`).** Bloqueios D1–D5 (#216–#220)
   verificados **MERGED** via `gh`; nenhum PR aberto. Passagem final de

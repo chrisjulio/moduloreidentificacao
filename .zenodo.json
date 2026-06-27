@@ -1,0 +1,21 @@
+{
+  "upload_type": "software",
+  "title": "Aferição de risco de reidentificação em redes sociais k-anônimas: código-fonte, configurações e relatórios dos experimentos",
+  "description": "Pipeline anonimização → ataque → métrica sobre redes sociais reais (Facebook Ego-Nets, Email-Enron), produzindo curvas privacidade-vs-utilidade. Baseline de avaliação de risco de reidentificação para k-anonimato estrutural de grafos (He et al., 2009). Instrumento de validação empírica para tese de doutorado (PPGInf/UFPR); não propõe mecanismo de privacidade novo.",
+  "license": "MIT",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Brito, Christiano Julio Pilger de",
+      "affiliation": "Programa de Pós-Graduação em Informática (PPGInf), Universidade Federal do Paraná (UFPR)"
+    }
+  ],
+  "keywords": [
+    "k-anonymity",
+    "graph anonymization",
+    "re-identification",
+    "privacy-utility tradeoff",
+    "social networks",
+    "reproducibility"
+  ]
+}

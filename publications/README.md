@@ -3,6 +3,14 @@
 Esta pasta centraliza artigos e publicações de leitura mais ampla, relacionados
 ao contexto do trabalho mas não necessariamente citados como referências diretas.
 
+> **Fronteira com [`references/`](../references/README.md):** aqui fica a leitura
+> de **contexto/horizonte** (escopo mais largo da tese) **não citada** como
+> referência direta. A bibliografia **citada** — a §12 do `README.md` raiz e as
+> refs de método — vive em `references/`. Critério: *foi citado → `references/`;
+> é leitura/horizonte → `publications/`*. Se uma obra desta pasta vier a ser
+> citada, ela é **promovida** a `references/` (entra na §12, com BibTeX e
+> catalogação), não copiada — evita-se manter o mesmo papel nos dois lugares.
+
 > ⚠️ **Aviso de copyright:** os arquivos aqui armazenados podem ser privados ou
 > protegidos por direitos autorais. Seu uso é restrito a leitura acadêmica
 > individual e não comercial. **Não redistribuir.** Por isso o conteúdo desta
