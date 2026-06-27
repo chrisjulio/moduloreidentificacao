@@ -1,6 +1,17 @@
 # Referências Bibliográficas — Módulo de Reidentificação
 
-Esta pasta centraliza os PDFs e documentos da bibliografia do módulo.
+Esta pasta centraliza os PDFs e documentos da bibliografia **citada** do
+módulo — as referências da §12 do [`README.md`](../README.md) raiz mais as do
+método, efetivamente citadas no artigo e/ou no relatório técnico.
+
+> **Fronteira com [`publications/`](../publications/README.md):** aqui ficam as
+> obras **citadas** (espinha de citação, fecha citação↔lista). Leitura mais
+> ampla, de contexto/horizonte da tese e **não citada** como referência direta,
+> vai para `publications/`. Critério: *foi citado → `references/`; é leitura/
+> horizonte → `publications/`*. Uma obra ainda **pendente** de decisão de
+> citação pode existir como stub aqui (`_*_pendente.local.md`) enquanto o PDF
+> repousa em `publications/` — não é duplicação, é a obra atravessando a
+> fronteira.
 
 > ⚠️ **Aviso de copyright:** os arquivos aqui armazenados podem ser privados ou
 > protegidos por direitos autorais. Seu uso é restrito a leitura acadêmica
@@ -23,13 +34,76 @@ Esta pasta centraliza os PDFs e documentos da bibliografia do módulo.
 AutorPrincipal_Ano_PalavraChaveDoTitulo.pdf
 ```
 
-Exemplos:
-- `He_2009_PrivacyPreservingStructureAware.pdf`
-- `Nettleton_2016_DataDrivenAnonymizationOSN.pdf`
+Três campos separados por `_`:
+
+| Campo | Regra |
+|---|---|
+| `AutorPrincipal` | Sobrenome do **primeiro** autor, sem acento, capitalizado. Apenas o sobrenome (`Yuan`, `Liu`, `Wang`) — nunca iniciais nem coautores. |
+| `Ano` | Ano de publicação com 4 dígitos (`2023`). Para preprint, o ano da versão usada. |
+| `PalavraChaveDoTitulo` | 3–6 palavras significativas do título em **CamelCase**, sem espaços, sem acentos, sem artigos/preposições soltos. Acrônimo do método pode liderar (`PGB...`, `PrivGraph...`). |
+
+Sem espaços, hífens ou caracteres especiais no nome. Extensão `.pdf` minúscula.
+
+**Exemplos válidos (acervo atual):**
+
+```
+He_2009_PrivacyPreservingStructureAware.pdf
+Nettleton_2016_DataDrivenAnonymizationOSN.pdf
+Yuan_2023_PrivGraphDifferentiallyPrivateGraphPublication.pdf
+Wang_2023_AnchorLinkPredictionDeanonymization.pdf
+Liu_2025_PGBBenchmarkingDPSyntheticGraphGeneration.pdf
+```
+
+**Não fazer:**
+
+```
+3637528.3672013.pdf                         ← DOI/ID do editor, não descreve nada
+Anchor_Link_Prediction_for_Privacy...pdf    ← título cru, com espaços/artigos
+yuan2023.pdf                                 ← sem título; minúsculo
+Yuan_Q_2023_PrivGraph.pdf                    ← não inserir iniciais no campo de autor
+```
+
+### Desambiguação de homônimos
+
+Sobrenomes repetem. O acervo já tem casos:
+
+- `Liu_2008_...` (Liu, K.) **vs** `Liu_2025_...` (Liu, S.) — anos distintos, sem conflito.
+- `Yuan_2023_...` (Yuan, **Q**uan — PrivGraph) **vs** `Yuan_2024_...` (Yuan, **H**anyang — KDD) — autores **diferentes**.
+
+Regra:
+
+1. No **nome do arquivo**, o ano normalmente já desambigua. Se dois homônimos
+   publicarem no **mesmo ano**, acrescente a inicial ao campo de título como
+   último recurso (`Yuan_2024_H_UnveilingPrivacy...`), nunca ao campo de autor.
+2. Na **citação / BibTeX é obrigatório desambiguar** quando "Sobrenome et al.
+   Ano" puder confundir dois trabalhos: use iniciais (`Yuan, H. 2024` vs
+   `Yuan, Q. 2023`) e chaves BibTeX distintas (`Yuan2023PrivGraph`,
+   `Yuan2024Unveiling`).
+
+### Checklist de inserção
+
+1. **Identificar metadados** na 1ª página do PDF (primeiro autor, ano, título,
+   venue, DOI). Para extrair texto sem rasterizar: `pdftotext -f 1 -l 1 arquivo.pdf -`.
+2. **Renomear** conforme a convenção acima.
+3. **Confirmar que está gitignored** — PDFs nunca são commitados:
+   `git check-ignore references/Novo_Arquivo.pdf` deve ecoar o caminho.
+4. **Catalogar** na tabela abaixo (arquivo, referência completa, DOI/link,
+   estado de acesso) e, se for citado no artigo, adicionar o bloco **BibTeX**.
+5. **Versionar apenas texto** (este `README.md` e o `.gitkeep`); conferir com
+   `git status` que nenhum `.pdf` aparece rastreado.
+6. **Preferir acesso aberto** (arXiv, repositório institucional, cópia de autor)
+   à versão do editor — ver §[Orientações](#orientações-e-condições-para-localização-e-download).
+
+### Entradas pendentes
+
+Referência levantada mas ainda **não** incorporada à §12 do `README.md` raiz
+fica em arquivo local gitignored com sufixo `.local.md`
+(ex.: `_dejong_2024_pendente.local.md`), preservando os metadados até a
+deliberação. Não citar no artigo antes da decisão.
 
 ## Catálogo
 
-Cobre as 20 referências da seção 12 do [`README.md`](../README.md) raiz.
+Cobre as 21 referências da seção 12 do [`README.md`](../README.md) raiz.
 Estado do download em 2026-06-10: **15/15 baixadas** — 12 de fontes de acesso
 aberto legítimas (arXiv, páginas de autor, repositórios institucionais, JMLR)
 e 3 obtidas manualmente pelo autor (He 2009 e Cordella 2004 via acesso
@@ -57,6 +131,16 @@ Mueller et al. (2022, taxonomia de DP em grafos). Por decisão da issue, ao
 (gitignored, não commitados), como o restante do acervo. BibTeX das três em
 [`#bibtex-218`](#bibtex-recentes-218). Total da §12: **20** entradas.
 
+**Atualização 2026-06-27 (rodada D7, adversário aprendido ML/GNN):** uma
+referência de de-anonimização baseada em aprendizado de máquina incorporada à
+§12 do README e citada no artigo (§2, após Narayanan) e no relatório (§1.3) —
+Wang et al. (2023, *anchor link prediction* via *graph embedding* + aprendizado
+adversarial federado, IEEE TDSC). Entra como **[18]** na §12 (renumerando
+Wörlein→[19], Yuan→[20], Zhou→[21]); total da §12: **21** entradas. Como nas
+rodadas anteriores, ao versionamento vão **apenas BibTeX e link** — o PDF foi
+obtido **localmente pelo autor** (gitignored, não commitado). BibTeX em
+[`#bibtex-d7`](#bibtex-d7-adversario-aprendido). Sem issue vinculada.
+
 | Arquivo | Referência | DOI / Link | Acesso |
 |---|---|---|---|
 | `Backstrom_2007_WhereforeArtThouR3579X.pdf` | Backstrom, L.; Dwork, C.; Kleinberg, J. *Wherefore art thou R3579X? Anonymized social networks, hidden patterns, and structural steganography.* WWW 2007. | https://doi.org/10.1145/1242572.1242598 — cópia de autor: https://www.cs.cornell.edu/home/kleinber/www07-anon.pdf | ✅ baixado (cópia de autor, Cornell) |
@@ -76,6 +160,7 @@ Mueller et al. (2022, taxonomia de DP em grafos). Por decisão da issue, ao
 | `Serjantov_2003_InformationTheoreticMetricAnonymity.pdf` | Serjantov, A.; Danezis, G. *Towards an information theoretic metric for anonymity.* PET 2002, LNCS 2482. | https://doi.org/10.1007/3-540-36467-6_4 — cópia de autor: http://www0.cs.ucl.ac.uk/staff/g.danezis/papers/set.pdf | ✅ baixado (cópia de autor, UCL) |
 | `Shervashidze_2011_WeisfeilerLehmanGraphKernels.pdf` | Shervashidze, N. et al. *Weisfeiler-Lehman graph kernels.* JMLR 12, 2539–2561, 2011. | https://www.jmlr.org/papers/v12/shervashidze11a.html | ✅ baixado (JMLR, VoR aberto) |
 | `Sweeney_2002_KAnonymity.pdf` | Sweeney, L. *k-anonymity: A model for protecting privacy.* IJUFKS 10(5), 557–570, 2002. | https://doi.org/10.1142/S0218488502001648 — cópia de autora: https://dataprivacylab.org/dataprivacy/projects/kanonymity/kanonymity.pdf | ✅ baixado (cópia de autora, Data Privacy Lab) |
+| `Wang_2023_AnchorLinkPredictionDeanonymization.pdf` | Wang, H.; Yang, W.; Man, D.; Wang, W.; Lv, J. *Anchor Link Prediction for Privacy Leakage via De-Anonymization in Multiple Social Networks.* IEEE Transactions on Dependable and Secure Computing, 20(6):5197–5213, 2023. | https://doi.org/10.1109/TDSC.2023.3242009 | ✅ baixado (local pelo autor, gitignored — D7) |
 | `Worlein_2005_SubgraphMinersComparison.pdf` | Wörlein, M. et al. *A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston.* PKDD 2005, LNCS 3721, 392–403. | https://doi.org/10.1007/11564126_39 | ✅ baixado (Springer, VoR de acesso aberto) |
 | `Yuan_2023_PrivGraphDifferentiallyPrivateGraphPublication.pdf` | Yuan, Q.; Zhang, Z.; Du, L.; Chen, M.; Cheng, P.; Sun, M. *PrivGraph: Differentially Private Graph Data Publication by Exploiting Community Information.* USENIX Security 2023, p. 3241–3258. | https://www.usenix.org/conference/usenixsecurity23/presentation/yuan-quan | ✅ baixado (local pelo autor, gitignored — #218) |
 | `Zhou_2008_NeighborhoodAttacks.pdf` | Zhou, B.; Pei, J. *Preserving privacy in social networks against neighborhood attacks.* ICDE 2008. | https://doi.org/10.1109/ICDE.2008.4497459 — cópia de autor: https://www.cs.sfu.ca/~jpei/publications/NeighborhoodAnonymization-ICDE08.pdf | ✅ baixado (cópia de autor, SFU) |
@@ -146,5 +231,31 @@ autor** e salvos em `references/` (gitignored), como o restante do acervo.
   archivePrefix = {arXiv},
   primaryClass  = {cs.CR},
   url           = {https://arxiv.org/abs/2203.09205}
+}
+```
+
+## BibTeX — adversário aprendido (D7) {#bibtex-d7-adversario-aprendido}
+
+Referência incorporada pela **rodada D7** (2026-06-27, adversário aprendido
+ML/GNN; sem issue vinculada). De-anonimização baseada em aprendizado de
+máquina, citada no artigo (§2) e no relatório (§1.3) como adversário mais
+forte que os cenários estruturais básicos — leitura de cota inferior. Ao
+versionamento vão **apenas BibTeX e link**; o PDF é local do autor
+(gitignored). Desambiguação: **Wang, H.** (2023) é distinto de outros autores
+homônimos; chave BibTeX própria `Wang2023AnchorLink`.
+
+```bibtex
+@article{Wang2023AnchorLink,
+  author  = {Wang, Huanran and Yang, Wu and Man, Dapeng and
+             Wang, Wei and Lv, Jiguang},
+  title   = {Anchor Link Prediction for Privacy Leakage via
+             De-Anonymization in Multiple Social Networks},
+  journal = {IEEE Transactions on Dependable and Secure Computing},
+  volume  = {20},
+  number  = {6},
+  pages   = {5197--5213},
+  year    = {2023},
+  doi     = {10.1109/TDSC.2023.3242009},
+  url     = {https://doi.org/10.1109/TDSC.2023.3242009}
 }
 ```

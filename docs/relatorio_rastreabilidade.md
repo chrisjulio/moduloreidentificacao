@@ -129,3 +129,32 @@ entradas, renumerada. **BibTeX + links** versionados em `references/README.md`;
 PDFs locais do autor (gitignored). Detalhamento espelhado em
 [`artigo_rastreabilidade.md`](artigo_rastreabilidade.md) (§Revisões D1–D3).
 de Jong et al. (2024) retido para deliberação com os orientadores.
+
+---
+
+## Revisão D7 — adversário aprendido (ML/GNN): Wang et al. (2023) (2026-06-27)
+
+Rodada de aderência bibliográfica, **sem issue vinculada** (rótulo descritivo).
+Executada **somente no texto** do relatório (`academic/relatorio_tecnico.md`,
+privado), com reflexos públicos em `README.md` §12 e nas matrizes de
+rastreabilidade. Sem alteração de números, tabelas, figuras ou código.
+
+- **B1 (§1.1):** o enquadramento da lacuna passa a incluir a de-anonimização
+  baseada em aprendizado de máquina ao lado da Privacidade Diferencial.
+- **B2 (§1.3):** parágrafo, após a fronteira de Narayanan, situando o adversário
+  aprendido contemporâneo (*embeddings* de grafo + aprendizado adversarial
+  federado) como **estritamente mais forte** que os cenários estruturais básicos
+  medidos — leitura de **cota inferior** (§6.1).
+- **Apêndice B — reconciliado à §12:** até D6 o apêndice listava 14 entradas +
+  2 adendos ([15] Narayanan 2009, [16] Wang 2023) e não incorporava as 5 refs de
+  D2/D3 (Brito, Hao, Mendonça, Mueller, Yuan), já citadas na §2.1. D7 reconcilia
+  o apêndice à lista canônica completa: **21 entradas alfabéticas**, mesma
+  numeração da §12, sem mecanismo de adendo (Wang = **[18]**).
+
+**Reflexo público:** `README.md` §12 passou de 20 → **21** entradas — Wang et al.
+(2023) entra como **[18]** (Wörlein→[19], Yuan→[20], Zhou→[21]). **BibTeX +
+link** versionados em `references/README.md`; PDF local do autor (gitignored).
+Detalhamento espelhado em
+[`artigo_rastreabilidade.md`](artigo_rastreabilidade.md) (§Revisão D7).
+Selecionado **apenas Wang et al. (2023)** entre os candidatos (Wang 2023; Yuan
+2024; Liu 2025).

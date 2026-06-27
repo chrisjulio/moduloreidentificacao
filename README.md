@@ -722,7 +722,8 @@ documentos de circulação restrita.
   article_figures.py         # regenera figuras do artigo (KDMiLe) com tipografia dedicada; opt-in --bw
 /bugs/                       # registro acumulativo de bugs (execução + explicação + decisão)
 /academic/                   # documentos acadêmicos (relatório técnico, artigo) — conteúdo NÃO versionado; só o README.md da pasta é público (ver academic/README.md)
-/references/                 # PDFs da bibliografia (não versionados); catálogo público em references/README.md
+/references/                 # bibliografia CITADA (§12 + refs de método); fecha citação↔lista; PDFs não versionados; catálogo público em references/README.md
+/publications/               # leitura de contexto/horizonte da tese, NÃO citada como referência direta; PDFs não versionados; catálogo público em publications/README.md
 /docs/
   scope.md                   # escopo, não-escopo e condições de contorno ética
   algorithm_notes.md         # notas sobre a implementação de He et al. (inclui k-sweep e d>1)
@@ -761,8 +762,17 @@ requirements-dev.txt         # dependências de desenvolvimento (lint, testes)
 config_example.yml           # modelo de configuração de experimento
 environment.yml              # ambiente Conda (caminho alternativo no Windows, com METIS)
 .pre-commit-config.yaml      # hooks de pre-commit (ruff)
-LICENSE                      # licença do repositório
+LICENSE                      # licença do repositório (MIT)
+CITATION.cff                 # metadados de citação (widget "Cite this repository"; concept DOI Zenodo pendente)
+.zenodo.json                 # metadados do depósito Zenodo (autor, título, licença, keywords)
 ```
+
+> **Duas prateleiras bibliográficas (papéis distintos).** `references/` guarda o
+> que é **citado** — a §12 e as refs de método, a espinha que fecha
+> citação↔lista. `publications/` guarda **leitura de contexto/horizonte** da
+> tese, **não citada** como referência direta. Regra: *citou → `references/`; é
+> horizonte → `publications/`*; uma obra é **promovida** de uma para a outra,
+> nunca duplicada. Detalhe e fronteira recíproca nos READMEs de cada pasta.
 
 A organização foi pensada para permitir migração futura para o repositório do
 framework integrado da tese (EpiCNet) sem refatoração estrutural significativa.
@@ -876,11 +886,13 @@ aprovação de Comitê de Ética em Pesquisa nos termos da Resolução CNS 510/2
 
 [17] [SWEENEY, L.](https://doi.org/10.1142/S0218488502001648) k-anonymity: A model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems*, v. 10, n. 5, p. 557–570, 2002.
 
-[18] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_39) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
+[18] [WANG, H.; YANG, W.; MAN, D.; WANG, W.; LV, J.](https://doi.org/10.1109/TDSC.2023.3242009) Anchor link prediction for privacy leakage via de-anonymization in multiple social networks. *IEEE Transactions on Dependable and Secure Computing*, v. 20, n. 6, p. 5197–5213, 2023.
 
-[19] [YUAN, Q.; ZHANG, Z.; DU, L.; CHEN, M.; CHENG, P.; SUN, M.](https://www.usenix.org/conference/usenixsecurity23/presentation/yuan-quan) PrivGraph: Differentially private graph data publication by exploiting community information. In: *Proceedings of the 32nd USENIX Security Symposium (USENIX Security 2023)*. [S. l.]: USENIX Association, 2023. p. 3241–3258.
+[19] [WÖRLEIN, M. et al.](https://doi.org/10.1007/11564126_39) A quantitative comparison of the subgraph miners MoFa, gSpan, FFSM, and Gaston. In: *Knowledge Discovery in Databases: PKDD 2005*. Berlin: Springer, 2005. p. 392–403. (Lecture Notes in Computer Science, v. 3721).
 
-[20] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
+[20] [YUAN, Q.; ZHANG, Z.; DU, L.; CHEN, M.; CHENG, P.; SUN, M.](https://www.usenix.org/conference/usenixsecurity23/presentation/yuan-quan) PrivGraph: Differentially private graph data publication by exploiting community information. In: *Proceedings of the 32nd USENIX Security Symposium (USENIX Security 2023)*. [S. l.]: USENIX Association, 2023. p. 3241–3258.
+
+[21] [ZHOU, B.; PEI, J.](https://doi.org/10.1109/ICDE.2008.4497459) Preserving privacy in social networks against neighborhood attacks. In: *2008 IEEE 24th International Conference on Data Engineering (ICDE 2008)*. [S. l.]: IEEE, 2008. p. 506–515.
 
 ---
 

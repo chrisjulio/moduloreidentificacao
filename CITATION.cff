@@ -1,0 +1,44 @@
+# Metadados de citação do software (formato Citation File Format).
+# GitHub lê este arquivo e exibe o widget "Cite this repository" (+ export BibTeX/APA).
+# O Zenodo também o consome ao arquivar um release.
+#
+# >>> PENDÊNCIA ÚNICA antes da citação final: o concept DOI do Zenodo. <<<
+# Fluxo: ligar Zenodo↔GitHub -> publicar um release -> o Zenodo cunha o
+# concept DOI (estável, "todas as versões") -> descomentar o bloco
+# `identifiers` abaixo com esse DOI -> commitar -> (re)publicar o release.
+# O concept DOI é o que se cita no artigo (ref. Brito, 2026).
+
+cff-version: 1.2.0
+message: "Se você usar este software, cite-o conforme os metadados abaixo."
+type: software
+title: >-
+  Aferição de risco de reidentificação em redes sociais k-anônimas:
+  código-fonte, configurações e relatórios dos experimentos
+abstract: >-
+  Pipeline anonimização -> ataque -> métrica sobre redes sociais reais
+  (Facebook Ego-Nets, Email-Enron), produzindo curvas privacidade-vs-utilidade.
+  Baseline de avaliação de risco de reidentificação para k-anonimato estrutural
+  de grafos (He et al., 2009). Instrumento de validação empírica para tese de
+  doutorado (PPGInf/UFPR); não propõe mecanismo de privacidade novo.
+authors:
+  - family-names: "Brito"
+    given-names: "Christiano Julio Pilger"
+    name-particle: "de"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # preencher quando disponível
+license: MIT
+repository-code: "https://github.com/chrisjulio/moduloreidentificacao"
+url: "https://github.com/chrisjulio/moduloreidentificacao"
+version: "v1.0.0"
+date-released: "2026-06-27"
+keywords:
+  - "k-anonymity"
+  - "graph anonymization"
+  - "re-identification"
+  - "privacy-utility tradeoff"
+  - "social networks"
+  - "reproducibility"
+  - "differential privacy (comparison)"
+# identifiers:
+#   - type: doi
+#     value: "10.5281/zenodo.XXXXXXX"      # concept DOI (todas as versões) — preencher
+#     description: "Concept DOI do Zenodo (resolve para a versão mais recente)"
