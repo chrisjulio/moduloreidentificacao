@@ -80,7 +80,7 @@ referências + reconciliação de coerência pós-D5) — concluída em 2026-06-
   reconciliação na revisão integrada final.
 - **Rodada D4 (#219) — revisão metodológica do artigo (2026-06-26). ✅ (docs,
   PR `docs/artigo-revisao-metodologia`).** Resposta a três limitações
-  percebidas pelos avaliadores (André/Sidgley), com **recontextualização
+  percebidas pelos avaliadores (orientador/coorientador), com **recontextualização
   metodológica**. **Diferente de D1–D3, altera números e tabelas:** incorpora
   o dado canônico inter-dataset de E1 (#211, D-19) — o run **pymetis** do
   baseline Facebook substitui o **Kernighan-Lin**. **No texto privado
@@ -105,7 +105,7 @@ referências + reconciliação de coerência pós-D5) — concluída em 2026-06-
   autor.
 - **Rodada D1–D3 (#216, #217, #218) — revisão pós-entrega do conteúdo
   acadêmico (2026-06-26). ✅ (docs, PRs #227/#229).** Revisão orientada pelo
-  retorno dos avaliadores externos (Profs. André Vignatti e Sidgley), no texto
+  retorno dos avaliadores externos (orientador e coorientador), no texto
   privado (`academic/`, gitignored — Overleaf captura daqui) com reflexos
   públicos. **D1 (#216):** abstract + §1 do artigo e §1.1 do relatório
   reposicionam o trabalho como **baseline de avaliação de risco** para

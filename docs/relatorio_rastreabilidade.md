@@ -106,7 +106,7 @@ reabre.
 ## Revisões D1–D3 — reposicionamento como baseline + atualização bibliográfica (2026-06-26)
 
 Rodada de revisão pós-entrega orientada pelo retorno dos avaliadores externos
-(Profs. André Vignatti e Sidgley), executada **somente no texto** do relatório
+(orientador e coorientador), executada **somente no texto** do relatório
 (`academic/relatorio_tecnico.md`, privado), com reflexos públicos em
 `README.md` §12 e nas matrizes de rastreabilidade. Sem alteração de números,
 tabelas, figuras ou código.

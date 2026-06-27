@@ -165,8 +165,7 @@ sem alteração de código.
    final da entrada D-17 do [`decision_log.md`](decision_log.md) (registro
    histórico não reescrito).
 6. **Folha de rosto e Figura 3.1 (versão compilada):** placeholders da capa
-   substituídos (orientador Prof. Dr. André Luís Vignatti; coorientador
-   Prof. Dr. Sidgley Camargo de Andrade — titulações confirmadas); legenda
+   substituídos (orientador e coorientador — titulações confirmadas); legenda
    da Figura 3.1 sem o rastro "[Convertida do diagrama Mermaid...]".
 7. **Figura 4.3 vetorial:** a versão compilada passou a usar o **PDF
    vetorial** do painel comparativo — o mesmo artefato versionado em
@@ -185,8 +184,8 @@ sem alteração de código.
 
 ## Revisões D1–D3 — reposicionamento como baseline + atualização bibliográfica (2026-06-26)
 
-Rodada de revisão orientada pelo retorno dos professores André Vignatti e
-Sidgley, executada **somente no texto** (academic/, privado) com os reflexos
+Rodada de revisão orientada pelo retorno do orientador e do coorientador,
+executada **somente no texto** (academic/, privado) com os reflexos
 públicos abaixo. Sem alteração de números, tabelas, figuras ou código.
 
 - **D1 (issue #216) — abstract + §1 do artigo e §1.1 do relatório:**
@@ -236,8 +235,8 @@ públicos abaixo. Sem alteração de números, tabelas, figuras ou código.
 
 ## Revisão metodológica D4 (#219) — migração KL → pymetis e reenquadramento (2026-06-26)
 
-Rodada orientada pelo retorno dos avaliadores externos (Profs. André Vignatti
-e Sidgley), respondendo a limitações percebidas que pediam
+Rodada orientada pelo retorno dos avaliadores externos (orientador e
+coorientador), respondendo a limitações percebidas que pediam
 **recontextualização metodológica**. **Diferentemente das rodadas D1–D3,
 esta altera números e tabelas** — incorpora o dado canônico inter-dataset
 fixado em E1 ([#211](https://github.com/chrisjulio/moduloreidentificacao/issues/211),
