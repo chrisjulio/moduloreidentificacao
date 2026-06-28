@@ -13,8 +13,8 @@ style conventions — panel labels, legends, geometry) are documented in
 
 Frozen data sources (no new experiments):
 
-* Figure 4.1 — ``experiments/logs/he2009_facebook_baseline`` (via
-  :func:`src.visualization.privacy_utility.aggregate_by_k`).
+* Figure 4.1 — ``experiments/logs/he2009_facebook_baseline_pymetis`` (canonical
+  pymetis engine) via :func:`src.visualization.privacy_utility.aggregate_by_k`.
 * Figure 4.3 — ``docs/assets/comparison_fb_enron.csv`` (the frozen, committed
   series: ``bound_fraction`` and ``relative_decay`` per dataset x k).
 * Enron d-sweep series — ``experiments/logs/he2009_enron_secondary`` (d=1
@@ -67,7 +67,7 @@ from src.visualization.privacy_utility import (
 )
 
 # Default frozen data locations, relative to the repository root.
-_DEFAULT_FB_LOGS = Path("experiments/logs/he2009_facebook_baseline")
+_DEFAULT_FB_LOGS = Path("experiments/logs/he2009_facebook_baseline_pymetis")
 _DEFAULT_COMPARISON_CSV = Path("docs/assets/comparison_fb_enron.csv")
 _DEFAULT_ENRON_ANCHOR_LOGS = Path("experiments/logs/he2009_enron_secondary")
 _DEFAULT_ENRON_DSWEEP_LOGS = Path("experiments/logs/he2009_enron_dsweep")
@@ -105,6 +105,17 @@ def _apply_log_k_axis(ax: plt.Axes) -> None:
     ax.xaxis.set_major_formatter(FixedFormatter([str(k) for k in _K_TICKS]))
     ax.xaxis.set_minor_locator(NullLocator())
     ax.set_xlim(1.7, 23.0)
+
+
+def _inline_k_label(ax: plt.Axes) -> None:
+    """Render the ``k`` axis label inline, to the left of the first tick (on the
+    tick-label row), instead of centered below the axis. Saves the vertical band
+    a centered xlabel would consume; reads as a ``k  2  5  10  20`` row.
+    """
+    ax.set_xlabel("k")
+    ax.xaxis.set_label_coords(-0.015, -0.063)
+    ax.xaxis.label.set_horizontalalignment("right")
+    ax.xaxis.label.set_verticalalignment("center")
 
 
 def _save_pdf(fig: plt.Figure, out_dir: Path, stem: str) -> Path:
@@ -188,13 +199,13 @@ def build_privacy_utility(fb_logs: Path, out_dir: Path, bw: bool = False) -> Pat
         )
 
     with plt.rc_context({"pdf.fonttype": 42, "font.size": base, "axes.linewidth": 0.8}):
-        fig, (ax_priv, ax_util) = plt.subplots(1, 2, figsize=(12.0, 5.19))
+        fig, (ax_priv, ax_util) = plt.subplots(1, 2, figsize=(12.0, 4.0))
 
         # ---- Panel (a): privacy ------------------------------------------
         draw(ax_priv, "rr_degree", _PU_PRIVACY[0], 100.0)
         draw(ax_priv, "rr_subgraph", _PU_PRIVACY[1], 100.0)
         ax_priv.set_ylabel("Re-identification rate (%)")
-        ax_priv.set_xlabel("k")
+        _inline_k_label(ax_priv)
         ax_priv.set_ylim(bottom=0)
         ax_priv.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
 
@@ -202,7 +213,7 @@ def build_privacy_utility(fb_logs: Path, out_dir: Path, bw: bool = False) -> Pat
         draw(ax_util, "clust_var", _PU_UTILITY[0], 1.0)
         draw(ax_util, "ks_d", _PU_UTILITY[1], 1.0)
         ax_util.set_ylabel("Utility degradation")
-        ax_util.set_xlabel("k")
+        _inline_k_label(ax_util)
         ax_util.set_ylim(bottom=0)
         ax_util.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
 
@@ -211,15 +222,19 @@ def build_privacy_utility(fb_logs: Path, out_dir: Path, bw: bool = False) -> Pat
             _apply_log_k_axis(ax)
             ax.set_title(tag, loc="left", fontweight="bold")
 
+        # Single-row legend; trimmed font keeps the four long labels within the
+        # panel width so the native size (and thus the \\textwidth downscale and
+        # final height) matches the other two article figures.
         fig.legend(
             handles=_legend_handles(_PU_PRIVACY + _PU_UTILITY, bw),
             loc="lower center",
-            ncol=2,
+            ncol=4,
             frameon=False,
-            bbox_to_anchor=(0.5, -0.02),
+            fontsize=13,
+            bbox_to_anchor=(0.5, 0.0),
         )
-        # Reserve a bottom margin so the two-row legend clears the "k" labels.
-        fig.tight_layout(rect=[0, 0.16, 1, 1])
+        # Reserve a slim bottom margin for the single-row legend.
+        fig.tight_layout(rect=[0, 0.11, 1, 1])
         return _save_pdf(fig, out_dir, "eng-privacy_utility")
 
 
@@ -271,18 +286,18 @@ def build_comparison(csv_path: Path, out_dir: Path, bw: bool = False) -> Path:
             )
 
     with plt.rc_context({"pdf.fonttype": 42, "font.size": base, "axes.linewidth": 0.8}):
-        fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(12, 5))
+        fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(12, 4))
 
         draw(ax_a, "bound_fraction")
         ax_a.axhline(1.0, color=ref_color, linestyle=":", linewidth=0.8)
         ax_a.set_ylabel("rr·k  (fraction of 1/k bound)")
-        ax_a.set_xlabel("k")
+        _inline_k_label(ax_a)
         ax_a.set_ylim(bottom=0)
         ax_a.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
 
         draw(ax_b, "relative_decay")
         ax_b.set_ylabel("rr(k) / rr(k_min)")
-        ax_b.set_xlabel("k")
+        _inline_k_label(ax_b)
         ax_b.set_ylim(bottom=0)
         ax_b.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
 
@@ -294,10 +309,10 @@ def build_comparison(csv_path: Path, out_dir: Path, bw: bool = False) -> Path:
         handles = _legend_handles(_CMP_STYLES, bw)
         handles.append(Line2D([0], [0], color=ref_color, linestyle=":", label="1/k bound"))
         fig.legend(
-            handles=handles, loc="lower center", ncol=3, frameon=False, bbox_to_anchor=(0.5, -0.06)
+            handles=handles, loc="lower center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 0.0)
         )
-        # Reserve a bottom margin so the single figure legend clears the "k" labels.
-        fig.tight_layout(rect=[0, 0.08, 1, 1])
+        # Reserve a slim bottom margin for the single-row legend.
+        fig.tight_layout(rect=[0, 0.11, 1, 1])
         return _save_pdf(fig, out_dir, "eng-comparison_fb_enron")
 
 
@@ -364,14 +379,14 @@ def build_enron_dsweep_series(
         )
 
     with plt.rc_context({"pdf.fonttype": 42, "font.size": base, "axes.linewidth": 0.8}):
-        fig, (ax_priv, ax_util) = plt.subplots(1, 2, figsize=(12.0, 5.19))
+        fig, (ax_priv, ax_util) = plt.subplots(1, 2, figsize=(12.0, 4.0))
 
         # ---- Panel (a): privacy — subgraph solid, degree dashed ----------
         for d in d_values:
             draw(ax_priv, d, "rr_subgraph", "-", 100.0, _DSWEEP_PRIV_MARKERS["rr_subgraph"])
             draw(ax_priv, d, "rr_degree", "--", 100.0, _DSWEEP_PRIV_MARKERS["rr_degree"])
         ax_priv.set_ylabel("Re-identification rate (%)")
-        ax_priv.set_xlabel("k")
+        _inline_k_label(ax_priv)
         ax_priv.set_ylim(bottom=0)
         ax_priv.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
 
@@ -380,7 +395,7 @@ def build_enron_dsweep_series(
             draw(ax_util, d, "clust_var", "-", 1.0, _DSWEEP_UTIL_MARKERS["clust_var"])
             draw(ax_util, d, "ks_d", "--", 1.0, _DSWEEP_UTIL_MARKERS["ks_d"])
         ax_util.set_ylabel("Utility degradation")
-        ax_util.set_xlabel("k")
+        _inline_k_label(ax_util)
         ax_util.set_ylim(bottom=0)
         ax_util.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
 
@@ -410,24 +425,28 @@ def build_enron_dsweep_series(
             )
             for d in d_values
         ]
+        # Metric/line-style key BELOW the axes (single row); the d key goes
+        # INSIDE panel (b)'s upper-left corner (free of data) so it no longer
+        # needs a second bottom row, recovering vertical space.
         fig.legend(
             handles=metric_handles,
             loc="lower center",
             ncol=4,
             frameon=False,
             fontsize=12,
-            bbox_to_anchor=(0.5, 0.05),
+            bbox_to_anchor=(0.5, 0.0),
         )
-        fig.legend(
+        ax_util.legend(
             handles=d_handles,
-            loc="lower center",
-            ncol=len(d_handles),
-            frameon=False,
-            fontsize=12,
+            loc="upper left",
+            ncol=2,
+            fontsize=10,
             title="d",
-            bbox_to_anchor=(0.5, -0.04),
+            framealpha=0.9,
+            handletextpad=0.4,
+            columnspacing=1.0,
         )
-        fig.tight_layout(rect=[0, 0.16, 1, 1])
+        fig.tight_layout(rect=[0, 0.10, 1, 1])
         return _save_pdf_png(fig, out_dir, "eng-enron_dsweep_series")
 
 

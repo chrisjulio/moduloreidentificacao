@@ -25,10 +25,11 @@ de origem são:
 | Enron (âncora d=1) | `experiments/logs/he2009_enron_secondary` |
 | Enron d-sweep (d∈{2,5,10}) | `experiments/logs/he2009_enron_dsweep` |
 
-> ⚠️ **Atenção ao default do Facebook.** O default embutido em
-> `article_figures.py` (`_DEFAULT_FB_LOGS`) ainda aponta para
-> `he2009_facebook_baseline` (motor **KL**, histórico). Para o canônico pymetis,
-> **passe explicitamente** `--fb-logs experiments/logs/he2009_facebook_baseline_pymetis`.
+> **Default já canônico.** O default embutido em `article_figures.py`
+> (`_DEFAULT_FB_LOGS`) aponta para `he2009_facebook_baseline_pymetis` (pymetis),
+> então `python -m scripts.article_figures --bw` já produz o Facebook no motor
+> canônico. O log KL histórico (`he2009_facebook_baseline`) só deve ser usado
+> via `--fb-logs` explícito para reproduzir artefatos antigos.
 
 ---
 
@@ -37,9 +38,7 @@ de origem são:
 Um único comando regenera as três. Sempre em `--bw` (o artigo declara "sem cores"):
 
 ```bash
-python -m scripts.article_figures --bw \
-  --fb-logs experiments/logs/he2009_facebook_baseline_pymetis \
-  --out docs/assets
+python -m scripts.article_figures --bw --out docs/assets
 ```
 
 | Figura | Função | Fonte de dados |
@@ -57,9 +56,13 @@ python -m scripts.article_figures --bw \
 - **`(a)/(b)`:** sempre como **título à esquerda, acima do frame**
   (`ax.set_title(tag, loc="left")`) — **nunca** dentro da área de dados. A
   enumeração também vive na `\caption` do LaTeX.
-- **Legendas:** sempre **fora dos eixos** (embaixo, `fig.legend`), nunca
-  sobrepondo dados.
-- **Eixo k:** logarítmico, ticks fixos `{2, 5, 10, 20}`.
+- **Legendas:** preferencialmente **fora dos eixos** (embaixo, `fig.legend`),
+  nunca sobrepondo dados. Exceção: chaves auxiliares que caibam num canto livre
+  podem ficar **dentro** do painel (ex.: a chave de `d` da `eng-enron_dsweep_series`
+  fica no canto superior-esquerdo do painel (b), poupando uma fileira inferior).
+- **Eixo k:** logarítmico, ticks fixos `{2, 5, 10, 20}`. O rótulo "k" fica
+  **inline**, à esquerda do primeiro tick (`k  2  5  10  20`), via
+  `_inline_k_label` — não centralizado abaixo do eixo (poupa altura).
 - **d (d-sweep):** codificado por **cor** (modo cor) ou por **marcador** em B&W
   (`d=1→○, d=2→□, d=5→△, d=10→◇`); o ataque/métrica fica no estilo de linha.
 
