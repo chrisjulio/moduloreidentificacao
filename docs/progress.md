@@ -45,6 +45,24 @@ comparativo `comparison_fb_enron` regenerado em pymetis (canônica + `eng-`) e
 de D4/D6 — concluída em 2026-06-27 (branch `viz/comparison-fb-enron-pymetis`).
 
 **Último passo concluído:**
+- **Correção da §4.1 de `results_enron_dsweep.md` — replicação parcial do
+  d-sweep (2026-06-27). ✅ (docs, PR #236 `docs/enron-dsweep-s41-partial-replication`).**
+  A prosa da §4.1 contradizia a própria tabela da §2 do arquivo: afirmava que
+  "grau se fortalece com d crescente" e que o deslocamento grau↑/subgrafo↓ "se
+  confirma no Enron". A tabela mostra `reid_sub` enfraquecendo com d (✔), mas
+  `reid_deg` **colado ao piso** (~0,002–0,004) em toda a grade — sem cruzamento
+  de vetores; o subgrafo permanece dominante nas 16 células (k=20/d=10: 0,017
+  subgrafo vs 0,001 grau). **Causa:** numa rede de ~33,7 k nós, colisões de grau
+  são abundantes e mesmo anonimização agressiva (KS D até ~0,30) raramente isola
+  um grau único — o deslocamento visto no Facebook é dependente da escala pequena
+  daquela ego-rede, não lei do mecanismo. §4.1 reescrita para declarar replicada
+  **só a metade estrutural** (subgrafo↓ com d; EGS ≈ k·d) e ler o
+  deslocamento/cruzamento como **replicação parcial / dependente de escala**
+  (título da §4 e §4.2 mantidos). Como a prosa vive no gerador
+  `experiments/make_enron_dsweep_table.py` (fonte de verdade), editados o gerador
+  **e** o doc; tabela regenerada — saída bate com a edição manual. Alinha a §4.1
+  ao artigo LaTeX (§4.6) e ao `relatorio_mudancas_orientadores.md` (Parte I §5 /
+  Parte II item 3). Sem alteração de código de produção, números ou figuras.
 - **Release `v1.0.0` publicado + terminologia baseline (ponto A) — 2026-06-27.
   ✅ (GitHub + academic).** PR #233 mergeado em `main` (`cd0c4cb`); **release
   [`v1.0.0`](https://github.com/chrisjulio/moduloreidentificacao/releases/tag/v1.0.0)**

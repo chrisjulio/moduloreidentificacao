@@ -223,20 +223,27 @@ def main() -> None:
         "",
         "## 4. Análise — deslocamento do vetor de ataque",
         "",
-        "### 4.1 Tendências opostas dos ataques com d crescente",
+        "### 4.1 Replicação parcial: metade estrutural sim, deslocamento não",
         "",
-        "O padrão central do d-sweep Facebook (§5.2 de `docs/results_dsweep.md`) "
-        "se replica no Enron:",
+        "Do padrão central do d-sweep Facebook (§5.2 de `docs/results_dsweep.md`), "
+        "apenas a **metade estrutural** se replica no Enron:",
         "",
-        "- **Subgrafo enfraquece com d crescente** (em k fixo). Grupos de equivalência "
-        "maiores (EGS ≈ k·d) aumentam a ambiguidade estrutural e dificultam o "
-        "isomorfismo 1-hop.",
-        "- **Grau se fortalece com d crescente** (em k fixo). Anonimizar com d alto "
-        "distorce mais a distribuição de graus (KS D cresce), tornando assinaturas de "
-        "grau mais singulares — `reid_deg` cresce com d.",
+        "- **Subgrafo enfraquece com d crescente** (em k fixo) ✔ replica. Grupos de "
+        "equivalência maiores (EGS ≈ k·d) aumentam a ambiguidade estrutural e "
+        "dificultam o isomorfismo 1-hop. Ex.: k=2 → 0,124 / 0,098 / 0,080 / 0,053; "
+        "k=20 → 0,057 / 0,045 / 0,027 / 0,017.",
+        "- **Grau NÃO se fortalece com d** ✘ não replica. `reid_deg` fica colado ao "
+        "piso (~0,002–0,004) em toda a grade — chegando a declinar levemente em k/d "
+        "altos —, mesmo com anonimização agressiva (KS D até ~0,30). Ex.: k=2 → "
+        "0,003 / 0,003 / 0,004 / 0,003; k=20 → 0,002 / 0,002 / 0,002 / 0,001.",
         "",
-        "**Confirmação:** o deslocamento grau↑/subgrafo↓ com d crescente **se confirma "
-        "no Enron** (D5). A tendência é robusta em k ∈ {2, 5, 10, 20} com d ∈ {2, 5, 10}.",
+        "**Leitura (replicação parcial / dependente de escala):** não há cruzamento "
+        "dos vetores de ataque no Enron — o subgrafo permanece dominante nas 16 células "
+        "(em k=20/d=10: 0,017 subgrafo vs 0,001 grau). Numa rede de ~33,7 k nós, as "
+        "colisões de grau são abundantes e raramente isolam um grau único; o "
+        "deslocamento grau↑/subgrafo↓ observado no Facebook é **dependente da escala "
+        "pequena daquela ego-rede, não uma lei do mecanismo**. O d-sweep Enron confirma "
+        "(D5) a degradação estrutural do subgrafo com d, mas não o cruzamento.",
         "",
         "### 4.2 Escala atenua o efeito de subgrafo",
         "",
