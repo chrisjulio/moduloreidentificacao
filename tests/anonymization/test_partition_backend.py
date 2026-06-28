@@ -9,7 +9,7 @@ Cobertura:
     - meta["sizes"] soma n total de nós
     - Determinismo: mesma seed → mesma partição (backend KL)
 
-Seeds fixadas em testes são exceção controlada conforme .claude/rules/seeds.md:
+Seeds fixadas em testes são exceção controlada conforme docs/regras_sementes.md:
 reprodutibilidade dos testes requer valores determinísticos.
 """
 

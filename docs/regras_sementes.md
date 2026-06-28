@@ -1,11 +1,6 @@
----
-paths:
-  - "src/**/*.py"
-  - "experiments/**/*.py"
-  - "tests/**/*.py"
----
+# Regras de projeto — Sementes aleatórias
 
-# Regras escopadas — Sementes aleatórias
+> Aplica-se a `src/**/*.py`, `experiments/**/*.py` e `tests/**/*.py`.
 
 ## Princípio
 

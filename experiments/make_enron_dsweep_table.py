@@ -19,7 +19,7 @@ Output
 
 This mirrors ``experiments/make_baseline_table.py`` extended with the extra
 ``d`` dimension.  Outputs come from structured logs, never from interactive
-execution (.claude/rules/experiments.md).
+execution (docs/regras_experimentos.md).
 """
 
 # ruff: noqa: RUF001, RUF002
@@ -280,7 +280,7 @@ def main() -> None:
         "```",
         "",
         "> Logs em `experiments/logs/` são **gitignored** "
-        "(`.claude/rules/experiments.md`); versiona-se o YAML de config e o script "
+        "(`docs/regras_experimentos.md`); versiona-se o YAML de config e o script "
         "de tabela. O log d=1 de âncora (`he2009_enron_secondary`) é produzido por "
         "`experiments/configs/he2009_enron_secondary.yml` (issue #29/S9).",
     ]

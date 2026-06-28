@@ -40,7 +40,7 @@ experiment:
     (2009). Substitui o run KL original para comparação inter-dataset no artigo.
 
 # ------------------------------------------------------------
-# Sementes — mínimo 3 por .claude/rules/seeds.md
+# Sementes — mínimo 3 por docs/regras_sementes.md
 # Nunca hardcoded no código de produção; sempre lidas deste YAML.
 # ------------------------------------------------------------
 seeds: [42, 1337, 2718]

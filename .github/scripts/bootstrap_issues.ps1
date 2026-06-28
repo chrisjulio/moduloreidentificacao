@@ -524,7 +524,7 @@ Implementar o verificador independente de k-anonimato. AUDITOR EXTERNO,
 nao reutilizar codigo interno do anonimizador.
 
 ## Contexto
-Ver `.claude/rules/anonymization.md` para o contrato completo.
+Ver `docs/regras_anonimizacao.md` para o contrato completo.
 
 ## Definicao de pronto
 - `src/anonymization/validation.py` implementado.

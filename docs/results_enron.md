@@ -141,4 +141,4 @@ python -m src.visualization.comparison \
     --out docs/assets --stem comparison_fb_enron --pdf
 ```
 
-> Logs, tabelas CSV e plots em `results/` são **gitignored** (`.claude/rules/experiments.md`); versiona-se o YAML de config e os scripts que os regeneram. **Exceção documentada:** o snapshot comparativo em `docs/assets/` (`comparison_fb_enron.png` + `.pdf` + `.csv`) é versionado por ser artefato auditável publicamente, e permanece regenerável pelo comando 5. As referências cruzadas: D-11 (projeção OR), D-15/D-16 (viabilidade do subgrafo), achados A1/B1; ver `docs/decision_log.md` e `docs/results_baseline.md`.
+> Logs, tabelas CSV e plots em `results/` são **gitignored** (`docs/regras_experimentos.md`); versiona-se o YAML de config e os scripts que os regeneram. **Exceção documentada:** o snapshot comparativo em `docs/assets/` (`comparison_fb_enron.png` + `.pdf` + `.csv`) é versionado por ser artefato auditável publicamente, e permanece regenerável pelo comando 5. As referências cruzadas: D-11 (projeção OR), D-15/D-16 (viabilidade do subgrafo), achados A1/B1; ver `docs/decision_log.md` e `docs/results_baseline.md`.

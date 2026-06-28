@@ -16,7 +16,7 @@ experiment:
   output_dir: results/validacao_k_anonimato
 
 # ------------------------------------------------------------
-# Sementes (mínimo 3 por .claude/rules/seeds.md)
+# Sementes (mínimo 3 por docs/regras_sementes.md)
 # ------------------------------------------------------------
 seeds: [42, 1337, 2718]
 

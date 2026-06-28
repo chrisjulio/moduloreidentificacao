@@ -12,7 +12,7 @@ experiment:
   output_dir: results/k_sweep
 
 # ------------------------------------------------------------
-# Sementes (mínimo 3 por .claude/rules/seeds.md)
+# Sementes (mínimo 3 por docs/regras_sementes.md)
 # ------------------------------------------------------------
 seeds: [42, 1337, 2718]
 

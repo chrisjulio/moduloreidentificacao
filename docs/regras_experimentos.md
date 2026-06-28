@@ -1,10 +1,6 @@
----
-paths:
-  - "experiments/**/*"
-  - "src/**/*.py"
----
+# Regras de projeto — Experimentos e outputs
 
-# Regras escopadas — Experimentos e outputs
+> Aplica-se a `experiments/**/*` e `src/**/*.py`.
 
 ## Outputs vêm de logs
 

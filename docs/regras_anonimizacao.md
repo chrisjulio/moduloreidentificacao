@@ -1,10 +1,6 @@
----
-paths:
-  - "src/anonymization/**/*.py"
-  - "tests/anonymization/**/*.py"
----
+# Regras de projeto — Anonimização
 
-# Regras escopadas — Anonimização
+> Aplica-se a `src/anonymization/**/*.py` e `tests/anonymization/**/*.py`.
 
 ## Validação obrigatória de k-anonimato
 

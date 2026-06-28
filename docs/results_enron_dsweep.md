@@ -168,4 +168,4 @@ python -m experiments.run --config experiments/configs/he2009_enron_dsweep.yml
 python -m experiments.make_enron_dsweep_table
 ```
 
-> Logs em `experiments/logs/` são **gitignored** (`.claude/rules/experiments.md`); versiona-se o YAML de config e o script de tabela. O log d=1 de âncora (`he2009_enron_secondary`) é produzido por `experiments/configs/he2009_enron_secondary.yml` (issue #29/S9).
+> Logs em `experiments/logs/` são **gitignored** (`docs/regras_experimentos.md`); versiona-se o YAML de config e o script de tabela. O log d=1 de âncora (`he2009_enron_secondary`) é produzido por `experiments/configs/he2009_enron_secondary.yml` (issue #29/S9).

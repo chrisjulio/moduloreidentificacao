@@ -12,7 +12,7 @@ Covers (as specified in issue #13):
     - Input graphs are not modified (function works on copies).
 
 Seeds are fixed to 0 throughout; this is an approved exception per
-.claude/rules/seeds.md — _modify_structure is deterministic by design
+docs/regras_sementes.md — _modify_structure is deterministic by design
 (no random choices in Phase 1 or Phase 2), so seed choice carries no
 algorithmic significance for the tests below.
 """
@@ -458,7 +458,7 @@ class TestEdgeCases:
 # realises its behaviour — _group_isomorphic for fsm_max_size, _modify_structure
 # for isomorphism_mode — and that the historical defaults are preserved.
 #
-# Seeds are fixed (0 / 7); approved exception per .claude/rules/seeds.md
+# Seeds are fixed (0 / 7); approved exception per docs/regras_sementes.md
 # (deterministic tests). cycle_graph(20) with d=5 is the same fixture used to
 # settle decision G2/D-01: its frequent subgraphs span sizes 1..4, so s_max in
 # {4, 5} yields identical grouping.

@@ -8,7 +8,7 @@ and anonymize(g, k=2, d=10) on a small deterministic graph (~20 nodes).  Verifie
 3. Validator coherent: report is valid or deficit_fully_structural=True (D-06).
 4. No non_isomorphic violations in complete groups (condition 4.3, VF2).
 
-Seeds fixed to 0 and 7; approved exception per .claude/rules/seeds.md —
+Seeds fixed to 0 and 7; approved exception per docs/regras_sementes.md —
 integration tests require reproducible pipeline state.
 """
 

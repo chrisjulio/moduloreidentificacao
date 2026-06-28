@@ -18,7 +18,7 @@ verifying:
     * a full ``main()`` run with an Enron config propagates through the runner
       end-to-end (summary.json + JSONL produced).
 
-Seeds are fixed; approved exception per .claude/rules/seeds.md (tests must be
+Seeds are fixed; approved exception per docs/regras_sementes.md (tests must be
 deterministic). Edge lists are written to ``tmp_path`` so the tests never touch
 the real ``data/raw`` tree or the network.
 """

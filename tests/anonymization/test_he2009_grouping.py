@@ -14,7 +14,7 @@ Covers:
     - Edge cases: sigma=0, sigma=1, k=1, edgeless LSs (mf=0 tiebreak).
 
 Seeds are fixed to 0 throughout (controlled exception per
-.claude/rules/seeds.md — deterministic tests require reproducible
+docs/regras_sementes.md — deterministic tests require reproducible
 grouping; seed=0 carries no algorithmic significance).
 """
 
