@@ -1,4 +1,4 @@
-"""Article-styled (KDMiLe) regeneration of the two LaTeX figures.
+"""Article-styled (KDMiLe) regeneration of the three LaTeX figures.
 
 This script does **not** replace the canonical generators in
 ``src.visualization`` — it reuses their *data* layer (log loading and
@@ -7,12 +7,19 @@ typography and vector export required by the KDMiLe two-column A4 class.
 Keeping it separate leaves the canonical PT/EN figures and their tests
 untouched.
 
+Canonical generation parameters (pymetis engine, source logs, commands and
+style conventions — panel labels, legends, geometry) are documented in
+``scripts/figuras_canonicas.md``; consult it before regenerating any figure.
+
 Frozen data sources (no new experiments):
 
 * Figure 4.1 — ``experiments/logs/he2009_facebook_baseline`` (via
   :func:`src.visualization.privacy_utility.aggregate_by_k`).
 * Figure 4.3 — ``docs/assets/comparison_fb_enron.csv`` (the frozen, committed
   series: ``bound_fraction`` and ``relative_decay`` per dataset x k).
+* Enron d-sweep series — ``experiments/logs/he2009_enron_secondary`` (d=1
+  anchor) + ``experiments/logs/he2009_enron_dsweep`` (d in {2,5,10}), via
+  :func:`src.visualization.privacy_utility.aggregate_by_k_d`.
 
 Article styling (applies to both figures):
 
@@ -50,11 +57,20 @@ import numpy as np
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FixedFormatter, FixedLocator, NullLocator
 
-from src.visualization.privacy_utility import aggregate_by_k, load_jsonl_records
+from src.visualization.privacy_utility import (
+    _d_color_map,
+    _series_for_d,
+    aggregate_by_k,
+    aggregate_by_k_d,
+    load_jsonl_records,
+    load_jsonl_records_combined,
+)
 
 # Default frozen data locations, relative to the repository root.
 _DEFAULT_FB_LOGS = Path("experiments/logs/he2009_facebook_baseline")
 _DEFAULT_COMPARISON_CSV = Path("docs/assets/comparison_fb_enron.csv")
+_DEFAULT_ENRON_ANCHOR_LOGS = Path("experiments/logs/he2009_enron_secondary")
+_DEFAULT_ENRON_DSWEEP_LOGS = Path("experiments/logs/he2009_enron_dsweep")
 _DEFAULT_OUT = Path("docs/assets")
 
 _K_TICKS = [2, 5, 10, 20]
@@ -96,6 +112,17 @@ def _save_pdf(fig: plt.Figure, out_dir: Path, stem: str) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     pdf_path = out_dir / f"{stem}.pdf"
     fig.savefig(str(pdf_path), format="pdf", bbox_inches="tight", pad_inches=0.01)
+    plt.close(fig)
+    return pdf_path
+
+
+def _save_pdf_png(fig: plt.Figure, out_dir: Path, stem: str) -> Path:
+    """Export *fig* as a vector PDF plus a 150-dpi PNG preview; return the PDF path."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    pdf_path = out_dir / f"{stem}.pdf"
+    png_path = out_dir / f"{stem}.png"
+    fig.savefig(str(pdf_path), format="pdf", bbox_inches="tight", pad_inches=0.01)
+    fig.savefig(str(png_path), format="png", dpi=150, bbox_inches="tight", pad_inches=0.01)
     plt.close(fig)
     return pdf_path
 
@@ -259,9 +286,10 @@ def build_comparison(csv_path: Path, out_dir: Path, bw: bool = False) -> Path:
         ax_b.set_ylim(bottom=0)
         ax_b.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
 
+        # Panel labels above the frame (like privacy_utility), clear of the data.
         for ax, tag in ((ax_a, "(a)"), (ax_b, "(b)")):
             _apply_log_k_axis(ax)
-            ax.text(0.02, 0.96, tag, transform=ax.transAxes, va="top", ha="left")
+            ax.set_title(tag, loc="left", fontweight="bold")
 
         handles = _legend_handles(_CMP_STYLES, bw)
         handles.append(Line2D([0], [0], color=ref_color, linestyle=":", label="1/k bound"))
@@ -271,6 +299,136 @@ def build_comparison(csv_path: Path, out_dir: Path, bw: bool = False) -> Path:
         # Reserve a bottom margin so the single figure legend clears the "k" labels.
         fig.tight_layout(rect=[0, 0.08, 1, 1])
         return _save_pdf(fig, out_dir, "eng-comparison_fb_enron")
+
+
+# ---------------------------------------------------------------------------
+# Figure 4.6 — Enron d-sweep series (privacy + utility vs k, one curve per d)
+# ---------------------------------------------------------------------------
+
+# Marker per d — the B&W stand-in for the viridis colour key (colour encodes d
+# in colour mode; in B&W the marker does, since line style already encodes the
+# attack/utility metric and there is no free visual axis left for colour).
+_DSWEEP_D_MARKERS: dict[int, str] = {1: "o", 2: "s", 5: "^", 10: "D"}
+
+# Colour-mode marker per metric, mirroring the canonical series figure.
+_DSWEEP_PRIV_MARKERS: dict[str, str] = {"rr_subgraph": "s", "rr_degree": "o"}
+_DSWEEP_UTIL_MARKERS: dict[str, str] = {"clust_var": "^", "ks_d": "D"}
+
+
+def build_enron_dsweep_series(
+    anchor_logs: Path, dsweep_logs: Path, out_dir: Path, bw: bool = False
+) -> Path:
+    """Render the article-styled Enron d-sweep series figure (eng-enron_dsweep_series).
+
+    Two panels share the ``k`` axis: (a) privacy (re-identification rate, with
+    subgraph solid / degree dashed) and (b) utility (clustering variation solid /
+    KS-D dashed). One curve per ``d`` (anchor ``d=1`` + ``d`` in {2,5,10}).
+
+    ``d`` is encoded by colour (viridis) in colour mode and by marker in B&W
+    mode; the attack/utility metric is encoded by line style in both modes.
+    """
+    records = load_jsonl_records_combined([anchor_logs, dsweep_logs])
+    stats = aggregate_by_k_d(records)
+    d_values = sorted({d for (_k, d) in stats})
+    colors = _d_color_map(d_values)
+
+    base, lw, ms, caps = 16.0, 1.2, 6.0, 3.0
+
+    def draw(ax: plt.Axes, d: int, metric: str, ls: str, scale: float, colour_marker: str) -> None:
+        color = _BLACK if bw else colors[d]
+        marker = _DSWEEP_D_MARKERS.get(d, "x") if bw else colour_marker
+        mfc = "white" if bw else color
+        k_arr, m, s = _series_for_d(stats, d, metric)
+        ax.errorbar(
+            k_arr,
+            m * scale,
+            yerr=s * scale,
+            color=color,
+            linestyle=ls,
+            marker=marker,
+            linewidth=lw,
+            markersize=ms,
+            capsize=caps,
+            elinewidth=0.8,
+            markerfacecolor=mfc,
+        )
+
+    def style_handle(label: str, ls: str, colour_marker: str) -> Line2D:
+        return Line2D(
+            [0],
+            [0],
+            color=_BLACK,
+            linestyle=ls,
+            marker=None if bw else colour_marker,
+            label=label,
+        )
+
+    with plt.rc_context({"pdf.fonttype": 42, "font.size": base, "axes.linewidth": 0.8}):
+        fig, (ax_priv, ax_util) = plt.subplots(1, 2, figsize=(12.0, 5.19))
+
+        # ---- Panel (a): privacy — subgraph solid, degree dashed ----------
+        for d in d_values:
+            draw(ax_priv, d, "rr_subgraph", "-", 100.0, _DSWEEP_PRIV_MARKERS["rr_subgraph"])
+            draw(ax_priv, d, "rr_degree", "--", 100.0, _DSWEEP_PRIV_MARKERS["rr_degree"])
+        ax_priv.set_ylabel("Re-identification rate (%)")
+        ax_priv.set_xlabel("k")
+        ax_priv.set_ylim(bottom=0)
+        ax_priv.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
+
+        # ---- Panel (b): utility — clustering solid, KS-D dashed ----------
+        for d in d_values:
+            draw(ax_util, d, "clust_var", "-", 1.0, _DSWEEP_UTIL_MARKERS["clust_var"])
+            draw(ax_util, d, "ks_d", "--", 1.0, _DSWEEP_UTIL_MARKERS["ks_d"])
+        ax_util.set_ylabel("Utility degradation")
+        ax_util.set_xlabel("k")
+        ax_util.set_ylim(bottom=0)
+        ax_util.grid(True, linestyle="--", alpha=0.3, linewidth=0.5)
+
+        for ax, tag in ((ax_priv, "(a)"), (ax_util, "(b)")):
+            _apply_log_k_axis(ax)
+            ax.set_title(tag, loc="left", fontweight="bold")
+
+        # Both legends live BELOW the axes (like eng-privacy_utility) so neither
+        # overlaps the data: top row = metric/line-style key, bottom row = d key.
+        metric_handles = [
+            style_handle("Subgraph scenario", "-", _DSWEEP_PRIV_MARKERS["rr_subgraph"]),
+            style_handle("Degree scenario", "--", _DSWEEP_PRIV_MARKERS["rr_degree"]),
+            style_handle("Clustering variation", "-", _DSWEEP_UTIL_MARKERS["clust_var"]),
+            style_handle("KS-D (degree dist.)", "--", _DSWEEP_UTIL_MARKERS["ks_d"]),
+        ]
+        # d key — colour swatch (colour mode) or white-filled marker (B&W).
+        d_handles = [
+            Line2D(
+                [0],
+                [0],
+                color=_BLACK if bw else colors[d],
+                linestyle="None" if bw else "-",
+                marker=_DSWEEP_D_MARKERS.get(d, "x") if bw else None,
+                markerfacecolor="white" if bw else colors[d],
+                markeredgecolor=_BLACK if bw else colors[d],
+                label=f"d={d}",
+            )
+            for d in d_values
+        ]
+        fig.legend(
+            handles=metric_handles,
+            loc="lower center",
+            ncol=4,
+            frameon=False,
+            fontsize=12,
+            bbox_to_anchor=(0.5, 0.05),
+        )
+        fig.legend(
+            handles=d_handles,
+            loc="lower center",
+            ncol=len(d_handles),
+            frameon=False,
+            fontsize=12,
+            title="d",
+            bbox_to_anchor=(0.5, -0.04),
+        )
+        fig.tight_layout(rect=[0, 0.16, 1, 1])
+        return _save_pdf_png(fig, out_dir, "eng-enron_dsweep_series")
 
 
 # ---------------------------------------------------------------------------
@@ -295,6 +453,18 @@ def _build_parser() -> argparse.ArgumentParser:
         default=_DEFAULT_COMPARISON_CSV,
         help="Frozen comparison CSV (Figure 4.3 source).",
     )
+    p.add_argument(
+        "--enron-anchor-logs",
+        type=Path,
+        default=_DEFAULT_ENRON_ANCHOR_LOGS,
+        help="Enron d=1 anchor logs dir (d-sweep series source).",
+    )
+    p.add_argument(
+        "--enron-dsweep-logs",
+        type=Path,
+        default=_DEFAULT_ENRON_DSWEEP_LOGS,
+        help="Enron d in {2,5,10} logs dir (d-sweep series source).",
+    )
     p.add_argument("--out", type=Path, default=_DEFAULT_OUT, help="Output directory.")
     p.add_argument(
         "--bw",
@@ -310,9 +480,13 @@ def main(argv: list[str] | None = None) -> None:
     args = _build_parser().parse_args(argv)
     p1 = build_privacy_utility(args.fb_logs, args.out, bw=args.bw)
     p2 = build_comparison(args.comparison_csv, args.out, bw=args.bw)
+    p3 = build_enron_dsweep_series(
+        args.enron_anchor_logs, args.enron_dsweep_logs, args.out, bw=args.bw
+    )
     print(f"Saved ({'black-and-white' if args.bw else 'colour'}):")
     print(f"  {p1}")
     print(f"  {p2}")
+    print(f"  {p3}")
 
 
 if __name__ == "__main__":
