@@ -21,7 +21,7 @@ _modify_structure}`` — by:
 The behavioural propagation through ``anonymize()`` itself is covered in
 tests/anonymization/test_he2009_modify.py; this module is the config layer.
 
-Seeds are fixed; approved exception per .claude/rules/seeds.md (tests must be
+Seeds are fixed; approved exception per docs/regras_sementes.md (tests must be
 deterministic). load_dataset is monkeypatched to a small synthetic graph so the
 tests never touch the filesystem.
 """

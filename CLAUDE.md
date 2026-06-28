@@ -8,7 +8,7 @@
 > Definições de métricas: [docs/metrics_definitions.md](docs/metrics_definitions.md).
 > Validação de k-anonimato (resultados consolidados): [docs/validacao_k_anonimato.md](docs/validacao_k_anonimato.md).
 > Protocolo humano de orquestração entre interfaces: [WORKFLOW.md](WORKFLOW.md).
-> Regras escopadas a partes do repositório: [.claude/rules/](.claude/rules/).
+> Regras de projeto (sementes, experimentos, anonimização): [docs/regras_sementes.md](docs/regras_sementes.md), [docs/regras_experimentos.md](docs/regras_experimentos.md), [docs/regras_anonimizacao.md](docs/regras_anonimizacao.md).
 > Limitações metodológicas: [docs/limitations.md](docs/limitations.md).
 > Entregáveis consolidados: [docs/entregaveis.md](docs/entregaveis.md).
 
@@ -122,7 +122,7 @@ na própria issue antes de prosseguir.
   **inglês**. Issues, documentação em `/docs/` e arquivos `.md` na raiz em
   **português**.
 - **Sementes:** sempre lidas do YAML de configuração — **nunca hardcoded** no
-  código de produção. Ver [.claude/rules/seeds.md](.claude/rules/seeds.md).
+  código de produção. Ver [docs/regras_sementes.md](docs/regras_sementes.md).
 - **Configuração:** um YAML por experimento em `experiments/configs/`. Modelo:
   [config_example.yml](config_example.yml).
 - **Reprodutibilidade:** mínimo 3 sementes por configuração `(k, dataset, ataque)`;
@@ -174,9 +174,9 @@ Para cada issue:
   **PowerShell**, nunca pela ferramenta **Bash**. Nesta máquina (Windows) a
   ferramenta Bash executa o Git Bash, um shell separado; sintaxe PowerShell
   (here-string `@'...'@`, `Set-Content`, `$env:`) enviada a ela falha com
-  `command not found`/`syntax error`. Um hook `PreToolUse`
-  (`.claude/hooks/guard_bash_powershell.py`) bloqueia esse erro, mas a regra
-  vale por si. Use a ferramenta Bash só para sintaxe POSIX legítima.
+  `command not found`/`syntax error`. Um hook local `PreToolUse` (fora do
+  versionamento) bloqueia esse erro, mas a regra vale por si. Use a ferramenta
+  Bash só para sintaxe POSIX legítima.
 - Ao gravar o arquivo de mensagem, evite o BOM que `Set-Content -Encoding utf8`
   injeta no assunto do commit: use
   `[System.IO.File]::WriteAllText($path, $msg, (New-Object System.Text.UTF8Encoding $false))`.
@@ -227,7 +227,7 @@ Aplicado sobre o grafo de saída, não sobre estruturas internas. Resultado em
 log estruturado, reproduzível via semente.
 
 Detalhamento e critério de aprovação do marco 29/05:
-[.claude/rules/anonymization.md](.claude/rules/anonymization.md).
+[docs/regras_anonimizacao.md](docs/regras_anonimizacao.md).
 
 ---
 

@@ -18,7 +18,7 @@ Output
 
 This mirrors ``experiments/make_baseline_table.py`` so that the two results
 documents stay structurally parallel. Outputs come from structured logs, never
-from interactive execution (.claude/rules/experiments.md).
+from interactive execution (docs/regras_experimentos.md).
 """
 
 # ruff: noqa: RUF001
@@ -435,7 +435,7 @@ def main() -> None:
         "```",
         "",
         "> Logs, tabelas CSV e plots em `results/` são **gitignored** "
-        "(`.claude/rules/experiments.md`); versiona-se o YAML de config e os scripts que os "
+        "(`docs/regras_experimentos.md`); versiona-se o YAML de config e os scripts que os "
         "regeneram. **Exceção documentada:** o snapshot comparativo em `docs/assets/` "
         "(`comparison_fb_enron.png` + `.pdf` + `.csv`) é versionado por ser artefato auditável "
         "publicamente, e permanece regenerável pelo comando 5. As referências "

@@ -16,7 +16,7 @@ Nota sobre tamanhos exatos com d=2 (ck=5):
     test_partition_backend.py. Aqui testa-se contagem e cobertura, não tamanho
     exato por partição, para ck=5. Para ck=2 (d=5), KL garante balanceamento.
 
-Seeds fixadas são exceção controlada conforme .claude/rules/seeds.md.
+Seeds fixadas são exceção controlada conforme docs/regras_sementes.md.
 """
 
 from __future__ import annotations

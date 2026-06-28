@@ -213,7 +213,7 @@ Exemplos:
 `he2009_facebook_baseline.yml` (Mínimo completo: k ∈ {2,5,10,20}, grau + subgrafo,
 3 sementes) e `he2009_enron_secondary.yml` (Desejável). As **sementes nunca são
 passadas por linha de comando** — vêm sempre do YAML
-([`.claude/rules/seeds.md`](../../.claude/rules/seeds.md)).
+([`docs/regras_sementes.md`](../../docs/regras_sementes.md)).
 
 ---
 
@@ -248,7 +248,7 @@ demonstrar o que foi executado. Cada etapa também emite logs textuais no
 terminal com data/hora e nível (`INFO`/`ERROR`).
 
 > `experiments/logs/*` e `results/{plots,tables}/*` **não são versionados**
-> (ver [`.claude/rules/experiments.md`](../../.claude/rules/experiments.md)).
+> (ver [`docs/regras_experimentos.md`](../../docs/regras_experimentos.md)).
 
 ---
 

@@ -37,7 +37,7 @@ experiment:
     e 3 sementes. Complementa o baseline Facebook para validade externa (#29).
 
 # ------------------------------------------------------------
-# Sementes — mínimo 3 por .claude/rules/seeds.md
+# Sementes — mínimo 3 por docs/regras_sementes.md
 # Nunca hardcoded no código de produção; sempre lidas deste YAML.
 # ------------------------------------------------------------
 seeds: [42, 1337, 2718]

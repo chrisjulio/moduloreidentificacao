@@ -10,7 +10,7 @@ Validates the three mandatory checkboxes of issue #76:
    groups (D-06), producing deficit_fully_structural=True — not a bug.
 
 Seeds fixed to 0; integration tests require reproducible pipeline state
-(approved exception per .claude/rules/seeds.md).
+(approved exception per docs/regras_sementes.md).
 """
 
 from __future__ import annotations

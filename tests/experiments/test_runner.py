@@ -11,7 +11,7 @@ Definition-of-Done coverage:
     - main: exit code 0 when all runs pass; 1 when any run fails.
 
 Seeds are fixed to 0 / 42 throughout; approved exception per
-.claude/rules/seeds.md — tests require deterministic, reproducible outputs.
+docs/regras_sementes.md — tests require deterministic, reproducible outputs.
 """
 
 from __future__ import annotations

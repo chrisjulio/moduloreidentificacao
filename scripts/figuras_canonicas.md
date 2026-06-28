@@ -3,7 +3,7 @@
 Fonte de verdade para **como** as figuras versionadas em `docs/assets/` são
 geradas. Toda regeneração deve seguir os comandos e convenções abaixo — nunca
 produzir figuras por execução interativa não rastreável (ver
-[`.claude/rules/experiments.md`](../.claude/rules/experiments.md)).
+[`docs/regras_experimentos.md`](../docs/regras_experimentos.md)).
 
 Há **dois conjuntos** de figuras, com geradores e estilos distintos:
 

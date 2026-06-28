@@ -9,7 +9,7 @@ Covers (as specified in the Definition of Done):
     - anonymize: return type nx.Graph, d required, no nodes added/removed.
 
 Seeds are fixed to 0 / 42 throughout; approved exception per
-.claude/rules/seeds.md — these tests require reproducible outputs.
+docs/regras_sementes.md — these tests require reproducible outputs.
 """
 
 from __future__ import annotations

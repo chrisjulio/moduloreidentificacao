@@ -975,7 +975,7 @@
   (48 registros, `experiments/logs/he2009_facebook_dsweep/`) via as ferramentas
   já existentes: tabelas CSV d-aware (`results/tables/facebook_{degree,subgraph}.csv`,
   agora com coluna `d`) e duas figuras (`privacy_utility_dsweep_series` e
-  `..._facets`), ambas não versionadas conforme `.claude/rules/experiments.md`.
+  `..._facets`), ambas não versionadas conforme `docs/regras_experimentos.md`.
   Escrevi `docs/results_dsweep.md` (relatório final): metadados, cobertura 16/16
   células, tabelas `média ± std` por `(k,d)`, análise (déficit estrutural em
   48/48 com `valid=false`+`deficit_fully_structural=true`; tendências opostas
@@ -2072,7 +2072,7 @@
   estrutural D-06), **0 erros**, backend pymetis; `reidentification_rate_degree`
   ∈ [0,0018; 0,0034] (cai levemente com k); logs em
   `experiments/logs/he2009_enron_secondary/` (`.jsonl` 12 linhas + `summary.json`,
-  `any_failure: false`) — gitignored por `.claude/rules/experiments.md`. D-13
+  `any_failure: false`) — gitignored por `docs/regras_experimentos.md`. D-13
   (`subgraph_timeout_count == 0`) não se aplica (subgrafo desabilitado); ataque
   por grau não usa VF2/timeout. Branch `loader/enron-run` (`Closes #127`).
 

@@ -17,7 +17,7 @@
 > cientes da dimensão `d`, **ainda não implementadas** — `src/visualization/`
 > foi escrito para o baseline de `d` único e ignora `d` (uma issue de extensão
 > `viz/dsweep-d-aware` foi especificada para tratar disso). Será regenerado a
-> partir do log estruturado conforme o fluxo de `.claude/rules/experiments.md`
+> partir do log estruturado conforme o fluxo de `docs/regras_experimentos.md`
 > (`config → run → log → parse → table/plot`) quando essas ferramentas existirem.
 > Os números abaixo são consolidação legível do log, sujeitos a reapresentação.
 

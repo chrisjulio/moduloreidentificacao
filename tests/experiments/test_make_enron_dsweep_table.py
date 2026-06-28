@@ -7,7 +7,7 @@ Covers:
     - fmt: formatting with correct digits and None handling.
     - main(): end-to-end — writes the output file with expected sections.
 
-Seeds fixed to small deterministic values per .claude/rules/seeds.md (tests
+Seeds fixed to small deterministic values per docs/regras_sementes.md (tests
 require deterministic outputs, not production runs).
 """
 

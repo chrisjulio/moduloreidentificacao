@@ -206,7 +206,7 @@ Legenda de status: ✅ já documentado e fiel · ⚠️ documentado mas disperso
   não propõem verificador externo.
 - **Executado.** O projeto **adicionou** `validate_k_anonymity` como auditor
   independente (não reutiliza código do anonimizador), exigido pela metodologia
-  (regra `.claude/rules/anonymization.md`). Ele é **mais forte** que a garantia
+  (regra `docs/regras_anonimizacao.md`). Ele é **mais forte** que a garantia
   teórica em um aspecto (expõe violações de D-06/D-07 que a construção mascara) e
   **mais conservador** em outro: conta candidatos isomorfos só **dentro do grupo
   de anonimização**, podendo superestimar violadores (a Def. 2 não restringe ao

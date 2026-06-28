@@ -6,7 +6,7 @@
 > agora apenas snapshot histórico do estado intermediário.
 >
 > As tabelas e figuras abaixo são **regeneradas a partir do log estruturado**
-> seguindo o fluxo de [`.claude/rules/experiments.md`](../.claude/rules/experiments.md)
+> seguindo o fluxo de [`docs/regras_experimentos.md`](../docs/regras_experimentos.md)
 > (`config → run → log → parse → table/plot`). Comandos de reprodução na §6.
 
 ---
@@ -102,7 +102,7 @@ Valores `média ± desvio-padrão` sobre as 3 sementes de cada célula `(k, d)`.
 Tabelas CSV por nó/semente regeneradas em `results/tables/facebook_degree.csv` e
 `results/tables/facebook_subgraph.csv` (colunas `k, d, seed, reid_rate,
 eq_group_mean, ks_D, ks_p, clustering_var`; não versionadas — ver
-[`.claude/rules/experiments.md`](../.claude/rules/experiments.md)).
+[`docs/regras_experimentos.md`](../docs/regras_experimentos.md)).
 
 ---
 

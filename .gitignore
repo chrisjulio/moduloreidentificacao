@@ -139,9 +139,8 @@ desktop.ini
 !/publications/README.md
 
 # ------------------------------------------------------------
-# Registro de sessoes do Claude Code (leitura humana, local)
-# O log e os flags de sobrecarga sao gerados pelos hooks
-# UserPromptSubmit/PreCompact; nao versionar.
+# Configuracao local de tooling (nao versionar)
+# Hooks, settings e logs de sessao do Claude Code sao tooling
+# de bancada do autor, nao parte do artefato de pesquisa.
 # ------------------------------------------------------------
-/.claude/session-log.md
-/.claude/.overload-*
+/.claude/
