@@ -421,7 +421,7 @@ def build_enron_dsweep_series(
                 marker=_DSWEEP_D_MARKERS.get(d, "x") if bw else None,
                 markerfacecolor="white" if bw else colors[d],
                 markeredgecolor=_BLACK if bw else colors[d],
-                label=f"d={d}",
+                label=rf"$\ell={d}$",
             )
             for d in d_values
         ]
@@ -441,7 +441,7 @@ def build_enron_dsweep_series(
             loc="upper left",
             ncol=2,
             fontsize=10,
-            title="d",
+            title=r"$\ell$",
             framealpha=0.9,
             handletextpad=0.4,
             columnspacing=1.0,

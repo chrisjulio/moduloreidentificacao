@@ -669,11 +669,14 @@ def _plot_dsweep_series(
     _style_legend(ax_util, labels["clustering_full"], labels["ksd_degree"])
 
     # Shared d-colour legend (one entry per d), placed on the privacy panel.
+    # The English (journal) article denotes the local-structure size as ell;
+    # the Portuguese figures keep the canonical "d".
+    d_symbol = r"$\ell$" if lang == "en" else "d"
     d_handles = [
-        Line2D([0], [0], color=colors[d], marker="o", linestyle="-", label=f"d={d}")
+        Line2D([0], [0], color=colors[d], marker="o", linestyle="-", label=f"{d_symbol}={d}")
         for d in d_values
     ]
-    leg_d = ax_priv.legend(handles=d_handles, title="d", fontsize=9, loc="upper right")
+    leg_d = ax_priv.legend(handles=d_handles, title=d_symbol, fontsize=9, loc="upper right")
     ax_priv.add_artist(leg_d)
 
     all_k = sorted({k for (k, _d) in stats})
