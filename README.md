@@ -498,6 +498,14 @@ KL. Decisão registrada como D-19 em [`docs/decision_log.md`](docs/decision_log.
 
 ### 5.1 Baseline — `d=1` (âncora)
 
+> ⚠️ **DEPRECATED (motor KL) — não usar como referência canônica.** A tabela
+> abaixo vem do run **Kernighan-Lin** original (issue #23), **substituído** pelo
+> run **pymetis** (E1 / issue #211 / D-19) como dado canônico do artigo. Os
+> números KL ficam apenas como histórico: o `rr_subgrafo` k=2 de `0.791`
+> (gap ~30×) foi superado por `0.1454` (gap ~6×) sob pymetis. Dados canônicos em
+> [`docs/results_baseline.md`](docs/results_baseline.md) §pymetis; ver
+> [D-19](docs/decision_log.md).
+
 **Dataset:** Facebook Ego-Net 3437 (n=532, m=4812). **Parâmetros:** He et al.
 (2009), `d=1`, `sigma=0.5`, `k ∈ {2, 5, 10, 20}`, 3 sementes (42, 1337, 2718).
 **Ataques:** grau e subgrafo 1-hop (timeout 60 s). Valores: médias sobre sementes.
@@ -533,9 +541,10 @@ Análise completa e tabela bruta em [`docs/results_baseline.md`](docs/results_ba
 > ausência de `pymetis` no ambiente original). A reexecução E1 com pymetis exclusivo
 > (config `he2009_facebook_baseline_pymetis.yml`) mostra que o motor afeta os resultados
 > mesmo em `d=1`: `rr_subgrafo` k=2 cai de 0,7914 → 0,1454 (gap ~6× vs. ~30× no KL);
-> k=10/20 retorna `FAILURE_LOW_COVERAGE` (86,5% de cobertura). A tabela KL permanece a
-> referência canônica para o comparativo com o Enron (que usa pymetis); os números pymetis
-> e o histórico KL estão em `docs/results_baseline.md` §pymetis. Ver D-19 em
+> k=10/20 retorna `FAILURE_LOW_COVERAGE` (86,5% de cobertura). O run **pymetis** é a
+> referência canônica do artigo, inclusive no comparativo com o Enron (que também usa
+> pymetis); a tabela KL acima fica apenas como histórico. Os números pymetis e o
+> histórico KL estão em `docs/results_baseline.md` §pymetis. Ver D-19 em
 > [`docs/decision_log.md`](docs/decision_log.md).
 
 ### 5.2 d-sweep — `d ∈ {1, 2, 5, 10}` (48 runs, backend pymetis)
